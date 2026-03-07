@@ -1,14 +1,15 @@
 Lane Biocini
 February 2026
 
-# Categories via symmetric Segal conditions
-
-The covariant Segal conditions ask that `fiber yon (λ _ → id)` and
-`fiber yon (λ w → yon g w ∘ yon f w)` are contractible. The contravariant
-conditions ask the same for `yon-op`. Contractibility subsumes existence
-(the center gives `idn` and `_⨾_`) and uniqueness (which gives the
-embedding properties). The covariant/contravariant pairing gives perfect
-op-symmetry.
+We ask that `fiber yon (λ _ → id)` and `fiber yon (λ w → yon g w ∘ yon
+f w)` are contractible. The contravariant conditions ask the same for
+`yon-op`. Contractibility subsumes existence (the center gives `idn`
+and `_⨾_`) and uniqueness (which gives the embedding properties). The
+covariant/contravariant pairing gives perfect op-symmetry, allowing
+an involutive opposite category operation to be defined -- following
+Carrette, I believe this to be essential for the "right" definition
+of category. In principle however each direction can be presented
+independently and we get many of the things we want.
 
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness --no-sized-types #-}
@@ -25,7 +26,7 @@ open import Core.Path using (ap-comp)
 open import Core.Trait.Trunc
   using ( Π-is-prop; Πi-is-prop )
 open import Core.Function.Base
-open import Core.Function.Embedding
+open import Core.Function.Embedding using (is-embedding; _↪_)
 
 record category o h : Type₊ (o ⊔ h) where
   no-eta-equality
@@ -33,11 +34,8 @@ record category o h : Type₊ (o ⊔ h) where
     ob  : Type o
     hom : ob → ob → Type h
     yon : ∀ {x y} → hom x y → ∀ w → hom w x → hom w y
-
     idn-contr
-      : ∀ {x}
-      → is-contr
-          (fiber yon (λ (_ : ob) → id {A = hom _ x}))
+     : ∀ {x} → is-contr (fiber (yon {x} {x}) (λ _ → id))
     composable-contr
       : ∀ {x y z} (f : hom x y) (g : hom y z)
       → is-contr (fiber yon (λ w → yon g w ∘ yon f w))
@@ -64,25 +62,18 @@ record category o h : Type₊ (o ⊔ h) where
             (λ w → yon-op f w ∘ yon-op g w))
 
   {-# INLINE yon #-}
-```
+  {-# INLINE _⨾_ #-}
 
-## Cat module
-
-```agda
 module Cat {o} {h} (C : category o h) where
   open category C public
-```
 
-### Basic witnesses
-
-```agda
   yon-idn : ∀ {x} → yon (idn {x}) ≡ (λ _ → id)
   yon-idn = idn-contr .center .snd
 
-  yon-st
+  yon-composite
     : ∀ {x y z} (f : hom x y) (g : hom y z)
     → yon (f ⨾ g) ≡ (λ w → yon g w ∘ yon f w)
-  yon-st f g = composable-contr f g .center .snd
+  yon-composite f g = composable-contr f g .center .snd
 
   yon-idn-pt
     : ∀ {x} (w : ob) (k : hom w x)
@@ -92,7 +83,7 @@ module Cat {o} {h} (C : category o h) where
 
 ### Contravariant identity
 
-The contravariant Segal condition gives its own identity `op-idn`
+The contravariant condition gives its own identity `op-idn`
 with `yon g x op-idn ≡ g` for all g. Both conditions applied to each
 other force `op-idn ≡ idn`.
 
@@ -123,17 +114,24 @@ other force `op-idn ≡ idn`.
 
 ### yon-emb
 
-Any inhabited fiber of `yon` is contractible:
-`composable-contr idn m` gives contractibility of
-`fiber yon (yon m)` after transport along the identity witness.
+Any inhabited fiber of `yon` is contractible: `composable-contr idn m`
+gives contractibility of `fiber yon (yon m)` after transport along the
+identity witness. This is a consequence of the fact that our
+definition enforces that all composites exist due to the existence
+of unital morphisms at each object.
+
+In an earlier attempt at a definition I was able to show that given an
+arbitrary 2-cell type with a unary identity system fixed at some `f, g`
+compatible in the usual way over the canonical composition operator
+(i.e. `f ⨾ g` is well-typed), the 2-cells are equivalent to the identity
+type as soon as unital morphisms exist.
 
 ```agda
   yon-image-contr
     : ∀ {x y} (m : hom x y)
     → is-contr (fiber yon (yon m))
   yon-image-contr m =
-    subst (is-contr ∘ fiber yon) path
-      (composable-contr idn m)
+    subst (is-contr ∘ fiber yon) path (composable-contr idn m)
     where
       path : (λ w → yon m w ∘ yon idn w) ≡ yon m
       path i w k = yon m w (yon-idn-pt w k i)
@@ -141,14 +139,13 @@ Any inhabited fiber of `yon` is contractible:
   yon-emb : ∀ {x y} → is-embedding (yon {x} {y})
   yon-emb t (n , p) =
     is-contr→is-prop
-      (subst (is-contr ∘ fiber yon) p
-        (yon-image-contr n))
+      (subst (is-contr ∘ fiber yon) p (yon-image-contr n))
       (n , p)
 ```
 
 ### yon-op-emb
 
-Dual construction using the contravariant Segal conditions.
+Dual construction using the contravariant  conditions.
 
 ```agda
   private
@@ -156,8 +153,7 @@ Dual construction using the contravariant Segal conditions.
       : ∀ {x y} (m : hom x y)
       → is-contr (fiber yon-op (yon-op m))
     yon-op-image-contr m =
-      subst (is-contr ∘ fiber yon-op) path
-        (composable-op-contr idn m)
+      subst (is-contr ∘ fiber yon-op) path (composable-op-contr idn m)
       where
         path
           : (λ w → yon-op idn w ∘ yon-op m w)
@@ -171,6 +167,17 @@ Dual construction using the contravariant Segal conditions.
       (subst (is-contr ∘ fiber yon-op) p
         (yon-op-image-contr n))
       (n , p)
+
+  yon-op-image-ind
+    : ∀ {u} {x y} (m : hom x y)
+    → (P : (n : hom x y) → yon-op n ≡ yon-op m → Type u)
+    → P m refl
+    → ∀ n q → P n q
+  yon-op-image-ind m P base n q =
+    coe01 (λ i → P (path i .fst) (path i .snd)) base
+    where
+      path : (m , refl) ≡ (n , q)
+      path = is-contr→is-prop (yon-op-image-contr m) (m , refl) (n , q)
 ```
 
 ### Composite vocabulary
@@ -203,7 +210,7 @@ Dual construction using the contravariant Segal conditions.
       {s : hom x z}
     → (α : f ⨾ g => s)
     → PathP (λ i → f ⨾ g => (cast-path α i))
-        (yon-st f g) α
+        (yon-composite f g) α
   cast-pathp {f = f} {g} α =
     ap snd (composite-contr f g .paths (_ , α))
 
@@ -213,15 +220,26 @@ Dual construction using the contravariant Segal conditions.
   is-composable-is-prop f g =
     is-contr→is-prop (composite-contr f g)
 
+  yon-image-ind
+    : ∀ {u} {x y} (m : hom x y)
+    → (P : (n : hom x y) → yon n ≡ yon m → Type u)
+    → P m refl
+    → ∀ n q → P n q
+  yon-image-ind m P base n q =
+    coe01 (λ i → P (path i .fst) (path i .snd)) base
+    where
+      path : (m , refl) ≡ (n , q)
+      path = is-contr→is-prop (yon-image-contr m) (m , refl) (n , q)
+
   yon-inj
     : ∀ {x y} {f g : hom x y}
     → yon f ≡ yon g → f ≡ g
-  yon-inj = is-embedding→injective yon-emb
+  yon-inj {f = f} p = yon-image-ind f (λ n _ → f ≡ n) refl _ (sym p)
 
   yon-op-inj
     : ∀ {x y} {f g : hom x y}
     → yon-op f ≡ yon-op g → f ≡ g
-  yon-op-inj = is-embedding→injective yon-op-emb
+  yon-op-inj {f = f} p = yon-op-image-ind f (λ n _ → f ≡ n) refl _ (sym p)
 ```
 
 ### comp-eq and yon-nat
@@ -235,7 +253,7 @@ This follows by evaluating the composition witness at `idn`.
     → f ⨾ g ≡ yon g x f
   comp-eq f g =
     sym (yon-op-idn-pt _ (f ⨾ g))
-    ∙ (λ i → yon-st f g i _ idn)
+    ∙ (λ i → yon-composite f g i _ idn)
     ∙ ap (yon g _) (yon-op-idn-pt _ f)
 ```
 
@@ -289,24 +307,35 @@ we show `r ≡ f ⨾ g` by evaluating `α` at the identity.
     assoc f g h = cast-path wit where
       wit : composite (f ⨾ g) h (f ⨾ (g ⨾ h))
       wit =
-        yon-st f (g ⨾ h)
-        ∙ (λ i w k → yon-st g h i w (yon f w k))
-        ∙ sym (λ i w k → yon h w (yon-st f g i w k))
+        yon-composite f (g ⨾ h)
+        ∙ (λ i w k → yon-composite g h i w (yon f w k))
+        ∙ sym (λ i w k → yon h w (yon-composite f g i w k))
 ```
 
 ### Induction and crossing lemmas
 
 ```agda
   yon-ind
-    : ∀ {ℓ'} {x y z} (f : hom x y) (g : hom y z)
-    → (P : (s : hom x z) → f ⨾ g => s → Type ℓ')
-    → P (f ⨾ g) (yon-st f g)
+    : ∀ {u} {x y z} (f : hom x y) (g : hom y z)
+    → (P : (s : hom x z) → f ⨾ g => s → Type u)
+    → P (f ⨾ g) (yon-composite f g)
     → ∀ s q → P s q
   yon-ind f g P base m p =
     coe01 (λ i → P (path i .fst) (path i .snd)) base
     where
-      path : (f ⨾ g , yon-st f g) ≡ (m , p)
+      path : (f ⨾ g , yon-composite f g) ≡ (m , p)
       path = composite-contr f g .paths (m , p)
+
+  idn-ind
+    : ∀ {u} {x}
+    → (P : (e : hom x x) → yon e ≡ (λ _ → id) → Type u)
+    → P idn yon-idn
+    → ∀ e q → P e q
+  idn-ind P base e q =
+    coe01 (λ i → P (path i .fst) (path i .snd)) base
+    where
+      path : (idn , yon-idn) ≡ (e , q)
+      path = idn-contr .paths (e , q)
 
   lcross
     : ∀ {w x y z} (f : hom w x) (g : hom x y)
@@ -331,9 +360,9 @@ we show `r ≡ f ⨾ g` by evaluating `α` at the identity.
     → f ⨾ g => s → g ⨾ h => r
     → s ⨾ h ≡ f ⨾ r
   conj f g h α β =
-    sym (ap (_⨾ h) (cast-path α))
-    ∙ assoc f g h
-    ∙ ap (f ⨾_) (cast-path β)
+    pcom (ap (_⨾ h) (cast-path α))
+         (assoc f g h)
+         (ap (f ⨾_) (cast-path β))
 ```
 
 ### Embeddings
@@ -368,7 +397,7 @@ we show `r ≡ f ⨾ g` by evaluating `α` at the identity.
 
 The opposite category swaps morphism direction. In op, `yon` becomes
 `yon-op` from the original category. The covariant and contravariant
-Segal conditions swap.
+ conditions swap.
 
 ```agda
 module _ {o h} (C : category o h) where
@@ -391,7 +420,7 @@ module _ {o h} (C : category o h) where
 ## Opposite involution
 
 The structural fields (ob, hom, yon) are definitionally equal after
-double reversal. The Segal conditions are propositions (is-contr is
+double reversal. The  conditions are propositions (is-contr is
 a proposition), so `is-prop→PathP` fills them.
 
 ```agda

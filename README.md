@@ -12,14 +12,6 @@ mathematics, proof theory research, as well as ordinary functional programming.
 
 ## Contents
 
-The `Core` namespace provides cubical foundations (paths, transport,
-equivalences, h-levels, Kan operations, univalence), standard data types, and
-typeclass traits. `Cat` builds a virtual category theory framework — magmoids,
-unitality, associativity, coherence, monads, and CwFs. `Data` and `HData`
-supply concrete and higher inductive types. `Lib` contains extended
-developments: cubical and semi-simplicial sets, Segal types, and modular group
-theory.
-
 Kitcat will be host to investigations at the intersection of higher catgegory
 theory, homotopy type theory, rewriting theory, combinatorics, and proof
 theory. The library is intended to be a testbed for new ideas in these areas,
@@ -35,8 +27,7 @@ The category theory framework is built on a confluence of ideas from:
 - [Petrakis](https://arxiv.org/abs/2205.06651) and
 - Sterling's [virtual bicategory theory](https://www.jonmsterling.com/005B) &
   ([reflexive graph lenses](https://arxiv.org/abs/2303.10986))
-- among other references, including ideas from virtual double category theory
-  and (obviously) homotopy type theory
+- among other references
 
 ## Acknowledgments
 
@@ -59,8 +50,7 @@ Kitcat incorporates and adapts code from the following projects:
   `Lib.SSet.Base`, `Lib.SSet.Segal`, and `Lib.CSet.Base` adapt the simplicial
   set and Segal condition definitions
 
-The primary HoTT reference used throughout is Rijke's *Introduction to
-Homotopy Type Theory*.
+The primary HoTT reference used throughout is Rijke's _Introduction to Homotopy Type Theory_.
 
 ## Related work
 

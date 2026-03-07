@@ -191,39 +191,3 @@ pentagon
   → Type h
 pentagon f g k l a0 a1 a2 b0 b1 = (f ◃ a0) ∙ a1 ∙ (a2 ▹ l) ≡ b0 ∙ b1
 {-# INLINE pentagon #-}
-```
-
--- record is-pullback {b c d ρ} {f : hom b d} {g : hom c d} {π₁ : hom ρ b} {π₂ : hom ρ c}
---   (pb : commutative-sq π₁ π₂ f g) : Type (o ⊔ h) where
---   no-eta-equality
---   field
---     universal
---       : ∀ {a} (α : hom a b) (β : hom a c) → commutative-sq α β f g
---       → is-contr (Σ h ∶ hom a ρ , (h ⨾ π₁ ≡ α) × (h ⨾ π₂ ≡ β))
-
---   gap : ∀ {a} (α : hom a b) (β : hom a c) → commutative-sq α β f g → hom a ρ
---   gap α β s = universal α β s .center .fst
-
---   gap-π₁
---     : ∀ {a} (α : hom a b) (β : hom a c) (s : commutative-sq α β f g)
---     → gap α β s ⨾ π₁ ≡ α
---   gap-π₁ α β s = universal α β s .center .snd .fst
-
---   gap-π₂
---     : ∀ {a} (α : hom a b) (β : hom a c) (s : commutative-sq α β f g)
---     → gap α β s ⨾ π₂ ≡ β
---   gap-π₂ α β s = universal α β s .center .snd .snd
-
--- {-# INLINE is-pullback.constructor #-}
-
--- record pullback {b c d} (f : hom b d) (g : hom c d) : Type (o ⊔ h) where
---   no-eta-equality
---   field
---     apex   : ob
---     π₁     : hom apex b
---     π₂     : hom apex c
---     square : commutative-sq π₁ π₂ f g
---     is-pb  : is-pullback square
---   open is-pullback is-pb public
-
--- {-# INLINE pullback.constructor #-}
