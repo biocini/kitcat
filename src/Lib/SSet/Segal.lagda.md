@@ -17,7 +17,7 @@ open import Core.Data.Sigma
 open import Core.Data.Nat
 open import Core.Data.Fin.Type
 open import Core.Data.Fin.Base
-open import Core.Kan hiding (assoc)
+open import Core.Kan
 open import Core.Equiv
 open import Core.Trait.Trunc
 open import Core.Transport

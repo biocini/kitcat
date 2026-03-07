@@ -20,6 +20,7 @@ open import Core.Type
 open import Core.Data.Sigma
 open import Core.Data.Empty
 open import Core.Kan
+open Core.Kan.Path
 open import Core.Sub
 open import Core.HLevel
 open import Core.Trait.Trunc using (Σ-prop-path) public

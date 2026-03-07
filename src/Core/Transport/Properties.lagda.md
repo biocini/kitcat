@@ -10,6 +10,7 @@ open import Core.Type
 open import Core.Base
 open import Core.Data.Sigma
 open import Core.Kan
+open Core.Kan.Path
 open import Core.Sub
 open import Core.Transport.Base
 open import Core.Transport.J
@@ -29,7 +30,7 @@ Credit for the hlevel proofs throughout this module goes to 1lab.
 
 ```agda
 
-is-contr→extend : ∀ {ℓ} {A : Type ℓ} → is-contr A
+is-contr→extend : ∀ {@0 ℓ} {A : Type ℓ} → is-contr A
                 → (i : I) (p : Partial i A) →  A [ i ↦ p ]
 is-contr→extend c i p = inS do
   hcom (∂ i) λ where

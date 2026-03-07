@@ -17,6 +17,7 @@ open import Core.Type
 open import Core.Base
 open import Core.Sub
 open import Core.Kan
+open Core.Kan.Path
 open import Core.Data.Sigma
 open import Core.Data.Empty
 open import Core.Data.Nat.Type

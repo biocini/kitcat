@@ -12,7 +12,6 @@ open import Core.HLevel using (Π-is-set)
 open import Core.Base using (_≡_; refl; sym; ap; is-set)
 open import Core.Type using (Level; Type; _⊔_; id; _∘_; ⌞_⌟)
 open import Core.Kan using (_∙_)
-
 open import Lib.Group.Base
 
 private variable

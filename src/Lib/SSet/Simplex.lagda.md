@@ -24,7 +24,7 @@ open import Core.Data.Fin.Base hiding (weaken)
 open import Core.Data.Fin.Monotone
 open import Core.Kan using (_∙_)
 open import Core.Equiv
-open import Cat.Base hiding (_⇒_)
+open import Cat.Base
 
 open Nat
 

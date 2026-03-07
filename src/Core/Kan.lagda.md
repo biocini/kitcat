@@ -19,8 +19,8 @@ open X public renaming (primTransp to transp) using () public
 
 private
   variable
-    ℓ : I → Level
-    u : Level
+    @0 ℓ : I → Level
+    @0 u : Level
     A : Type u
     U : I → Type u
 
@@ -91,7 +91,7 @@ The space of system composites is contractible - this is the Kan condition.
 ```agda
 
 SysComp : {A : Type u} (φ : I) (s : Sys φ A) → Type u
-SysComp {A} φ s = Σ x ∶ A , sys-composite φ s ≡ x
+SysComp {A} φ s = Σ (λ (x : A) → sys-composite φ s ≡ x)
 
 SysComp-is-contr : {A : Type u} (φ : I) (s : Sys φ A) → is-contr (SysComp φ s)
 SysComp-is-contr φ s .center = sys-composite φ s , sys-filler.plid φ s
@@ -153,11 +153,11 @@ kext φ P g f = com (∂.cover φ P f) (∂ φ) sys
     sys k (φ = i1) = g k (f k)
 {-# DISPLAY com (∂.cover φ P f) φ (kext.sys φ P g f) = kext φ P g f #-}
 
-HComposite : ∀ {u} {A : I → Type u} {w x : A i0} {y z : A i1}
+HComposite : ∀ {@0 u} {A : I → Type u} {w x : A i0} {y z : A i1}
             → (p : x ≡ w) (q : x ≡ y ∶ A) (r : y ≡ z) → Type u
-HComposite {A} {w} {z} p q r = Σ s ∶ PathP A w z , HCell p q r s
+HComposite {A} {w} {z} p q r = Σ (λ (s : PathP A w z) → HCell p q r s)
 
-module HComposite {u} {A : I → Type u} {w x : A i0} {y z : A i1}
+module HComposite {@0 u} {A : I → Type u} {w x : A i0} {y z : A i1}
   (p : x ≡ w) (q : x ≡ y ∶ A) (r : y ≡ z)
   (α β : HComposite p q r)
   where
@@ -330,7 +330,7 @@ module Path {A : Type u} where
     fill : SquareP (λ i j → q j ≡ comp i .fst j) (cat.lcoh p q r) refl (cat.rcoh p q r) refl
     fill = ap snd comp
 
-  idem : ∀ {u} {A : Type u} (x : A) →  refl ∙ refl ≡ refl {x = x}
+  idem : ∀ {@0 u} {A : Type u} (x : A) →  refl ∙ refl ≡ refl {x = x}
   idem x = ap fst comp
     module idem where
     private
@@ -403,7 +403,7 @@ cocone {x} p q i j = hcom (∂ i ∨ ~ j) λ where
 ## Triangles
 ```agda
 
-module Triangle {ℓ} {A : Type ℓ} {x y z : A}
+module Triangle {@0 ℓ} {A : Type ℓ} {x y z : A}
   (p : x ≡ y) (q : y ≡ z) (r : x ≡ z)
   (sq : Triangle p q r)
   where

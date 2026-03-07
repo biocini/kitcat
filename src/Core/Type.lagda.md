@@ -37,7 +37,7 @@ Type₊ ℓ = Type (ℓ ₊)
 𝓤 : Typeω
 𝓤 = {u : Level} → Type u
 
-record Underlying {ℓ} (A : Type ℓ) : Typeω where
+record Underlying {@0 ℓ} (A : Type ℓ) : Typeω where
   field
     ℓ-underlying : Level
     ⌞_⌟   : A → Type ℓ-underlying
@@ -71,7 +71,7 @@ const : ∀ {u v} {@0 A : Type u} {@0 B : Type v} → A → B → A
 const a ._ = a
 {-# INLINE const #-}
 
-_∘_ : ∀ {u v w} {@0 A : Type u} {@0 B : A → Type v} {@0 C : ∀ a → B a → Type w}
+_∘_ : ∀ {@0 u v w} {@0 A : Type u} {@0 B : A → Type v} {@0 C : ∀ a → B a → Type w}
      → ({x : A} (y : B x) → C x y) → (f : Π B) (x : A) → C x (f x)
 _∘_ g f = λ x → g {x} (f x)
 infixr 9 _∘_
@@ -92,7 +92,7 @@ instance
   Lift-Unit : ∀ {u} → Unit {u}
   Lift-Unit .lower = tt
 
-record Irr {u} (A : Type u) : Type u where
+record Irr {@0 u} (A : Type u) : Type u where
   constructor forget
   field
     .witness : A

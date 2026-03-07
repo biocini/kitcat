@@ -14,17 +14,17 @@ open import Core.HCompU
 open import Core.Equiv using (_≃_; equiv)
 
 private primitive
-  primGlue    : ∀ {ℓ ℓ'} (A : Type ℓ) {φ : I}
+  primGlue    : ∀ {@0 ℓ ℓ'} (A : Type ℓ) {φ : I}
     → (T : Partial φ (Type ℓ')) → (e : PartialP φ (λ o → T o ≃ A))
     → Type ℓ'
-  prim^glue   : ∀ {ℓ ℓ'} {A : Type ℓ} {φ : I}
+  prim^glue   : ∀ {@0 ℓ ℓ'} {A : Type ℓ} {φ : I}
     → {T : Partial φ (Type ℓ')} → {e : PartialP φ (λ o → T o ≃ A)}
     → PartialP φ T → A → primGlue A T e
-  prim^unglue : ∀ {ℓ ℓ'} {A : Type ℓ} {φ : I}
+  prim^unglue : ∀ {@0 ℓ ℓ'} {A : Type ℓ} {φ : I}
     → {T : Partial φ (Type ℓ')} → {e : PartialP φ (λ o → T o ≃ A)}
     → primGlue A T e → A
 
-private variable ℓ ℓ' : Level
+private variable @0 ℓ ℓ' : Level
 
 Glue : (A : Type ℓ) {φ : I}
      → (Te : Partial φ (Σ T ∶ Type ℓ' , T ≃ A)) → Type ℓ'

@@ -77,9 +77,9 @@ import HData.Quotient
 
 import Cat.Base
 -- import Cat.Braid  -- WIP: needs Nat import fix
-import Cat.Cwf
-import Cat.Magmoid
-import Cat.Monad
+-- import Cat.Cwf  -- WIP: module removed
+-- import Cat.Magmoid  -- WIP: renamed to Cat.Data
+-- import Cat.Monad  -- WIP: module removed
 -- import Cat.Span  -- WIP: depends on Cat.Braid
 -- import Cat.Units  -- WIP: proof error at line 382
 
@@ -112,8 +112,8 @@ import Lib.Group.Modular.Transposition
 import Lib.Group.Modular.Twist
 import Lib.Group.Modular.UniversalProperty
 import Lib.SSet.Base
-import Lib.SSet.Segal
-import Lib.SSet.Simplex
+-- import Lib.SSet.Segal  -- WIP: uses old precategory record
+-- import Lib.SSet.Simplex  -- WIP: uses old precategory record
 import Lib.SSet.Catalan.Base
 
 import Net

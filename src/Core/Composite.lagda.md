@@ -12,6 +12,7 @@ open import Core.Base
 open import Core.Type
 open import Core.Data.Sigma
 open import Core.Kan
+open Core.Kan.Path
 open import Core.Sub
 
 private variable

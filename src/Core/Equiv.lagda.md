@@ -15,9 +15,10 @@ open import Core.Base
 open import Core.Data.Sigma
 open import Core.Data.Empty
 open import Core.Kan
+open Core.Kan.Path
 open import Core.Sub
 
-record is-equiv {u v} {A : Type u} {B : Type v} (f : A → B) : Type (u ⊔ v) where
+record is-equiv {@0 u v} {A : Type u} {B : Type v} (f : A → B) : Type (u ⊔ v) where
   no-eta-equality
   field
     eqv-fibers : (y : B) → is-contr (fiber f y)
@@ -26,19 +27,19 @@ open is-equiv public
 {-# INLINE is-equiv.constructor #-}
 
 _≃_ Equiv
-  : ∀ {u v} → Type u → Type v → Type (u ⊔ v)
+  : ∀ {@0 u v} → Type u → Type v → Type (u ⊔ v)
 A ≃ B = Σ {A = A → B} is-equiv; infix 6 _≃_
 Equiv = _≃_
 {-# BUILTIN EQUIV _≃_ #-}
 
-eqvtofun : ∀ {u v} {A : Type u} {B : Type v} → A ≃ B → A → B
+eqvtofun : ∀ {@0 u v} {A : Type u} {B : Type v} → A ≃ B → A → B
 eqvtofun e = fst e
 {-# BUILTIN EQUIVFUN eqvtofun #-}
 
 equiv-proof
-  : ∀ {u v} (T : Type u) (A : Type v) (w : T ≃ A) (a : A)
+  : ∀ {@0 u v} (T : Type u) (A : Type v) (w : T ≃ A) (a : A)
   → ∀ φ (p : Partial φ (fiber (w .fst) a)) → fiber (w .fst) a [ φ ↦ p ]
-equiv-proof {u} {v} T A w a = is-contr→extend (eqv-fibers (w .snd) a)
+equiv-proof T A w a = is-contr→extend (eqv-fibers (w .snd) a)
 {-# BUILTIN EQUIVPROOF equiv-proof #-}
 
 is-left-inverse

@@ -17,7 +17,8 @@ open Core.Kan using (conn) public
 
 open Core.Base using (funext; happly) public
 
-open Core.Kan using (_∙_; unitl; unitr; invl; invr; assoc) public
+open Core.Kan using (_∙_) public
+open Core.Kan.Path using (unitl; unitr; invl; invr; assoc) public
 open Core.Base using (sym) public
 
 ```
