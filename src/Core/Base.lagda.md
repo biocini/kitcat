@@ -306,8 +306,8 @@ happly : {@0 A : Type u} {@0 B : A → Type v} {f g : (x : A) → B x}
 happly p x i = p i x
 {-# INLINE happly #-}
 
-hrefl : {A : Type u} {B : A → Type v} {f : (x : A) → B x} → f ~ f
-hrefl _ = refl
-{-# INLINE hrefl #-}
+htrefl : {A : Type u} {B : A → Type v} {f : (x : A) → B x} → f ~ f
+htrefl _ = refl
+{-# INLINE htrefl #-}
 
 ```

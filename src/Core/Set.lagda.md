@@ -2,7 +2,7 @@ Bundled propositions and sets with propositional extensionality.
 
 This module consolidates the theory of propositions (h-level 1 types) and sets
 (h-level 2 types) as bundled structures, along with propositional extensionality
-and conversions to/from `N-type`.
+and conversions to/from `nType`.
 
 This module uses `--cubical` (not `--erased-cubical`) because we need `ua` from
 `Core.Univalence` for propositional extensionality.
@@ -197,25 +197,25 @@ Set-Lift {u} v X .has-is-set = Lift-is-hlevel 2 (X .has-is-set)
 ```
 
 
-## N-type Conversions
+## nType Conversions
 
 ```agda
 
-Prop→N-type : Prop u → N-type u 1
-Prop→N-type P .N-type.∣_∣ = ∣ P ∣ᴾ
-Prop→N-type P .N-type.trunc-ntype = P .has-is-prop
+Prop→nType : Prop u → nType u 1
+Prop→nType P .nType.∣_∣ = ∣ P ∣ᴾ
+Prop→nType P .nType.is-tr = P .has-is-prop
 
-N-type-1→Prop : N-type u 1 → Prop u
-N-type-1→Prop N .∣_∣ᴾ = N-type.∣_∣ N
-N-type-1→Prop N .has-is-prop = N-type.trunc-ntype N
+nType-1→Prop : nType u 1 → Prop u
+nType-1→Prop N .∣_∣ᴾ = nType.∣_∣ N
+nType-1→Prop N .has-is-prop = nType.is-tr N
 
-Set→N-type : Set u → N-type u 2
-Set→N-type X .N-type.∣_∣ = ∣ X ∣ˢ
-Set→N-type X .N-type.trunc-ntype = X .has-is-set
+Set→nType : Set u → nType u 2
+Set→nType X .nType.∣_∣ = ∣ X ∣ˢ
+Set→nType X .nType.is-tr = X .has-is-set
 
-N-type-2→Set : N-type u 2 → Set u
-N-type-2→Set N .∣_∣ˢ = N-type.∣_∣ N
-N-type-2→Set N .has-is-set = N-type.trunc-ntype N
+nType-2→Set : nType u 2 → Set u
+nType-2→Set N .∣_∣ˢ = nType.∣_∣ N
+nType-2→Set N .has-is-set = nType.is-tr N
 ```
 
 

@@ -61,14 +61,21 @@ J-sys : ∀ {u v} {A : Type u} (φ : I) (s : Sys φ A)
 J-sys φ s P c {x} α = transport (λ i → P (ap fst total i) (ap snd total i)) c
   where
   total : (sys-composite φ s , sys-filler.plid φ s) ≡ (x , α)
-  total = SysComp-is-contr φ s .paths (x , α)
+  total = Total-sys-contr φ s .paths (x , α)
 
--- we recover general J
+-- we recover general J at i=i1
 J : ∀ {u v} {A : Type u} {x : A}
   → (P : ∀ y → x ≡ y → Type v)
   → P x refl
   → ∀ {y} (q : x ≡ y) → P y q
 J {x = x} = J-sys i1 (λ _ _ → x)
+
+J-refl : ∀ {u v} {A : Type u} {x : A}
+       → (P : ∀ y → x ≡ y → Type v)
+       → (c : P x refl)
+       → J P c refl ≡ c
+J-refl {x} P = transport-refl
+{-# INLINE J-refl #-}
 
 private
   J-singl : ∀ {u v} {A : Type u} {x : A}
@@ -86,12 +93,4 @@ private
 
   J-singl≡J : ∀ {u v} {A : Type u} {x : A} → J-singl {u} {v} {A} {x} ≡ J
   J-singl≡J = refl
-
-J-refl : ∀ {u v} {A : Type u} {x : A}
-       → (P : ∀ y → x ≡ y → Type v)
-       → (c : P x refl)
-       → J P c refl ≡ c
-J-refl {x} P = transport-refl
-{-# INLINE J-refl #-}
-
 ```

@@ -7,10 +7,24 @@ Properties and lemmas for lists.
 module Core.Data.List.Properties where
 
 open import Core.Type hiding (id)
-open import Core.Base using (_≡_; refl; ap; sym)
+open import Core.Data.Nat.Type using (Nat; S; Z)
+open import Core.Base
+  using (_≡_; refl; ap; sym; is-contr; center; paths; _∧_)
 open import Core.Kan using (_∙_)
+open import Core.Transport using (subst)
+open import Core.Equiv using (_≃_; Equiv; esym; is-contr-equiv)
+open import Core.IdSys
+  using ( is-based-identity-system; to-path; to-path-over
+        ; Ids-based→equiv )
+open import Core.Data.Sigma using (_×_; Σ; _,_)
+open import Core.Data.Empty using (⊥; ex-falso)
 open import Core.Data.List.Type
 open import Core.Data.List.Base
+
+open import Core.Trait.Trunc
+  using ( is-hlevel; is-contr→is-hlevel; is-prop→is-hlevel-suc
+        ; ×-is-hlevel )
+open import Core.HLevel.Base using (equiv→is-hlevel)
 
 private variable
   u v w : Level
@@ -104,4 +118,88 @@ module concatMap where
     cat g (f x) (concatMap f xs)
     ∙ ap (concatMap g (f x) ++_) (assoc f g xs)
 
+```
+
+## H-levels
+
+Lists are (S (S n))-truncated when their element type is.
+
+```agda
+
+cons-injective
+  : ∀ {u} {A : Type u} {x y : A} {xs ys : List A}
+  → x ∷ xs ≡ y ∷ ys → (x ≡ y) × (xs ≡ ys)
+cons-injective {x = x} {xs = xs} p =
+  ap head' p , ap tail' p
+  where
+    head' : List _ → _
+    head' []      = x
+    head' (z ∷ _) = z
+
+    tail' : List _ → List _
+    tail' []       = xs
+    tail' (_ ∷ zs) = zs
+
+List-is-hlevel
+  : ∀ {u} {A : Type u} (n : Nat)
+  → is-hlevel (S (S n)) A → is-hlevel (S (S n)) (List A)
+List-is-hlevel {A = A} n ahl [] [] =
+  is-contr→is-hlevel (S n) nil-path-contr
+  where
+    Code : List A → Type
+    Code []      = ⊤
+    Code (_ ∷ _) = ⊥
+
+    nil-ids : is-based-identity-system ([] {A = A}) Code tt
+    nil-ids .to-path {b = []}    _ = refl
+    nil-ids .to-path {b = _ ∷ _} ()
+    nil-ids .to-path-over {b = []}    _ = refl
+    nil-ids .to-path-over {b = _ ∷ _} ()
+
+    ⊤-is-contr : is-contr ⊤
+    ⊤-is-contr .center = tt
+    ⊤-is-contr .paths _ = refl
+
+    nil-path-contr : is-contr ([] ≡ [])
+    nil-path-contr = is-contr-equiv (Ids-based→equiv nil-ids) ⊤-is-contr
+
+List-is-hlevel n ahl [] (y ∷ ys) =
+  is-prop→is-hlevel-suc {n = n}
+    (λ p _ → ex-falso (subst discrim p tt))
+  where
+    discrim : List _ → Type
+    discrim []      = ⊤
+    discrim (_ ∷ _) = ⊥
+List-is-hlevel n ahl (x ∷ xs) [] =
+  is-prop→is-hlevel-suc {n = n}
+    (λ p _ → ex-falso (subst discrim p tt))
+  where
+    discrim : List _ → Type
+    discrim []      = ⊥
+    discrim (_ ∷ _) = ⊤
+List-is-hlevel n ahl (x ∷ xs) (y ∷ ys) =
+  equiv→is-hlevel (S n)
+    (esym List-cons-path-equiv) inner
+  module ListCons where
+    Code : List _ → Type _
+    Code []       = Lift _ ⊥
+    Code (z ∷ zs) = (x ≡ z) × (xs ≡ zs)
+
+    cons-ids
+      : is-based-identity-system
+          (x ∷ xs) Code (refl , refl)
+    cons-ids .to-path {b = []}     (liftℓ ())
+    cons-ids .to-path {b = z ∷ zs} (p , q) i =
+      p i ∷ q i
+    cons-ids .to-path-over {b = []}     (liftℓ ())
+    cons-ids .to-path-over {b = z ∷ zs} (p , q) i =
+      (λ j → p (i ∧ j)) , (λ j → q (i ∧ j))
+
+    List-cons-path-equiv
+      : ((x ∷ xs) ≡ (y ∷ ys)) ≃ ((x ≡ y) × (xs ≡ ys))
+    List-cons-path-equiv = Ids-based→equiv cons-ids
+
+    inner : is-hlevel (S n) ((x ≡ y) × (xs ≡ ys))
+    inner = ×-is-hlevel (S n) (ahl x y)
+      (List-is-hlevel n ahl xs ys)
 ```

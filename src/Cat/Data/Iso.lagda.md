@@ -6,11 +6,11 @@ Wild isomorphisms
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness --no-sized-types #-}
 
-open import Cat.Magmoid.Type
-import Cat.Magmoid.Data.Neutral as N
-import Cat.Magmoid.Data.Unit as U
+open import Cat.Data.Magmoid
+import Cat.Data.Neutral as N
+import Cat.Data.Unit as U
 
-module Cat.Magmoid.Data.Iso (M : Magmoids) (u : ∀ x → N.unital M x) where
+module Cat.Data.Iso (M : magmoids) (u : ∀ x → N.unital M x) where
 
 open import Core.Type
 open import Core.Base
@@ -20,7 +20,7 @@ open import Core.Kan using (pcom; _∙_)
 open import Core.Transport
 open import Core.Equiv hiding (_≃_)
 
-open import Cat.Magmoid.Data.Base M
+open import Cat.Data.Base M hiding (assoc)
 open N M
 
 private module unit {x} = U M (u x)

@@ -18,5 +18,6 @@ module List where
     open import Core.Data.List.Impl.Monad public
     open import Core.Data.List.Impl.Alternative public
     open import Core.Data.List.Impl.Foldable public
+    open import Core.Data.List.Impl.Trunc public
 
 ```

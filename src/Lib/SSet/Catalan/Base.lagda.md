@@ -23,7 +23,7 @@ open import Core.Transport
   using (is-prop→PathP; is-prop→SquareP)
 open import Core.Function.Embedding
   using (_↪_; _∙↪_; Emb-is-prop; embedding→is-prop)
-open import Core.Equiv using (_≃_; is-equiv; equiv; is-equiv-is-prop)
+open import Core.Equiv using (_≃_; is-equiv; is-equiv-is-prop)
 open import Core.Univalence
   using (ua; ua-η; idtoeqv)
 open import Core.Set using (propext; Type-path-is-prop)

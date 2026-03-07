@@ -22,9 +22,9 @@ open import Core.Data.Sigma
 open import Core.Data.Empty
 open import Core.Data.Nat.Type
 open import Core.Data.Nat.Base using (_+_)
-import Core.Data.Nat.Properties as NatP
-open import Core.Path
-open import Core.Equiv
+import Core.Data.Nat.Properties as Nat
+open import Core.Path.Base
+open import Core.Equiv.Base
 open import Core.Transport
 
 private variable
@@ -48,9 +48,9 @@ is-hlevel-suc {n = S Z} p x y = is-prop→is-set p x y
 is-hlevel-suc {n = S (S n)} hl x y = is-hlevel-suc (hl x y)
 
 is-hlevel-+ : (n k : Nat) → is-hlevel n A → is-hlevel (n + k) A
-is-hlevel-+ {A = A} n Z hl = subst (λ m → is-hlevel m A) (sym (NatP.add.unitr n)) hl
+is-hlevel-+ {A = A} n Z hl = subst (λ m → is-hlevel m A) (sym (Nat.add.unitr n)) hl
 is-hlevel-+ {A = A} n (S k) hl =
-  subst (λ m → is-hlevel m A) (sym (NatP.add.+suc n k))
+  subst (λ m → is-hlevel m A) (sym (Nat.add.+suc n k))
     (is-hlevel-suc (is-hlevel-+ n k hl))
 
 is-contr→is-hlevel : (n : Nat) → is-contr A → is-hlevel n A

@@ -66,6 +66,65 @@ hfil {A = A} φ i u = hcom (imp i φ) sys
 {-# DISPLAY hcom _ (hfil.sys φ i u) = hfil φ i u #-}
 
 ```
+
+## Contractibility and Extension
+
+No reason to change what 1lab did for the following two lemmas:
+
+```agda
+
+is-contr→extend : ∀ {@0 ℓ} {A : Type ℓ} → is-contr A
+                → (i : I) (p : Partial i A) →  A [ i ↦ p ]
+is-contr→extend c i p = inS do
+  hcom (∂ i) λ where
+      j (i = i1) → c .paths (p 1=1) j
+      j (i = i0) → c .center
+      j (j = i0) → c .center
+{-# INLINE is-contr→extend #-}
+
+extend→is-contr : ∀ {u} {A : Type u}
+                → (∀ i (p : Partial i A) → A [ i ↦ p ])
+                → is-contr A
+extend→is-contr ex .center = outS do ex i0 λ ()
+extend→is-contr ex .paths x i = outS do ex i (λ _ → x)
+
+is-contr→is-prop : ∀ {u} {A : Type u} → is-contr A → is-prop A
+is-contr→is-prop c x y i = outS do
+  is-contr→extend c (∂ i) λ where
+    (i = i0) → x
+    (i = i1) → y
+
+is-contr→is-set : ∀ {u} {A : Type u} → is-contr A → is-set A
+is-contr→is-set c x y p q i j = outS do
+  is-contr→extend c (∂ i ∨ ∂ j) λ where
+    (i = i0) → p j
+    (i = i1) → q j
+    (j = i0) → x
+    (j = i1) → y
+
+total-contr-unique
+  : ∀ {u v} {X : Type u} {P : X → Type v}
+  → is-contr (Σ P)
+  → {a b : X} {α : P a} {β : P b}
+  → (p q : a ≡ b)
+  → PathP (λ i → P (p i)) α β
+  → PathP (λ i → P (q i)) α β
+  → p ≡ q
+total-contr-unique cc {α} {β} p q αp αq =
+  ap (ap fst)
+    (is-contr→is-set cc (_ , α) (_ , β)
+      (λ i → p i , αp i) (λ i → q i , αq i))
+
+Σ-contr-contr
+  : ∀ {u v} {A : Type u} {B : A → Type v}
+  → is-contr A → ((a : A) → is-contr (B a)) → is-contr (Σ B)
+Σ-contr-contr cA cB .center = cA .center , cB (cA .center) .center
+Σ-contr-contr cA cB .paths (a , b) i = cA .paths a i , outS do
+  is-contr→extend (cB (cA .paths a i)) (∂ i) λ where
+    (i = i0) → cB (cA .center) .center
+    (i = i1) → b
+
+```
 Named wrappers for the primitives.
 ```agda
 
@@ -90,12 +149,12 @@ module sys-filler where
 The space of system composites is contractible - this is the Kan condition.
 ```agda
 
-SysComp : {A : Type u} (φ : I) (s : Sys φ A) → Type u
-SysComp {A} φ s = Σ (λ (x : A) → sys-composite φ s ≡ x)
+Total-sys : {A : Type u} (φ : I) (s : Sys φ A) → Type u
+Total-sys {A} φ s = Σ (λ (x : A) → sys-composite φ s ≡ x)
 
-SysComp-is-contr : {A : Type u} (φ : I) (s : Sys φ A) → is-contr (SysComp φ s)
-SysComp-is-contr φ s .center = sys-composite φ s , sys-filler.plid φ s
-SysComp-is-contr φ s .paths (x , p) i = p i , λ j → p (i ∧ j)
+Total-sys-contr : {A : Type u} (φ : I) (s : Sys φ A) → is-contr (Total-sys φ s)
+Total-sys-contr φ s .center = sys-composite φ s , sys-filler.plid φ s
+Total-sys-contr φ s .paths (x , p) i = p i , λ j → p (i ∧ j)
 
 ```
 Heterogeneous composition (com) and filler (fil).
@@ -137,8 +196,8 @@ hc A φ f g h = hcom (∂ φ) sys
 
     hc-fil : (i : I) → A i1
     hc-fil i = hfil (∂ φ) i sys
-{-# DISPLAY hcom _ (hc.sys A φ f g p) = hc A φ f g p #-}
-{-# DISPLAY hfil _ (hc.hc-fil A φ f g p i) = hc.hc-fil A φ f g p i #-}
+-- {-# DISPLAY hcom _ (hc.sys A φ f g p) = hc A φ f g p #-}
+-- {-# DISPLAY hfil _ (hc.hc-fil A φ f g p i) = hc.hc-fil A φ f g p i #-}
 
 kext : {A : ∀ i → Type (ℓ i)} (φ : I)
      → (P : ∀ i → A (φ ∧ i) → Type (ℓ (φ ∧ i)))
@@ -218,22 +277,21 @@ open pcom public using () renaming (composite to pcom; fill to pfil)
 
 module pfil {A : I → Type} where
   module _ {w x : A i0} {y z : A i1} (p : x ≡ w) (q : x ≡ y ∶ A) (r : y ≡ z) where
-    coh : ((s , α) : HComposite p q r)
-          → SquareP (λ i j → q j ≡ pcom.unique p q r (s , α) i j) (pcom.fill p q r) refl α refl
+    coh
+      : ((s , α) : HComposite p q r)
+      → SquareP (λ i j → q j ≡ pcom.unique p q r (s , α) i j) (pcom.fill p q r) refl α refl
     coh = ap snd ∘ pcom.fibers p q r
 
   module _ {w x : A i0} {y z : A i1} (p : w ≡ x) (q : w ≡ y ∶ A) (r : y ≡ z) (s : x ≡ z ∶ A) where
-    lcomp≡rcomp : HCell (sym p) s (sym r) q → pcom (sym p) s refl ≡ pcom refl q r
+    lcomp≡rcomp
+      : HCell (sym p) s (sym r) q
+      → pcom (sym p) s refl ≡ pcom refl q r
     lcomp≡rcomp α i j = hcom (∂ j ∨ ~ i) λ where
       k (j = i0) → p (~ i ∧ ~ k)
       k (i = i0) → pfil (sym p) s refl j k
       k (j = i1) → r (~ i ∨ k)
       k (k = i0) → α j i
 
-  -- rwsk : ∀ {A : I → Type u} {x : A i0} {y z : A i1}
-  --      → (p q : x ≡ y ∶ A) (r : y ≡ z) (s : x ≡ z ∶ A)
-  --      → HCell refl p r s
-  -- rwsk p α= {!!}
 
 ```
 ## Connection
@@ -250,15 +308,16 @@ conn {x} {y} {z} p q i j = hcom (∂ i ∨ ∂ j) sys
     sys k (i = i1) = q j
 {-# DISPLAY hcom _ (conn.sys p q i j) = conn p q i j #-}
 
-
-
 ```
 
 Ordinary Path Composition
 
 ```agda
 module cat where
+
+
   module _  {A : I → Type u} {x : A i0} {y z : A i1} (p : x ≡ y ∶ A) (q : y ≡ z) where
+
     composite : x ≡ z ∶ A
     composite = pcom refl p q
 

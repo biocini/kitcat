@@ -6,22 +6,22 @@ Wild equivalences
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness --no-sized-types #-}
 
-open import Cat.Magmoid.Type
-import Cat.Magmoid.Data.Neutral as N
-import Cat.Magmoid.Data.Unit as U
-import Cat.Magmoid.Data.Iso as I
+open import Cat.Data.Magmoid
+import Cat.Data.Neutral as N
+import Cat.Data.Unit as U
+import Cat.Data.Iso as I
 
-module Cat.Magmoid.Data.Eqv (M : Magmoids) (u : ∀ x → N.unital M x) where
+module Cat.Data.Eqv (M : magmoids) (u : ∀ x → N.unital M x) where
 
 open import Core.Type
 open import Core.Base
 open import Core.Data.Sigma
 open import Core.HLevel
-open import Core.Kan using (pcom; _∙_)
+open import Core.Kan using (pcom; _∙_; is-contr→is-set; is-contr→is-prop)
 open import Core.Transport
 open import Core.Equiv hiding (_≃_)
 
-open import Cat.Magmoid.Data.Base M
+open import Cat.Data.Base M hiding (assoc)
 open N M
 
 private module unit {x} = U M (u x)
@@ -41,16 +41,16 @@ module _  {x y} where
   is-biinv f = sect f × retr f
 
   is-neutral→is-biinv : {f : hom x y} → is-neutral f → is-biinv f
-  is-neutral→is-biinv {f} p .fst .fst = Equiv.inv ((f ⨾_) , p .snd) idn
-  is-neutral→is-biinv {f} p .fst .snd = Equiv.counit ((f ⨾_) , p .snd) idn
-  is-neutral→is-biinv {f} p .snd .fst = Equiv.inv ((_⨾ f) , p .fst) idn
-  is-neutral→is-biinv {f} p .snd .snd = Equiv.counit ((_⨾ f) , p .fst) idn
+  is-neutral→is-biinv {f} p .fst .fst = Equiv.inv ((f ⨾_) , p .fst) idn
+  is-neutral→is-biinv {f} p .fst .snd = Equiv.counit ((f ⨾_) , p .fst) idn
+  is-neutral→is-biinv {f} p .snd .fst = Equiv.inv ((_⨾ f) , p .snd) idn
+  is-neutral→is-biinv {f} p .snd .snd = Equiv.counit ((_⨾ f) , p .snd) idn
 
   is-neutral→biinv-is-contr
     : {f : hom x y} → is-neutral f → is-contr (is-biinv f)
   is-neutral→biinv-is-contr p =
-    is-contr-× (p .snd .eqv-fibers idn)
-               (p .fst .eqv-fibers idn)
+    is-contr-× (p .fst .eqv-fibers idn)
+               (p .snd .eqv-fibers idn)
 
   is-neutral→biinv-is-embedding
     : {f : hom x y}
@@ -91,12 +91,12 @@ module associator (assoc : associativity) where
       s⨾f≡idn = ap (_⨾ f) s≡r ∙ q
 
     is-biinv→is-neutral : is-neutral f
-    is-biinv→is-neutral .fst = iso→equiv (_⨾ f) (_⨾ r)
-      (λ h → pcom (assoc h f r) (h ◃ f⨾r≡idn) (unitr h))
-      (λ k → pcom (assoc k r f) (k ◃ q) (unitr k)) .snd
-    is-biinv→is-neutral .snd = iso→equiv (f ⨾_) (s ⨾_)
+    is-biinv→is-neutral .fst = iso→equiv (f ⨾_) (s ⨾_)
       (λ g → pcom (sym (assoc s f g)) (s⨾f≡idn ▹ g) (unitl g))
       (λ k → pcom (sym (assoc f s k)) (p ▹ k) (unitl k)) .snd
+    is-biinv→is-neutral .snd = iso→equiv (_⨾ f) (_⨾ r)
+      (λ h → pcom (assoc h f r) (h ◃ f⨾r≡idn) (unitr h))
+      (λ k → pcom (assoc k r f) (k ◃ q) (unitr k)) .snd
 
     is-biinv→sect-is-biinv : is-biinv s
     is-biinv→sect-is-biinv .snd = f , p
@@ -107,9 +107,9 @@ module associator (assoc : associativity) where
     is-biinv→retr-is-biinv .snd = f , f⨾r≡idn
 
   is-biinv-is-prop : ∀ {x y} (f : hom x y) → is-prop (is-biinv f)
-  is-biinv-is-prop f = inhab-to-contr→is-prop λ bi →
-    is-contr-× (is-biinv→is-neutral bi .snd .eqv-fibers idn)
-               (is-biinv→is-neutral bi .fst .eqv-fibers idn)
+  is-biinv-is-prop f x y = is-contr→is-prop
+    (is-contr-× (is-biinv→is-neutral x .fst .eqv-fibers idn)
+                (is-biinv→is-neutral x .snd .eqv-fibers idn)) x y
 
   is-neutral≃is-biinv
     : ∀ {x y} (f : hom x y)

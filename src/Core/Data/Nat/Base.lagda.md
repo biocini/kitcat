@@ -33,5 +33,10 @@ s<s suc = suc
 s<s (step p) = step (s<s p)
 
 pred : Nat → Nat
-pred Z = Z
+pred Z     = Z
 pred (S n) = n
+
+max : Nat → Nat → Nat
+max Z     n     = n
+max (S m) Z     = S m
+max (S m) (S n) = S (max m n)

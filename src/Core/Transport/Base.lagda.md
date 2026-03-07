@@ -92,6 +92,9 @@ Singl-contr : ∀ {u} {A : Type u} (x : A) → is-contr (Σ y ∶ A , x ≡ y)
 Singl-contr x .center = x , refl
 Singl-contr x .paths (y , q) = λ i → (q i) , λ j → q (i ∧ j)
 
+Singl-unique : ∀ {u} {A : Type u} {x : A} → is-prop (Σ y ∶ A , x ≡ y)
+Singl-unique {x} = is-contr→is-prop (Singl-contr x)
+
 ```
 
 ## Fillers
@@ -101,7 +104,9 @@ Singl-contr x .paths (y , q) = λ i → (q i) , λ j → q (i ∧ j)
 coe-filler : (A : I → Type u) (x : A i0) → PathP A x (coe01 A x)
 coe-filler A x i = coe0i A i x
 
-transport-filler : ∀ {u} {A B : Type u} (P : A ≡ B) (x : A) → PathP (λ i → P i) x (transport P x)
+transport-filler
+  : ∀ {u} {A B : Type u} (P : A ≡ B) (x : A)
+  → PathP (λ i → P i) x (transport P x)
 transport-filler P = coe-filler (λ i → P i)
 
 module transp (A : I → Type u) where
@@ -119,5 +124,27 @@ module transp (A : I → Type u) where
 
   path : ∀ {ℓ} (A : I → Type ℓ) (p : ∀ i → A i) i j → coe A i j (p i) ≡ p j
   path A p i j k = transp (λ l → A (ierp k (ierp l i j) j)) (ierp k (ieq i j) i1) (p (ierp k i j))
+
+Path-over : ∀ {u} (A : I → Type u) → A i0 → A i1 → Type u
+Path-over A x y = coe01 A x ≡ y
+
+module Path-over {u} {A : I → Type u} {x} {y} where
+  to-pathp : Path-over A x y → PathP A x y
+  to-pathp p i = hcom (∂ i) λ where
+    j (i = i0) → x
+    j (i = i1) → p j
+    j (j = i0) → coe0i A i x
+
+  from-pathp : PathP A x y → Path-over A x y
+  from-pathp p i = coei1 A i (p i)
+
+  eq-pathp : ∀ {ℓ} (P : I → Type ℓ) x y → PathP P x y ≡ Path-over P x y
+  eq-pathp P x y i = PathP (∂.contract P i) (coe-filler P x i) y
+
+is-prop→PathP : ∀ {u} {A : I → Type u} → ((i : I) → is-prop (A i))
+              → ∀ x y → PathP (λ i → A i) x y
+is-prop→PathP {A} H x y = Path-over.to-pathp do H i1 (coe01 A x) y
+
+
 
 ```

@@ -7,7 +7,6 @@ Path composition structures and higher coherences.
 module Core.Composite where
 
 open import Core.Transport
-open import Core.HLevel
 open import Core.Base
 open import Core.Type
 open import Core.Data.Sigma
@@ -93,31 +92,6 @@ module SysFunctor {u v} {A : Type u} {B : Type v} (f : A → B) where
     k (φ = i1) → f (s (i ∨ k) 1=1)
     k (i = i1) → f (sys-filler φ s (k ∨ φ))
     k (k = i0) → f (sys-filler φ s (i ∧ φ))
-
-```
-## Mode Transitions and Associativity
-
-Associativity is the functorial transition between fill modes:
-- At k=0: fully in T-mode for (p,q), identity for (q,r)
-- At k=1: identity for (p,q), fully in L-mode for (q,r)
-```agda
-
-module ModeTransition {v w x y z : A}
-  (p : v ≡ w) (q : w ≡ x) (r : x ≡ y) (s : y ≡ z) where
-
-  lhs : p ∙ (q ∙ (r ∙ s)) ≡ ((p ∙ q) ∙ r) ∙ s
-  lhs = Path.assoc p q (r ∙ s) ∙ Path.assoc (p ∙ q) r s
-
-  rhs : p ∙ (q ∙ (r ∙ s)) ≡ ((p ∙ q) ∙ r) ∙ s
-  rhs = (λ j → p ∙ Path.assoc q r s j) ∙ Path.assoc p (q ∙ r) s ∙ (λ j → Path.assoc p q r j ∙ s)
-
-pentagon-lhs : {v w x y z : A} (p : v ≡ w) (q : w ≡ x) (r : x ≡ y) (s : y ≡ z)
-             → p ∙ (q ∙ (r ∙ s)) ≡ ((p ∙ q) ∙ r) ∙ s
-pentagon-lhs p q r s = ModeTransition.lhs p q r s
-
-pentagon-rhs : {v w x y z : A} (p : v ≡ w) (q : w ≡ x) (r : x ≡ y) (s : y ≡ z)
-             → p ∙ (q ∙ (r ∙ s)) ≡ ((p ∙ q) ∙ r) ∙ s
-pentagon-rhs p q r s = ModeTransition.rhs p q r s
 
 ```
 ## Square Manipulation

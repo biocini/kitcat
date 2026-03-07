@@ -11,10 +11,10 @@ see the definitions for functor, adjunctions, nat-trans, etc.
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness --no-sized-types #-}
 
-open import Cat.Magmoid.Type
-import Cat.Magmoid.Data.Base as M
+open import Cat.Data.Magmoid
+import Cat.Data.Base as M
 
-module Cat.Magmoid.Data.Neutral (M : Magmoids) where
+module Cat.Data.Neutral (M : magmoids) where
 
 open import Core.Type
 open import Core.Base
@@ -24,53 +24,84 @@ open import Core.HLevel
 open import Core.Kan
 open import Core.Transport
 open import Core.Equiv
+open import Core.Function.Surjection
+  using (is-surjective; equiv→surjective
+       ; surjective+embedding→equiv)
+open import Core.Function.Embedding
+  using (is-embedding; is-equiv→is-embedding)
+
 
 open M M
 
-module _ {x y} (f : hom x y) where
-  is-left-divisible : Type (o ⊔ h)
-  is-left-divisible = ∀ {w} → is-equiv (λ (h : hom w x) → h ⨾ f)
-
-  is-right-divisible : Type (o ⊔ h)
-  is-right-divisible = ∀ {z} → is-equiv (λ (g : hom y z) → f ⨾ g)
-
-divl→rcancel
+divr→rcancel
   : ∀ {w x y} {g : hom x y} {h₁ h₂ : hom w x}
-  → (is-left-divisible g)
+  → (is-right-divisible g)
   → h₁ ⨾ g ≡ h₂ ⨾ g → h₁ ≡ h₂
-divl→rcancel {g = g} {h₁} {h₂} e σ =
+divr→rcancel {g = g} {h₁} {h₂} e σ =
   ap fst (is-contr→is-prop (e .eqv-fibers (h₂ ⨾ g))
     (h₁ , σ) (h₂ , refl))
 
-divr→lcancel
+divl→lcancel
   : ∀ {x y z} {f : hom x y} {k₁ k₂ : hom y z}
-  → (is-right-divisible f)
+  → (is-left-divisible f)
   → f ⨾ k₁ ≡ f ⨾ k₂ → k₁ ≡ k₂
-divr→lcancel {f = f} {k₁} {k₂} e σ =
+divl→lcancel {f = f} {k₁} {k₂} e σ =
   ap fst (is-contr→is-prop (e .eqv-fibers (f ⨾ k₂))
     (k₁ , σ) (k₂ , refl))
 
-is-neutral : ∀ {x y} → hom x y → Type (o ⊔ h)
-is-neutral {x} {y} f =
-  is-left-divisible f × is-right-divisible f
+neutral→divisible
+  : ∀ {x y} {f : hom x y}
+  → is-neutral f → is-divisible f
+neutral→divisible (ld , rd) =
+  (λ {w} → equiv→surjective ld)
+  , (λ {z} → equiv→surjective rd)
 
-is-neutral-is-prop
-  : ∀ {x y} (f : hom x y) → is-prop (is-neutral f)
-is-neutral-is-prop f = is-prop-×
-  (Πi-is-prop λ _ → is-equiv-is-prop _) (Πi-is-prop λ _ → is-equiv-is-prop _)
+neutral→cancellable
+  : ∀ {x y} {f : hom x y}
+  → is-neutral f → is-cancellable f
+neutral→cancellable (ld , rd) =
+  (λ {z} → is-equiv→is-embedding ld)
+  , (λ {w} → is-equiv→is-embedding rd)
 
-module is-neutral {x y} {f : hom x y} (e : is-neutral f) where
+divisible+cancellable→neutral
+  : ∀ {x y} {f : hom x y}
+  → is-divisible f → is-cancellable f → is-neutral f
+divisible+cancellable→neutral (ls , rs) (le , re) =
+  (λ {z} → surjective+embedding→equiv ls le)
+  , (λ {w} → surjective+embedding→equiv rs re)
+
+-- The associativity data needed to show neutral morphisms compose:
+-- all-k associativity on the left, all-h associativity on the right.
+comp-coh : ∀ {a b c} (f : hom a b) (g : hom b c) → Type (o ⊔ h)
+comp-coh f g =
+  (∀ {w} (k : hom w _) → associator k f g)
+  × (∀ {z} (h : hom _ z) → associator f g h)
+
+module composable {a b c} {f : hom a b} {g : hom b c}
+  (coh : comp-coh f g)
+  (fn : is-neutral f) (gn : is-neutral g)
+  where
+
+  comp-is-neutral : is-neutral (f ⨾ g)
+  comp-is-neutral .fst =
+    subst is-equiv (funext (coh .snd))
+      (((g ⨾_ , gn .fst) ∙e (f ⨾_ , fn .fst)) .snd)
+  comp-is-neutral .snd =
+    subst is-equiv (sym (funext (coh .fst)))
+      (((_⨾ f , fn .snd) ∙e (_⨾ g , gn .snd)) .snd)
+
+module is-neutral {x y} {f : hom x y} ((ld , rd) : is-neutral f) where
   divl : ∀ {z} → hom x z → hom y z
-  divl = Equiv.inv (f ⨾_ , e .snd)
+  divl = Equiv.inv (f ⨾_ , ld)
 
   divr : ∀ {w} → hom w y → hom w x
-  divr = Equiv.inv (_⨾ f , e .fst)
+  divr = Equiv.inv (_⨾ f , rd)
 
   divl-equiv : ∀ {z} → is-equiv (divl {z})
-  divl-equiv = sym-equiv (e .snd)
+  divl-equiv = sym-equiv ld
 
   divr-equiv : ∀ {w} → is-equiv (divr {w})
-  divr-equiv = sym-equiv (e .fst)
+  divr-equiv = sym-equiv rd
 
   loop : hom y y
   loop = divl f
@@ -80,20 +111,53 @@ module is-neutral {x y} {f : hom x y} (e : is-neutral f) where
 
   pre-counit : ∀ {z} (g : hom x z)
     → f ⨾ divl g ≡ g
-  pre-counit = Equiv.counit (f ⨾_ , e .snd)
+  pre-counit = Equiv.counit (f ⨾_ , ld)
 
   post-counit : ∀ {w} (g : hom w y)
     → divr g ⨾ f ≡ g
-  post-counit = Equiv.counit (_⨾ f , e .fst)
+  post-counit = Equiv.counit (_⨾ f , rd)
 
   pre-unit : ∀ {z} (g : hom y z)
     → divl (f ⨾ g) ≡ g
-  pre-unit = Equiv.unit (f ⨾_ , e .snd)
+  pre-unit = Equiv.unit (f ⨾_ , ld)
 
   post-unit : ∀ {w} (g : hom w x)
     → divr (g ⨾ f) ≡ g
-  post-unit = Equiv.unit (_⨾ f , e .fst)
+  post-unit = Equiv.unit (_⨾ f , rd)
 
+  is-thunkable→loop-unitl
+    : (∀ {a b} (g : hom _ a) (h : hom a b) → associator f g h)
+    → ∀ {z} (g : hom y z) → loop ⨾ g ≡ g
+  is-thunkable→loop-unitl et g =
+    divl→lcancel ld (et loop g ∙ pre-counit f ▹ g)
+
+  is-linear→coloop-unitr
+    : (∀ {a b} (g : hom a b) (h : hom b _) → associator g h f)
+    → ∀ {w} (h : hom w x) → h ⨾ coloop ≡ h
+  is-linear→coloop-unitr el h =
+    divr→rcancel rd (sym (el h coloop) ∙ h ◃ post-counit f)
+
+  module _ (em : is-medial f) where
+    is-medial→loop-unitr : ∀ {w} (h : hom w y) → h ⨾ loop ≡ h
+    is-medial→loop-unitr h =
+      sym (post-counit h) ▹ loop
+      ∙ sym (em (divr h) loop)
+      ∙ divr h ◃ pre-counit f
+      ∙ post-counit h
+
+    is-medial→coloop-unitl : ∀ {z} (g : hom x z) → coloop ⨾ g ≡ g
+    is-medial→coloop-unitl g =
+      coloop ◃ sym (pre-counit g)
+      ∙ em coloop (divl g)
+      ∙ post-counit f ▹ divl g
+      ∙ pre-counit g
+
+```
+
+When a neutral morphism carries thunkability, linearity, and mediality,
+its loop and coloop are two-sided units.
+
+```agda
 module _ {x} (e : hom x x) where
   lunital runital : Type (o ⊔ h)
   lunital = ∀ {y} (f : hom x y)
@@ -112,7 +176,7 @@ unital x = Σ i ∶ hom x x , is-unital i
 
 -- Kraus's notion is the finest equivalence relation (without
 -- associativity it is only an embedding into wild equivalences
--- defined with is-biinv, with assoc it is equivalent) which is
+-- defined with is-biinv; with assoc it is equivalent) which is
 -- general enough to be defined in any magmoid structure
 _≐_ : ob → ob → Type (o ⊔ h)
 _≐_ x y = Σ f ∶ hom x y , is-neutral f
@@ -141,9 +205,9 @@ right-neutral-coherent {e = e} n f g =
 neutral-thunkable
   : ∀ {a b} {e : hom a b} → is-neutral e → ∀ {w} → hom w b → Type (o ⊔ h)
 neutral-thunkable {e = e} n f =
-    thunkable (divr f) e
-  × thunkable f loop
-  × thunkable f (divr loop)
+    (∀ {z} (h : hom _ z) → associator (divr f) e h)
+  × (∀ {z} (h : hom _ z) → associator f loop h)
+  × (∀ {z} (h : hom _ z) → associator f (divr loop) h)
   where open is-neutral n
 
 -- Linear decomposition: dual structure using source-side morphisms.
@@ -151,9 +215,9 @@ neutral-thunkable {e = e} n f =
 neutral-linear
   : ∀ {a b} {e : hom a b} → is-neutral e → ∀ {z} → hom a z → Type (o ⊔ h)
 neutral-linear {e = e} n g =
-    linear (divl g) e
-  × linear g coloop
-  × linear g (divl coloop)
+    (∀ {w} (f : hom w _) → associator f e (divl g))
+  × (∀ {w} (f : hom w _) → associator f coloop g)
+  × (∀ {w} (f : hom w _) → associator f (divl coloop) g)
   where open is-neutral n
 
 -- Source-based coherence, dual to right-neutral-coherent.
@@ -167,11 +231,11 @@ left-neutral-coherent {e = e} n f g =
   × associator (f ⨾ e) (divl coloop) g
   where open is-neutral n
 
-module right-neutral-coherent {a b} {e : hom a b} (n : is-neutral e)
+module right-neutral-coherent {a b} {e : hom a b} ((ld , rd) : is-neutral e)
   (coh : ∀ {w z} (f : hom w b) (g : hom b z)
-    → right-neutral-coherent n f g) where
+    → right-neutral-coherent (ld , rd) f g) where
 
-  open is-neutral n
+  open is-neutral (ld , rd)
 
   private
     assoc-e
@@ -202,57 +266,57 @@ module right-neutral-coherent {a b} {e : hom a b} (n : is-neutral e)
     e0 {w} = 3-for-2-right
       {f = λ (k : hom w a) → k ⨾ e}
       {g = λ (k : hom w b) → k ⨾ loop}
-      (n .fst)
+      (rd)
       (subst is-equiv
         (funext λ k → ap (k ⨾_) (sym p0) ∙ assoc-e k loop)
-        (n .fst))
+        (rd))
 
     e1 : ∀ {z} → is-equiv (λ (g : hom b z) → loop ⨾ g)
     e1 {z} = 3-for-2-left
       {f = λ (g : hom b z) → loop ⨾ g}
       {g = λ (g : hom b z) → e ⨾ g}
-      (n .snd)
+      (ld)
       (subst is-equiv
         (funext λ g → sym (assoc-loop e g ∙ ap (_⨾ g) p0))
-        (n .snd))
+        (ld))
 
-  neu-sym : b ≐ a
-  neu-sym .fst = divr loop
-  neu-sym .snd .fst {w} = 3-for-2-left
-    {f = λ (k : hom w b) → k ⨾ divr loop}
-    {g = λ (k : hom w a) → k ⨾ e}
-    (n .fst)
-    (subst is-equiv
-      (funext λ k → ap (k ⨾_) (sym p1) ∙ assoc-inv k e)
-      e0)
-  neu-sym .snd .snd {z} = 3-for-2-right
-    {f = λ (g : hom b z) → e ⨾ g}
-    {g = λ (g : hom a z) → divr loop ⨾ g}
-    (n .snd)
-    (subst is-equiv
-      (funext λ g₀ →
-        ap (_⨾ g₀) (sym p1) ∙ sym (assoc-e (divr loop) g₀))
-      e1)
+  -- neu-sym : b ≐ a
+  -- neu-sym .fst = divr loop
+  -- neu-sym .snd .fst {w} = 3-for-2-left
+  --   {f = λ (k : hom w b) → k ⨾ divr loop}
+  --   {g = λ (k : hom w a) → k ⨾ e}
+  --   (rd)
+  --   (subst is-equiv
+  --     (funext λ k → ap (k ⨾_) (sym p1) ∙ assoc-inv k e)
+  --     e0)
+  -- neu-sym .snd .snd {z} = 3-for-2-right
+  --   {f = λ (g : hom b z) → e ⨾ g}
+  --   {g = λ (g : hom a z) → divr loop ⨾ g}
+  --   (ld)
+  --   (subst is-equiv
+  --     (funext λ g₀ →
+  --       ap (_⨾ g₀) (sym p1) ∙ sym (assoc-e (divr loop) g₀))
+  --     e1)
 
   inv-unique : divr loop ≡ divl coloop
-  inv-unique = divr→lcancel (n .snd)
+  inv-unique = divl→lcancel (ld)
     (step-a ∙ sym (pre-counit coloop)) where
     step-a : e ⨾ divr loop ≡ coloop
-    step-a = divl→rcancel (n .fst)
+    step-a = divr→rcancel (rd)
       (sym (assoc-inv e e)
         ∙ ap (e ⨾_) p1 ∙ p0 ∙ sym (post-counit e))
 
-  to-thunkable : ∀ {w} (f : hom w b) → neutral-thunkable n f
+  to-thunkable : ∀ {w} (f : hom w b) → neutral-thunkable (ld , rd) f
   to-thunkable f .fst g = coh f g .fst
   to-thunkable f .snd .fst g = coh f g .snd .fst
   to-thunkable f .snd .snd h = subst (associator f (divr loop))
     (pre-counit h) (coh f (divl h) .snd .snd)
 
-module left-neutral-coherent {a b} {e : hom a b} (n : is-neutral e)
-  (coh : ∀ {w z} (f : hom w a) (g : hom a z)
-    → left-neutral-coherent n f g) where
+module left-neutral-coherent {a b} {e : hom a b} ((ld , rd) : is-neutral e)
+  (coh : ∀ {w z} (f : hom w a) (g : hom a z) → left-neutral-coherent (ld , rd) f g)
+  where
 
-  open is-neutral n
+  open is-neutral (ld , rd)
 
   private
     assoc-e
@@ -283,57 +347,57 @@ module left-neutral-coherent {a b} {e : hom a b} (n : is-neutral e)
     e0 {w} = 3-for-2-left
       {f = λ (k : hom w a) → k ⨾ coloop}
       {g = λ (k : hom w a) → k ⨾ e}
-      (n .fst)
+      rd
       (subst is-equiv
         (funext λ k → ap (k ⨾_) (sym q0) ∙ assoc-coloop k e)
-        (n .fst))
+        rd)
 
     e1 : ∀ {z} → is-equiv (λ (g : hom a z) → coloop ⨾ g)
     e1 {z} = 3-for-2-right
       {f = λ (g : hom b z) → e ⨾ g}
       {g = λ (g : hom a z) → coloop ⨾ g}
-      (n .snd)
+      ld
       (subst is-equiv
         (funext λ g → sym (assoc-e coloop g ∙ ap (_⨾ g) q0))
-        (n .snd))
+        ld)
 
-  neu-sym : b ≐ a
-  neu-sym .fst = divl coloop
-  neu-sym .snd .fst {w} = 3-for-2-right
-    {f = λ (k : hom w a) → k ⨾ e}
-    {g = λ (k : hom w b) → k ⨾ divl coloop}
-    (n .fst)
-    (subst is-equiv
-      (funext λ k → ap (k ⨾_) (sym q1) ∙ assoc-e k (divl coloop))
-      e0)
-  neu-sym .snd .snd {z} = 3-for-2-left
-    {f = λ (g : hom a z) → divl coloop ⨾ g}
-    {g = λ (g : hom b z) → e ⨾ g}
-    (n .snd)
-    (subst is-equiv
-      (funext λ g₀ →
-        ap (_⨾ g₀) (sym q1) ∙ sym (assoc-inv e g₀))
-      e1)
+  -- neu-sym : b ≐ a
+  -- neu-sym .fst = divl coloop
+  -- neu-sym .snd .fst {w} = 3-for-2-right
+  --   {f = λ (k : hom w a) → k ⨾ e}
+  --   {g = λ (k : hom w b) → k ⨾ divl coloop}
+  --   (rd)
+  --   (subst is-equiv
+  --     (funext λ k → ap (k ⨾_) (sym q1) ∙ assoc-e k (divl coloop))
+  --     e0)
+  -- neu-sym .snd .snd {z} = 3-for-2-left
+  --   {f = λ (g : hom a z) → divl coloop ⨾ g}
+  --   {g = λ (g : hom b z) → e ⨾ g}
+  --   (ld)
+  --   (subst is-equiv
+  --     (funext λ g₀ →
+  --       ap (_⨾ g₀) (sym q1) ∙ sym (assoc-inv e g₀))
+  --     e1)
 
   inv-unique : divl coloop ≡ divr loop
-  inv-unique = divl→rcancel (n .fst)
+  inv-unique = divr→rcancel (rd)
     (step-a ∙ sym (post-counit loop)) where
     step-a : divl coloop ⨾ e ≡ loop
-    step-a = divr→lcancel (n .snd)
+    step-a = divl→lcancel (ld)
       (assoc-inv e e
         ∙ ap (_⨾ e) q1 ∙ q0 ∙ sym (pre-counit e))
 
-  to-linear : ∀ {z} (g : hom a z) → neutral-linear n g
+  to-linear : ∀ {z} (g : hom a z) → neutral-linear (ld , rd) g
   to-linear g .fst f = coh f g .fst
   to-linear g .snd .fst f = coh f g .snd .fst
   to-linear g .snd .snd f = subst (λ x → associator x (divl coloop) g)
     (post-counit f) (coh (divr f) g .snd .snd)
 
-module neutral-thunkable {a b} {e : hom a b} (n : is-neutral e)
-  (th : ∀ {w} (f : hom w b) → neutral-thunkable n f)
+module neutral-thunkable {a b} {e : hom a b} ((ld , rd) : is-neutral e)
+  (th : ∀ {w} (f : hom w b) → neutral-thunkable (ld , rd) f)
   where
 
-  open is-neutral n
+  open is-neutral (ld , rd)
 
   private
     p0 : e ⨾ loop ≡ e
@@ -347,26 +411,26 @@ module neutral-thunkable {a b} {e : hom a b} (n : is-neutral e)
     e1 {z} = 3-for-2-left
       {f = λ (g : hom b z) → loop ⨾ g}
       {g = λ (g : hom b z) → e ⨾ g}
-      (n .snd)
+      ld
       (subst is-equiv
         (funext λ g → sym (th e .snd .fst g ∙ ap (_⨾ g) p0))
-        (n .snd))
+        ld)
 
-  rdiv : is-right-divisible (divr loop)
-  rdiv {z} = 3-for-2-right
+  ldivisible : is-left-divisible (divr loop)
+  ldivisible {z} = 3-for-2-right
     {f = λ (g : hom b z) → e ⨾ g}
     {g = λ (g : hom a z) → divr loop ⨾ g}
-    (n .snd)
+    ld
     (subst is-equiv
       (funext λ g₀ →
         ap (_⨾ g₀) (sym p1) ∙ sym (th loop .fst g₀))
       e1)
 
-module neutral-linear {a b} {e : hom a b} (n : is-neutral e)
-  (ln : ∀ {z} (g : hom a z) → neutral-linear n g)
+module neutral-linear {a b} {e : hom a b} ((ld , rd) : is-neutral e)
+  (ln : ∀ {z} (g : hom a z) → neutral-linear (ld , rd) g)
   where
 
-  open is-neutral n
+  open is-neutral (ld , rd)
   private
     q0 : coloop ⨾ e ≡ e
     q0 = post-counit e
@@ -379,58 +443,39 @@ module neutral-linear {a b} {e : hom a b} (n : is-neutral e)
     e1' {w} = 3-for-2-left
       {f = λ (k : hom w a) → k ⨾ coloop}
       {g = λ (k : hom w a) → k ⨾ e}
-      (n .fst)
+      rd
       (subst is-equiv
         (funext λ k → ap (k ⨾_) (sym q0) ∙ ln e .snd .fst k)
-        (n .fst))
+        rd)
 
-  ldiv : is-left-divisible (divl coloop)
-  ldiv {w} = 3-for-2-right
+  rdivisible : is-right-divisible (divl coloop)
+  rdivisible {w} = 3-for-2-right
     {f = λ (k : hom w a) → k ⨾ e}
     {g = λ (k : hom w b) → k ⨾ divl coloop}
-    (n .fst)
+    rd
     (subst is-equiv
       (funext λ k → ap (k ⨾_) (sym q1) ∙ ln coloop .fst k)
       e1')
 
--- The associativity data needed to compose neutral morphisms:
--- g linear at f, and f thunkable at g.
-comp-coherent
-  : ∀ {a b c} (f : hom a b) (g : hom b c) → Type (o ⊔ h)
-comp-coherent f g = linear g f × thunkable f g
-
-module comp-coherent {a b c} {f : hom a b} {g : hom b c}
-  (fn : is-neutral f) (gn : is-neutral g)
-  (coh : comp-coherent f g) where
-
-  comp-is-neutral : is-neutral (f ⨾ g)
-  comp-is-neutral .fst =
-    subst is-equiv (funext (λ h → sym (coh .fst h)))
-      (_∙e_ (_⨾ f , fn .fst) (_⨾ g , gn .fst) .snd)
-  comp-is-neutral .snd =
-    subst is-equiv (funext (λ h → coh .snd h))
-      (_∙e_ (g ⨾_ , gn .snd) (f ⨾_ , fn .snd) .snd)
-
 module associative (assoc : associativity) where
   comp-is-neutral
     : ∀ {a b c} {f : hom a b} {g : hom b c}
-    → is-neutral f → is-neutral g → is-neutral (_⨾_ f g)
+    → is-neutral f → is-neutral g → is-neutral (f ⨾ g)
   comp-is-neutral {f} {g} fe ge = m.comp-is-neutral where
-    module m = comp-coherent fe ge
-      ((λ h → assoc h f g) , (λ k → assoc f g k))
+    module m = composable ((λ h → assoc h f g) , (λ k → assoc f g k)) fe ge
 
   neu-cat :  ∀ {a b c} → a ≐ b → b ≐ c → a ≐ c
   neu-cat e d .fst = e .fst ⨾ d .fst
   neu-cat e d .snd = comp-is-neutral (e .snd) (d .snd)
 
-  neu-sym : ∀ {a b} → a ≐ b → b ≐ a
-  neu-sym (e , n) = m.neu-sym where
-    open is-neutral n
-    coh : ∀ {w z} (f : hom w _) (g : hom _ z)
-      → right-neutral-coherent n f g
-    coh f g = assoc (divr f) e g , assoc f loop g
-      , assoc f (divr loop) (e ⨾ g)
-    module m = right-neutral-coherent n coh
+  -- neu-sym : ∀ {a b} → a ≐ b → b ≐ a
+  -- neu-sym (e , n) = m.neu-sym where
+  --   open is-neutral n
+  --   coh : ∀ {w z} (f : hom w _) (g : hom _ z)
+  --     → right-neutral-coherent n f g
+  --   coh f g = assoc (divr f) e g , assoc f loop g
+  --     , assoc f (divr loop) (e ⨾ g)
+  --   module m = right-neutral-coherent n coh
 
   neu-assoc
     : ∀ {w x y z} (a : w ≐ x) (b : x ≐ y) (c : y ≐ z)

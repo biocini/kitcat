@@ -650,13 +650,22 @@ the "copyright" line and a pointer to where the full notice is found.
 This project incorporates work covered by the following copyright and
 permission notices:
 
-TypeTopology Logical manifestations of topological concepts, and other things, via the univalent point of view. 
-Copyright (C) 2018 Martin Escardo & contributors
+TypeTopology
+Logical manifestations of topological concepts, and other things,
+via the univalent point of view.
+Copyright (C) 2018 Martin Escardó & contributors
 Licensed under the GNU General Public License v3.0
+https://github.com/martinescardo/TypeTopology
 
 Cubical 1lab
-Copyright (C) 2021 Amélia Liao
+Copyright (C) 2021 Amélia Liao & contributors
 Licensed under the GNU Affero General Public License v3.0
+https://github.com/plt-amy/1lab
+
+agda-prelude
+Copyright (C) 2017 Ulf Norell
+Licensed under the MIT License
+https://github.com/UlfNorell/agda-prelude
 
 Also add information on how to contact you by electronic and paper mail.
 

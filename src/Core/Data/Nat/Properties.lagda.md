@@ -13,7 +13,7 @@ open import Core.Transport
 open import Core.Data.Dec
 open Dec
 open import Core.Data.Empty
-open import Core.Data.Sum
+open import Core.Data.Sum.Type
 open import Core.Data.Nat.Type
 open import Core.Data.Nat.Base
 
@@ -147,6 +147,40 @@ distl m n k =
   ∙ distr n k m
   ∙ ap (_+ k * m) (mul.comm n m)
   ∙ ap (m * n +_) (mul.comm k m)
+
+module max where
+  unitl : max Z n ≡ n
+  unitl = refl
+
+  unitr : max n Z ≡ n
+  unitr {n = Z}   = refl
+  unitr {n = S n} = refl
+
+  comm : ∀ m n → max m n ≡ max n m
+  comm Z     Z     = refl
+  comm Z     (S n) = refl
+  comm (S m) Z     = refl
+  comm (S m) (S n) = ap S (comm m n)
+
+  assoc : ∀ m n k → max (max m n) k ≡ max m (max n k)
+  assoc Z     n     k     = refl
+  assoc (S m) Z     k     = refl
+  assoc (S m) (S n) Z     = refl
+  assoc (S m) (S n) (S k) = ap S (assoc m n k)
+
+  idem : ∀ n → max n n ≡ n
+  idem Z     = refl
+  idem (S n) = ap S (idem n)
+
+  ≤l : ∀ n m → n ≤ max n m
+  ≤l Z     m     = lt.z<s
+  ≤l (S n) Z     = suc
+  ≤l (S n) (S m) = s<s (≤l n m)
+
+  ≤r : ∀ n m → m ≤ max n m
+  ≤r Z     m     = suc
+  ≤r (S n) Z     = lt.z<s
+  ≤r (S n) (S m) = s<s (≤r n m)
 
 module sub where
   -- facts about _-_ go here

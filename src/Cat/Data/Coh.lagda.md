@@ -8,13 +8,16 @@ for any category-like (i.e. magmoidal) structure; we also even have the machiner
 for heteromorphisms between structures that only agree in being magmoidal,
 see the definitions for functor, adjunctions, nat-trans, etc.
 
+FIXES NEEDED TODO
+
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness --no-sized-types #-}
 
-open import Cat.Magmoid.Type
-import Cat.Magmoid.Base as M
+open import Cat.Data.Magmoid
+import Cat.Data.Base as M
+import Cat.Data.Neutral as N
 
-module Cat.Magmoid.Coh (M : Magmoids) (assoc : M.associativity M) where
+module Cat.Data.Coh (M : magmoids) (assoc : M.associativity M) where
 
 open import Core.Type
 open import Core.Base
@@ -25,7 +28,8 @@ open import Core.Kan
 open import Core.Transport
 open import Core.Equiv
 
-open M M
+open M M hiding (assoc)
+open N M
 
 has-pentagon : Type (o ⊔ h)
 has-pentagon
@@ -34,12 +38,12 @@ has-pentagon
              (assoc f g (k ⨾ l)) (assoc (f ⨾ g) k l)
 
 module 2-cat (units : ∀ x → unital x) where
-  has-triangle : Type (o ⊔ h)
-  has-triangle
-    = ∀ {x y z} (f : hom x y) (g : hom y z) → triangle f g (units y) (assoc f (units y .fst) g)
+  -- has-triangle : Type (o ⊔ h)
+  -- has-triangle
+  --   = ∀ {x y z} (f : hom x y) (g : hom y z) → triangle f g (assoc f (units y .fst) g)
 
-  record is-2-coherent : Type (o ⊔ h) where
-    no-eta-equality
-    field
-      tri : has-triangle
-      pen : has-pentagon
+  -- record is-2-coherent : Type (o ⊔ h) where
+  --   no-eta-equality
+  --   field
+  --     tri : has-triangle
+  --     pen : has-pentagon

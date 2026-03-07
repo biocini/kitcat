@@ -13,4 +13,7 @@ module ⊎ where
   open import Core.Data.Sum.Base public
   open import Core.Data.Sum.Properties public
 
+  module impl where
+    open import Core.Data.Sum.Impl.Trunc public
+
 ```

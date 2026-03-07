@@ -14,6 +14,7 @@ open Core.Kan.Path
 open import Core.Sub
 open import Core.Transport.Base
 open import Core.Transport.J
+open import Core.Equiv.Base
 
 private
   variable
@@ -24,50 +25,6 @@ private
 
 ```
 
-## Contractibility and Extension
-
-Credit for the hlevel proofs throughout this module goes to 1lab.
-
-```agda
-
-is-contr→extend : ∀ {@0 ℓ} {A : Type ℓ} → is-contr A
-                → (i : I) (p : Partial i A) →  A [ i ↦ p ]
-is-contr→extend c i p = inS do
-  hcom (∂ i) λ where
-      j (i = i1) → c .paths (p 1=1) j
-      j (i = i0) → c .center
-      j (j = i0) → c .center
-{-# INLINE is-contr→extend #-}
-
-extend→is-contr : ∀ {u} {A : Type u}
-                → (∀ i (p : Partial i A) → A [ i ↦ p ])
-                → is-contr A
-extend→is-contr ex .center = outS do ex i0 λ ()
-extend→is-contr ex .paths x i = outS do ex i (λ _ → x)
-
-is-contr→is-prop : ∀ {u} {A : Type u} → is-contr A → is-prop A
-is-contr→is-prop c x y i = outS do
-  is-contr→extend c (∂ i) λ where
-    (i = i0) → x
-    (i = i1) → y
-
-```
-
-## Singleton Contractibility
-
-```agda
-
-Singl-unique : ∀ {u} {A : Type u} {x : A} → is-prop (Σ y ∶ A , x ≡ y)
-Singl-unique {x} = is-contr→is-prop (Singl-contr x)
-
-Cosingl-contr : ∀ {u} {A : Type u} (x : A) → is-contr (Σ y ∶ A , y ≡ x)
-Cosingl-contr x .center = x , refl
-Cosingl-contr x .paths (y , q) i = q (~ i) , λ j → q (~ i ∨ j)
-
-Cosingl-unique : ∀ {u} {A : Type u} {x : A} → is-prop (Σ y ∶ A , y ≡ x)
-Cosingl-unique {x} = is-contr→is-prop (Cosingl-contr x)
-
-```
 
 ## Transport Composition
 
@@ -104,7 +61,7 @@ subst-path-left {c = c} p q = J (λ b' p' → subst (_≡ c) p' q ≡ sym p' ∙
 
 ```
 
-## Inverse Transport
+## Inverse Transport laws and equivalence
 
 ```agda
 
@@ -114,36 +71,22 @@ transport⁻-transport
 transport⁻-transport p b j =
   transp (λ i → p (j ∨ i)) j (transp (λ i → p (j ∨ ~ i)) j b)
 
-transport-transport⁻ : ∀ {ℓ} {A B : Type ℓ} (p : A ≡ B) (a : A)
-                     → transport⁻ p (transport p a) ≡ a
+transport-transport⁻
+  : ∀ {ℓ} {A B : Type ℓ} (p : A ≡ B) (a : A)
+  → transport⁻ p (transport p a) ≡ a
 transport-transport⁻ p a = transport⁻-transport (sym p) a
+
+transport-equiv
+  : ∀ {ℓ} {A B : Type ℓ} (p : A ≡ B)
+  → is-equiv (transport p)
+transport-equiv p = iso→equiv (transport p) (transport⁻ p)
+  (transport-transport⁻ p) (transport⁻-transport p) .snd
 
 ```
 
 ## PathP Conversions
 
 ```agda
-
-Path-over : ∀ {u} (A : I → Type u) → A i0 → A i1 → Type u
-Path-over A x y = coe01 A x ≡ y
-
-module Path-over {u} {A : I → Type u} {x} {y} where
-  to-pathp : Path-over A x y → PathP A x y
-  to-pathp p i = hcom (∂ i) λ where
-    j (i = i0) → x
-    j (i = i1) → p j
-    j (j = i0) → coe0i A i x
-
-  from-pathp : PathP A x y → Path-over A x y
-  from-pathp p i = coei1 A i (p i)
-
-  eq-pathp : ∀ {ℓ} (P : I → Type ℓ) x y → PathP P x y ≡ Path-over P x y
-  eq-pathp P x y i = PathP (∂.contract P i) (coe-filler P x i) y
-
-is-prop→PathP : ∀ {u} {A : I → Type u} → ((i : I) → is-prop (A i))
-              → ∀ x y → PathP (λ i → A i) x y
-is-prop→PathP {A} H x y = Path-over.to-pathp do H i1 (coe01 A x) y
-
 is-prop→SquareP : ∀ {u} {B : I → I → Type u}
                 → ((i j : I) → is-prop (B i j))
                 → {a : B i0 i0} {b : B i0 i1} {c : B i1 i0} {d : B i1 i1}
@@ -170,12 +113,6 @@ SinglP-contr {A} x .paths (y , q) i = _ , λ j → fil A (∂ i) j λ where
  j (j = i0) → x
  j (i = i1) → q j
 
-TotalP
-  : ∀ {u v} {A : Type u} {B : A → Type v} {x} (a : B x)
-  → is-contr (Σ y ∶ A , Σ q ∶ (x ≡ y) , Σ b ∶ B y , PathP (λ i → B (q i)) a b)
-TotalP {x} a .center = x , refl , a , refl
-TotalP a .paths (y , q , b , α) i = q i , (λ j → q (i ∧ j)) , α i , λ j → α (i ∧ j)
-
 is-prop→PathP-is-contr : ∀ {u} {A : I → Type u}
                        → ((i : I) → is-prop (A i))
                        → (x : A i0) (y : A i1)
@@ -196,16 +133,22 @@ is-prop→PathP-is-contr {A = A} aprop x y .paths p =
 
 ```agda
 
-inhab-to-contr→is-prop : ∀ {u} {A : Type u} → (A → is-contr A) → is-prop A
-inhab-to-contr→is-prop iprop x y = is-contr→is-prop (iprop x) x y
+contr-path-natural
+  : ∀ {u v} {C : Type u} {D : Type v}
+  → (cc : is-contr C) (cd : is-contr D)
+  → (φ : C → D) (x y : C)
+  → is-contr→is-prop cd (φ x) (φ y) ≡ ap φ (is-contr→is-prop cc x y)
+contr-path-natural cc cd φ x y =
+  is-contr→is-set cd (φ x) (φ y) _ _
 
-is-contr→is-set : ∀ {u} {A : Type u} → is-contr A → is-set A
-is-contr→is-set c x y p q i j = outS do
-  is-contr→extend c (∂ i ∨ ∂ j) λ where
-    (i = i0) → p j
-    (i = i1) → q j
-    (j = i0) → x
-    (j = i1) → y
+contr-ap-commute
+  : ∀ {u v w} {C : Type u} {D : Type v} {E : Type w}
+  → (cc : is-contr C) (cd : is-contr D)
+  → (φ : C → D) (π : D → E) (x y : C)
+  → ap π (is-contr→is-prop cd (φ x) (φ y))
+    ≡ ap (π ∘ φ) (is-contr→is-prop cc x y)
+contr-ap-commute cc cd φ π x y =
+  ap (ap π) (contr-path-natural cc cd φ x y)
 
 is-contr→loop-is-refl
   : ∀ {u} {A : Type u} (c : is-contr A) → c .paths (c .center) ≡ refl

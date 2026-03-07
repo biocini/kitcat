@@ -1,4 +1,4 @@
-Indination principles and cocones for pushouts.
+Induction principles and cocones for pushouts.
 
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
@@ -39,7 +39,6 @@ rec inl* inr* glue* (inl a)    = inl* a
 rec inl* inr* glue* (inr b)    = inr* b
 rec inl* inr* glue* (glue c i) = glue* c i
 ```
-
 
 ## Cocones
 

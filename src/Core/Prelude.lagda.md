@@ -17,7 +17,7 @@ open import Core.Univalence public
 open import Core.Set public
 open import Core.Trait public
 open import Core.Base public
-open import Core.Path hiding (is-qinv; Qinv) public
+open import Core.Path public
 open import Core.Type public
 open import Core.Data.Sigma public
 open import Core.Kan public

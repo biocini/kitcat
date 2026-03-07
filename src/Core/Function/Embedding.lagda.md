@@ -22,7 +22,7 @@ open import Core.Data.Empty
 open import Core.Kan
 open Core.Kan.Path
 open import Core.Sub
-open import Core.HLevel
+open import Core.HLevel.Base
 open import Core.Trait.Trunc using (Σ-prop-path) public
 open import Core.Data.Fin.Type using (Fin; lower)
 open import Core.Data.Fin.Properties using (fin-path)
@@ -133,13 +133,19 @@ equiv→embedding : ∀ {u v} {A : Type u} {B : Type v} → A ≃ B → A ↪ B
 equiv→embedding e = e .fst , is-equiv→is-embedding (e .snd)
 
 -- Alias for clarity
-embedding→injective
+is-embedding→injective
   : ∀ {u v} {A : Type u} {B : Type v} {f : A → B}
   → is-embedding f → injective f
-embedding→injective {f = f} = has-prop-fibers→injective f
+is-embedding→injective {f = f} = has-prop-fibers→injective f
+
+is-embedding→contr-fibers
+  : ∀ {u v} {A : Type u} {B : Type v} {f : A → B}
+  → is-embedding f → {y : B} → fiber f y → is-contr (fiber f y)
+is-embedding→contr-fibers emb z .center = z
+is-embedding→contr-fibers emb {y} z .paths = emb y z
 
 id-emb : ∀ {u} {A : Type u} → A ↪ A
-id-emb = equiv→embedding equiv
+id-emb = equiv→embedding aut
 ```
 
 ## Composition
@@ -168,7 +174,7 @@ fiber-comp f g c = iso→equiv fwd bwd sec retr
     bwd ((b , q) , (a , r)) = a , ap g r ∙ q
 
     sec : (x : fiber (g ∘ f) c) → bwd (fwd x) ≡ x
-    sec (a , p) i = a , unitl p i
+    sec (a , p) i = a , Path.unitl p i
 
     retr : (y : Σ (b , _) ∶ fiber g c , fiber f b) → fwd (bwd y) ≡ y
     retr ((b , q) , (a , r)) i = (r i , lemma i) , (a , λ j → r (i ∧ j))
@@ -197,12 +203,12 @@ Embeddings make `ap` an equivalence (stronger than just an embedding).
 Credit: Adapted from 1Lab.Function.Embedding (embedding→cancellable).
 
 ```agda
-embedding→ap-equiv
+is-embedding→ap-equiv
   : ∀ {u v} {A : Type u} {B : Type v} {f : A → B}
   → is-embedding f
   → {x y : A}
   → is-equiv (ap f {x} {y})
-embedding→ap-equiv {A = A} {B = B} {f = f} emb {x} {y} =
+is-embedding→ap-equiv {A = A} {B = B} {f = f} emb {x} {y} =
   iso→equiv (ap f) inv unit counit .snd
   where
     fib-prop : is-prop (fiber f (f y))
@@ -255,7 +261,7 @@ ap-is-embedding
   → is-embedding f
   → {x y : A}
   → is-embedding (ap f {x} {y})
-ap-is-embedding emb = is-equiv→is-embedding (embedding→ap-equiv emb)
+ap-is-embedding emb = is-equiv→is-embedding (is-embedding→ap-equiv emb)
 ```
 
 ### Left cancellation for embeddings

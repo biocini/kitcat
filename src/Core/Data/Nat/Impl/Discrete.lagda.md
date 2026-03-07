@@ -8,10 +8,10 @@ module Core.Data.Nat.Impl.Discrete where
 
 open import Core.Data.Nat.Type
 open import Core.Trait.Eq
-import Core.Data.Nat.Properties as NatP
+import Core.Data.Nat.Properties as Nat
 
 instance
   Discrete-Nat : Discrete Nat
-  Discrete-Nat .Discrete._≟_ = NatP.DecEq-Nat
+  Discrete-Nat .Discrete._≟_ = Nat.DecEq-Nat
 
 ```

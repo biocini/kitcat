@@ -12,8 +12,8 @@ see the definitions for functor, adjunctions, nat-trans, etc.
 {-# OPTIONS --safe --erased-cubical --no-guardedness --no-sized-types #-}
 
 
-open import Cat.Magmoid.Type
-module Cat.Magmoid.Het (M N : Magmoids) where
+open import Cat.Data.Magmoid
+module Cat.Data.Het (M N : magmoids) where
 
 open import Core.Type
 open import Core.Base
@@ -23,13 +23,13 @@ open import Core.HLevel
 open import Core.Kan
 open import Core.Transport
 open import Core.Equiv
-import Cat.Magmoid.Base
+import Cat.Data.Base
 
-open import Cat.Magmoid.Map
+open import Cat.Data.Map
 
 private
-  module C = Cat.Magmoid.Base M
-  module D = Cat.Magmoid.Base N
+  module C = Cat.Data.Base M
+  module D = Cat.Data.Base N
 
 record _⊣_ (F : functor M N) (G : functor N M) : Type (C.o ⊔ D.o ⊔ C.h ⊔ D.h) where
   no-eta-equality

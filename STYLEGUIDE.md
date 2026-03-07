@@ -763,6 +763,78 @@ Within groups, sort by module path length (longest path first).
 
 Order statement types: `open import`, then `import`, then `open`.
 
+### Dependency-Aware Imports
+
+Import the narrowest submodule that provides what you need. Prefer
+`Core.Path.Base` over `Core.Path` when you don't need IdType; prefer
+`Core.HLevel.Base` over `Core.HLevel` when you don't need data-type
+Trunc instances.
+
+Aggregator modules exist for consumer convenience — they should not
+appear in foundational module imports unless the full aggregated API
+is actually used.
+
+### Bridge Definitions
+
+A "bridge definition" is one that logically belongs to domain X but
+is needed by module Y earlier in the dependency chain. Example:
+`is-left-inverse` belongs with function theory but is needed by
+`retract→is-hlevel` in Core.Trait.Trunc.
+
+Placement: define bridge definitions in the lightest-weight module
+that can express them. If they need only `_≡_` and types, they go
+in a dedicated lightweight module (e.g., Core.Function.Retract), not
+in the first module that uses them.
+
+When a bridge definition must stay in a heavier module for practical
+reasons, import that specific submodule (not its aggregator).
+
+### When to Stay Monolithic
+
+Some modules remain monolithic despite exceeding 200 lines when:
+
+- Splitting creates a chain, not a DAG — no dependency cycles to
+  break (e.g., Core.Kan)
+- Internal coherence requires definitions in mutual scope — instance
+  resolution, automation layers (e.g., Core.Trait.Trunc)
+- The module is a true foundation with a flat dependency profile
+  (e.g., Core.Base)
+
+Document the reason in the module header when this exception applies.
+
+### Submodule Naming Vocabulary
+
+Standard submodule names and their purposes:
+
+| Name | Purpose | Example |
+|------|---------|---------|
+| `Type` | Raw type definition only | `Core.Data.Nat.Type` |
+| `Base` | Core operations, lightweight imports | `Core.Equiv.Base` |
+| `Properties` | Derived lemmas about the parent type | `Core.Data.Nat.Properties` |
+| `IdType` | Path/identity type characterizations | `Core.Path.IdType` |
+| `Impl/<Trait>` | Trait instance, only instance is public | `Core.Data.Fin.Impl.Trunc` |
+
+**Reserved namespace prefixes** (`Core`, `Data`, `Cat`, `Lib`, `Trait`,
+`Meta`, `HData`, `Stash`, `Test`) must never be used as leaf module
+names. They exist solely as directory-level organizational containers.
+A module named `Core.HLevel.Data` is wrong — proofs about data types'
+h-levels belong in each type's own Properties or Impl module.
+
+### No Ad-Hoc Module Aliases
+
+Do not alias submodules to abbreviations that shadow the aggregator's
+namespace. `import Core.Data.Nat.Properties as NatP` is wrong — it
+creates a private namespace (`NatP.add.unitr`) that diverges from the
+public API (`Nat.add.unitr`).
+
+When you need qualified access to a type's properties, either:
+
+1. Import the aggregator: `import Core.Data.Nat` → `Nat.add.unitr`
+2. Alias the submodule to match: `import Core.Data.Nat.Properties as Nat`
+
+Both give the canonical `Nat.*` namespace. Option 2 is appropriate
+when the aggregator would add unwanted transitive dependencies.
+
 ### Private Variable Blocks
 
 Declare private variables at the top of the module, immediately after

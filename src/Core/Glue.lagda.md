@@ -11,7 +11,7 @@ open import Core.Base
 open import Core.Data.Sigma using (Σ; Σ-syntax; _,_; fst; snd)
 open import Core.Sub using (_[_↦_]; outS; inS)
 open import Core.HCompU
-open import Core.Equiv using (_≃_; equiv)
+open import Core.Equiv using (_≃_)
 
 private primitive
   primGlue    : ∀ {@0 ℓ ℓ'} (A : Type ℓ) {φ : I}

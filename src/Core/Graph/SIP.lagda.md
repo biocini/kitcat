@@ -34,7 +34,7 @@ The universe of types at level `u` forms a reflexive graph where:
 Univ : ∀ u → Rx-graph (u ₊) u
 Univ u .Rx-graph.graph .Graph.₀ = Type u
 Univ u .Rx-graph.graph .Graph.₁ = _≃_
-Univ u .Rx-graph.rx _ = equiv
+Univ u .Rx-graph.rx _ = aut
 ```
 
 
@@ -52,7 +52,7 @@ private
 -- The singleton type Σ B, A ≃ B is contractible
 -- Adapted from 1lab's univalence proof; uses Glue types
 equiv-singl-is-contr : ∀ {u} (A : Type u) → is-contr (Σ B ∶ Type u , A ≃ B)
-equiv-singl-is-contr {u} A .center = A , equiv
+equiv-singl-is-contr {u} A .center = A , aut
 equiv-singl-is-contr {u} A .paths (B , e) i = ua e i , eqv-over-ua i
   where
   open import Core.Glue
@@ -60,7 +60,7 @@ equiv-singl-is-contr {u} A .paths (B , e) i = ua e i , eqv-over-ua i
   -- Partial type-equiv pairs for the Glue boundaries
   Te : (j : I) → Partial (∂ j) (Σ T ∶ Type u , T ≃ B)
   Te j (j = i0) = A , e
-  Te j (j = i1) = B , equiv
+  Te j (j = i1) = B , aut
 
   -- The forward function path: id at j=i0, e.fst at j=i1
   fwd-path : PathP (λ j → A → ua e j) id (e .fst)
@@ -69,7 +69,7 @@ equiv-singl-is-contr {u} A .paths (B , e) i = ua e i , eqv-over-ua i
                       (inS (e .fst a))
 
   -- The equivalence path over ua e
-  eqv-over-ua : PathP (λ j → A ≃ ua e j) equiv e
+  eqv-over-ua : PathP (λ j → A ≃ ua e j) aut e
   eqv-over-ua j .fst = fwd-path j
   eqv-over-ua j .snd = is-prop→PathP (λ j → is-equiv-is-prop (fwd-path j))
                                       id-equiv (e .snd) j
@@ -114,7 +114,7 @@ module Std-str {u v} (S : Standard-structure u v) where
   _preserves_ {A} {B} e s t = ₂ {A} {B} e s t
 
   -- Identity preserves structure
-  id-preserves : ∀ {A} (s : Str A) → _preserves_ {A} {A} equiv s s
+  id-preserves : ∀ {A} (s : Str A) → _preserves_ {A} {A} aut s s
   id-preserves {A} s = rx A s
 ```
 
@@ -162,8 +162,8 @@ paths in the total space are equivalent to structure-preserving equivalences.
     str-transport-preserves e s = str-univ e s .center .snd
 
     -- Identity transport is identity
-    str-transport-id : ∀ {A} (s : Str A) → str-transport equiv s ≡ s
-    str-transport-id {A} s = ap fst (str-univ equiv s .paths (s , id-preserves s))
+    str-transport-id : ∀ {A} (s : Str A) → str-transport aut s ≡ s
+    str-transport-id {A} s = ap fst (str-univ aut s .paths (s , id-preserves s))
 
     -- Uniqueness of transported structure
     str-transport-unique : ∀ {A B} (e : A ≃ B) (s : Str A) (t : Str B)

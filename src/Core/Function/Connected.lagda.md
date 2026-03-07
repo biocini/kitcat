@@ -22,7 +22,7 @@ open import Core.Data.Trunc
 open Core.Data.Trunc.Trunc
 open import Core.Function.Surjection
 open import Core.Transport.Properties
-  using (prop-inhabited→is-contr; is-contr-is-prop; is-contr→is-prop; is-prop→is-set)
+  using (prop-inhabited→is-contr; is-contr-is-prop; is-prop→is-set)
 
 private variable
   u v : Level

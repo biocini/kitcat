@@ -13,6 +13,9 @@ module Bool where
   open import Core.Data.Bool.Base public
   open import Core.Data.Bool.Properties public
 
+  module impl where
+    open import Core.Data.Bool.Impl.Trunc public
+
 open Bool public
   using (Bool; true; false)
 

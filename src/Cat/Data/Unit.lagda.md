@@ -11,11 +11,11 @@ see the definitions for functor, adjunctions, nat-trans, etc.
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness --no-sized-types #-}
 
-open import Cat.Magmoid.Type
-import Cat.Magmoid.Data.Base as B
-import Cat.Magmoid.Data.Neutral as N
+open import Cat.Data.Magmoid
+import Cat.Data.Base as B
+import Cat.Data.Neutral as N
 
-module Cat.Magmoid.Data.Unit (M : Magmoids) {x} (u : N.unital M x) where
+module Cat.Data.Unit (M : magmoids) {x} (u : N.unital M x) where
 
 open import Core.Type
 open import Core.Base
@@ -50,10 +50,10 @@ neutral : is-neutral i
 neutral = neu
 
 f0 : Path (fiber (_⨾ i) i) (coloop , post-counit i) (i , idem)
-f0 = Equiv.fibers ((_⨾ i) , neutral .fst) (i , idem)
+f0 = Equiv.fibers ((_⨾ i) , neutral .snd) (i , idem)
 
 f1 : Path (fiber (i ⨾_) i) (loop , pre-counit i) (i , idem)
-f1 = Equiv.fibers ((i ⨾_) , neutral .snd) (i , idem)
+f1 = Equiv.fibers ((i ⨾_) , neutral .fst) (i , idem)
 
 coloop-coh : coloop ≡ i
 coloop-coh = ap fst f0
@@ -62,22 +62,27 @@ loop-coh : loop ≡ i
 loop-coh = ap fst f1
 
 unit-thunkable : is-thunkable i
-unit-thunkable g h = unitl (g ⨾ h) ∙ sym (unitl g ▹ h)
+unit-thunkable g =
+  ap yon (unitl g) ∙ λ j w k → sym (unitr k) j ⨾ g
 
 unit-linear : is-linear i
-unit-linear f g = (f ◃ unitr g) ∙ sym (unitr (f ⨾ g))
+unit-linear g =
+  ap yon (unitr g) ∙ λ j w k → unitr (k ⨾ g) (~ j)
+
+unit-medial : is-medial i
+unit-medial f g = (f ◃ unitl g) ∙ sym (unitr f ▹ g)
 
 coloop-absorb
   : ∀ {y} {f : hom x y} (fn : is-neutral f)
   → is-neutral.coloop fn ≡ i
 coloop-absorb fn =
-  ap fst (Equiv.fibers ((_⨾ _) , fn .fst) (i , unitl _))
+  ap fst (Equiv.fibers ((_⨾ _) , fn .snd) (i , unitl _))
 
 loop-absorb
   : ∀ {w} {d : hom w x} (dn : is-neutral d)
   → is-neutral.loop dn ≡ i
 loop-absorb dn =
-  ap fst (Equiv.fibers ((_ ⨾_) , dn .snd) (i , unitr _))
+  ap fst (Equiv.fibers ((_ ⨾_) , dn .fst) (i , unitr _))
 
 absorb-unital : ∀ {j : hom x x} → j ≡ i → is-unital j
 absorb-unital {j} p .is-unital.neutral =
@@ -100,12 +105,20 @@ coloop-unital : is-unital coloop
 coloop-unital = absorb-unital coloop-coh
 
 absorb-thunkable : ∀ {j : hom x x} → j ≡ i → is-thunkable j
-absorb-thunkable p g h =
-  (p ▹ (g ⨾ h)) ∙ unit-thunkable g h ∙ sym ((p ▹ g) ▹ h)
+absorb-thunkable p g =
+  ap (λ e → yon (e ⨾ g)) p
+  ∙ unit-thunkable g
+  ∙ ap (λ e w k → (k ⨾ e) ⨾ g) (sym p)
 
 absorb-linear : ∀ {j : hom x x} → j ≡ i → is-linear j
-absorb-linear p f g =
-  (f ◃ (g ◃ p)) ∙ unit-linear f g ∙ sym ((f ⨾ g) ◃ p)
+absorb-linear p g =
+  ap (λ e → yon (g ⨾ e)) p
+  ∙ unit-linear g
+  ∙ ap (λ e w k → (k ⨾ g) ⨾ e) (sym p)
+
+absorb-medial : ∀ {j : hom x x} → j ≡ i → is-medial j
+absorb-medial p f g =
+  f ◃ (p ▹ g) ∙ unit-medial f g ∙ sym ((f ◃ p) ▹ g)
 
 loop-thunkable : is-thunkable loop
 loop-thunkable = absorb-thunkable loop-coh
@@ -129,6 +142,12 @@ coloop-thunkable = absorb-thunkable coloop-coh
 coloop-linear : is-linear coloop
 coloop-linear = absorb-linear coloop-coh
 
+loop-medial : is-medial loop
+loop-medial = absorb-medial loop-coh
+
+coloop-medial : is-medial coloop
+coloop-medial = absorb-medial coloop-coh
+
 loop-absorb-thunkable
   : ∀ {w} {d : hom w x} (dn : is-neutral d)
   → is-thunkable (is-neutral.loop dn)
@@ -148,6 +167,16 @@ coloop-absorb-linear
   : ∀ {y} {f : hom x y} (fn : is-neutral f)
   → is-linear (is-neutral.coloop fn)
 coloop-absorb-linear fn = absorb-linear (coloop-absorb fn)
+
+loop-absorb-medial
+  : ∀ {w} {d : hom w x} (dn : is-neutral d)
+  → is-medial (is-neutral.loop dn)
+loop-absorb-medial dn = absorb-medial (loop-absorb dn)
+
+coloop-absorb-medial
+  : ∀ {y} {f : hom x y} (fn : is-neutral f)
+  → is-medial (is-neutral.coloop fn)
+coloop-absorb-medial fn = absorb-medial (coloop-absorb fn)
 
 divl-triv : ∀ {y} (g : hom x y) → divl g ≡ g
 divl-triv g = sym (unitl (divl g)) ∙ pre-counit g
@@ -171,15 +200,15 @@ pre≡post f = unitl f ∙ sym (unitr f)
 
 neutral-comm
   : PathP (λ j → is-equiv (λ (f : hom x x) → post≡pre f j))
-          (neutral .fst) (neutral .snd)
+          (neutral .snd) (neutral .fst)
 neutral-comm = is-prop→PathP
-  (λ j → is-equiv-is-prop _) (neutral .fst) (neutral .snd)
+  (λ j → is-equiv-is-prop _) (neutral .snd) (neutral .fst)
 
 neutral-comm⁻¹
   : PathP (λ j → is-equiv (λ (f : hom x x) → pre≡post f j))
-          (neutral .snd) (neutral .fst)
+          (neutral .fst) (neutral .snd)
 neutral-comm⁻¹ = is-prop→PathP
-  (λ j → is-equiv-is-prop _) (neutral .snd) (neutral .fst)
+  (λ j → is-equiv-is-prop _) (neutral .fst) (neutral .snd)
 
 triangle-coherator
   : ∀ {w y} (f : hom w x) (g : hom x y) → f ⨾ i ⨾ g ≡ (f ⨾ i) ⨾ g → Type h

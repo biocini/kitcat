@@ -87,3 +87,15 @@ instance
   Alternative-Maybe .<|>-assoc {x = just _}  = refl
 
 ```
+
+## Properties and instances
+
+```agda
+
+module maybe where
+  open import Core.Data.Maybe.Properties public
+
+  module impl where
+    open import Core.Data.Maybe.Impl.Trunc public
+
+```

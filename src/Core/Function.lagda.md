@@ -11,9 +11,13 @@ open import Core.Data.Sigma
 
 -- Re-export submodules
 open import Core.Function.Base public
+open import Core.Function.Retract public
 open import Core.Function.Embedding public
 open import Core.Function.Image public
 open import Core.Function.Surjection public
 open import Core.Function.Connected public
+open import Core.Function.Partial public
+open import Core.Function.Partial.Fiber public hiding (η; ⊥ₗ)
+open import Core.Function.Partial.Graded public
 open import Core.Function.Pullback public
 ```

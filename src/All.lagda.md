@@ -14,6 +14,7 @@ import Core.HCompU
 import Core.Interval
 import Core.Transport
 import Core.Equiv
+import Core.IdSys
 import Core.Path
 import Core.Univalence
 import Core.Set
@@ -21,6 +22,7 @@ import Core.HLevel
 import Core.Homotopy
 import Core.Retract
 import Core.Composite
+import Core.Groupoid
 import Core.Discrete
 import Core.Function
 import Core.Function.Embedding
@@ -28,6 +30,7 @@ import Core.Function.Surjection
 import Core.Function.Image
 import Core.Function.Connected
 import Core.Function.Pullback
+import Core.Function.Partial.Graded
 import Core.Equiv.PropIndexed
 import Core.Set.Omega
 import Core.Prelude
@@ -76,6 +79,12 @@ import HData.Pushout
 import HData.Quotient
 
 import Cat.Base
+import Cat.Data.Magmoid
+import Cat.Eqv
+import Cat.Functor
+import Cat.Het
+import Cat.Iso
+import Cat.Nat
 -- import Cat.Braid  -- WIP: needs Nat import fix
 -- import Cat.Cwf  -- WIP: module removed
 -- import Cat.Magmoid  -- WIP: renamed to Cat.Data
