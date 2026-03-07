@@ -1,12 +1,6 @@
 # Kitcat
 
-An experiment in univalent programming and open source mathematics conducted in
-Agda.
-
-Kitcat is an experimental univalent mathematics and programming library written
-in [Cubical Agda](https://agda.readthedocs.io/en/latest/index.html) intended to
-be an ergonomic, modular, and scalable library to be used for formalized
-mathematics, proof theory research, as well as ordinary functional programming.
+An experiment with univalent programming and open source mathematics in cubical Agda.
 
 > **WIP** — API is unstable. Expect breaking changes.
 
