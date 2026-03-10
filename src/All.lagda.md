@@ -79,12 +79,16 @@ import HData.Pushout
 import HData.Quotient
 
 import Cat.Base
+import Cat.BaseTernary
+import Cat.BaseTernary2
 import Cat.Data.Magmoid
 import Cat.Eqv
 import Cat.Functor
 import Cat.Het
 import Cat.Iso
 import Cat.Nat
+import Cat.Slice
+import Cat.Universal
 -- import Cat.Braid  -- WIP: needs Nat import fix
 -- import Cat.Cwf  -- WIP: module removed
 -- import Cat.Magmoid  -- WIP: renamed to Cat.Data

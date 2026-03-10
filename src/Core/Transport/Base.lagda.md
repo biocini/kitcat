@@ -145,6 +145,21 @@ is-prop→PathP : ∀ {u} {A : I → Type u} → ((i : I) → is-prop (A i))
               → ∀ x y → PathP (λ i → A i) x y
 is-prop→PathP {A} H x y = Path-over.to-pathp do H i1 (coe01 A x) y
 
+```
+
+Given a contractible type `A`, every dependent type over `A` is
+inhabited as soon as it holds at the center. This is the general
+elimination principle behind all universal properties.
+
+```agda
+contr-ind
+  : ∀ {u v} {A : Type u}
+  → (c : is-contr A)
+  → (P : A → Type v)
+  → P (c .center)
+  → ∀ a → P a
+contr-ind c P base a = coe01 (λ i → P (c .paths a i)) base
+
 
 
 ```
