@@ -351,62 +351,86 @@ and `emb-inj`. The `emb-yon` and `emb-noy` lemmas express
     ∙ sym (interchange idn f w a v b)
 ```
 
-### Unit laws
+### Coherent unit laws and associativity
 
-Right unit: `⨾-η` at `(f, idn)` with target `f`, since
-`emb f w a v b ≡ emb f w a v (noy idn v b)` by `sym (absorb-l b)`.
+The unit laws and associativity are defined as projections from
+contractible fibers rather than via `emb-inj` / `⨾-η`. Each
+law is `ap fst` of the unique path between two points in a
+contractible fiber of `emb`. This gives control over the
+emb-image at every intermediate point along the path, which is
+needed for pentagon and triangle coherences.
 
 ```agda
   unitr : ∀ {x y} (f : hom x y) → f ⨾ idn ≡ f
-  unitr f = ⨾-η f idn f
-    (funext λ w → funext λ a → funext λ v →
-      funext λ b → ap (emb f w a v) (sym (absorb-l b)))
-```
+  unitr f =
+    ap fst (is-contr→is-prop (emb-image-contr f) lhs rhs)
+    where
+      lhs : fiber emb (emb f)
+      lhs = f ⨾ idn
+          , emb-composite f idn
+          ∙ funext λ w → funext λ a → funext λ v →
+            funext λ b →
+              ap (emb f w a v) (absorb-l b)
 
-Left unit: `⨾-η` at `(idn, f)` with target `f`, since
-`emb-noy` decomposes `emb f` into `emb idn w a v (noy f v b)`.
+      rhs : fiber emb (emb f)
+      rhs = f , refl
 
-```agda
   unitl : ∀ {x y} (f : hom x y) → idn ⨾ f ≡ f
-  unitl f = ⨾-η idn f f
-    (funext λ w → funext λ a → funext λ v →
-      funext λ b →
-        ap (λ t → emb f w t v b) (sym (absorb-r a))
-        ∙ sym (interchange idn f w a v b))
-```
+  unitl f =
+    ap fst (is-contr→is-prop (emb-image-contr f) lhs rhs)
+    where
+      lhs : fiber emb (emb f)
+      lhs = idn ⨾ f
+          , emb-composite idn f
+          ∙ sym (funext λ w → funext λ a → funext λ v →
+              funext λ b → emb-noy f w a v b)
 
-### Associativity
+      rhs : fiber emb (emb f)
+      rhs = f , refl
 
-Both sides expand to `emb f w a v (noy g v (noy h v b))`:
-the left via `emb-composite` twice, the right via
-`emb-composite` + `noy-composite`.
+  private
+    E₃ : ∀ {x y z w} (f : hom x y) (g : hom y z)
+        (h : hom z w)
+      → ∀ w' → hom w' x → ∀ v → hom w v → hom w' v
+    E₃ f g h =
+      λ w a v b → emb f w a v (noy g v (noy h v b))
 
-```agda
+  E₃-contr
+    : ∀ {x y z w} (f : hom x y) (g : hom y z)
+      (h : hom z w)
+    → is-contr (fiber emb (E₃ f g h))
+  E₃-contr f g h =
+    subst (is-contr ∘ fiber emb) path
+      (composable-contr (f ⨾ g) h)
+    where
+      path
+        : (λ w a v b →
+            emb (f ⨾ g) w a v (noy h v b))
+        ≡ E₃ f g h
+      path = funext λ w → funext λ a →
+        funext λ v → funext λ b →
+          emb-composite-pt f g w a v (noy h v b)
+
   assoc
     : ∀ {x y z w} (f : hom x y) (g : hom y z)
       (h : hom z w)
     → (f ⨾ g) ⨾ h ≡ f ⨾ (g ⨾ h)
-  assoc f g h = emb-inj
-    (emb-composite (f ⨾ g) h ∙ lhs
-    ∙ sym rhs ∙ sym (emb-composite f (g ⨾ h)))
+  assoc f g h =
+    ap fst (is-contr→is-prop (E₃-contr f g h) lhs rhs)
     where
-      lhs
-        : (λ w a v b →
-            emb (f ⨾ g) w a v (noy h v b))
-        ≡ (λ w a v b →
-            emb f w a v (noy g v (noy h v b)))
-      lhs = funext λ w → funext λ a →
-        funext λ v → funext λ b →
-          emb-composite-pt f g w a v (noy h v b)
+      lhs : fiber emb (E₃ f g h)
+      lhs = (f ⨾ g) ⨾ h
+          , emb-composite (f ⨾ g) h
+          ∙ funext λ w → funext λ a → funext λ v →
+            funext λ b →
+              emb-composite-pt f g w a v (noy h v b)
 
-      rhs
-        : (λ w a v b →
-            emb f w a v (noy (g ⨾ h) v b))
-        ≡ (λ w a v b →
-            emb f w a v (noy g v (noy h v b)))
-      rhs = funext λ w → funext λ a →
-        funext λ v → funext λ b →
-          ap (emb f w a v) (noy-composite g h b)
+      rhs : fiber emb (E₃ f g h)
+      rhs = f ⨾ (g ⨾ h)
+          , emb-composite f (g ⨾ h)
+          ∙ funext λ w → funext λ a → funext λ v →
+            funext λ b →
+              ap (emb f w a v) (noy-composite g h b)
 ```
 
 ## Opposite category
@@ -524,7 +548,7 @@ Derived naturality conditions arise from specializing the outer
 slots of `emb-natural`. Since `C.yon f w a = C.emb f w a _ C.idn`
 and `C.noy f v b = C.emb f _ C.idn v b` hold definitionally, the
 right-hand sides simplify directly.
-f
+
 ```agda
   module Functor (F : functor) where
     open functor F public
