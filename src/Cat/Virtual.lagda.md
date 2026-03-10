@@ -32,8 +32,6 @@ open import Core.Data.Sigma
 open import Core.Kan
 open import Core.Transport
 open import Core.Function.Base
-open import Core.Function.Embedding
-  using (is-embedding; is-embedding→injective)
 
 record category o h : Type₊ (o ⊔ h) where
   no-eta-equality
@@ -119,19 +117,44 @@ every `f`, making `emb` an embedding.
           interchange idn f w a v b
           ∙ ap (λ t → emb f w t v b) (absorb-r a)
 
-  emb-is-emb : ∀ {x y} → is-embedding (emb {x} {y})
-  emb-is-emb t (f , p) =
-    is-contr→is-prop
-      (subst (is-contr ∘ fiber emb) p (emb-image-contr f))
-      (f , p)
+  composable-yon
+    : ∀ {x y z} (f : hom x y) (g : hom y z)
+    → is-contr
+        (fiber emb
+          (λ w a v b → emb g w (yon f w a) v b))
+  composable-yon f g =
+    subst (is-contr ∘ fiber emb) path (composable-contr f g)
+    where
+      path
+        : (λ w a v b → emb f w a v (noy g v b))
+        ≡ (λ w a v b → emb g w (yon f w a) v b)
+      path = funext λ w → funext λ a → funext λ v →
+        funext λ b → interchange f g w a v b
 
-  emb-inj
-    : ∀ {x y} {f g : hom x y}
-    → emb f ≡ emb g → f ≡ g
-  emb-inj = is-embedding→injective emb-is-emb
+  composable-swap
+    : ∀ {x y}
+      {target : ∀ w → hom w x → ∀ v → hom y v → hom w v}
+    → is-contr (fiber emb target)
+    → is-contr
+        (fiber {B = ∀ w → hom y w → ∀ v → hom v x → hom v w}
+          (λ s w a v b → emb s v b w a)
+          (λ w a v b → target v b w a))
+  composable-swap c .center .fst = c .center .fst
+  composable-swap c .center .snd i w a v b =
+    c .center .snd i v b w a
+  composable-swap {target = target} c .paths (s' , q') i .fst =
+    c .paths (s' , q'') i .fst
+    where
+      q'' : emb s' ≡ target
+      q'' i w a v b = q' i v b w a
+  composable-swap {target = target} c .paths (s' , q') i .snd j w a v b =
+    c .paths (s' , q'') i .snd j v b w a
+    where
+      q'' : emb s' ≡ target
+      q'' i w a v b = q' i v b w a
 ```
 
-### Composition
+### Composite equations
 
 ```agda
   emb-composite
@@ -145,12 +168,135 @@ every `f`, making `emb` an embedding.
     → emb (f ⨾ g) w a v b ≡ emb f w a v (noy g v b)
   emb-composite-pt f g w a v b i =
     emb-composite f g i w a v b
+
+  emb-yon-composite
+    : ∀ {x y z} (f : hom x y) (g : hom y z)
+    → emb (f ⨾ g)
+    ≡ (λ w a v b → emb g w (yon f w a) v b)
+  emb-yon-composite f g =
+    emb-composite f g
+    ∙ funext λ w → funext λ a → funext λ v →
+      funext λ b → interchange f g w a v b
 ```
 
-### Noy distributes over composition
+### Induction principles
 
-`noy (g ⨾ h) v b = noy g v (noy h v b)` follows from the
-composite equation evaluated at `w = source, a = idn`.
+Each contractible fiber yields an induction principle via
+`contr-ind`: to prove something about all inhabitants of the
+fiber, it suffices to prove it for the canonical center.
+
+The identity is the unique endomorphism absorbing from both
+sides. `idn-ind` eliminates any `(e, r, l)` satisfying the
+absorption laws back to the canonical triple
+`(idn, absorb-r, absorb-l)`.
+
+```agda
+  private
+    idn-fiber : ∀ {x} → Type _
+    idn-fiber {x} = Σ e ∶ hom x x ,
+        (∀ {w} (g : hom w x) → emb e w g x e ≡ g)
+      × (∀ {z} (h : hom x z) → emb e x e z h ≡ h)
+
+  idn-ind
+    : ∀ {u} {x}
+    → (P : (e : hom x x)
+         → (∀ {w} (g : hom w x) → emb e w g x e ≡ g)
+         → (∀ {z} (h : hom x z) → emb e x e z h ≡ h)
+         → Type u)
+    → P idn absorb-r absorb-l
+    → (a : idn-fiber) → P (a .fst) (a .snd .fst) (a .snd .snd)
+  idn-ind P base a =
+    coe01 (λ i → P (p i .fst) (p i .snd .fst) (p i .snd .snd)) base
+    where p = idn-contr .paths a
+
+  idn-unique
+    : ∀ {x} (e : hom x x)
+    → (∀ {w} (g : hom w x) → emb e w g x e ≡ g)
+    → (∀ {z} (h : hom x z) → emb e x e z h ≡ h)
+    → idn ≡ e
+  idn-unique e r l = idn-ind (λ e _ _ → idn ≡ e) refl (e , r , l)
+```
+
+Composition is the unique morphism whose embedding equals the
+composite target. `emb-ind` eliminates any `(s, q)` in the
+composable fiber back to `(f ⨾ g, emb-composite f g)`.
+
+```agda
+  emb-ind
+    : ∀ {u} {x y z} (f : hom x y) (g : hom y z)
+    → (P : (s : hom x z)
+         → emb s
+           ≡ (λ w a v b → emb f w a v (noy g v b))
+         → Type u)
+    → P (f ⨾ g) (emb-composite f g)
+    → ∀ s q → P s q
+  emb-ind f g P base s q =
+    contr-ind (composable-contr f g)
+      (λ where (s , q) → P s q)
+      base (s , q)
+
+  ⨾-η
+    : ∀ {x y z} (f : hom x y) (g : hom y z)
+    → (s : hom x z)
+    → emb s
+      ≡ (λ w a v b → emb f w a v (noy g v b))
+    → f ⨾ g ≡ s
+  ⨾-η f g = emb-ind f g (λ s _ → f ⨾ g ≡ s) refl
+```
+
+The embedding is faithful: `emb n ≡ emb m` implies `n ≡ m`.
+`emb-image-ind` eliminates any `(n, q)` in the image fiber back
+to `(m, refl)`.
+
+```agda
+  emb-image-ind
+    : ∀ {u} {x y} (m : hom x y)
+    → (P : (n : hom x y) → emb n ≡ emb m → Type u)
+    → P m refl
+    → ∀ n q → P n q
+  emb-image-ind m P base n q =
+    coe01 (λ i → P (path i .fst) (path i .snd)) base
+    where
+      path : (m , refl) ≡ (n , q)
+      path = sym (emb-image-contr m .paths (m , refl))
+           ∙ emb-image-contr m .paths (n , q)
+
+  emb-inj
+    : ∀ {x y} {f g : hom x y}
+    → emb f ≡ emb g → f ≡ g
+  emb-inj {f = f} {g} p =
+    emb-image-ind f (λ n _ → f ≡ n) refl g (sym p)
+```
+
+The yon-characterized composite: interchange swaps `noy` for `yon`
+in the composite target, giving a dual fiber with the same center.
+`emb-yon-ind` eliminates over this alternative characterization.
+
+```agda
+  emb-yon-ind
+    : ∀ {u} {x y z} (f : hom x y) (g : hom y z)
+    → (P : (s : hom x z)
+         → emb s
+           ≡ (λ w a v b → emb g w (yon f w a) v b)
+         → Type u)
+    → P (f ⨾ g) (emb-yon-composite f g)
+    → ∀ s q → P s q
+  emb-yon-ind f g P base s q =
+    coe01 (λ i → P (path i .fst) (path i .snd)) base
+    where
+      path : (f ⨾ g , emb-yon-composite f g) ≡ (s , q)
+      path = sym (composable-yon f g .paths _)
+           ∙ composable-yon f g .paths (s , q)
+```
+
+### Distribution and decomposition
+
+`noy` and `yon` distribute over composition. `noy-composite`
+follows from the composite equation at `a = idn`;
+`yon-composite` uses the composite equation and interchange.
+Both `yon` and `noy` are injective, following from interchange
+and `emb-inj`. The `emb-yon` and `emb-noy` lemmas express
+`emb f` in terms of `yon` and `noy`.
 
 ```agda
   noy-composite
@@ -159,16 +305,7 @@ composite equation evaluated at `w = source, a = idn`.
     → noy (g ⨾ h) v b ≡ noy g v (noy h v b)
   noy-composite g h {v} b i =
     emb-composite g h i _ idn v b
-```
 
-### Yon and noy distribute
-
-Yon distributes over composition, dual to `noy-composite`. Both
-`yon` and `noy` are injective, following from interchange and
-`emb-inj`. The `emb-yon` and `emb-noy` lemmas express `emb f` in
-terms of `yon` and `noy` — useful equational tools.
-
-```agda
   yon-composite
     : ∀ {x y z} (f : hom x y) (g : hom y z)
       w (a : hom w x)
@@ -216,31 +353,26 @@ terms of `yon` and `noy` — useful equational tools.
 
 ### Unit laws
 
-Right unit: `noy idn v b = b` by left absorption, so the
-composite target collapses to `emb f`.
+Right unit: `⨾-η` at `(f, idn)` with target `f`, since
+`emb f w a v b ≡ emb f w a v (noy idn v b)` by `sym (absorb-l b)`.
 
 ```agda
   unitr : ∀ {x y} (f : hom x y) → f ⨾ idn ≡ f
-  unitr f = emb-inj (emb-composite f idn ∙ p) where
-    p : (λ w a v b → emb f w a v (noy idn v b))
-      ≡ emb f
-    p = funext λ w → funext λ a → funext λ v →
-      funext λ b → ap (emb f w a v) (absorb-l b)
+  unitr f = ⨾-η f idn f
+    (funext λ w → funext λ a → funext λ v →
+      funext λ b → ap (emb f w a v) (sym (absorb-l b)))
 ```
 
-Left unit: interchange at `(idn, f)` reduces
-`emb idn w a v (noy f v b)` to `emb f w a v b` via
-right absorption.
+Left unit: `⨾-η` at `(idn, f)` with target `f`, since
+`emb-noy` decomposes `emb f` into `emb idn w a v (noy f v b)`.
 
 ```agda
   unitl : ∀ {x y} (f : hom x y) → idn ⨾ f ≡ f
-  unitl f = emb-inj (emb-composite idn f ∙ q) where
-    q : (λ w a v b → emb idn w a v (noy f v b))
-      ≡ emb f
-    q = funext λ w → funext λ a → funext λ v →
+  unitl f = ⨾-η idn f f
+    (funext λ w → funext λ a → funext λ v →
       funext λ b →
-        interchange idn f w a v b
-        ∙ ap (λ t → emb f w t v b) (absorb-r a)
+        ap (λ t → emb f w t v b) (sym (absorb-r a))
+        ∙ sym (interchange idn f w a v b))
 ```
 
 ### Associativity
@@ -302,61 +434,7 @@ module _ {o h} (C : category o h) where
     let q = C.idn-contr .paths (e' , r' , l') i
     in q .fst , q .snd .snd , q .snd .fst
   op .category.composable-contr {x} {y} {z} f g =
-    cc
-    where
-      open category C using (emb; idn)
-
-      -- C.composable-contr g f gives contractibility of
-      -- the fiber over
-      --   λ w a v b → C.emb g w a v (C.noy f v b)
-      --
-      -- By interchange, that target equals
-      --   λ w a v b → C.emb f w (C.yon g w a) v b
-      --
-      -- Swapping the variable pairs gives the op target
-      --   λ w a v b → C.emb f v (C.yon g v b) w a
-
-      ic-path
-        : (λ w a v b →
-            C.emb g w a v (C.noy f v b))
-        ≡ (λ w a v b →
-            C.emb f w (C.yon g w a) v b)
-      ic-path = funext λ w → funext λ a →
-        funext λ v → funext λ b →
-          C.interchange g f w a v b
-
-      cc-base
-        : is-contr
-            (fiber (emb {z} {x})
-              (λ w a v b →
-                C.emb f w (C.yon g w a) v b))
-      cc-base = subst (is-contr ∘ fiber emb)
-        ic-path (C.composable-contr g f)
-
-      cc
-        : is-contr
-            (fiber (λ s w a v b → emb s v b w a)
-              (λ w a v b →
-                C.emb f v (C.yon g v b) w a))
-      cc .center .fst = cc-base .center .fst
-      cc .center .snd i w a v b =
-        cc-base .center .snd i v b w a
-      cc .paths (s' , q') i .fst =
-        cc-base .paths (s' , q'') i .fst
-        where
-          q''
-            : emb s'
-            ≡ (λ w a v b →
-                C.emb f w (C.yon g w a) v b)
-          q'' i w a v b = q' i v b w a
-      cc .paths (s' , q') i .snd j w a v b =
-        cc-base .paths (s' , q'') i .snd j v b w a
-        where
-          q''
-            : emb s'
-            ≡ (λ w a v b →
-                C.emb f w (C.yon g w a) v b)
-          q'' i w a v b = q' i v b w a
+    C.composable-swap {x = z} {y = x} (C.composable-yon g f)
   op .category.interchange f g w a v b =
     sym (C.interchange g f v b w a)
 ```
@@ -446,7 +524,7 @@ Derived naturality conditions arise from specializing the outer
 slots of `emb-natural`. Since `C.yon f w a = C.emb f w a _ C.idn`
 and `C.noy f v b = C.emb f _ C.idn v b` hold definitionally, the
 right-hand sides simplify directly.
-
+f
 ```agda
   module Functor (F : functor) where
     open functor F public
