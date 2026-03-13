@@ -631,9 +631,9 @@ the ternary composite and collapsing the trivial boundary.
     α₃₅ : f ⨾ ((g ⨾ h) ⨾ k) ≡ f ⨾ (g ⨾ (h ⨾ k))
     α₃₅ = ap fst σ₃₅
 
-    identity : σ₁₄ ∙ σ₄₅ ≡ σ₁₂ ∙ σ₂₃ ∙ σ₃₅
+    identity : σ₁₄ ∙ σ₄₅ ≡ pcom (sym σ₁₂) σ₂₃ σ₃₅
     identity = is-contr→is-set E₄c pt₁ pt₅
-      (σ₁₄ ∙ σ₄₅) (σ₁₂ ∙ σ₂₃ ∙ σ₃₅)
+      (σ₁₄ ∙ σ₄₅) (pcom (sym σ₁₂) σ₂₃ σ₃₅)
 
     private
       assoc-σ
@@ -685,9 +685,6 @@ the ternary composite and collapsing the trivial boundary.
               (noy-composite g (h ⨾ k) b)
               (ap (noy g v') (noy-composite h k b)) i
 
-      γ₃₅-full : pt₃ ≡ pt₅
-      γ₃₅-full = v₃ ∙ (λ i → γ₃₅-pt i) ∙ v₅
-
       γ₂₃-pt : ∀ i → fiber emb (E₄ f g h k)
       γ₂₃-pt i =
         assoc f (g ⨾ h) k i
@@ -725,9 +722,6 @@ the ternary composite and collapsing the trivial boundary.
                 ap (emb f w' a v')
                   (noy-composite g h (noy k v' b)))) i
 
-      γ₂₃-full : pt₂ ≡ pt₃
-      γ₂₃-full = w₂ ∙ (λ i → γ₂₃-pt i) ∙ w₃
-
       γ₄₅-pt : ∀ i → fiber emb (E₄ f g h k)
       γ₄₅-pt i =
         assoc f g (h ⨾ k) i
@@ -764,9 +758,6 @@ the ternary composite and collapsing the trivial boundary.
               funext λ v' → funext λ b →
                 ap (λ t → emb f w' a v' (noy g v' t))
                   (noy-composite h k b))) i
-
-      γ₄₅-full : pt₄ ≡ pt₅
-      γ₄₅-full = w₄ ∙ (λ i → γ₄₅-pt i) ∙ w₅
 
       γ₁₄-pt : ∀ i → fiber emb (E₄ f g h k)
       γ₁₄-pt i =
@@ -833,9 +824,6 @@ the ternary composite and collapsing the trivial boundary.
             funext λ v' → funext λ b →
               w₁₄-nat w' a v' b j
 
-      γ₁₄-full : pt₁ ≡ pt₄
-      γ₁₄-full = w₁ ∙ (λ i → γ₁₄-pt i) ∙ w₁₄
-
     face₁₂ : α₁₂ ≡ ap (_⨾ k) (assoc f g h)
     face₁₂ = total-contr-unique E₄c
       α₁₂ (ap (_⨾ k) (assoc f g h))
@@ -870,28 +858,25 @@ the ternary composite and collapsing the trivial boundary.
     open pentagon-fibers f g h k
 
     hom-identity
-      : α₁₄ ∙ α₄₅ ≡ α₁₂ ∙ α₂₃ ∙ α₃₅
+      : α₁₄ ∙ α₄₅ ≡ pcom (sym α₁₂) α₂₃ α₃₅
     hom-identity =
       sym (ap-comp fst σ₁₄ σ₄₅)
       ∙ ap (ap fst) identity
-      ∙ ap-comp fst σ₁₂ (σ₂₃ ∙ σ₃₅)
-      ∙ ap (α₁₂ ∙_) (ap-comp fst σ₂₃ σ₃₅)
+      ∙ pcom.ap (λ _ → fst) (sym σ₁₂) σ₂₃ σ₃₅
 
   pentagon
     : ∀ {x y z w v}
       (f : hom x y) (g : hom y z)
       (h : hom z w) (k : hom w v)
     → assoc (f ⨾ g) h k ∙ assoc f g (h ⨾ k)
-    ≡ ap (_⨾ k) (assoc f g h)
-      ∙ assoc f (g ⨾ h) k ∙ ap (f ⨾_) (assoc g h k)
+    ≡ pcom (sym (ap (_⨾ k) (assoc f g h)))
+           (assoc f (g ⨾ h) k)
+           (ap (f ⨾_) (assoc g h k))
   pentagon f g h k =
     sym (ap (_∙ α₄₅) face₁₄
         ∙ ap (assoc (f ⨾ g) h k ∙_) face₄₅)
     ∙ hom-identity
-    ∙ ap (_∙ (α₂₃ ∙ α₃₅)) face₁₂
-    ∙ ap (ap (_⨾ k) (assoc f g h) ∙_)
-        (ap (_∙ α₃₅) face₂₃
-        ∙ ap (assoc f (g ⨾ h) k ∙_) face₃₅)
+    ∙ (λ i → pcom (sym (face₁₂ i)) (face₂₃ i) (face₃₅ i))
     where open pentagon-fibers f g h k
           open pentagon f g h k
 ```
@@ -978,9 +963,6 @@ not `absorb-coh`. The `α₂₃` edge remains abstract.
         f ⨾ g
         , Path.unitr (emb-composite f g) i
 
-      γ₁₃-full : pt₁ ≡ pt₃
-      γ₁₃-full = (λ i → γ₁₃-pt i) ∙ v₃
-
       assoc-σ-fig
         : E₃-contr f idn g .center
         ≡ (   f ⨾ (idn ⨾ g)
@@ -1030,17 +1012,10 @@ not `absorb-coh`. The `α₂₃` edge remains abstract.
                 ap (emb f w a v)
                   (absorb-l (noy g v b)))) i
 
-      γ₁₂-full : pt₁ ≡ pt₂
-      γ₁₂-full = w₁ ∙ (λ i → γ₁₂-pt i) ∙ w₂
-
     face₁₃ : α₁₃ ≡ ap (_⨾ g) (unitr f)
     face₁₃ =
-      total-contr-unique cc
-        α₁₃ (ap fst γ₁₃-full)
-        (ap snd σ₁₃)
-        (ap snd γ₁₃-full)
-      ∙ ap-comp fst (λ i → γ₁₃-pt i) v₃
-      ∙ Path.unitr (ap (_⨾ g) (unitr f))
+      contr-face cc σ₁₃
+        refl (λ i → γ₁₃-pt i) (ap snd v₃)
 
     face₁₂ : α₁₂ ≡ assoc f idn g
     face₁₂ =
@@ -1207,25 +1182,11 @@ the full Mac Lane triangle from the weak version.
           f ⨾ g
           , Path.unitr (emb-composite f g) i
 
-        γ₂₃-full : pt₂ ≡ pt₃
-        γ₂₃-full =
-          w₀ ∙ (λ i → γ₂₃-pt i) ∙ v₁ ∙ v₂
-
       face₂₃ : α₂₃ ≡ ap (f ⨾_) (unitl g)
       face₂₃ =
-        total-contr-unique cc
-          α₂₃ (ap fst γ₂₃-full)
-          (ap snd σ₂₃)
-          (ap snd γ₂₃-full)
-        ∙ ap-comp fst w₀
-            ((λ i → γ₂₃-pt i) ∙ v₁ ∙ v₂)
-        ∙ ap (refl ∙_)
-            (ap-comp fst (λ i → γ₂₃-pt i) (v₁ ∙ v₂)
-            ∙ ap (ap (f ⨾_) (unitl g) ∙_)
-                (ap-comp fst v₁ v₂
-                ∙ Path.unitr refl)
-            ∙ Path.unitr (ap (f ⨾_) (unitl g)))
-        ∙ Path.unitl (ap (f ⨾_) (unitl g))
+        contr-face cc σ₂₃
+          (ap snd w₀) (λ i → γ₂₃-pt i)
+          (ap snd v₁ ∙ ap snd v₂)
 
   triangle
     : ∀ {x y z}
