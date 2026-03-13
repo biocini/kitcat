@@ -136,7 +136,16 @@ record category o h : Type₊ (o ⊔ h) where
 ```agda
 module Cat {o} {h} (C : category o h) where
   open category C public
+```
 
+### Composable fiber and its eliminators
+
+`composable-contr` restates the contractibility of the composite
+fiber with `(f ⨾ g, emb-composite f g)` as center. `emb-ind`
+eliminates any `(s, q)` in the fiber back to the canonical center,
+and `⨾-η` witnesses that the composite is unique.
+
+```agda
   composable-contr
     : ∀ {x y z} (f : hom x y) (g : hom y z)
     → is-contr
@@ -146,15 +155,40 @@ module Cat {o} {h} (C : category o h) where
     f ⨾ g , emb-composite f g
   composable-contr f g .paths (s , p) =
     compose-contr f g .paths (s , p)
+
+  emb-ind
+    : ∀ {u} {x y z} (f : hom x y) (g : hom y z)
+    → (P : (s : hom x z)
+         → emb s
+           ≡ (λ w a v b → emb f w a v (noy g v b))
+         → Type u)
+    → P (f ⨾ g) (emb-composite f g)
+    → ∀ s q → P s q
+  emb-ind f g P base s q =
+    contr-ind (composable-contr f g)
+      (λ where (s , q) → P s q)
+      base (s , q)
+
+  ⨾-η
+    : ∀ {x y z} (f : hom x y) (g : hom y z)
+    → (s : hom x z)
+    → emb s
+      ≡ (λ w a v b → emb f w a v (noy g v b))
+    → f ⨾ g ≡ s
+  ⨾-η f g = emb-ind f g (λ s _ → f ⨾ g ≡ s) refl
 ```
 
-### Embedding property
+### Embedding property and its eliminators
 
 `composable-contr idn f` gives `is-contr (fiber emb target)` where
 `target w a v b = emb idn w a v (noy f v b)`. By interchange,
 this equals `emb f w (yon idn w a) v b = emb f w a v b` via
 right absorption. So `fiber emb (emb f)` is contractible for
 every `f`, making `emb` an embedding.
+
+`emb-image-ind` eliminates any `(n, q)` in the image fiber back
+to `(m, refl)`, and `emb-inj` is faithful: `emb n ≡ emb m`
+implies `n ≡ m`.
 
 ```agda
   emb-image-contr
@@ -172,6 +206,33 @@ every `f`, making `emb` an embedding.
           interchange idn f w a v b
           ∙ ap (λ t → emb f w t v b) (absorb-r a)
 
+  emb-image-ind
+    : ∀ {u} {x y} (m : hom x y)
+    → (P : (n : hom x y) → emb n ≡ emb m → Type u)
+    → P m refl
+    → ∀ n q → P n q
+  emb-image-ind m P base n q =
+    coe01 (λ i → P (path i .fst) (path i .snd)) base
+    where
+      path : (m , refl) ≡ (n , q)
+      path =
+        sym (emb-image-contr m .paths (m , refl))
+        ∙ emb-image-contr m .paths (n , q)
+
+  emb-inj
+    : ∀ {x y} {f g : hom x y}
+    → emb f ≡ emb g → f ≡ g
+  emb-inj {f = f} {g} p =
+    emb-image-ind f (λ n _ → f ≡ n) refl g (sym p)
+```
+
+### Yon-characterized composite and its eliminator
+
+Interchange swaps `noy` for `yon` in the composite target,
+giving a dual fiber with the same center. `emb-yon-ind`
+eliminates over this alternative characterization.
+
+```agda
   composable-yon
     : ∀ {x y z} (f : hom x y) (g : hom y z)
     → is-contr
@@ -187,6 +248,27 @@ every `f`, making `emb` an embedding.
       path = funext λ w → funext λ a → funext λ v →
         funext λ b → interchange f g w a v b
 
+  emb-yon-ind
+    : ∀ {u} {x y z} (f : hom x y) (g : hom y z)
+    → (P : (s : hom x z)
+         → emb s
+           ≡ (λ w a v b → emb g w (yon f w a) v b)
+         → Type u)
+    → P (f ⨾ g) (emb-yon-composite f g)
+    → ∀ s q → P s q
+  emb-yon-ind f g P base s q =
+    coe01 (λ i → P (path i .fst) (path i .snd)) base
+    where
+      path
+        : (f ⨾ g , emb-yon-composite f g) ≡ (s , q)
+      path =
+        sym (composable-yon f g .paths _)
+        ∙ composable-yon f g .paths (s , q)
+```
+
+### Argument swap
+
+```agda
   composable-swap
     : ∀ {x y}
       {target : ∀ w → hom w x → ∀ v → hom y v
@@ -214,97 +296,6 @@ every `f`, making `emb` an embedding.
     where
       q'' : emb s' ≡ target
       q'' i w a v b = q' i v b w a
-```
-
-### Induction principles
-
-Each contractible fiber yields an induction principle via
-`contr-ind`: to prove something about all inhabitants of the
-fiber, it suffices to prove it for the canonical center.
-
-`idn-ind` and `idn-unique` require deriving `idn-contr`
-from `unit` via the Kraus argument (unit-is-prop). Deferred
-to a follow-up.
-
-```agda
-  -- idn-ind and idn-unique require unit-is-prop (Kraus argument)
-  -- to re-derive idn-contr. Deferred to a follow-up.
-```
-
-Composition is the unique morphism whose embedding equals the
-composite target. `emb-ind` eliminates any `(s, q)` in the
-composable fiber back to `(f ⨾ g, emb-composite f g)`.
-
-```agda
-  emb-ind
-    : ∀ {u} {x y z} (f : hom x y) (g : hom y z)
-    → (P : (s : hom x z)
-         → emb s
-           ≡ (λ w a v b → emb f w a v (noy g v b))
-         → Type u)
-    → P (f ⨾ g) (emb-composite f g)
-    → ∀ s q → P s q
-  emb-ind f g P base s q =
-    contr-ind (composable-contr f g)
-      (λ where (s , q) → P s q)
-      base (s , q)
-
-  ⨾-η
-    : ∀ {x y z} (f : hom x y) (g : hom y z)
-    → (s : hom x z)
-    → emb s
-      ≡ (λ w a v b → emb f w a v (noy g v b))
-    → f ⨾ g ≡ s
-  ⨾-η f g = emb-ind f g (λ s _ → f ⨾ g ≡ s) refl
-```
-
-The embedding is faithful: `emb n ≡ emb m` implies `n ≡ m`.
-`emb-image-ind` eliminates any `(n, q)` in the image fiber back
-to `(m, refl)`.
-
-```agda
-  emb-image-ind
-    : ∀ {u} {x y} (m : hom x y)
-    → (P : (n : hom x y) → emb n ≡ emb m → Type u)
-    → P m refl
-    → ∀ n q → P n q
-  emb-image-ind m P base n q =
-    coe01 (λ i → P (path i .fst) (path i .snd)) base
-    where
-      path : (m , refl) ≡ (n , q)
-      path =
-        sym (emb-image-contr m .paths (m , refl))
-        ∙ emb-image-contr m .paths (n , q)
-
-  emb-inj
-    : ∀ {x y} {f g : hom x y}
-    → emb f ≡ emb g → f ≡ g
-  emb-inj {f = f} {g} p =
-    emb-image-ind f (λ n _ → f ≡ n) refl g (sym p)
-```
-
-The yon-characterized composite: interchange swaps `noy` for
-`yon` in the composite target, giving a dual fiber with the
-same center. `emb-yon-ind` eliminates over this alternative
-characterization.
-
-```agda
-  emb-yon-ind
-    : ∀ {u} {x y z} (f : hom x y) (g : hom y z)
-    → (P : (s : hom x z)
-         → emb s
-           ≡ (λ w a v b → emb g w (yon f w a) v b)
-         → Type u)
-    → P (f ⨾ g) (emb-yon-composite f g)
-    → ∀ s q → P s q
-  emb-yon-ind f g P base s q =
-    coe01 (λ i → P (path i .fst) (path i .snd)) base
-    where
-      path
-        : (f ⨾ g , emb-yon-composite f g) ≡ (s , q)
-      path =
-        sym (composable-yon f g .paths _)
-        ∙ composable-yon f g .paths (s , q)
 ```
 
 ### Distribution and decomposition
@@ -425,17 +416,37 @@ the path, which is needed for triangle coherence.
     : ∀ {x y z w} (f : hom x y) (g : hom y z)
       (h : hom z w)
     → is-contr (fiber emb (E₃ f g h))
-  E₃-contr f g h =
-    subst (is-contr ∘ fiber emb) path
-      (composable-contr (f ⨾ g) h)
+  E₃-contr f g h .center .fst = (f ⨾ g) ⨾ h
+  E₃-contr f g h .center .snd =
+    emb-composite (f ⨾ g) h
+    ∙ funext λ w → funext λ a →
+      funext λ v → funext λ b →
+        emb-composite-pt f g w a v (noy h v b)
+  E₃-contr f g h .paths =
+    is-contr→is-prop
+      (subst (is-contr ∘ fiber emb) path
+        (composable-contr (f ⨾ g) h)) _
     where
-      path
-        : (λ w a v b →
-            emb (f ⨾ g) w a v (noy h v b))
-        ≡ E₃ f g h
+      path : (λ w a v b →
+                emb (f ⨾ g) w a v (noy h v b))
+            ≡ E₃ f g h
       path = funext λ w → funext λ a →
         funext λ v → funext λ b →
           emb-composite-pt f g w a v (noy h v b)
+
+  E₃-ind
+    : ∀ {u} {x y z w} (f : hom x y) (g : hom y z)
+      (h : hom z w)
+    → (P : (s : hom x w)
+         → emb s ≡ E₃ f g h
+         → Type u)
+    → P (E₃-contr f g h .center .fst)
+        (E₃-contr f g h .center .snd)
+    → ∀ s q → P s q
+  E₃-ind f g h P base s q =
+    contr-ind (E₃-contr f g h)
+      (λ where (s , q) → P s q)
+      base (s , q)
 
   assoc
     : ∀ {x y z w} (f : hom x y) (g : hom y z)
@@ -443,15 +454,9 @@ the path, which is needed for triangle coherence.
     → (f ⨾ g) ⨾ h ≡ f ⨾ (g ⨾ h)
   assoc f g h =
     ap fst
-      (is-contr→is-prop (E₃-contr f g h) lhs rhs)
+      (is-contr→is-prop (E₃-contr f g h)
+        (E₃-contr f g h .center) rhs)
     where
-      lhs : fiber emb (E₃ f g h)
-      lhs = (f ⨾ g) ⨾ h
-          , emb-composite (f ⨾ g) h
-          ∙ funext λ w → funext λ a →
-            funext λ v → funext λ b →
-              emb-composite-pt f g w a v (noy h v b)
-
       rhs : fiber emb (E₃ f g h)
       rhs = f ⨾ (g ⨾ h)
           , emb-composite f (g ⨾ h)
@@ -459,6 +464,40 @@ the path, which is needed for triangle coherence.
             funext λ v → funext λ b →
               ap (emb f w a v)
                 (noy-composite g h b)
+```
+
+### Contractible face extraction
+
+When a contractible Σ-type has two total paths `σ` and
+`w ∙ core ∙ v` between the same endpoints, and the bread
+paths `w`, `v` don't move `.fst` (i.e., `ap fst w` and
+`ap fst v` are definitionally `refl`), we can conclude
+`ap fst σ ≡ ap fst core`.
+
+```agda
+  contr-face
+    : ∀ {u v} {X : Type u} {P : X → Type v}
+    → (c : is-contr (Σ P))
+    → {a b : X} {α α' : P a} {β β' : P b}
+    → (σ : (a , α) ≡ (b , β))
+    → (w : α ≡ α')
+      (core : (a , α') ≡ (b , β'))
+      (v : β' ≡ β)
+    → ap fst σ ≡ ap fst core
+  contr-face c {a} {b} σ w core v =
+    total-contr-unique c
+      (ap fst σ) (ap fst (w' ∙ core ∙ v'))
+      (ap snd σ) (ap snd (w' ∙ core ∙ v'))
+    ∙ ap-comp fst w' (core ∙ v')
+    ∙ ap (refl ∙_)
+        (ap-comp fst core v'
+        ∙ Path.unitr (ap fst core))
+    ∙ Path.unitl (ap fst core)
+    where
+      w' : (a , _) ≡ (a , _)
+      w' i = a , w i
+      v' : (b , _) ≡ (b , _)
+      v' i = b , v i
 ```
 
 ### Pentagon
@@ -476,19 +515,42 @@ the path, which is needed for triangle coherence.
     : ∀ {x y z w v} (f : hom x y) (g : hom y z)
       (h : hom z w) (k : hom w v)
     → is-contr (fiber emb (E₄ f g h k))
-  E₄-contr f g h k =
-    subst (is-contr ∘ fiber emb) path
-      (composable-contr ((f ⨾ g) ⨾ h) k)
+  E₄-contr f g h k .center .fst = ((f ⨾ g) ⨾ h) ⨾ k
+  E₄-contr f g h k .center .snd =
+    emb-composite ((f ⨾ g) ⨾ h) k
+    ∙ funext λ w → funext λ a →
+      funext λ v → funext λ b →
+        emb-composite-pt (f ⨾ g) h w a v
+          (noy k v b)
+      ∙ emb-composite-pt f g w a v
+          (noy h v (noy k v b))
+  E₄-contr f g h k .paths =
+    is-contr→is-prop
+      (subst (is-contr ∘ fiber emb) path
+        (composable-contr ((f ⨾ g) ⨾ h) k)) _
     where
-      path
-        : (λ w a v b →
-            emb ((f ⨾ g) ⨾ h) w a v (noy k v b))
-        ≡ E₄ f g h k
+      path : (λ w a v b →
+                emb ((f ⨾ g) ⨾ h) w a v (noy k v b))
+            ≡ E₄ f g h k
       path = funext λ w → funext λ a →
         funext λ v → funext λ b →
           emb-composite-pt (f ⨾ g) h w a v (noy k v b)
         ∙ emb-composite-pt f g w a v
             (noy h v (noy k v b))
+
+  E₄-ind
+    : ∀ {u} {x y z w v} (f : hom x y) (g : hom y z)
+      (h : hom z w) (k : hom w v)
+    → (P : (s : hom x v)
+         → emb s ≡ E₄ f g h k
+         → Type u)
+    → P (E₄-contr f g h k .center .fst)
+        (E₄-contr f g h k .center .snd)
+    → ∀ s q → P s q
+  E₄-ind f g h k P base s q =
+    contr-ind (E₄-contr f g h k)
+      (λ where (s , q) → P s q)
+      base (s , q)
 
   module pentagon-fibers
     {x y z w v}
@@ -499,14 +561,7 @@ the path, which is needed for triangle coherence.
       E₄c = E₄-contr f g h k
 
       pt₁ : fiber emb (E₄ f g h k)
-      pt₁ = ((f ⨾ g) ⨾ h) ⨾ k
-          , emb-composite ((f ⨾ g) ⨾ h) k
-          ∙ funext λ w → funext λ a →
-            funext λ v → funext λ b →
-              emb-composite-pt (f ⨾ g) h w a v
-                (noy k v b)
-            ∙ emb-composite-pt f g w a v
-                (noy h v (noy k v b))
+      pt₁ = E₄c .center
 
       pt₂ : fiber emb (E₄ f g h k)
       pt₂ = (f ⨾ (g ⨾ h)) ⨾ k
@@ -586,12 +641,7 @@ the path, which is needed for triangle coherence.
       assoc-σ
         : ∀ {x y z w}
           (f : hom x y) (g : hom y z) (h : hom z w)
-        → (   (f ⨾ g) ⨾ h
-            , emb-composite (f ⨾ g) h
-            ∙ funext λ w' → funext λ a →
-              funext λ v' → funext λ b →
-                emb-composite-pt f g w' a v'
-                  (noy h v' b))
+        → E₃-contr f g h .center
         ≡ (   f ⨾ (g ⨾ h)
             , emb-composite f (g ⨾ h)
             ∙ funext λ w' → funext λ a →
@@ -796,51 +846,23 @@ the path, which is needed for triangle coherence.
 
     face₃₅ : α₃₅ ≡ ap (f ⨾_) (assoc g h k)
     face₃₅ =
-      total-contr-unique E₄c
-        α₃₅ (ap fst γ₃₅-full)
-        (ap snd σ₃₅)
-        (ap snd γ₃₅-full)
-      ∙ ap-comp fst v₃ ((λ i → γ₃₅-pt i) ∙ v₅)
-      ∙ ap (refl ∙_)
-          (ap-comp fst (λ i → γ₃₅-pt i) v₅
-          ∙ Path.unitr (ap (f ⨾_) (assoc g h k)))
-      ∙ Path.unitl (ap (f ⨾_) (assoc g h k))
+      contr-face E₄c σ₃₅
+        (ap snd v₃) (λ i → γ₃₅-pt i) (ap snd v₅)
 
     face₂₃ : α₂₃ ≡ assoc f (g ⨾ h) k
     face₂₃ =
-      total-contr-unique E₄c
-        α₂₃ (ap fst γ₂₃-full)
-        (ap snd σ₂₃)
-        (ap snd γ₂₃-full)
-      ∙ ap-comp fst w₂ ((λ i → γ₂₃-pt i) ∙ w₃)
-      ∙ ap (refl ∙_)
-          (ap-comp fst (λ i → γ₂₃-pt i) w₃
-          ∙ Path.unitr (assoc f (g ⨾ h) k))
-      ∙ Path.unitl (assoc f (g ⨾ h) k)
+      contr-face E₄c σ₂₃
+        (ap snd w₂) (λ i → γ₂₃-pt i) (ap snd w₃)
 
     face₄₅ : α₄₅ ≡ assoc f g (h ⨾ k)
     face₄₅ =
-      total-contr-unique E₄c
-        α₄₅ (ap fst γ₄₅-full)
-        (ap snd σ₄₅)
-        (ap snd γ₄₅-full)
-      ∙ ap-comp fst w₄ ((λ i → γ₄₅-pt i) ∙ w₅)
-      ∙ ap (refl ∙_)
-          (ap-comp fst (λ i → γ₄₅-pt i) w₅
-          ∙ Path.unitr (assoc f g (h ⨾ k)))
-      ∙ Path.unitl (assoc f g (h ⨾ k))
+      contr-face E₄c σ₄₅
+        (ap snd w₄) (λ i → γ₄₅-pt i) (ap snd w₅)
 
     face₁₄ : α₁₄ ≡ assoc (f ⨾ g) h k
     face₁₄ =
-      total-contr-unique E₄c
-        α₁₄ (ap fst γ₁₄-full)
-        (ap snd σ₁₄)
-        (ap snd γ₁₄-full)
-      ∙ ap-comp fst w₁ ((λ i → γ₁₄-pt i) ∙ w₁₄)
-      ∙ ap (refl ∙_)
-          (ap-comp fst (λ i → γ₁₄-pt i) w₁₄
-          ∙ Path.unitr (assoc (f ⨾ g) h k))
-      ∙ Path.unitl (assoc (f ⨾ g) h k)
+      contr-face E₄c σ₁₄
+        (ap snd w₁) (λ i → γ₁₄-pt i) (ap snd w₁₄)
 
   module pentagon
     {x y z w v}
@@ -962,12 +984,7 @@ not `absorb-coh`. The `α₂₃` edge remains abstract.
       γ₁₃-full = (λ i → γ₁₃-pt i) ∙ v₃
 
       assoc-σ-fig
-        : (   (f ⨾ idn) ⨾ g
-            , emb-composite (f ⨾ idn) g
-            ∙ funext λ w' → funext λ a →
-              funext λ v' → funext λ b →
-                emb-composite-pt f idn w' a v'
-                  (noy g v' b))
+        : E₃-contr f idn g .center
         ≡ (   f ⨾ (idn ⨾ g)
             , emb-composite f (idn ⨾ g)
             ∙ funext λ w' → funext λ a →
@@ -1029,15 +1046,8 @@ not `absorb-coh`. The `α₂₃` edge remains abstract.
 
     face₁₂ : α₁₂ ≡ assoc f idn g
     face₁₂ =
-      total-contr-unique cc
-        α₁₂ (ap fst γ₁₂-full)
-        (ap snd σ₁₂)
-        (ap snd γ₁₂-full)
-      ∙ ap-comp fst w₁ ((λ i → γ₁₂-pt i) ∙ w₂)
-      ∙ ap (refl ∙_)
-          (ap-comp fst (λ i → γ₁₂-pt i) w₂
-          ∙ Path.unitr (assoc f idn g))
-      ∙ Path.unitl (assoc f idn g)
+      contr-face cc σ₁₂
+        (ap snd w₁) (λ i → γ₁₂-pt i) (ap snd w₂)
 
   module triangle
     {x y z} (f : hom x y) (g : hom y z)
