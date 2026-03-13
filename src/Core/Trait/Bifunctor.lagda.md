@@ -42,19 +42,19 @@ Map over only the first or second component.
 
 ```agda
 
-mapFst
+map-fst
   : ∀ {ℓ₁ ℓ₂ ℓ₃} {F : Type ℓ₁ → Type ℓ₂ → Type ℓ₃}
   → ⦃ Bifunctor F ⦄
   → {A C : Type ℓ₁} {B : Type ℓ₂}
   → (A → C) → F A B → F C B
-mapFst f = bimap f id
+map-fst f = bimap f id
 
-mapSnd
+map-snd
   : ∀ {ℓ₁ ℓ₂ ℓ₃} {F : Type ℓ₁ → Type ℓ₂ → Type ℓ₃}
   → ⦃ Bifunctor F ⦄
   → {A : Type ℓ₁} {B D : Type ℓ₂}
   → (B → D) → F A B → F A D
-mapSnd g = bimap id g
+map-snd g = bimap id g
 
 ```
 

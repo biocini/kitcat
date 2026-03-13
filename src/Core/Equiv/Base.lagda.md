@@ -180,7 +180,7 @@ module Equiv {u v} {A : Type u} {B : Type v} (e : A ≃ B) where
   unit : (x : A) → inv (fwd x) ≡ x
   unit x i = fibers (x , λ _ → fwd x) i .fst
 
-  counit :  (y : B) → fwd (inv y) ≡ y
+  counit : (y : B) → fwd (inv y) ≡ y
   counit y = c y .snd
 
 eqvtoinv = Equiv.inv
@@ -195,7 +195,7 @@ aut .snd = id-equiv
 
 is-contr-equiv
   : ∀ {u v} {A : Type u} {B : Type v}
-  -> A ≃ B -> is-contr B -> is-contr A
+  → A ≃ B → is-contr B → is-contr A
 is-contr-equiv e bcontr .center = e.inv (bcontr .center)
   where module e = Equiv e
 is-contr-equiv e bcontr .paths x = ap e.inv (bcontr .paths (e.fwd x)) ∙ e.unit x

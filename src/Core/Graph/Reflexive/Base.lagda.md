@@ -19,9 +19,11 @@ open import Core.Trait.Cast
 open import Core.Graph.Base
 
 record Rx-graph u v : Type₊ (u ⊔ v) where
+  no-eta-equality
   field
     graph : Graph u v
     rx    : graph.reflexive graph
+{-# INLINE Rx-graph.constructor #-}
 
 instance
   Graphical-Rx-graph : ∀ {u v} → Graphical (Rx-graph u v)

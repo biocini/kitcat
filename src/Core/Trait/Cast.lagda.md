@@ -10,9 +10,9 @@ There is an expected interface to implement when making an instance
 for this record.  If I have a source `S` and a target `T` which needs
 some data for T, say its some A, then your cast would be to `Cast S (A
 → T)`. Calling cast will therefore give you the function requesting
-the auxillary data sufficient to reach the target.
+the auxiliary data sufficient to reach the target.
 
-```
+```agda
 {-# OPTIONS --safe --cubical-compatible #-}
 
 module Core.Trait.Cast where
@@ -25,4 +25,5 @@ record Cast {u v} (S : Type u) (T : Type v) : Typeω where
     cast : S → T
 
 open Cast ⦃ ... ⦄ public
+{-# INLINE Cast.constructor #-}
 ```

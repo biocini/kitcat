@@ -29,17 +29,13 @@ private variable
 ## Core Definitions
 
 ```agda
-
--- A map is surjective if all fibers are merely inhabited
 is-surjective : {A : Type u} {B : Type v} → (A → B) → Type (u ⊔ v)
 is-surjective f = ∀ b → ∥ fiber f b ∥
 
--- Bundled surjection
 _↠_ : ∀ {u v} → Type u → Type v → Type (u ⊔ v)
 A ↠ B = Σ f ∶ (A → B) , is-surjective f
 infix 6 _↠_
 
--- Split surjection (has a section, i.e., actual choice of preimages)
 is-split-surjective : {A : Type u} {B : Type v} → (A → B) → Type (u ⊔ v)
 is-split-surjective f = ∀ b → fiber f b
 ```
@@ -49,22 +45,16 @@ is-split-surjective f = ∀ b → fiber f b
 
 ```agda
 
--- Equivalences are surjective (fibers are contractible, hence inhabited)
 equiv→surjective
   : {A : Type u} {B : Type v} {f : A → B}
   → is-equiv f → is-surjective f
 equiv→surjective e b = ∣ e .eqv-fibers b .center ∣
 
--- Split surjective implies surjective
 split-surjective→surjective
   : {A : Type u} {B : Type v} {f : A → B}
   → is-split-surjective f → is-surjective f
 split-surjective→surjective split b = ∣ split b ∣
 
--- Surjective + embedding = equivalence
--- Key insight: if f is an embedding, fibers are props.
--- If f is surjective, fibers are merely inhabited.
--- Merely inhabited prop = contractible.
 surjective+embedding→equiv
   : {A : Type u} {B : Type v} {f : A → B}
   → is-surjective f → is-embedding f → is-equiv f

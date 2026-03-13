@@ -59,6 +59,10 @@ lt-le-cat : ∀ {k m n} → k < m → m ≤ n → k < n
 lt-le-cat p suc = p
 lt-le-cat p (step q) = lt.cat p q
 
+le-lt-cat : ∀ {k m n} → k ≤ m → m < n → k < n
+le-lt-cat suc q = q
+le-lt-cat (step p) q = lt.cat p q
+
 lt-le-absurd : ∀ {a b} → a < b → b ≤ a → ⊥
 lt-le-absurd p q = lt.irrefl (lt-le-cat p q)
 
@@ -181,9 +185,6 @@ module max where
   ≤r Z     m     = suc
   ≤r (S n) Z     = lt.z<s
   ≤r (S n) (S m) = s<s (≤r n m)
-
-module sub where
-  -- facts about _-_ go here
 
 ```
 

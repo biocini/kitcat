@@ -60,7 +60,6 @@ a sum type: either `i ≤ j` or `j < i`.
 
 ```agda
 
--- Compare two Fin elements (same index)
 fin-compare : (i j : Fin n) → i ≤ᶠ j ⊎ j <ᶠ i
 fin-compare i j with cmp (lower i) (lower j)
 ... | inl p = inl (forget p)
@@ -75,16 +74,12 @@ manipulating the bound proof.
 
 ```agda
 
--- Keep the same lower value, weaken the bound: k < n implies k < S n
--- Named `weaken` following SSet conventions (pairs with `fsuc`)
 weaken : Fin n → Fin (S n)
 weaken (fin k ⦃ bounded = forget p ⦄) = fin k ⦃ forget (step p) ⦄
 
--- Predecessor on Fin: requires evidence that the value is positive
 fpred : (j : Fin (S n)) → Z < lower j → Fin n
 fpred {n} (fin (S k) ⦃ bounded = forget p ⦄) _ = fin k ⦃ forget (lt.peel n p) ⦄
 
--- Restrict Fin (S n) to Fin n: requires evidence that value is small enough
 restrict : (i : Fin (S n)) → lower i < n → Fin n
 restrict (fin k) p = fin k ⦃ forget p ⦄
 
@@ -114,6 +109,7 @@ record _⇒_ (m n : Nat) : Type where
     @0 has-is-monotone : is-monotone map
 
 open _⇒_ public
+{-# INLINE _⇒_.constructor #-}
 
 infix 5 _⇒_
 

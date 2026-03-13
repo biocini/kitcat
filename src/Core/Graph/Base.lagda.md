@@ -15,6 +15,7 @@ open import Core.Base
 open import Core.Trait.Graphical public
 
 record Graph u v : Type₊ (u ⊔ v) where
+  no-eta-equality
   constructor Gph
   field
     ₀ : Type u
@@ -34,7 +35,10 @@ instance
   {-# INLINE Graphical-Graph #-}
 
 module graph {u v} (G : Graph u v) where
-  private module G = Graph G; _~>_ = G.₁; infix 6 _~>_
+  private
+    module G = Graph G
+    _~>_ = G.₁
+    infix 6 _~>_
 
   module displayed where
     vtx : ∀ w → Type (u ⊔ w ₊)
@@ -55,11 +59,9 @@ module graph {u v} (G : Graph u v) where
   cofan : G.₀ → Type (u ⊔ v)
   cofan y = Σ x ∶ G.₀ , x ~> y
 
-  -- Univalence: fans are propositional
   is-univalent : Type (u ⊔ v)
   is-univalent = ∀ x → is-prop (fan x)
 
-  -- Equivalent via cofans
   is-univalent-op : Type (u ⊔ v)
   is-univalent-op = ∀ y → is-prop (cofan y)
 

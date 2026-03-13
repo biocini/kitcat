@@ -45,11 +45,9 @@ witnesses, leaving only the contractibility condition.
 is-connected : Type u → Type u
 is-connected A = is-contr ∥ A ∥
 
--- Being connected is a proposition
 is-connected-is-prop : (A : Type u) → is-prop (is-connected A)
 is-connected-is-prop A = is-contr-is-prop ∥ A ∥
 
--- Connected types are merely inhabited
 connected→inhabited : is-connected A → ∥ A ∥
 connected→inhabited c = c .center
 ```
@@ -66,7 +64,6 @@ all preimages (with their paths) is merely contractible.
 is-connected-map : {A : Type u} {B : Type v} → (A → B) → Type (u ⊔ v)
 is-connected-map f = ∀ b → is-connected (fiber f b)
 
--- Being a connected map is a proposition
 is-connected-map-is-prop
   : {A : Type u} {B : Type v} (f : A → B)
   → is-prop (is-connected-map f)
@@ -82,7 +79,6 @@ requires that the truncation of each fiber is contractible.
 
 ```agda
 
--- Connected maps are surjective
 connected-map→surjective
   : {A : Type u} {B : Type v} {f : A → B}
   → is-connected-map f → is-surjective f
@@ -96,13 +92,10 @@ Equivalences preserve and reflect connectedness.
 
 ```agda
 
--- If A ≃ B and A is connected, then B is connected
--- The truncation of an equivalence is an equivalence, so ∥ A ∥ ≃ ∥ B ∥
 equiv→is-connected : A ≃ B → is-connected A → is-connected B
 equiv→is-connected e conn .center = map (Equiv.fwd e) (conn .center)
 equiv→is-connected e conn .paths y = squash _ y
 
--- The converse: if A ≃ B and B is connected, then A is connected
 equiv→is-connected' : A ≃ B → is-connected B → is-connected A
 equiv→is-connected' e = equiv→is-connected (esym e)
 ```
@@ -117,27 +110,21 @@ codomain are connected.
 
 ```agda
 
--- A type is connected iff any map to a proposition factors through the point
--- This is the universal property of connected types for propositions
-
--- If A is connected and B is a prop, then A → B is equivalent to B
--- (A connected type "evaluates" all propositions to their value)
 connected-to-prop
   : is-connected A → is-prop B → (A → B) → B
 connected-to-prop conn prop f = rec prop f (conn .center)
+```
 
--- NOTE: The proposition "connected A → connected B → (f : A → B) → is-surjective f"
--- is FALSE in general. Counterexample: let A = B = Bool (which is connected since
--- ∥ Bool ∥ is contractible), and let f be the constant function at true.
--- Then fiber f false is empty, so f is not surjective.
---
--- What IS true is that connected maps are surjective (proven above), and that
--- equivalences between connected types are surjective (trivially, as all
--- equivalences are surjective).
+The proposition "connected A → connected B → (f : A → B) → is-surjective f"
+is false in general. Counterexample: let A = B = Bool (which is connected
+since `∥ Bool ∥` is contractible), and let f be the constant function at
+true. Then `fiber f false` is empty, so f is not surjective. What is true
+is that connected maps are surjective (proven above), and that equivalences
+between connected types are surjective (trivially, as all equivalences are
+surjective). The weaker version below restricts the codomain to be a
+proposition.
 
--- For the specified lemma, we provide a weaker version that is actually provable:
--- If B is a proposition, then any map from a connected type to B is surjective
--- (in fact, constant).
+```agda
 connected-to-prop-surjective
   : is-connected A → is-prop B → (f : A → B) → is-surjective f
 connected-to-prop-surjective connA bprop f b =
@@ -163,11 +150,6 @@ Connected maps are closed under composition.
 
 ```agda
 
--- Connected maps are closed under composition.
--- The proof uses that the fiber of g ∘ f over c decomposes as:
---   fiber (g ∘ f) c ≃ Σ (b : B), fiber f b × (g b ≡ c)
--- When both f and g have connected fibers, this total space has connected
--- truncation.
 connected-map-comp
   : {A : Type u} {B C : Type v}
   → {f : A → B} {g : B → C}

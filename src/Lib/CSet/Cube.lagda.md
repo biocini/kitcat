@@ -263,7 +263,7 @@ private
 ## Skip helpers
 
 Lemmas relating the `lower` value of `skip` results to the
-comparison outcome. These parallel `σ-result-lo`/`σ-result-hi`
+comparison outcome. These parallel `σ-lower-lo`/`σ-lower-hi`
 from `Core.Data.Fin.Monotone`.
 
 ```agda

@@ -11,11 +11,14 @@ open import Core.Base
 open import Core.Trait.Effect
 
 record Quiver : Typeω where
+  no-eta-equality
   constructor gph
   field
     {adj} : Level → Level → Level
     ob : ∀ u → Type (u ₊)
     ₁ : ∀ {u v} → ob u → ob v → Type (adj u v)
+
+{-# INLINE gph #-}
 
 Fun : Quiver
 Fun .Quiver.adj = λ u v → u ⊔ v
@@ -28,6 +31,7 @@ Pro .Quiver.ob = λ u → Type u
 Pro .Quiver.₁ = λ A B → A × B
 
 record Semicategory (X : Quiver) : Typeω where
+  no-eta-equality
   private module X = Quiver X
   field
     seq
@@ -38,7 +42,10 @@ record Semicategory (X : Quiver) : Typeω where
       → (f : X.₁ a b) (g : X.₁ b c) (h : X.₁ c d)
       → seq (seq f g) h ≡ seq f (seq g h)
 
+{-# INLINE Semicategory.constructor #-}
+
 record Functor (X Y : Quiver) : Typeω where
+  no-eta-equality
   private module X = Quiver X
   private module Y = Quiver Y
   field
@@ -47,3 +54,5 @@ record Functor (X Y : Quiver) : Typeω where
     map : ∀ {u} → X.ob u → Y.ob u
     hmap : ∀ {u v} {a : X.ob u} {b : X.ob v}
          → X.₁ a b → Y.₁ (map a) (map b)
+
+{-# INLINE Functor.constructor #-}

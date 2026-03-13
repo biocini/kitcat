@@ -66,21 +66,15 @@ dimension to a lower one by collapsing adjacent vertices.
 
 ```agda
 
--- Bound transformation for low case: j ≤ i and i < n implies j < n
--- j ≤ i means j < S i, and i < n gives S i ≤ n (by s<s), so j < n
 δ-lo-bound : ∀ {j i n} → j ≤ i → i < n → j < n
 δ-lo-bound ji in' = lt-le-cat ji (lt.s<s in')
 
--- Compare j : Fin (S n) with i : Fin n for face map
--- Returns: j ≤ i (j < S i) or i < j (S i < S j, i.e., S i ≤ j)
 δ-compare : (j : Fin (S n)) (i : Fin n)
            → (lower j < S (lower i)) ⊎ (S (lower i) < S (lower j))
 δ-compare j i with cmp (lower j) (lower i)
 ... | inl p = inl p
 ... | inr q = inr (lt.s<s q)
 
--- Explicit result function for δ-map that takes comparison evidence.
--- Proofs can match on comparison results and have the function compute.
 δ-result
   : (i : Fin n) (j : Fin (S n))
   → (lower j < S (lower i)) ⊎ (S (lower i) < S (lower j))
@@ -125,7 +119,6 @@ dimension to a lower one by collapsing adjacent vertices.
 δ-mono : (i : Fin n) → is-monotone (δ-map i)
 δ-mono i j k (forget jk) = forget (δ-mono-raw i j k jk)
 
--- Face map: merge/duplicate at position i (surjection)
 δ : Fin n → S n ⇒ n
 δ i .map = δ-map i
 δ i .has-is-monotone = δ-mono i
@@ -145,8 +138,8 @@ dimension to a higher one by inserting a degenerate vertex.
 
 σ-map : Fin (S n) → Fin n → Fin (S n)
 σ-map i j with cmp (lower i) (lower j)
-... | inl _ = fsuc j    -- i ≤ j: use successor (shift up)
-... | inr _ = weaken j  -- j < i: keep j, weaken bound
+... | inl _ = fsuc j
+... | inr _ = weaken j
 
 σ-mono-raw : (i : Fin (S n)) (j k : Fin n) → lower j ≤ lower k
            → lower (σ-map i j) ≤ lower (σ-map i k)
@@ -159,13 +152,10 @@ dimension to a higher one by inserting a degenerate vertex.
 σ-mono : (i : Fin (S n)) → is-monotone (σ-map i)
 σ-mono i j k (forget jk) = forget (σ-mono-raw i j k jk)
 
--- Degeneracy map: skip position i (injection)
 σ : Fin (S n) → n ⇒ S n
 σ i .map = σ-map i
 σ i .has-is-monotone = σ-mono i
 
--- σ-map behavior on low arguments (needed by downstream modules
--- that cannot reduce σ-map's internal with-abstraction)
 σ-lower-lo : (i : Fin (S n)) (j : Fin n) → lower j < lower i
            → lower (σ i .map j) ≡ lower j
 σ-lower-lo i j lt with cmp (lower i) (lower j)
@@ -189,26 +179,6 @@ dimension to a higher one by inserting a degenerate vertex.
 σ-map-hi i j le with cmp (lower i) (lower j)
 ... | inl _ = refl
 ... | inr lt = ex-falso (lt-le-absurd lt le)
-
-σ-result-lo : (i : Fin (S n)) (j : Fin n) → lower j < lower i
-            → lower (σ-map i j) ≡ lower j
-σ-result-lo i j lt with cmp (lower i) (lower j)
-... | inl le = ex-falso (lt-le-absurd lt le)
-... | inr _ = refl
-
-σ-result-hi : (i : Fin (S n)) (j : Fin n) → lower i ≤ lower j
-            → lower (σ-map i j) ≡ S (lower j)
-σ-result-hi i j le with cmp (lower i) (lower j)
-... | inl _ = refl
-... | inr lt = ex-falso (lt-le-absurd lt le)
-
-σ-map-lower-lo : (i : Fin (S n)) (j : Fin n)
-               → lower j < lower i → lower (σ-map i j) ≡ lower j
-σ-map-lower-lo = σ-result-lo
-
-σ-map-lower-hi : (i : Fin (S n)) (j : Fin n)
-               → lower i ≤ lower j → lower (σ-map i j) ≡ S (lower j)
-σ-map-lower-hi = σ-result-hi
 
 ```
 
@@ -498,12 +468,7 @@ With diagrammatic composition (left-to-right):
         j<k : j' < k'
         j<k = lt.peel k' Sj<Sk
         i<k : i' < k'
-        i<k = ≤<→< i≤j j<k
-          where
-            ≤<→< : ∀ {a b c}
-              → a ≤ b → b < c → a < c
-            ≤<→< suc q = q
-            ≤<→< (step p) q = lt.cat p q
+        i<k = le-lt-cat i≤j j<k
 
 ```
 
@@ -529,14 +494,14 @@ The standard identity: σᵢ ; σⱼ₊₁ = σⱼ ; σᵢ when i ≤ j
       k@(fin k' ⦃ bounded = forget kb ⦄)
       with cmp i' k' | cmp j' k'
     ... | inl i≤k | inl j≤k = fin-path
-      (σ-result-hi (fsuc j) (fsuc k)
+      (σ-lower-hi (fsuc j) (fsuc k)
         (lt.s<s j≤k)
-       ∙ sym (σ-result-hi (weaken i) (fsuc k)
+       ∙ sym (σ-lower-hi (weaken i) (fsuc k)
            (step i≤k)))
     ... | inl i≤k | inr k<j = fin-path
-      (σ-result-lo (fsuc j) (fsuc k)
+      (σ-lower-lo (fsuc j) (fsuc k)
         (lt.s<s k<j)
-       ∙ sym (σ-result-hi (weaken i) (weaken k)
+       ∙ sym (σ-lower-hi (weaken i) (weaken k)
            i≤k))
     ... | inr k<i | inl j≤k =
       ex-falso (lt-le-absurd j<i i≤j)
@@ -544,9 +509,9 @@ The standard identity: σᵢ ; σⱼ₊₁ = σⱼ ; σᵢ when i ≤ j
         j<i : j' < i'
         j<i = lt-le-cat j≤k (lt.s<s k<i)
     ... | inr k<i | inr k<j = fin-path
-      (σ-result-lo (fsuc j) (weaken k)
+      (σ-lower-lo (fsuc j) (weaken k)
         (step k<j)
-       ∙ sym (σ-result-lo (weaken i) (weaken k)
+       ∙ sym (σ-lower-lo (weaken i) (weaken k)
            k<i))
 
 ```
@@ -584,7 +549,7 @@ In our setting with diagrammatic composition:
     ... | inl Z<Si = fin-path
       (δ-map-lo (weaken i)
         (weaken (fin Z)) lt.z<s
-       ∙ sym (σ-result-lo j
+       ∙ sym (σ-lower-lo j
            (δ-result i (fin Z) (inl lt.z<s))
            z<j))
     ... | inr Si<Z = ex-falso (lt.¬n<z Si<Z)
@@ -609,7 +574,7 @@ In our setting with diagrammatic composition:
     ... | inl Sj≤Sk | inr i<Sk = fin-path
       (δ-map-hi (weaken i) (fsuc k)
         (lt.s<s (step i<Sk))
-       ∙ sym (σ-result-hi j
+       ∙ sym (σ-lower-hi j
            (δ-result i k (inr (lt.s<s i<Sk)))
            j≤k''))
       where
@@ -617,7 +582,7 @@ In our setting with diagrammatic composition:
         j≤k'' = lt.peel (S k'') Sj≤Sk
     ... | inr Sk<Sj | inl Sk≤i = fin-path
       (δ-map-lo (weaken i) (weaken k) Sk≤i
-       ∙ sym (σ-result-lo j
+       ∙ sym (σ-lower-lo j
            (δ-result i k (inl Sk≤i)) Sk<j))
       where
         Sk<j : S k'' < j'
@@ -625,7 +590,7 @@ In our setting with diagrammatic composition:
     ... | inr Sk<Sj | inr i<Sk = fin-path
       (δ-map-hi (weaken i) (weaken k)
         (lt.s<s i<Sk)
-       ∙ sym (σ-result-lo j
+       ∙ sym (σ-lower-lo j
            (δ-result i k (inr (lt.s<s i<Sk)))
            k<j))
       where
@@ -649,7 +614,7 @@ In our setting with diagrammatic composition:
     ... | inl j≤k | inl k≤i = fin-path
       (δ-map-lo (fsuc i) (fsuc k)
         (lt.s<s k≤i)
-       ∙ sym (σ-result-hi j
+       ∙ sym (σ-lower-hi j
            (δ-result i k (inl k≤i)) j≤k))
     pointwise
       (fin Z ⦃ bounded = forget _ ⦄)
@@ -660,7 +625,7 @@ In our setting with diagrammatic composition:
       | inl j≤Sk | inr i<Sk = fin-path
       (δ-map-hi (fsuc i) (fsuc k)
         (lt.s<s (lt.s<s i<Sk))
-       ∙ sym (σ-result-hi j
+       ∙ sym (σ-lower-hi j
            (δ-result i k (inr (lt.s<s i<Sk)))
            j≤k''))
       where
@@ -669,7 +634,7 @@ In our setting with diagrammatic composition:
     ... | inr k<j | inl k≤i = fin-path
       (δ-map-lo (fsuc i) (weaken k)
         (step k≤i)
-       ∙ sym (σ-result-lo j
+       ∙ sym (σ-lower-lo j
            (δ-result i k (inl k≤i)) k<j))
     ... | inr k<j | inr i<k =
       ex-falso (lt.irrefl i<i')

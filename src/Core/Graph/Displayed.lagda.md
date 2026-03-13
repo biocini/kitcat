@@ -17,9 +17,11 @@ open import Core.Base
 open Graph R renaming (₀ to V; ₁ to infix 4 _~>_)
 
 record Disp-graph w z : Type (u ⊔ v ⊔ w ₊ ⊔ z ₊) where
+  no-eta-equality
   field
     Ob : V → Type w
     ₂  : ∀ {x y} → x ~> y → Ob x → Ob y → Type z
+{-# INLINE Disp-graph.constructor #-}
 
 module disp-graph {w z} (D : Disp-graph w z) where
   open Disp-graph D renaming (₂ to E)

@@ -196,10 +196,13 @@ module Magma-example where
 
   -- The displayed reflexive graph of magma structures
   Magma-disp : ∀ u → Standard-structure u u
-  Magma-disp u = record
-    { disp = record { Ob = Magma-str ; ₂ = _preserves-magma_ }
-    ; rx = λ A m x y → refl
-    }
+  Magma-disp u .RxDisp.Disp-rx-graph.disp = mg
+    where
+    open import Core.Graph.Displayed (Rx-graph.graph (Univ u))
+    mg : Disp-graph u u
+    mg .Disp-graph.Ob = Magma-str
+    mg .Disp-graph.₂ = _preserves-magma_
+  Magma-disp u .RxDisp.Disp-rx-graph.rx A m x y = refl
 
   -- Magma structure is univalent when the carrier is a set
   -- This is the standard assumption for algebraic structures in HoTT

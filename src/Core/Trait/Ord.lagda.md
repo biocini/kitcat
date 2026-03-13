@@ -60,5 +60,3 @@ comparison-elim (greater p) lt eq gt = gt p
 
 
 ```
-
-```

@@ -77,19 +77,16 @@ infixr 6 _∧ᵈ_
 infixr 5 _∨ᵈ_
 infix 8 ¬ᵈ_
 
--- Conjunction of decisions
 _∧ᵈ_ : Dec A → Dec B → Dec (A × B)
 yes a ∧ᵈ yes b = yes (a , b)
 yes a ∧ᵈ no ¬b = no (λ { (_ , b) → ¬b b })
 no ¬a ∧ᵈ _     = no (λ { (a , _) → ¬a a })
 
--- Disjunction of decisions
 _∨ᵈ_ : Dec A → Dec B → Dec (A ⊎ B)
 yes a ∨ᵈ _     = yes (inl a)
 no _  ∨ᵈ yes b = yes (inr b)
 no ¬a ∨ᵈ no ¬b = no λ { (inl a) → ¬a a ; (inr b) → ¬b b }
 
--- Negation of decision
 ¬ᵈ_ : Dec A → Dec (¬ A)
 ¬ᵈ yes a = no (λ ¬a → ¬a a)
 ¬ᵈ no ¬a = yes ¬a

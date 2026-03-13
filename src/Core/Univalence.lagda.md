@@ -105,20 +105,15 @@ private
     ≃-singl-contr .center = A , aut
     ≃-singl-contr .paths (B , e) i = ua e i , p i , q i
       where
-      -- The type-equivalence pair at each boundary
       Te : (i : I) → Partial (∂ i) (Σ T ∶ Type u , T ≃ B)
       Te i (i = i0) = A , e
       Te i (i = i1) = B , aut
 
-      -- The forward function over ua: id at i=i0, e.fst at i=i1
-      -- At boundary i=i0: ua e i0 = A, so we need A → A (identity)
-      -- At boundary i=i1: ua e i1 = B, so we need A → B (e.fst)
       p : PathP (λ i → A → ua e i) id (e .fst)
       p i a = glue {φ = ∂ i} {Te = Te i}
         (λ { (i = i0) → a ; (i = i1) → e .fst a })
         (inS (e .fst a))
 
-      -- The is-equiv component: use is-prop→PathP since is-equiv is a prop
       q : PathP (λ i → is-equiv (p i)) id-equiv (e .snd)
       q = is-prop→PathP (λ i → is-equiv-is-prop (p i)) id-equiv (e .snd)
 ```
@@ -126,8 +121,6 @@ private
 ## Univalence theorem
 
 ```agda
--- idtoeqv (ua e) ≡ e
--- This follows from contractibility of the equivalence singleton
 idtoeqv-ua : (e : A ≃ B) → idtoeqv (ua e) ≡ e
 idtoeqv-ua {A} {B} e = p
   where
@@ -145,11 +138,9 @@ idtoeqv-ua {A} {B} e = p
     (e .snd)
     i
 
--- The main theorem: idtoeqv is an equivalence
 univalence : is-equiv (idtoeqv {A = A} {B = B})
 univalence = qinv.to-equiv (qinv idtoeqv ua ua-η idtoeqv-ua)
 
--- Bundled form
 Univalence : (A ≡ B) ≃ (A ≃ B)
 Univalence = idtoeqv , univalence
 ```
@@ -157,7 +148,6 @@ Univalence = idtoeqv , univalence
 ## Derived operations
 
 ```agda
--- Equivalence induction
 equiv-ind
   : ∀ {w} (P : (B : Type u) → A ≃ B → Type w)
   → P A aut
@@ -174,26 +164,11 @@ The univalence axiom gives us a rich algebra between paths in the universe
 and equivalences. This section develops the key compatibility lemmas.
 
 ```agda
--- Transport along a composed path is composition of transports
--- This is a fundamental lemma relating path composition and transport
-transport-∙ : {A B C : Type u} (p : A ≡ B) (q : B ≡ C) (a : A)
-            → transport (p ∙ q) a ≡ transport q (transport p a)
-transport-∙ {A} {B} {C} p q a =
-  J {x = A}
-    (λ B' p' → (q' : B' ≡ C) → transport (p' ∙ q') a ≡ transport q' (transport p' a))
-    base
-    p q
-  where
-  -- Base case: p = refl, so we need transport (refl ∙ q) a ≡ transport q (transport refl a)
-  base : (q' : A ≡ C) → transport (refl ∙ q') a ≡ transport q' (transport refl a)
-  base q' = ap (λ r → transport r a) (Path.unitl q') ∙ sym (ap (λ x → transport q' x) (transport-refl a))
-
 -- ua respects equivalence composition
 -- Credit: Adapted from 1lab's proof
 ua-∙e : (e : A ≃ B) (f : B ≃ C) → ua (e ∙e f) ≡ ua e ∙ ua f
 ua-∙e {A} {B} {C} e f = sym (ap ua eqv-composite-path) ∙ ua-η (ua e ∙ ua f)
   where
-  -- Show that idtoeqv (ua e ∙ ua f) ≡ e ∙e f
   fwd-agree : (a : A) → transport (ua e ∙ ua f) a ≡ (e ∙e f) .fst a
   fwd-agree a = transport-∙ (ua e) (ua f) a
               ∙ ap (transport (ua f)) (ua-β e a)
@@ -228,8 +203,6 @@ ua-esym {A} {B} e =
     id-equiv
     i
 
--- Characterization of subst along ua
--- This shows that subst along ua e is the same as transporting along ap P (ua e)
 subst-ua : (P : Type u → Type v) (e : A ≃ B) (x : P A)
          → subst P (ua e) x ≡ transport (ap P (ua e)) x
 subst-ua P e x = refl

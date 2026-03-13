@@ -1,7 +1,7 @@
 Truncation level automation via instance resolution.
 
 The H-Level automation machinery in this module is largely derived from 1Lab
-(Amélia Liao et al.), with additional influence from Chen's semicategories-with-
+(Amelia Liao et al.), with additional influence from Chen's semicategories-with-
 identities formalization.
 
 ```agda
@@ -22,8 +22,12 @@ open import Core.HLevel.Base public
 private variable
   ℓ : Level
   A : Type ℓ
+```
 
--- The Trunc trait record
+
+## The Trunc trait record
+
+```agda
 
 record Trunc {ℓ} (T : Type ℓ) (n : Nat) : Type ℓ where
   no-eta-equality
@@ -33,8 +37,12 @@ record Trunc {ℓ} (T : Type ℓ) (n : Nat) : Type ℓ where
 open Trunc ⦃ ... ⦄ public
 {-# INLINE Trunc.constructor #-}
 {-# DISPLAY Trunc.has-trunc _ x = has-trunc x #-}
+```
 
--- Entry points
+
+## Entry points
+
+```agda
 
 trunc : (n : Nat) ⦃ _ : Trunc A n ⦄ → is-hlevel n A
 trunc n = has-trunc
@@ -45,8 +53,12 @@ trunc! = has-trunc .center
 prop! : ∀ {A : I → Type ℓ} ⦃ hl : ∀ {i} → Trunc (A i) (S Z) ⦄ {x : A i0} {y : A i1}
       → PathP A x y
 prop! ⦃ hl ⦄ {x} {y} = is-prop→PathP (λ i → hl .has-trunc) x y
+```
 
--- Instance helpers
+
+## Instance helpers
+
+```agda
 
 basic-trunc : (n : Nat) → is-hlevel n A → ∀ {k} → Trunc A (n + k)
 basic-trunc n hl {k} .has-trunc = is-hlevel-+ n k hl
@@ -59,8 +71,12 @@ set-trunc s {k} .has-trunc = is-hlevel-+ 2 k s
 
 contr-trunc : is-contr A → ∀ {k} → Trunc A k
 contr-trunc c {k} .has-trunc = is-contr→is-hlevel k c
+```
 
--- Instances
+
+## Instances
+
+```agda
 
 instance
   Trunc-Π : ∀ {ℓ ℓ'} {A : Type ℓ} {B : A → Type ℓ'} {n}

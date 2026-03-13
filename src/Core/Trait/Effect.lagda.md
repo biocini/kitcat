@@ -20,10 +20,13 @@ Functor, Applicative, Monad, and Alternative hierarchies.
 ```agda
 
 record Effect : Typeω where
+  no-eta-equality
   constructor impl
   field
     {adj} : Level → Level
     ₀     : ∀ {ℓ} → Type ℓ → Type (adj ℓ)
+
+{-# INLINE impl #-}
 
 Impl
   : {ℓ : Level → Level}

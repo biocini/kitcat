@@ -74,7 +74,6 @@ record Discrete {u} (A : Type u) : Type u where
   field
     _≟_ : (x y : A) → Dec (x ≡ y)
 
-  -- Derive Eq from Discrete
   discrete-eq : Eq A
   discrete-eq ._==_ x y with x ≟ y
   ... | yes _ = true
@@ -83,7 +82,6 @@ record Discrete {u} (A : Type u) : Type u where
 open Discrete ⦃ ... ⦄ public
 {-# INLINE Discrete.constructor #-}
 
--- Discrete implies is-set (via Hedberg)
 Discrete→is-set : Discrete A → is-set A
 Discrete→is-set d = hedberg (d .Discrete._≟_)
 

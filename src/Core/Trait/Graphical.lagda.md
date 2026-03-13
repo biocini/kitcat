@@ -22,6 +22,7 @@ we can extract its type of vertices `∣ x ∣` and its family of edge types
 ```agda
 
 record Graphical {u} (A : Type u) : Typeω where
+  no-eta-equality
   field
     {v e} : Level
     ∣_∣ : A → Type v
@@ -30,6 +31,7 @@ record Graphical {u} (A : Type u) : Typeω where
   {-# INLINE _[_~>_] #-}
 
 open Graphical ⦃ ... ⦄ using (∣_∣; _[_~>_]) public
+{-# INLINE Graphical.constructor #-}
 
 ```
 

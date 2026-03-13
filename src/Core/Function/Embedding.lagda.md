@@ -122,17 +122,14 @@ module Emb {u v} {A : Type u} {B : Type v} (e : A ↪ B) where
 ## From Equivalences
 
 ```agda
--- Equivalences are embeddings (unbundled)
 is-equiv→is-embedding
   : ∀ {u v} {A : Type u} {B : Type v} {f : A → B}
   → is-equiv f → is-embedding f
 is-equiv→is-embedding e y = is-contr→is-prop (e .eqv-fibers y)
 
--- Equivalences are embeddings (bundled)
 equiv→embedding : ∀ {u v} {A : Type u} {B : Type v} → A ≃ B → A ↪ B
 equiv→embedding e = e .fst , is-equiv→is-embedding (e .snd)
 
--- Alias for clarity
 is-embedding→injective
   : ∀ {u v} {A : Type u} {B : Type v} {f : A → B}
   → is-embedding f → injective f
@@ -154,13 +151,6 @@ Fibers of composites decompose as Σ-types of fibers.
 See 1Lab.Equiv (fibre-∘-≃) and 1Lab.Function.Embedding (∘-is-embedding).
 
 ```agda
-private
-  -- Σ over a prop of props is a prop
-  Σ-prop² : ∀ {u v} {A : Type u} {B : A → Type v}
-          → is-prop A → ((a : A) → is-prop (B a)) → is-prop (Σ B)
-  Σ-prop² aprop bprop (a₁ , b₁) (a₂ , b₂) i =
-    aprop a₁ a₂ i , is-prop→PathP (λ j → bprop (aprop a₁ a₂ j)) b₁ b₂ i
-
 -- Adapted from 1Lab.Equiv (Amélia Liao et al.; January 2026)
 fiber-comp : ∀ {u v w} {A : Type u} {B : Type v} {C : Type w}
            → (f : A → B) (g : B → C) (c : C)
@@ -214,15 +204,12 @@ is-embedding→ap-equiv {A = A} {B = B} {f = f} emb {x} {y} =
     fib-prop : is-prop (fiber f (f y))
     fib-prop = emb (f y)
 
-    -- The inverse: given q : f x ≡ f y, extract the path x ≡ y from fiber
     inv : f x ≡ f y → x ≡ y
     inv q = ap fst (fib-prop (x , q) (y , refl))
 
-    -- Unit: inv (ap f p) ≡ p
     unit : (p : x ≡ y) → inv (ap f p) ≡ p
     unit p = ap (ap fst) path-unique ∙ ap-fst-lifted
       where
-        -- The path in fiber from (x, ap f p) to (y, refl) via p
         lifted-p : (x , ap f p) ≡ (y , refl)
         lifted-p i = p i , sq i
           where
@@ -234,14 +221,12 @@ is-embedding→ap-equiv {A = A} {B = B} {f = f} emb {x} {y} =
               k (j = i1) → f y
               k (k = i0) → f (p (i ∨ j))
 
-        -- fib-prop gives the same path (up to path in paths)
         path-unique : fib-prop (x , ap f p) (y , refl) ≡ lifted-p
         path-unique = is-prop→is-set fib-prop _ _ _ _
 
         ap-fst-lifted : ap fst lifted-p ≡ p
         ap-fst-lifted = refl
 
-    -- Counit: ap f (inv q) ≡ q
     counit : (q : f x ≡ f y) → ap f (inv q) ≡ q
     counit q = α
       where
@@ -281,7 +266,6 @@ embedding-cancel-l {f = f} emb B-set {g} {h} fg≡fh =
 ### Σ-types with propositional fibers
 
 ```agda
--- First projection from a Σ-type with propositional fibers is an embedding
 Σ-prop-embedding
   : ∀ {u v} {A : Type u} {B : A → Type v}
   → ((a : A) → is-prop (B a))

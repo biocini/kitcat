@@ -9,7 +9,7 @@ identity, composition, closure under products and Sigma, and the
 connection to equivalences and h-levels.
 
 ```agda
-{-# OPTIONS --safe --erased-cubical --no-guardedness --no-sized-types #-}
+{-# OPTIONS --safe --erased-cubical --no-guardedness #-}
 
 module Core.Retract where
 

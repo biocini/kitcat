@@ -118,6 +118,11 @@ PathP-is-hlevel {A = A} {x = x} {y = y} hl =
           → is-prop A → (∀ a → is-prop (B a)) → is-prop (Σ B)
 Σ-is-prop aprop bprop (a₁ , b₁) (a₂ , b₂) = Σ-prop-path bprop (aprop a₁ a₂)
 
+Σ-prop² : ∀ {u v} {A : Type u} {B : A → Type v}
+        → is-prop A → ((a : A) → is-prop (B a)) → is-prop (Σ B)
+Σ-prop² aprop bprop (a₁ , b₁) (a₂ , b₂) i =
+  aprop a₁ a₂ i , is-prop→PathP (λ j → bprop (aprop a₁ a₂ j)) b₁ b₂ i
+
 Σ-is-hlevel : {B : A → Type ℓ'} (n : Nat)
             → is-hlevel n A → ((a : A) → is-hlevel n (B a))
             → is-hlevel n (Σ B)

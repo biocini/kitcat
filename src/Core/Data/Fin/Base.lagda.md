@@ -65,8 +65,6 @@ weaken i with fin-view i
 inject : m Nat.≤ n → Fin m → Fin n
 inject q (fin k ⦃ bounded = forget p ⦄) = fin k ⦃ forget (Nat.lt-le-cat p q) ⦄
 
--- Inject into higher positions: Fin n → Fin (m + n)
--- This places the element in the "upper" part of the sum
 raise : ∀ m {n} → Fin n → Fin (m +N n)
 raise Z i = i
 raise (S m) i = fsuc (raise m i)

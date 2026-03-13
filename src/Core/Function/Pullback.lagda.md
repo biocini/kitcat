@@ -1,7 +1,6 @@
 Pullbacks: fiber products and their universal property.
 
 ```agda
-
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
 
 module Core.Function.Pullback where

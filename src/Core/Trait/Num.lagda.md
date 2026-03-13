@@ -1,7 +1,6 @@
 Numeric type class for literal overloading.
 
 ```agda
-
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
 
 module Core.Trait.Num where
@@ -19,6 +18,7 @@ open import Agda.Builtin.FromNeg public
   renaming (Negative to FromNeg)
 
 record Num {u} (A : Type u) : Typeω where
+  no-eta-equality
   infixl 8 _+_
   infixl 9 _*_
 
@@ -34,6 +34,7 @@ record Num {u} (A : Type u) : Typeω where
     FromNat-Num .FromNat.fromNat n = fromInteger (pos n)
 
 open Num ⦃ ... ⦄ public
+{-# INLINE Num.constructor #-}
 {-# DISPLAY Num._+_ _ = _+_ #-}
 {-# DISPLAY Num._*_ _ = _*_ #-}
 {-# DISPLAY Num.fromInteger _ = fromInteger #-}
@@ -47,7 +48,7 @@ instance
   {-# INLINE Num-Int #-}
 
 record Neg {u} (A : Type u) : Typeω where
-  infix 10 negate
+  no-eta-equality
   infixl 8 _-_
 
   field
@@ -72,19 +73,23 @@ instance
   {-# INLINE Neg-Int #-}
 
 open Neg ⦃ ... ⦄ public
+{-# INLINE Neg.constructor #-}
 {-# DISPLAY Neg.negate _ = negate #-}
 {-# DISPLAY Neg.subtract _ = subtract #-}
 {-# DISPLAY Neg._-_ _ = _-_ #-}
 
 record Abs {u} (A : Type u) : Typeω where
+  no-eta-equality
   field
     ⦃ Num-Abs ⦄ : Num A
     abs : A → A
 
 open Abs ⦃ ... ⦄ public
+{-# INLINE Abs.constructor #-}
 {-# DISPLAY Abs.abs _ = abs #-}
 
 record Fractional {u} (A : Type u) : Typeω where
+  no-eta-equality
   infixl 9 _/_
   field
     ⦃ Num-Fractional ⦄ : Num A
@@ -92,10 +97,12 @@ record Fractional {u} (A : Type u) : Typeω where
     recip : A → A
 
 open Fractional ⦃ ... ⦄ public
+{-# INLINE Fractional.constructor #-}
 {-# DISPLAY Fractional._/_ _ = _/_ #-}
 {-# DISPLAY Fractional.recip _ = recip #-}
 
 record Integral {u} (A : Type u) : Typeω where
+  no-eta-equality
   infixl 9 _div_ _mod_
   field
     ⦃ Num-Integral ⦄ : Num A
@@ -103,6 +110,7 @@ record Integral {u} (A : Type u) : Typeω where
     _mod_ : A → A → A
 
 open Integral ⦃ ... ⦄ public
+{-# INLINE Integral.constructor #-}
 {-# DISPLAY Integral._div_ _ = _div_ #-}
 {-# DISPLAY Integral._mod_ _ = _mod_ #-}
 

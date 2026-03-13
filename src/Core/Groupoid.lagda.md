@@ -11,7 +11,7 @@ Potential refs:
 
 ```agda
 
-{-# OPTIONS --safe --erased-cubical --no-guardedness --no-sized-types #-}
+{-# OPTIONS --safe --erased-cubical --no-guardedness #-}
 
 module Core.Groupoid where
 

@@ -95,9 +95,6 @@ equivalence, and logical equivalence between propositions is a proposition.
 
 ```agda
 
--- Paths in Type between propositions form a proposition.
--- This uses univalence: two paths are equal iff they induce equal equivalences,
--- and equivalences between propositions are determined by their forward maps.
 Type-path-is-prop
   : {A B : Type u}
   → is-prop A → is-prop B
@@ -108,17 +105,14 @@ Type-path-is-prop {A = A} {B} pA pB p q = path
     e1 = idtoeqv p
     e2 = idtoeqv q
 
-    -- The forward maps are equal (both are prop-to-prop)
     fwd-eq : e1 .fst ≡ e2 .fst
     fwd-eq = funext (λ a → pB (e1 .fst a) (e2 .fst a))
 
-    -- Hence the equivalences are equal
     eqv-eq : e1 ≡ e2
     eqv-eq i .fst = fwd-eq i
     eqv-eq i .snd = is-prop→PathP (λ i → is-equiv-is-prop (fwd-eq i))
       (e1 .snd) (e2 .snd) i
 
-    -- And thus the paths are equal (via ua-η)
     path : p ≡ q
     path = sym (ua-η p) ∙ ap ua eqv-eq ∙ ua-η q
 

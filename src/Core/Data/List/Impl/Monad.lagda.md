@@ -18,9 +18,9 @@ instance
   Monad-List : Monad (impl List)
   Monad-List .Monad.Applicative-Monad = Applicative-List
   Monad-List .Monad._>>=_ xs f = concatMap f xs
-  Monad-List .Monad.>>=-left-id {f = f} =
+  Monad-List .Monad.>>=-unitl {f = f} =
     concatMap.singleton f _
-  Monad-List .Monad.>>=-right-id {m = m} = concatMap.unitr m
+  Monad-List .Monad.>>=-unitr {m = m} = concatMap.unitr m
   Monad-List .Monad.>>=-assoc {m = m} {f} {g} =
     concatMap.assoc f g m
 

@@ -36,12 +36,12 @@ record Monad (M : Effect) : Typeω where
     p = pure Applicative-Monad
 
   field
-    @0 >>=-left-id : ∀ {ℓ ℓ'} {A : Type ℓ} {B : Type ℓ'}
-                   → {a : A} {f : A → M.₀ B}
-                   → (p a >>= f) ≡ f a
-    @0 >>=-right-id : ∀ {ℓ} {A : Type ℓ}
-                    → {m : M.₀ A}
-                    → (m >>= p) ≡ m
+    @0 >>=-unitl : ∀ {ℓ ℓ'} {A : Type ℓ} {B : Type ℓ'}
+                 → {a : A} {f : A → M.₀ B}
+                 → (p a >>= f) ≡ f a
+    @0 >>=-unitr : ∀ {ℓ} {A : Type ℓ}
+                 → {m : M.₀ A}
+                 → (m >>= p) ≡ m
     @0 >>=-assoc : ∀ {ℓ ℓ' ℓ''} {A : Type ℓ} {B : Type ℓ'} {C : Type ℓ''}
                  → {m : M.₀ A} {f : A → M.₀ B} {g : B → M.₀ C}
                  → ((m >>= f) >>= g) ≡ (m >>= (λ x → f x >>= g))

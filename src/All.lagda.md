@@ -57,7 +57,6 @@ import Core.Prim.Word64
 
 import Core.Trait
 import Core.Trait.Quiver
--- import Core.Trait.Virtual  -- misnamed duplicate of Quiver
 import Core.Trait.Alt
 
 import Core.Graph.Base
@@ -83,12 +82,14 @@ import Cat.BaseTernary
 import Cat.BaseTernary2
 import Cat.Data.Magmoid
 import Cat.Eqv
+import Cat.Groupoid
 import Cat.Functor
 import Cat.Het
 import Cat.Iso
 import Cat.Nat
 import Cat.Slice
 import Cat.Universal
+import Cat.Walking
 -- import Cat.Braid  -- WIP: needs Nat import fix
 -- import Cat.Cwf  -- WIP: module removed
 -- import Cat.Magmoid  -- WIP: renamed to Cat.Data

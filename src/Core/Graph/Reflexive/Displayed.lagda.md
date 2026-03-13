@@ -19,11 +19,13 @@ private module R = rx-graph R
 open R renaming (₀ to Ob; ₁ to infix 4 _~>_) hiding (rx)
 
 record Disp-rx-graph w z : Type (u ⊔ v ⊔ w ₊ ⊔ z ₊) where
+  no-eta-equality
   field
     disp : Disp-graph w z
     rx   : ∀ x (u : Disp-graph.Ob disp x) → Disp-graph.₂ disp (R.rx x) u u
 
   open Disp-graph disp public
+{-# INLINE Disp-rx-graph.constructor #-}
 
 module disp-rx-graph {w z} (D : Disp-rx-graph w z) where
   private module D = Disp-rx-graph D

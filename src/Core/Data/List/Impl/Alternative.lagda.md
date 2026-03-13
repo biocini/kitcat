@@ -21,8 +21,8 @@ instance
     Applicative-List
   Alternative-List .Alternative.empty = []
   Alternative-List .Alternative._<|>_ = _++_
-  Alternative-List .Alternative.<|>-left-id = refl
-  Alternative-List .Alternative.<|>-right-id {x = x} =
+  Alternative-List .Alternative.<|>-unitl = refl
+  Alternative-List .Alternative.<|>-unitr {x = x} =
     cat.unitr x
   Alternative-List .Alternative.<|>-assoc {x = x} {y} {z} =
     cat.assoc x y z

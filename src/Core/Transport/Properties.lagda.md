@@ -59,6 +59,18 @@ subst-path-left {c = c} p q = J (λ b' p' → subst (_≡ c) p' q ≡ sym p' ∙
                                 (transport-refl q ∙ sym (Path.unitl q))
                                 p
 
+transport-∙ : ∀ {u} {A B C : Type u} (p : A ≡ B) (q : B ≡ C) (a : A)
+            → transport (p ∙ q) a ≡ transport q (transport p a)
+transport-∙ {A = A} {C = C} p q a =
+  J {x = A}
+    (λ B' p' → (q' : B' ≡ C) → transport (p' ∙ q') a ≡ transport q' (transport p' a))
+    base
+    p q
+  where
+  base : (q' : A ≡ C) → transport (refl ∙ q') a ≡ transport q' (transport refl a)
+  base q' = ap (λ r → transport r a) (Path.unitl q')
+          ∙ sym (ap (λ x → transport q' x) (transport-refl a))
+
 ```
 
 ## Inverse Transport laws and equivalence
@@ -109,9 +121,9 @@ SinglP-contr : ∀ {u} {A : I → Type u} (x : A i0)
              → is-contr (Σ y ∶ A i1 , PathP A x y)
 SinglP-contr {A} x .center = coe01 A x , coe-filler A x
 SinglP-contr {A} x .paths (y , q) i = _ , λ j → fil A (∂ i) j λ where
- j (i = i0) → coe0i A j x
- j (j = i0) → x
- j (i = i1) → q j
+  j (i = i0) → coe0i A j x
+  j (j = i0) → x
+  j (i = i1) → q j
 
 is-prop→PathP-is-contr : ∀ {u} {A : I → Type u}
                        → ((i : I) → is-prop (A i))

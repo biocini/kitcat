@@ -37,10 +37,10 @@ record Alternative (M : Effect) : Typeω where
   infixl 3 _<|>_
 
   field
-    @0 <|>-left-id  : ∀ {ℓ} {A : Type ℓ} {x : M.₀ A}
-                    → (empty <|> x) ≡ x
-    @0 <|>-right-id : ∀ {ℓ} {A : Type ℓ} {x : M.₀ A}
-                    → (x <|> empty) ≡ x
+    @0 <|>-unitl  : ∀ {ℓ} {A : Type ℓ} {x : M.₀ A}
+                  → (empty <|> x) ≡ x
+    @0 <|>-unitr : ∀ {ℓ} {A : Type ℓ} {x : M.₀ A}
+                 → (x <|> empty) ≡ x
     @0 <|>-assoc    : ∀ {ℓ} {A : Type ℓ} {x y z : M.₀ A}
                     → ((x <|> y) <|> z) ≡ (x <|> (y <|> z))
 

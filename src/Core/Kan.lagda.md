@@ -409,7 +409,7 @@ module Path {A : Type u} where
     fill : SquareP (λ i j → q j ≡ comp i .fst j) (cat.lcoh p q r) refl (cat.rcoh p q r) refl
     fill = cong snd comp
 
-  idem : ∀ {@0 u} {A : Type u} (x : A) →  refl ∙ refl ≡ refl {x = x}
+  idem : ∀ {@0 u} {A : Type u} (x : A) → refl ∙ refl ≡ refl {x = x}
   idem x = cong fst comp
     module idem where
     private

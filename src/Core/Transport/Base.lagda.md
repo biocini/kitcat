@@ -11,10 +11,6 @@ open import Core.Base
 open import Core.Data.Sigma
 open import Core.Kan
 
-private module X where
-  open import Agda.Primitive.Cubical public using (primTransp; primHComp)
-open X public renaming (primTransp to transp) using () public
-
 private
   variable
     ℓ : I → Level
