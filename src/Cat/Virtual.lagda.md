@@ -469,10 +469,10 @@ the path, which is needed for triangle coherence.
 ### Contractible face extraction
 
 When a contractible Σ-type has two total paths `σ` and
-`w ∙ core ∙ v` between the same endpoints, and the bread
-paths `w`, `v` don't move `.fst` (i.e., `ap fst w` and
-`ap fst v` are definitionally `refl`), we can conclude
-`ap fst σ ≡ ap fst core`.
+`pcom (sym w') core v'` between the same endpoints, where
+`w'` and `v'` only move the fiber (so `ap fst` is `refl`),
+we get `ap fst σ ≡ ap fst core` by distributing `fst` over
+the ternary composite and collapsing the trivial boundary.
 
 ```agda
   contr-face
@@ -486,18 +486,16 @@ paths `w`, `v` don't move `.fst` (i.e., `ap fst w` and
     → ap fst σ ≡ ap fst core
   contr-face c {a} {b} σ w core v =
     total-contr-unique c
-      (ap fst σ) (ap fst (w' ∙ core ∙ v'))
-      (ap snd σ) (ap snd (w' ∙ core ∙ v'))
-    ∙ ap-comp fst w' (core ∙ v')
-    ∙ ap (refl ∙_)
-        (ap-comp fst core v'
-        ∙ Path.unitr (ap fst core))
-    ∙ Path.unitl (ap fst core)
+      (ap fst σ) (ap fst tri)
+      (ap snd σ) (ap snd tri)
+    ∙ pcom.ap (λ _ → fst) (sym w') core v'
+    ∙ pcom.unit (ap fst core)
     where
       w' : (a , _) ≡ (a , _)
       w' i = a , w i
       v' : (b , _) ≡ (b , _)
       v' i = b , v i
+      tri = pcom (sym w') core v'
 ```
 
 ### Pentagon
