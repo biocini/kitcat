@@ -108,22 +108,32 @@ record category o h : Type₊ (o ⊔ h) where
   emb-composite f g =
     compose-contr f g .center .snd
 
+  {-# INLINE emb #-}
+  {-# INLINE _⨾_ #-}
+
+```
+
+
+## Derived operations
+
+```agda
+module Virtual {o} {h} (C : category o h) where
+  open category C public
+
+  emb-ext
+    : ∀ {x y} {F G : ∀ w → hom w x → ∀ v → hom y v → hom w v}
+    → (∀ w (a : hom w x) v (b : hom y v) → F w a v b ≡ G w a v b)
+    → F ≡ G
+  emb-ext h =
+    funext λ w → funext λ a → funext λ v → funext λ b → h w a v b
+
   emb-yon-composite
     : ∀ {x y z} (f : hom x y) (g : hom y z)
     → emb (f ⨾ g)
     ≡ (λ w a v b → emb g w (yon f w a) v b)
   emb-yon-composite f g =
     emb-composite f g
-    ∙ funext λ w → funext λ a → funext λ v →
-      funext λ b → interchange f g w a v b
-
-  emb-composite-pt
-    : ∀ {x y z} (f : hom x y) (g : hom y z)
-      w (a : hom w x) v (b : hom z v)
-    → emb (f ⨾ g) w a v b
-    ≡ emb f w a v (noy g v b)
-  emb-composite-pt f g w a v b i =
-    emb-composite f g i w a v b
+    ∙ emb-ext λ w a v b → interchange f g w a v b
 
   emb-yon-composite-pt
     : ∀ {x y z} (f : hom x y) (g : hom y z)
@@ -132,6 +142,14 @@ record category o h : Type₊ (o ⊔ h) where
     ≡ emb g w (yon f w a) v b
   emb-yon-composite-pt f g w a v b i =
     emb-yon-composite f g i w a v b
+
+  emb-composite-pt
+    : ∀ {x y z} (f : hom x y) (g : hom y z)
+      w (a : hom w x) v (b : hom z v)
+    → emb (f ⨾ g) w a v b
+    ≡ emb f w a v (noy g v b)
+  emb-composite-pt f g w a v b i =
+    emb-composite f g i w a v b
 
   noy-composite
     : ∀ {x y z} (g : hom x y) (h : hom y z)
@@ -176,25 +194,6 @@ record category o h : Type₊ (o ⊔ h) where
       yon-idn-idpt =
         sym (subst (λ t → yon t _ g ≡ yon idn _ (yon idn _ g))
           idem (yon-composite idn idn _ g))
-
-  {-# INLINE emb #-}
-  {-# INLINE _⨾_ #-}
-
-```
-
-
-## Derived operations
-
-```agda
-module Virtual {o} {h} (C : category o h) where
-  open category C public
-
-  emb-ext
-    : ∀ {x y} {F G : ∀ w → hom w x → ∀ v → hom y v → hom w v}
-    → (∀ w (a : hom w x) v (b : hom y v) → F w a v b ≡ G w a v b)
-    → F ≡ G
-  emb-ext h =
-    funext λ w → funext λ a → funext λ v → funext λ b → h w a v b
 ```
 
 ### Composable fiber and its eliminators
