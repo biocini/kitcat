@@ -71,24 +71,10 @@ import Data.W
 import HData.Pushout
 import HData.Quotient
 
+import Cat.Virtual
 import Cat.Base
-import Cat.BaseTernary
-import Cat.BaseTernary2
-import Cat.Data.Magmoid
-import Cat.Eqv
 import Cat.Groupoid
-import Cat.Functor
-import Cat.Het
-import Cat.Iso
-import Cat.Nat
-import Cat.Slice
-import Cat.Universal
-import Cat.Walking
--- import Cat.Braid  -- WIP: needs Nat import fix
--- import Cat.Cwf  -- WIP: module removed
--- import Cat.Magmoid  -- WIP: renamed to Cat.Data
--- import Cat.Monad  -- WIP: module removed
--- import Cat.Span  -- WIP: depends on Cat.Braid
+import Cat.Data.Magmoid
 -- import Cat.Units  -- WIP: proof error at line 382
 
 import Lib.CSet.Base

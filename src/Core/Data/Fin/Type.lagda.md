@@ -23,8 +23,6 @@ Per 1lab.
 ```agda
 
 record Fin (n : Nat) : Type where
-  no-eta-equality
-  pattern
   constructor fin
   field
     lower : Nat
