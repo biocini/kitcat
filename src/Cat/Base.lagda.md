@@ -17,6 +17,8 @@ open import Core.Base
 open import Core.Data.Sigma
 open import Core.Kan
 open import Core.Transport
+open import Core.Equiv.Base using (is-equiv; aut)
+open import Core.Function.Embedding using (equiv→lc)
 open import Cat.Virtual
 ```
 
@@ -806,11 +808,40 @@ the section and retraction agree by `inv-unique`.
         r ∎
 ```
 
+### Neutrality
+
+A morphism is neutral when both composition maps are
+equivalences. Left-neutrality: `(f ⨾_)` is an equivalence.
+Right-neutrality: `(_⨾ f)` is an equivalence. An idempotent
+neutral morphism equals the identity (cancel `_⨾ e` against
+`idn ⨾ e`).
+
+```agda
+  is-neutral : ∀ {x y} → hom x y → Type (o ⊔ h)
+  is-neutral {x} {y} f =
+    (∀ {z} → is-equiv (λ (h : hom y z) → f ⨾ h))
+    × (∀ {w} → is-equiv (λ (g : hom w x) → g ⨾ f))
+
+  idn-is-neutral : ∀ {x} → is-neutral (idn {x})
+  idn-is-neutral .fst =
+    subst is-equiv (sym (funext unitl)) (aut .snd)
+  idn-is-neutral .snd =
+    subst is-equiv (sym (funext unitr)) (aut .snd)
+
+  idempotent-neutral→idn
+    : ∀ {x} {e : hom x x}
+    → is-neutral e → e ⨾ e ≡ e → e ≡ idn
+  idempotent-neutral→idn {e = e} (_ , re) ee≡e =
+    equiv→lc re
+      (ee≡e ∙ sym (unitl e))
+```
+
 ## Functors
 
-A functor between categories maps objects and morphisms,
-preserving identity and composition. Since functors relate
-two categories, this definition lives outside `module Cat`.
+A functor maps objects and morphisms, preserving composition
+and neutrality. Identity preservation is derived: `hom-map idn`
+is neutral (preserved) and idempotent (from comp preservation
++ `idem`), so it equals `idn` by `idempotent-neutral→idn`.
 
 ```agda
 record functor
@@ -820,19 +851,26 @@ record functor
   where
   no-eta-equality
   private
-    module C = Virtual C
-    module D = Virtual D
+    module Cs = Virtual C
+    module Ds = Virtual D
+    module Cb = Cat C
+    module Db = Cat D
 
   field
-    ob-map  : C.ob → D.ob
+    ob-map  : Cs.ob → Ds.ob
     hom-map : ∀ {x y}
-      → C.hom x y → D.hom (ob-map x) (ob-map y)
-    hom-map-idn
-      : ∀ {x}
-      → hom-map (C.idn {x}) ≡ D.idn
+      → Cs.hom x y → Ds.hom (ob-map x) (ob-map y)
     hom-map-seq
-      : ∀ {x y z} (f : C.hom x y) (g : C.hom y z)
-      → hom-map (f C.⨾ g) ≡ hom-map f D.⨾ hom-map g
+      : ∀ {x y z} (f : Cs.hom x y) (g : Cs.hom y z)
+      → hom-map (f Cs.⨾ g) ≡ hom-map f Ds.⨾ hom-map g
+    preserves-neutral
+      : ∀ {x y} {f : Cs.hom x y}
+      → Cb.is-neutral f → Db.is-neutral (hom-map f)
+
+  hom-map-idn : ∀ {x} → hom-map (Cs.idn {x}) ≡ Ds.idn
+  hom-map-idn = Db.idempotent-neutral→idn
+    (preserves-neutral Cb.idn-is-neutral)
+    (sym (hom-map-seq Cs.idn Cs.idn) ∙ ap hom-map Cs.idem)
 
 {-# INLINE functor.constructor #-}
 ```
@@ -844,8 +882,8 @@ id-functor
   : ∀ {o h} (C : category o h) → functor C C
 id-functor C .functor.ob-map x = x
 id-functor C .functor.hom-map f = f
-id-functor C .functor.hom-map-idn = refl
 id-functor C .functor.hom-map-seq _ _ = refl
+id-functor C .functor.preserves-neutral n = n
 ```
 
 Functor composition maps objects and morphisms sequentially.
@@ -869,11 +907,11 @@ _∘F_ {C = C} {D} {E} G F = FGF where
   FGF : functor C E
   FGF .functor.ob-map x = G.ob-map (F.ob-map x)
   FGF .functor.hom-map f = G.hom-map (F.hom-map f)
-  FGF .functor.hom-map-idn =
-    ap G.hom-map F.hom-map-idn ∙ G.hom-map-idn
   FGF .functor.hom-map-seq f g =
     ap G.hom-map (F.hom-map-seq f g)
     ∙ G.hom-map-seq (F.hom-map f) (F.hom-map g)
+  FGF .functor.preserves-neutral n =
+    G.preserves-neutral (F.preserves-neutral n)
 
 infixr 30 _∘F_
 ```
