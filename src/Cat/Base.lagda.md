@@ -809,11 +809,11 @@ the section and retraction agree by `inv-unique`.
 ## Functors
 
 A functor between categories maps objects and morphisms,
-preserving identity and composition. Since functors relate two
-categories, this definition lives outside `module Cat`.
+preserving identity and composition. Since functors relate
+two categories, this definition lives outside `module Cat`.
 
 ```agda
-record Functor
+record functor
   {o h o' h'}
   (C : category o h) (D : category o' h')
   : Type (o ⊔ h ⊔ o' ⊔ h')
@@ -834,18 +834,18 @@ record Functor
       : ∀ {x y z} (f : C.hom x y) (g : C.hom y z)
       → hom-map (f C.⨾ g) ≡ hom-map f D.⨾ hom-map g
 
-{-# INLINE Functor.constructor #-}
+{-# INLINE functor.constructor #-}
 ```
 
 The identity functor maps everything to itself.
 
 ```agda
-Id-Functor
-  : ∀ {o h} (C : category o h) → Functor C C
-Id-Functor C .Functor.ob-map x = x
-Id-Functor C .Functor.hom-map f = f
-Id-Functor C .Functor.hom-map-idn = refl
-Id-Functor C .Functor.hom-map-seq _ _ = refl
+id-functor
+  : ∀ {o h} (C : category o h) → functor C C
+id-functor C .functor.ob-map x = x
+id-functor C .functor.hom-map f = f
+id-functor C .functor.hom-map-idn = refl
+id-functor C .functor.hom-map-seq _ _ = refl
 ```
 
 Functor composition maps objects and morphisms sequentially.
@@ -859,19 +859,19 @@ _∘F_
     {C : category o₁ h₁}
     {D : category o₂ h₂}
     {E : category o₃ h₃}
-  → Functor D E → Functor C D → Functor C E
+  → functor D E → functor C D → functor C E
 _∘F_ {C = C} {D} {E} G F = FGF where
-  module F = Functor F
-  module G = Functor G
+  module F = functor F
+  module G = functor G
   module C = Virtual C
   module E = Virtual E
 
-  FGF : Functor C E
-  FGF .Functor.ob-map x = G.ob-map (F.ob-map x)
-  FGF .Functor.hom-map f = G.hom-map (F.hom-map f)
-  FGF .Functor.hom-map-idn =
+  FGF : functor C E
+  FGF .functor.ob-map x = G.ob-map (F.ob-map x)
+  FGF .functor.hom-map f = G.hom-map (F.hom-map f)
+  FGF .functor.hom-map-idn =
     ap G.hom-map F.hom-map-idn ∙ G.hom-map-idn
-  FGF .Functor.hom-map-seq f g =
+  FGF .functor.hom-map-seq f g =
     ap G.hom-map (F.hom-map-seq f g)
     ∙ G.hom-map-seq (F.hom-map f) (F.hom-map g)
 
@@ -886,18 +886,18 @@ for any morphism `f : x → y`, the naturality square commutes:
 `F(f) ⨾ η y ≡ η x ⨾ G(f)`.
 
 ```agda
-record NatTrans
+record nat-trans
   {o h o' h'}
   {C : category o h} {D : category o' h'}
-  (F G : Functor C D)
+  (F G : functor C D)
   : Type (o ⊔ h ⊔ h')
   where
   no-eta-equality
   private
     module C = Virtual C
     module D = Virtual D
-    module F = Functor F
-    module G = Functor G
+    module F = functor F
+    module G = functor G
 
   field
     component
@@ -907,7 +907,7 @@ record NatTrans
       → F.hom-map f D.⨾ component y
       ≡ component x D.⨾ G.hom-map f
 
-{-# INLINE NatTrans.constructor #-}
+{-# INLINE nat-trans.constructor #-}
 ```
 
 The identity natural transformation has `idn` as every
@@ -917,15 +917,15 @@ component. Naturality follows from `unitl` and `unitr`.
 nat-id
   : ∀ {o h o' h'}
     {C : category o h} {D : category o' h'}
-    (F : Functor C D)
-  → NatTrans F F
+    (F : functor C D)
+  → nat-trans F F
 nat-id {D = D} F = nt where
   module D = Virtual D
-  module F = Functor F
+  module F = functor F
 
-  nt : NatTrans F F
-  nt .NatTrans.component _ = D.idn
-  nt .NatTrans.natural f =
+  nt : nat-trans F F
+  nt .nat-trans.component _ = D.idn
+  nt .nat-trans.natural f =
     D.unitr (F.hom-map f) ∙ sym (D.unitl (F.hom-map f))
 ```
 
@@ -937,21 +937,21 @@ associativity and the naturality of each factor.
 nat-comp
   : ∀ {o h o' h'}
     {C : category o h} {D : category o' h'}
-    {F G H : Functor C D}
-  → NatTrans F G → NatTrans G H → NatTrans F H
+    {F G H : functor C D}
+  → nat-trans F G → nat-trans G H → nat-trans F H
 nat-comp {D = D} {F} {G} {H} α β = αβ where
   module D  = Virtual D
   module Ca = Cat D
-  module F  = Functor F
-  module G  = Functor G
-  module H  = Functor H
-  module α  = NatTrans α
-  module β  = NatTrans β
+  module F  = functor F
+  module G  = functor G
+  module H  = functor H
+  module α  = nat-trans α
+  module β  = nat-trans β
 
-  αβ : NatTrans F H
-  αβ .NatTrans.component x =
+  αβ : nat-trans F H
+  αβ .nat-trans.component x =
     α.component x D.⨾ β.component x
-  αβ .NatTrans.natural {x} {y} f =
+  αβ .nat-trans.natural {x} {y} f =
     F.hom-map f D.⨾ (α.component y D.⨾ β.component y)
       ≡˘⟨ D.assoc (F.hom-map f)
             (α.component y) (β.component y) ⟩

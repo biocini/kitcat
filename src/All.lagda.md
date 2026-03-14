@@ -72,6 +72,7 @@ import HData.Pushout
 import HData.Quotient
 
 import Cat.Virtual
+import Cat.Coherence
 import Cat.Base
 import Cat.Groupoid
 import Cat.Data.Magmoid
