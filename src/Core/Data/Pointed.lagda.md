@@ -1,3 +1,5 @@
+Pointed types: types equipped with a distinguished basepoint.
+
 ```agda
 
 {-# OPTIONS --safe --cubical-compatible #-}

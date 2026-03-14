@@ -1,3 +1,5 @@
+Primitive string operations from Agda builtins.
+
 ```agda
 
 {-# OPTIONS --safe --cubical-compatible #-}

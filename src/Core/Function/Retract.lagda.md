@@ -1,7 +1,7 @@
 Retraction pairs: left and right inverses for function composition.
 
 ```agda
-{-# OPTIONS --safe --erased-cubical --no-guardedness --no-sized-types #-}
+{-# OPTIONS --safe --erased-cubical --no-guardedness #-}
 
 module Core.Function.Retract where
 

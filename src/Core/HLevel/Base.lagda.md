@@ -21,6 +21,7 @@ open import Core.Data.Nat.Base using (_+_; _<_; _≤_; suc; step)
 import Core.Data.Nat.Properties as Nat
 open import Core.Path.Base
 open import Core.Equiv.Base
+open import Core.Function.Retract using (is-left-inverse)
 open import Core.Transport
 
 private variable

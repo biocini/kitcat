@@ -1,3 +1,5 @@
+The empty type and absurdity elimination.
+
 ```agda
 
 {-# OPTIONS --safe --cubical-compatible #-}

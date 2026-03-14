@@ -16,7 +16,7 @@ open import Core.Base
 open import Core.Data.Sigma
 open import Core.Kan
 open import Core.Sub
-open import Core.Function.Retract public
+open import Core.Function.Retract
 
 record is-equiv {@0 u v} {A : Type u} {B : Type v} (f : A → B) : Type (u ⊔ v) where
   no-eta-equality

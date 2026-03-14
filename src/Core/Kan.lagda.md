@@ -202,8 +202,6 @@ hc A φ f g h = hcom (∂ φ) sys
 
     hc-fil : (i : I) → A i1
     hc-fil i = hfil (∂ φ) i sys
--- {-# DISPLAY hcom _ (hc.sys A φ f g p) = hc A φ f g p #-}
--- {-# DISPLAY hfil _ (hc.hc-fil A φ f g p i) = hc.hc-fil A φ f g p i #-}
 
 kext : {A : ∀ i → Type (ℓ i)} (φ : I)
      → (P : ∀ i → A (φ ∧ i) → Type (ℓ (φ ∧ i)))
@@ -578,36 +576,27 @@ module Triangle {@0 ℓ} {A : Type ℓ} {x y z : A}
 
 ## Square operations
 
-A path between paths gives a square with reflexivity on three sides.
+Given `p q : x ≡ y` and `α : p ≡ q`, we get a square
+`Square {w=y, x=x, y=x, z=y} p refl q refl` — refl top and bottom,
+`p` left, `q` right.
 
 ```agda
 
--- Given p q : x ≡ y and α : p ≡ q, we get a square:
---       x ---refl---> x
---       |             |
---       p             q
---       |             |
---       v             v
---       y ---refl---> y
---
--- In Square notation: Square {w=y, x=x, y=x, z=y} p refl q refl
 path→square
   : {A : Type u} {x y : A} {p q : x ≡ y}
   → p ≡ q → Square {w = y} {x = x} {y = x} {z = y} p refl q refl
 path→square α i j = α i j
 {-# INLINE path→square #-}
 
--- Note: Square and HCell are definitionally the same, just with different
--- argument conventions. The symmetry operations hflip and vflip are already
--- defined in Core.Base for HCell.
+```
 
--- Square p q r s has:
---   p : x ≡ w  (left)
---   q : x ≡ y  (top)
---   r : y ≡ z  (right)
---   s : w ≡ z  (bottom)
---
--- Horizontal symmetry swaps left-right:
+Square and HCell are definitionally the same with different argument
+conventions. The symmetry operations `hflip` and `vflip` are defined
+in Core.Base for HCell. The `Square p q r s` convention is: `p` left,
+`q` top, `r` right, `s` bottom.
+
+```agda
+
 square-sym-h
   : {A : Type u} {w x y z : A}
     {p : x ≡ w} {q : x ≡ y} {r : y ≡ z} {s : w ≡ z}
@@ -615,7 +604,6 @@ square-sym-h
 square-sym-h sq i j = sq (~ i) j
 {-# INLINE square-sym-h #-}
 
--- Vertical symmetry swaps top-bottom:
 square-sym-v
   : {A : Type u} {w x y z : A}
     {p : x ≡ w} {q : x ≡ y} {r : y ≡ z} {s : w ≡ z}

@@ -198,7 +198,7 @@ right unit law and associativity require `PathP` over
 
 Each law uses `LiftM-pathp` with an equivalence between the
 definedness types. The value functions agree definitionally in
-every case, so the coherence argument is always `lambda _ -> refl`.
+every case, so the coherence argument is always `λ _ → refl`.
 
 ### Left unit
 
@@ -419,7 +419,7 @@ Sigma reassociation yield the same `LiftM` path. Instead of
 composing `LiftG` paths with `_∙_` (which produces opaque `com`
 terms), we compose the underlying definedness-type equivalences
 with `_∙e_`. Both routes beta-reduce to the same forward function
-`(((p,d),gd),hd) -> (p,d,gd,hd)`, so `equiv-path` gives
+`(((p,d),gd),hd) → (p,d,gd,hd)`, so `equiv-path` gives
 equivalence equality, and `ap` on `LiftM-pathp` lifts this to
 `LiftM` path equality.
 
@@ -535,11 +535,11 @@ Sigma reassociation underlying the corresponding `♯ᵍ-assoc` step.
 ```
 
 Both routes have the same underlying forward function on
-definedness types: `(((p,d),gd),hd) -> (p,d,gd,hd)`. We
+definedness types: `(((p,d),gd),hd) → (p,d,gd,hd)`. We
 factor this out as `fwd` and transport the `is-equiv` proofs
 from the route compositions to `fwd`. Then `LiftM-pathp-ext`
 (with `sq = refl`) connects the two `LiftM-pathp` calls, since
-they share `fwd` and the coherence `(lambda _ -> refl)`.
+they share `fwd` and the coherence `(λ _ → refl)`.
 
 ```agda
   route-A-eqv
