@@ -4,13 +4,14 @@ March 2026
 Categories via ternary composition. The `compose-contr` field
 bundles only the noy-characterization of the composite into a
 contractible type. The `interchange` field separately links the
-noy and yon views of composition.
+noy and yon views of composition. The `yon-eval` field
+establishes `yon f x idn ≡ f`.
 
 The base `category` record has no coherence axioms beyond
-`unit` (neutrality + idempotency of the identity),
-`compose-contr`, and `interchange`. All standard categorical
-structure (unit laws, associativity, pentagon) follows from
-these.
+`unit` (neutrality + yon-idempotency of the identity),
+`compose-contr`, `interchange`, and `yon-eval`. All standard
+categorical structure (unit laws, associativity, pentagon)
+follows from these. The identity is unique (`unit-is-prop`).
 
 The triangle identity
 `ap (_⨾ g) (unitr f) ≡ assoc f idn g ∙ ap (f ⨾_) (unitl g)`
@@ -37,11 +38,13 @@ open import Core.Function.Embedding using (equiv→lc)
 
 ## The category record
 
-The record includes `absorb-r`, `absorb-l`, `noy`, and `yon` as
-derived definitions inside the record, so that `compose-contr`
-can reference them. The `compose-contr` field bundles only the
+The record includes `noy` and `yon` as derived definitions
+inside the record, so that `compose-contr` can reference them.
+The `compose-contr` field bundles only the
 noy-characterization. The `interchange` field connects the noy
-and yon views pointwise.
+and yon views pointwise. The `yon-eval` field establishes that
+`yon f x idn ≡ f`. Absorption (`absorb-l`, `absorb-r`) is
+derived from yon-idempotency + composition + left cancellation.
 
 ```agda
 record category o h : Type₊ (o ⊔ h) where
@@ -55,25 +58,27 @@ record category o h : Type₊ (o ⊔ h) where
       Σ e ∶ hom x x
       , ( (∀ {z} → is-equiv (λ (h : hom x z) → emb e x e z h))
         × (∀ {w} → is-equiv (λ (g : hom w x) → emb e w g x e)))
-      × (∀ {z} (h : hom x z) → emb e x e z (emb e x e z h) ≡ emb e x e z h)
-      × (∀ {w} (g : hom w x) → emb e w (emb e w g x e) x e ≡ emb e w g x e)
+      × (emb e x e x e ≡ e)
 
   idn : ∀ {x} → hom x x
   idn = unit .fst
-
-  absorb-l : ∀ {x} {z : ob} (h : hom x z)
-    → emb idn x idn z h ≡ h
-  absorb-l h = equiv→lc (unit .snd .fst .fst) (unit .snd .snd .fst h)
-
-  absorb-r : ∀ {x} {w : ob} (g : hom w x)
-    → emb idn w g x idn ≡ g
-  absorb-r g = equiv→lc (unit .snd .fst .snd) (unit .snd .snd .snd g)
 
   noy : ∀ {x y} → hom x y → ∀ z → hom y z → hom x z
   noy f z h = emb f _ idn z h
 
   yon : ∀ {x y} → hom x y → ∀ w → hom w x → hom w y
   yon f w g = emb f w g _ idn
+
+  unit-eqv-l : ∀ {x} {z : ob}
+    → is-equiv (λ (h : hom x z) → noy idn z h)
+  unit-eqv-l = unit .snd .fst .fst
+
+  unit-eqv-r : ∀ {x} {w : ob}
+    → is-equiv (λ (g : hom w x) → yon idn w g)
+  unit-eqv-r = unit .snd .fst .snd
+
+  yon-idpt : ∀ {x} → yon (idn {x}) x idn ≡ idn
+  yon-idpt = unit .snd .snd
 
   field
     compose-contr
@@ -88,6 +93,9 @@ record category o h : Type₊ (o ⊔ h) where
         w (a : hom w x) v (b : hom z v)
       → emb f w a v (noy g v b)
       ≡ emb g w (yon f w a) v b
+
+    yon-eval
+      : ∀ {x y} (f : hom x y) → yon f x idn ≡ f
 
   _⨾_ : ∀ {x y z} → hom x y → hom y z → hom x z
   f ⨾ g = compose-contr f g .center .fst
@@ -124,6 +132,50 @@ record category o h : Type₊ (o ⊔ h) where
     ≡ emb g w (yon f w a) v b
   emb-yon-composite-pt f g w a v b i =
     emb-yon-composite f g i w a v b
+
+  noy-composite
+    : ∀ {x y z} (g : hom x y) (h : hom y z)
+      {v : ob} (b : hom z v)
+    → noy (g ⨾ h) v b ≡ noy g v (noy h v b)
+  noy-composite g h {v} b i =
+    emb-composite g h i _ idn v b
+
+  yon-composite
+    : ∀ {x y z} (f : hom x y) (g : hom y z)
+      w (a : hom w x)
+    → yon (f ⨾ g) w a ≡ yon g w (yon f w a)
+  yon-composite f g w a =
+    emb-composite-pt f g w a _ idn
+    ∙ interchange f g w a _ idn
+
+  comp-eq
+    : ∀ {x y z} (f : hom x y) (g : hom y z)
+    → f ⨾ g ≡ yon g _ f
+  comp-eq f g =
+    sym (yon-eval (f ⨾ g))
+    ∙ yon-composite f g _ idn
+    ∙ ap (yon g _) (yon-eval f)
+
+  idem : ∀ {x} → idn {x} ⨾ idn ≡ idn
+  idem = comp-eq idn idn ∙ yon-idpt
+
+  absorb-l : ∀ {x} {z : ob} (h : hom x z)
+    → noy idn z h ≡ h
+  absorb-l {x} h = equiv→lc unit-eqv-l noy-idn-idpt
+    where
+      noy-idn-idpt : noy idn _ (noy idn _ h) ≡ noy idn _ h
+      noy-idn-idpt =
+        sym (subst (λ t → noy t _ h ≡ noy idn _ (noy idn _ h))
+          idem (noy-composite idn idn h))
+
+  absorb-r : ∀ {x} {w : ob} (g : hom w x)
+    → yon idn w g ≡ g
+  absorb-r {x} g = equiv→lc unit-eqv-r yon-idn-idpt
+    where
+      yon-idn-idpt : yon idn _ (yon idn _ g) ≡ yon idn _ g
+      yon-idn-idpt =
+        sym (subst (λ t → yon t _ g ≡ yon idn _ (yon idn _ g))
+          idem (yon-composite idn idn _ g))
 
   {-# INLINE emb #-}
   {-# INLINE _⨾_ #-}
@@ -304,31 +356,13 @@ eliminates over this alternative characterization.
       q'' i w a v b = q' i v b w a
 ```
 
-### Distribution and decomposition
+### Injectivity and decomposition
 
-`noy` and `yon` distribute over composition. `noy-composite`
-follows from the composite equation at `a = idn`;
-`yon-composite` uses the composite equation and interchange.
 Both `yon` and `noy` are injective, following from interchange
 and `emb-inj`. The `emb-yon` and `emb-noy` lemmas express
 `emb f` in terms of `yon` and `noy`.
 
 ```agda
-  noy-composite
-    : ∀ {x y z} (g : hom x y) (h : hom y z)
-      {v : ob} (b : hom z v)
-    → noy (g ⨾ h) v b ≡ noy g v (noy h v b)
-  noy-composite g h {v} b i =
-    emb-composite g h i _ idn v b
-
-  yon-composite
-    : ∀ {x y z} (f : hom x y) (g : hom y z)
-      w (a : hom w x)
-    → yon (f ⨾ g) w a ≡ yon g w (yon f w a)
-  yon-composite f g w a =
-    emb-composite-pt f g w a _ idn
-    ∙ interchange f g w a _ idn
-
   yon-inj
     : ∀ {x y} {f g : hom x y}
     → yon f ≡ yon g → f ≡ g
@@ -366,6 +400,50 @@ and `emb-inj`. The `emb-yon` and `emb-noy` lemmas express
   emb-noy f w a v b =
     ap (λ t → emb f w t v b) (sym (absorb-r a))
     ∙ sym (interchange idn f w a v b)
+```
+
+### Identity uniqueness
+
+Any morphism satisfying the unit axioms equals `idn`. The
+right equiv factors as `(yon e w)²` via interchange and
+absorption. Since `yon e w` is idempotent (from yon-composite
+and the yon-idempotency axiom), left-cancelling by the right
+equiv gives `yon e w g ≡ g` for all `g`, hence `e ≡ idn`
+via `yon-eval`.
+
+```agda
+  unit-is-prop
+    : ∀ {x} (e : hom x x)
+    → (∀ {z} → is-equiv (λ (h : hom x z) → emb e x e z h))
+    → (∀ {w} → is-equiv (λ (g : hom w x) → emb e w g x e))
+    → yon e x e ≡ e
+    → e ≡ idn
+  unit-is-prop {x} e le re idpt =
+    sym (yon-eval e) ∙ yon-e-absorb idn
+    where
+      e-idem : e ⨾ e ≡ e
+      e-idem = comp-eq e e ∙ idpt
+
+      yon-e-idpt : ∀ w (g : hom w x)
+        → yon e w (yon e w g) ≡ yon e w g
+      yon-e-idpt w g =
+        sym (sym (ap (λ t → yon t w g) e-idem)
+          ∙ yon-composite e e w g)
+
+      -- emb e w g x e ≡ (yon e w)²(g) via emb-yon + interchange
+      yon-e-squared : ∀ {w} (g : hom w x)
+        → emb e w g x e ≡ yon e w (yon e w g)
+      yon-e-squared {w} g =
+        emb-yon e w g x e
+        ∙ sym (ap (emb idn w (yon e w g) x) (yon-eval e))
+        ∙ interchange idn e w (yon e w g) x idn
+        ∙ ap (yon e w) (absorb-r (yon e w g))
+
+      yon-e-absorb : ∀ {w} (g : hom w x) → yon e w g ≡ g
+      yon-e-absorb {w} g = equiv→lc re
+        (yon-e-squared (yon e w g)
+        ∙ yon-e-idpt w (yon e w g)
+        ∙ sym (yon-e-squared g))
 ```
 
 ### Coherent unit laws and associativity
@@ -1148,12 +1226,12 @@ module _ {o h} (C : category o h) where
     C.idn
     , (C.unit .snd .fst .snd
       , C.unit .snd .fst .fst)
-    , C.unit .snd .snd .snd
-    , C.unit .snd .snd .fst
+    , C.unit .snd .snd
   op .category.compose-contr f g =
     C.composable-swap (C.composable-yon g f)
   op .category.interchange f g w a v b =
     sym (C.interchange g f v b w a)
+  op .category.yon-eval f = C.yon-eval f
 ```
 
 ### Opposite involution
@@ -1191,4 +1269,5 @@ module _ {o h} (C : category o h) where
       (C.compose-contr f g) i
   op-invol i .category.interchange f g w a v b =
     C.interchange f g w a v b
+  op-invol i .category.yon-eval f = C.yon-eval f
 ```
