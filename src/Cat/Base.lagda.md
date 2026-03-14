@@ -522,3 +522,286 @@ between `r` and the unit laws.
       pcom (unitl s) (sym q' ▹ s)
         (pcom (sym (assoc r f s)) (r ◃ p') (unitr r))
 ```
+
+### Sections and retractions vs mono and epi
+
+A section (right inverse) gives a monomorphism; a retraction
+(left inverse) gives an epimorphism. The proofs sandwich the
+hypothesis between unit laws and associativity.
+
+```agda
+  section→mono
+    : ∀ {x y} {f : hom x y}
+    → has-section f → is-mono f
+  section→mono {f = f} (g , s) {g = a} {h = b} p =
+    a             ≡˘⟨ unitr a ⟩
+    a ⨾ idn       ≡˘⟨ a ◃ s ⟩
+    a ⨾ (f ⨾ g)   ≡˘⟨ assoc a f g ⟩
+    (a ⨾ f) ⨾ g   ≡⟨ p ▹ g ⟩
+    (b ⨾ f) ⨾ g   ≡⟨ assoc b f g ⟩
+    b ⨾ (f ⨾ g)   ≡⟨ b ◃ s ⟩
+    b ⨾ idn       ≡⟨ unitr b ⟩
+    b ∎
+
+  retraction→epi
+    : ∀ {x y} {f : hom x y}
+    → has-retraction f → is-epi f
+  retraction→epi {f = f} (g , r) {g = a} {h = b} p =
+    a             ≡˘⟨ unitl a ⟩
+    idn ⨾ a       ≡˘⟨ r ▹ a ⟩
+    (g ⨾ f) ⨾ a   ≡⟨ assoc g f a ⟩
+    g ⨾ (f ⨾ a)   ≡⟨ g ◃ p ⟩
+    g ⨾ (f ⨾ b)   ≡˘⟨ assoc g f b ⟩
+    (g ⨾ f) ⨾ b   ≡⟨ r ▹ b ⟩
+    idn ⨾ b       ≡⟨ unitl b ⟩
+    b ∎
+```
+
+Isomorphisms have both a section and a retraction, so they are
+both mono and epi.
+
+```agda
+  iso→section
+    : ∀ {x y} {f : hom x y}
+    → is-iso f → has-section f
+  iso→section (g , p , _) = g , p
+
+  iso→retraction
+    : ∀ {x y} {f : hom x y}
+    → is-iso f → has-retraction f
+  iso→retraction (g , _ , q) = g , q
+
+  iso→mono
+    : ∀ {x y} {f : hom x y}
+    → is-iso f → is-mono f
+  iso→mono i = section→mono (iso→section i)
+
+  iso→epi
+    : ∀ {x y} {f : hom x y}
+    → is-iso f → is-epi f
+  iso→epi i = retraction→epi (iso→retraction i)
+```
+
+### Mono/epi composition and cancellation
+
+Monomorphisms compose: if both `f` and `g` are mono, then
+`f ⨾ g` is mono. The proof reassociates to apply `g`'s
+cancellation, then `f`'s.
+
+```agda
+  mono-comp
+    : ∀ {x y z} {f : hom x y} {g : hom y z}
+    → is-mono f → is-mono g → is-mono (f ⨾ g)
+  mono-comp {f = f} {g} mf mg p =
+    mf (mg (assoc _ f g ∙ p ∙ sym (assoc _ f g)))
+
+  epi-comp
+    : ∀ {x y z} {f : hom x y} {g : hom y z}
+    → is-epi f → is-epi g → is-epi (f ⨾ g)
+  epi-comp {f = f} {g} ef eg p =
+    eg (ef (sym (assoc f g _) ∙ p ∙ assoc f g _))
+```
+
+If `f ⨾ g` is mono then `f` is mono; if `f ⨾ g` is epi then
+`g` is epi. The proofs apply the composite cancellation after
+wrapping with the opposite morphism.
+
+```agda
+  mono-cancel
+    : ∀ {x y z} {f : hom x y} {g : hom y z}
+    → is-mono (f ⨾ g) → is-mono f
+  mono-cancel {f = f} {g} mfg p =
+    mfg (sym (assoc _ f g) ∙ p ▹ g ∙ assoc _ f g)
+
+  epi-cancel
+    : ∀ {x y z} {f : hom x y} {g : hom y z}
+    → is-epi (f ⨾ g) → is-epi g
+  epi-cancel {f = f} {g} efg p =
+    efg (assoc f g _ ∙ f ◃ p ∙ sym (assoc f g _))
+```
+
+### Composite witnesses from paths
+
+`cast-path` extracts a hom-level path from an emb-level
+composite witness. The reverse direction reconstructs the
+witness from a path and the canonical composite equation.
+
+```agda
+  cast-path⁻¹
+    : ∀ {x y z} {f : hom x y} {g : hom y z} {s : hom x z}
+    → f ⨾ g ≡ s → f ⨾ g => s
+  cast-path⁻¹ {f = f} {g} p =
+    ap emb (sym p) ∙ emb-composite f g
+```
+
+### Product η-expansion
+
+The pairing of the projections is the identity: any morphism
+that factors through both projections as itself must equal
+`idn`, because `idn` also factors (via `emb-noy`), and the
+product cone is contractible.
+
+```agda
+  module _
+    {A B P : ob} {π₁ : hom P A} {π₂ : hom P B}
+    (prod : is-product π₁ π₂)
+    where
+    open Product prod
+
+    private
+      idn-factors₁ : idn ⨾ π₁ => π₁
+      idn-factors₁ =
+        emb-ext λ w a v b → emb-noy π₁ w a v b
+
+      idn-factors₂ : idn ⨾ π₂ => π₂
+      idn-factors₂ =
+        emb-ext λ w a v b → emb-noy π₂ w a v b
+
+    ⟨,⟩-η-idn : ⟨ π₁ , π₂ ⟩ ≡ idn
+    ⟨,⟩-η-idn = ⟨,⟩-η π₁ π₂ idn idn-factors₁ idn-factors₂
+```
+
+### Coproduct η-expansion
+
+Dual: the copairing of the injections is the identity.
+
+```agda
+  module _
+    {A B S : ob} {ι₁ : hom A S} {ι₂ : hom B S}
+    (coprod : is-coproduct ι₁ ι₂)
+    where
+    open Coproduct coprod
+
+    private
+      idn-cofactors₁ : ι₁ ⨾ idn => ι₁
+      idn-cofactors₁ =
+        emb-ext λ w a v b →
+            sym (ap (emb ι₁ w a v) (absorb-l b))
+
+      idn-cofactors₂ : ι₂ ⨾ idn => ι₂
+      idn-cofactors₂ =
+        emb-ext λ w a v b →
+            sym (ap (emb ι₂ w a v) (absorb-l b))
+
+    copair-η-idn : copair ι₁ ι₂ ≡ idn
+    copair-η-idn =
+      copair-η ι₁ ι₂ idn idn-cofactors₁ idn-cofactors₂
+```
+
+### Product uniqueness up to isomorphism
+
+Two products for the same diagram are isomorphic. The mediating
+morphisms from each product's universal property compose to the
+identity by η-expansion.
+
+```agda
+  product-unique
+    : ∀ {A B P P' : ob}
+      {π₁ : hom P A} {π₂ : hom P B}
+      {π₁' : hom P' A} {π₂' : hom P' B}
+    → (prod : is-product π₁ π₂)
+    → (prod' : is-product π₁' π₂')
+    → P ≅ P'
+  product-unique {π₁ = π₁} {π₂} {π₁'} {π₂'} prod prod' =
+    ψ , φ , ψφ≡idn , φψ≡idn
+    where
+      module Π  = Product prod
+      module Π' = Product prod'
+      φ : hom _ _
+      φ = Π.⟨ π₁' , π₂' ⟩
+      ψ : hom _ _
+      ψ = Π'.⟨ π₁ , π₂ ⟩
+
+      ψφ≡idn : ψ ⨾ φ ≡ idn
+      ψφ≡idn =
+        sym (Π.⟨,⟩-η π₁ π₂ (ψ ⨾ φ)
+          (cast-path⁻¹ (assoc ψ φ π₁
+            ∙ ψ ◃ Π.⟨,⟩-β₁ π₁' π₂'
+            ∙ Π'.⟨,⟩-β₁ π₁ π₂))
+          (cast-path⁻¹ (assoc ψ φ π₂
+            ∙ ψ ◃ Π.⟨,⟩-β₂ π₁' π₂'
+            ∙ Π'.⟨,⟩-β₂ π₁ π₂)))
+        ∙ ⟨,⟩-η-idn prod
+
+      φψ≡idn : φ ⨾ ψ ≡ idn
+      φψ≡idn =
+        sym (Π'.⟨,⟩-η π₁' π₂' (φ ⨾ ψ)
+          (cast-path⁻¹ (assoc φ ψ π₁'
+            ∙ φ ◃ Π'.⟨,⟩-β₁ π₁ π₂
+            ∙ Π.⟨,⟩-β₁ π₁' π₂'))
+          (cast-path⁻¹ (assoc φ ψ π₂'
+            ∙ φ ◃ Π'.⟨,⟩-β₂ π₁ π₂
+            ∙ Π.⟨,⟩-β₂ π₁' π₂')))
+        ∙ ⟨,⟩-η-idn prod'
+
+  coproduct-unique
+    : ∀ {A B S S' : ob}
+      {ι₁ : hom A S} {ι₂ : hom B S}
+      {ι₁' : hom A S'} {ι₂' : hom B S'}
+    → (coprod : is-coproduct ι₁ ι₂)
+    → (coprod' : is-coproduct ι₁' ι₂')
+    → S ≅ S'
+  coproduct-unique
+    {ι₁ = ι₁} {ι₂} {ι₁'} {ι₂'} coprod coprod' =
+    φ , ψ , φψ≡idn , ψφ≡idn
+    where
+      module Co  = Coproduct coprod
+      module Co' = Coproduct coprod'
+      φ : hom _ _
+      φ = Co.copair ι₁' ι₂'
+      ψ : hom _ _
+      ψ = Co'.copair ι₁ ι₂
+
+      ψφ≡idn : ψ ⨾ φ ≡ idn
+      ψφ≡idn =
+        sym (Co'.copair-η ι₁' ι₂' (ψ ⨾ φ)
+          (cast-path⁻¹ (sym (assoc ι₁' ψ φ)
+            ∙ Co'.copair-β₁ ι₁ ι₂ ▹ φ
+            ∙ Co.copair-β₁ ι₁' ι₂'))
+          (cast-path⁻¹ (sym (assoc ι₂' ψ φ)
+            ∙ Co'.copair-β₂ ι₁ ι₂ ▹ φ
+            ∙ Co.copair-β₂ ι₁' ι₂')))
+        ∙ copair-η-idn coprod'
+
+      φψ≡idn : φ ⨾ ψ ≡ idn
+      φψ≡idn =
+        sym (Co.copair-η ι₁ ι₂ (φ ⨾ ψ)
+          (cast-path⁻¹ (sym (assoc ι₁ φ ψ)
+            ∙ Co.copair-β₁ ι₁' ι₂' ▹ ψ
+            ∙ Co'.copair-β₁ ι₁ ι₂))
+          (cast-path⁻¹ (sym (assoc ι₂ φ ψ)
+            ∙ Co.copair-β₂ ι₁' ι₂' ▹ ψ
+            ∙ Co'.copair-β₂ ι₁ ι₂)))
+        ∙ copair-η-idn coprod
+```
+
+## Functors
+
+A functor between categories maps objects and morphisms,
+preserving identity and composition. Since functors relate two
+categories, this definition lives outside `module Cat`.
+
+```agda
+record Functor
+  {o h o' h'}
+  (C : category o h) (D : category o' h')
+  : Type (o ⊔ h ⊔ o' ⊔ h')
+  where
+  no-eta-equality
+  private
+    module C = Virtual C
+    module D = Virtual D
+
+  field
+    ob-map  : C.ob → D.ob
+    hom-map : ∀ {x y}
+      → C.hom x y → D.hom (ob-map x) (ob-map y)
+    hom-map-idn
+      : ∀ {x}
+      → hom-map (C.idn {x}) ≡ D.idn
+    hom-map-seq
+      : ∀ {x y z} (f : C.hom x y) (g : C.hom y z)
+      → hom-map (f C.⨾ g) ≡ hom-map f D.⨾ hom-map g
+
+{-# INLINE Functor.constructor #-}
+```

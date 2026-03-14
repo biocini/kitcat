@@ -136,6 +136,13 @@ record category o h : Type₊ (o ⊔ h) where
 ```agda
 module Virtual {o} {h} (C : category o h) where
   open category C public
+
+  emb-ext
+    : ∀ {x y} {F G : ∀ w → hom w x → ∀ v → hom y v → hom w v}
+    → (∀ w (a : hom w x) v (b : hom y v) → F w a v b ≡ G w a v b)
+    → F ≡ G
+  emb-ext h =
+    funext λ w → funext λ a → funext λ v → funext λ b → h w a v b
 ```
 
 ### Composable fiber and its eliminators
@@ -201,8 +208,7 @@ implies `n ≡ m`.
       path
         : (λ w a v b → emb idn w a v (noy f v b))
         ≡ emb f
-      path = funext λ w → funext λ a → funext λ v →
-        funext λ b →
+      path = emb-ext λ w a v b →
           interchange idn f w a v b
           ∙ ap (λ t → emb f w t v b) (absorb-r a)
 
@@ -245,8 +251,8 @@ eliminates over this alternative characterization.
       path
         : (λ w a v b → emb f w a v (noy g v b))
         ≡ (λ w a v b → emb g w (yon f w a) v b)
-      path = funext λ w → funext λ a → funext λ v →
-        funext λ b → interchange f g w a v b
+      path = emb-ext λ w a v b →
+        interchange f g w a v b
 
   emb-yon-ind
     : ∀ {u} {x y z} (f : hom x y) (g : hom y z)
@@ -327,8 +333,7 @@ and `emb-inj`. The `emb-yon` and `emb-noy` lemmas express
     : ∀ {x y} {f g : hom x y}
     → yon f ≡ yon g → f ≡ g
   yon-inj {f = f} {g} p = emb-inj
-    (funext λ w → funext λ a → funext λ v →
-      funext λ b →
+    (emb-ext λ w a v b →
         ap (emb f w a v) (sym (absorb-l b))
         ∙ interchange f idn w a v b
         ∙ ap (λ t → emb idn w t v b) (λ i → p i w a)
@@ -339,8 +344,7 @@ and `emb-inj`. The `emb-yon` and `emb-noy` lemmas express
     : ∀ {x y} {f g : hom x y}
     → noy f ≡ noy g → f ≡ g
   noy-inj {f = f} {g} p = emb-inj
-    (funext λ w → funext λ a → funext λ v →
-      funext λ b →
+    (emb-ext λ w a v b →
         ap (λ t → emb f w t v b) (sym (absorb-r a))
         ∙ sym (interchange idn f w a v b)
         ∙ ap (λ t → emb idn w a v t) (λ i → p i v b)
@@ -381,8 +385,7 @@ the path, which is needed for triangle coherence.
       lhs : fiber emb (emb f)
       lhs = f ⨾ idn
           , emb-composite f idn
-          ∙ funext λ w → funext λ a → funext λ v →
-            funext λ b →
+          ∙ emb-ext λ w a v b →
               ap (emb f w a v) (absorb-l b)
 
       rhs : fiber emb (emb f)
@@ -400,8 +403,7 @@ the path, which is needed for triangle coherence.
 
       rhs : fiber emb
         (λ w a v b → emb idn w a v (noy f v b))
-      rhs = f , funext λ w → funext λ a →
-        funext λ v → funext λ b →
+      rhs = f , emb-ext λ w a v b →
           emb-noy f w a v b
 
   private
@@ -419,8 +421,7 @@ the path, which is needed for triangle coherence.
   E₃-contr f g h .center .fst = (f ⨾ g) ⨾ h
   E₃-contr f g h .center .snd =
     emb-composite (f ⨾ g) h
-    ∙ funext λ w → funext λ a →
-      funext λ v → funext λ b →
+    ∙ emb-ext λ w a v b →
         emb-composite-pt f g w a v (noy h v b)
   E₃-contr f g h .paths =
     is-contr→is-prop
@@ -430,8 +431,7 @@ the path, which is needed for triangle coherence.
       path : (λ w a v b →
                 emb (f ⨾ g) w a v (noy h v b))
             ≡ E₃ f g h
-      path = funext λ w → funext λ a →
-        funext λ v → funext λ b →
+      path = emb-ext λ w a v b →
           emb-composite-pt f g w a v (noy h v b)
 
   E₃-ind
@@ -460,8 +460,7 @@ the path, which is needed for triangle coherence.
       rhs : fiber emb (E₃ f g h)
       rhs = f ⨾ (g ⨾ h)
           , emb-composite f (g ⨾ h)
-          ∙ funext λ w → funext λ a →
-            funext λ v → funext λ b →
+          ∙ emb-ext λ w a v b →
               ap (emb f w a v)
                 (noy-composite g h b)
 ```
@@ -484,8 +483,7 @@ the path, which is needed for triangle coherence.
   E₄-contr f g h k .center .fst = ((f ⨾ g) ⨾ h) ⨾ k
   E₄-contr f g h k .center .snd =
     emb-composite ((f ⨾ g) ⨾ h) k
-    ∙ funext λ w → funext λ a →
-      funext λ v → funext λ b →
+    ∙ emb-ext λ w a v b →
         emb-composite-pt (f ⨾ g) h w a v
           (noy k v b)
       ∙ emb-composite-pt f g w a v
@@ -498,8 +496,7 @@ the path, which is needed for triangle coherence.
       path : (λ w a v b →
                 emb ((f ⨾ g) ⨾ h) w a v (noy k v b))
             ≡ E₄ f g h k
-      path = funext λ w → funext λ a →
-        funext λ v → funext λ b →
+      path = emb-ext λ w a v b →
           emb-composite-pt (f ⨾ g) h w a v (noy k v b)
         ∙ emb-composite-pt f g w a v
             (noy h v (noy k v b))
@@ -532,8 +529,7 @@ the path, which is needed for triangle coherence.
       pt₂ : fiber emb (E₄ f g h k)
       pt₂ = (f ⨾ (g ⨾ h)) ⨾ k
           , emb-composite (f ⨾ (g ⨾ h)) k
-          ∙ funext λ w → funext λ a →
-            funext λ v → funext λ b →
+          ∙ emb-ext λ w a v b →
               emb-composite-pt f (g ⨾ h) w a v
                 (noy k v b)
             ∙ ap (emb f w a v)
@@ -542,8 +538,7 @@ the path, which is needed for triangle coherence.
       pt₃ : fiber emb (E₄ f g h k)
       pt₃ = f ⨾ ((g ⨾ h) ⨾ k)
           , emb-composite f ((g ⨾ h) ⨾ k)
-          ∙ funext λ w → funext λ a →
-            funext λ v → funext λ b →
+          ∙ emb-ext λ w a v b →
               ap (emb f w a v)
                 (noy-composite (g ⨾ h) k b)
             ∙ ap (emb f w a v)
@@ -552,8 +547,7 @@ the path, which is needed for triangle coherence.
       pt₄ : fiber emb (E₄ f g h k)
       pt₄ = (f ⨾ g) ⨾ (h ⨾ k)
           , emb-composite (f ⨾ g) (h ⨾ k)
-          ∙ funext λ w → funext λ a →
-            funext λ v → funext λ b →
+          ∙ emb-ext λ w a v b →
               emb-composite-pt f g w a v
                 (noy (h ⨾ k) v b)
             ∙ ap (λ t → emb f w a v (noy g v t))
@@ -562,8 +556,7 @@ the path, which is needed for triangle coherence.
       pt₅ : fiber emb (E₄ f g h k)
       pt₅ = f ⨾ (g ⨾ (h ⨾ k))
           , emb-composite f (g ⨾ (h ⨾ k))
-          ∙ funext λ w → funext λ a →
-            funext λ v → funext λ b →
+          ∙ emb-ext λ w a v b →
               ap (emb f w a v)
                 (noy-composite g (h ⨾ k) b)
             ∙ ap (λ t → emb f w a v (noy g v t))
@@ -610,8 +603,7 @@ the path, which is needed for triangle coherence.
         → E₃-contr f g h .center
         ≡ (   f ⨾ (g ⨾ h)
             , emb-composite f (g ⨾ h)
-            ∙ funext λ w' → funext λ a →
-              funext λ v' → funext λ b →
+            ∙ emb-ext λ w' a v' b →
                 ap (emb f w' a v')
                   (noy-composite g h b))
       assoc-σ f g h =
@@ -637,8 +629,7 @@ the path, which is needed for triangle coherence.
       v₃ i =
         f ⨾ ((g ⨾ h) ⨾ k)
         , emb-composite f ((g ⨾ h) ⨾ k)
-        ∙ funext λ w' → funext λ a →
-          funext λ v' → funext λ b →
+        ∙ emb-ext λ w' a v' b →
             sym (ap-comp (emb f w' a v')
               (noy-composite (g ⨾ h) k b)
               (noy-composite g h (noy k v' b))) i
@@ -647,8 +638,7 @@ the path, which is needed for triangle coherence.
       v₅ i =
         f ⨾ (g ⨾ (h ⨾ k))
         , emb-composite f (g ⨾ (h ⨾ k))
-        ∙ funext λ w' → funext λ a →
-          funext λ v' → funext λ b →
+        ∙ emb-ext λ w' a v' b →
             ap-comp (emb f w' a v')
               (noy-composite g (h ⨾ k) b)
               (ap (noy g v') (noy-composite h k b)) i
@@ -657,8 +647,7 @@ the path, which is needed for triangle coherence.
       γ₂₃-pt i =
         assoc f (g ⨾ h) k i
         , assoc-σ f (g ⨾ h) k i .snd
-        ∙ funext λ w' → funext λ a →
-          funext λ v' → funext λ b →
+        ∙ emb-ext λ w' a v' b →
             ap (emb f w' a v')
               (noy-composite g h (noy k v' b))
 
@@ -667,12 +656,10 @@ the path, which is needed for triangle coherence.
         (f ⨾ (g ⨾ h)) ⨾ k
         , Path.assoc
             (emb-composite (f ⨾ (g ⨾ h)) k)
-            (funext λ w' → funext λ a →
-              funext λ v' → funext λ b →
+            (emb-ext λ w' a v' b →
                 emb-composite-pt f (g ⨾ h) w' a v'
                   (noy k v' b))
-            (funext λ w' → funext λ a →
-              funext λ v' → funext λ b →
+            (emb-ext λ w' a v' b →
                 ap (emb f w' a v')
                   (noy-composite g h (noy k v' b))) i
 
@@ -681,12 +668,10 @@ the path, which is needed for triangle coherence.
         f ⨾ ((g ⨾ h) ⨾ k)
         , sym (Path.assoc
             (emb-composite f ((g ⨾ h) ⨾ k))
-            (funext λ w' → funext λ a →
-              funext λ v' → funext λ b →
+            (emb-ext λ w' a v' b →
                 ap (emb f w' a v')
                   (noy-composite (g ⨾ h) k b))
-            (funext λ w' → funext λ a →
-              funext λ v' → funext λ b →
+            (emb-ext λ w' a v' b →
                 ap (emb f w' a v')
                   (noy-composite g h (noy k v' b)))) i
 
@@ -694,8 +679,7 @@ the path, which is needed for triangle coherence.
       γ₄₅-pt i =
         assoc f g (h ⨾ k) i
         , assoc-σ f g (h ⨾ k) i .snd
-        ∙ funext λ w' → funext λ a →
-          funext λ v' → funext λ b →
+        ∙ emb-ext λ w' a v' b →
             ap (λ t → emb f w' a v' (noy g v' t))
               (noy-composite h k b)
 
@@ -704,12 +688,10 @@ the path, which is needed for triangle coherence.
         (f ⨾ g) ⨾ (h ⨾ k)
         , Path.assoc
             (emb-composite (f ⨾ g) (h ⨾ k))
-            (funext λ w' → funext λ a →
-              funext λ v' → funext λ b →
+            (emb-ext λ w' a v' b →
                 emb-composite-pt f g w' a v'
                   (noy (h ⨾ k) v' b))
-            (funext λ w' → funext λ a →
-              funext λ v' → funext λ b →
+            (emb-ext λ w' a v' b →
                 ap (λ t → emb f w' a v' (noy g v' t))
                   (noy-composite h k b)) i
 
@@ -718,12 +700,10 @@ the path, which is needed for triangle coherence.
         f ⨾ (g ⨾ (h ⨾ k))
         , sym (Path.assoc
             (emb-composite f (g ⨾ (h ⨾ k)))
-            (funext λ w' → funext λ a →
-              funext λ v' → funext λ b →
+            (emb-ext λ w' a v' b →
                 ap (emb f w' a v')
                   (noy-composite g (h ⨾ k) b))
-            (funext λ w' → funext λ a →
-              funext λ v' → funext λ b →
+            (emb-ext λ w' a v' b →
                 ap (λ t → emb f w' a v' (noy g v' t))
                   (noy-composite h k b))) i
 
@@ -731,8 +711,7 @@ the path, which is needed for triangle coherence.
       γ₁₄-pt i =
         assoc (f ⨾ g) h k i
         , assoc-σ (f ⨾ g) h k i .snd
-        ∙ funext λ w' → funext λ a →
-          funext λ v' → funext λ b →
+        ∙ emb-ext λ w' a v' b →
             emb-composite-pt f g w' a v'
               (noy h v' (noy k v' b))
 
@@ -741,12 +720,10 @@ the path, which is needed for triangle coherence.
         ((f ⨾ g) ⨾ h) ⨾ k
         , Path.assoc
             (emb-composite ((f ⨾ g) ⨾ h) k)
-            (funext λ w' → funext λ a →
-              funext λ v' → funext λ b →
+            (emb-ext λ w' a v' b →
                 emb-composite-pt (f ⨾ g) h w' a v'
                   (noy k v' b))
-            (funext λ w' → funext λ a →
-              funext λ v' → funext λ b →
+            (emb-ext λ w' a v' b →
                 emb-composite-pt f g w' a v'
                   (noy h v' (noy k v' b))) i
 
@@ -773,23 +750,19 @@ the path, which is needed for triangle coherence.
         , (sym (Path.assoc A₁₄ B₁₄ C₁₄) ∙ ap (A₁₄ ∙_) N₁₄) i
         where
           A₁₄ = emb-composite (f ⨾ g) (h ⨾ k)
-          B₁₄ = funext λ w' → funext λ a →
-            funext λ v' → funext λ b →
+          B₁₄ = emb-ext λ w' a v' b →
               ap (emb (f ⨾ g) w' a v')
                 (noy-composite h k b)
-          C₁₄ = funext λ w' → funext λ a →
-            funext λ v' → funext λ b →
+          C₁₄ = emb-ext λ w' a v' b →
               emb-composite-pt f g w' a v'
                 (noy h v' (noy k v' b))
           N₁₄ : B₁₄ ∙ C₁₄
-              ≡ (funext λ w' → funext λ a →
-                  funext λ v' → funext λ b →
+              ≡ emb-ext λ w' a v' b →
                     emb-composite-pt f g w' a v'
                       (noy (h ⨾ k) v' b)
                   ∙ ap (λ t → emb f w' a v' (noy g v' t))
-                        (noy-composite h k b))
-          N₁₄ j = funext λ w' → funext λ a →
-            funext λ v' → funext λ b →
+                        (noy-composite h k b)
+          N₁₄ j = emb-ext λ w' a v' b →
               w₁₄-nat w' a v' b j
 
     face₁₂ : α₁₂ ≡ ap (_⨾ k) (assoc f g h)
@@ -865,8 +838,7 @@ not `absorb-coh`. The `α₂₃` edge remains abstract.
         (λ w a v b → emb f w a v (noy g v b))
       pt₁ = (f ⨾ idn) ⨾ g
           , emb-composite (f ⨾ idn) g
-          ∙ funext λ w → funext λ a →
-            funext λ v → funext λ b →
+          ∙ emb-ext λ w a v b →
               emb-composite-pt f idn w a v (noy g v b)
             ∙ ap (emb f w a v) (absorb-l (noy g v b))
 
@@ -874,8 +846,7 @@ not `absorb-coh`. The `α₂₃` edge remains abstract.
         (λ w a v b → emb f w a v (noy g v b))
       pt₂ = f ⨾ (idn ⨾ g)
           , emb-composite f (idn ⨾ g)
-          ∙ funext λ w → funext λ a →
-            funext λ v → funext λ b →
+          ∙ emb-ext λ w a v b →
               ap (emb f w a v)
                 (noy-composite idn g b)
             ∙ ap (emb f w a v)
@@ -911,8 +882,7 @@ not `absorb-coh`. The `α₂₃` edge remains abstract.
       unitr-σ
         : (   f ⨾ idn
             , emb-composite f idn
-            ∙ funext λ w → funext λ a →
-              funext λ v → funext λ b →
+            ∙ emb-ext λ w a v b →
                 ap (emb f w a v) (absorb-l b))
         ≡ (f , refl)
       unitr-σ =
@@ -935,8 +905,7 @@ not `absorb-coh`. The `α₂₃` edge remains abstract.
         : E₃-contr f idn g .center
         ≡ (   f ⨾ (idn ⨾ g)
             , emb-composite f (idn ⨾ g)
-            ∙ funext λ w' → funext λ a →
-              funext λ v' → funext λ b →
+            ∙ emb-ext λ w' a v' b →
                 ap (emb f w' a v')
                   (noy-composite idn g b))
       assoc-σ-fig =
@@ -947,8 +916,7 @@ not `absorb-coh`. The `α₂₃` edge remains abstract.
       γ₁₂-pt i =
         assoc f idn g i
         , assoc-σ-fig i .snd
-        ∙ funext λ w → funext λ a →
-          funext λ v → funext λ b →
+        ∙ emb-ext λ w a v b →
             ap (emb f w a v)
               (absorb-l (noy g v b))
 
@@ -957,12 +925,10 @@ not `absorb-coh`. The `α₂₃` edge remains abstract.
         (f ⨾ idn) ⨾ g
         , Path.assoc
             (emb-composite (f ⨾ idn) g)
-            (funext λ w → funext λ a →
-              funext λ v → funext λ b →
+            (emb-ext λ w a v b →
                 emb-composite-pt f idn w a v
                   (noy g v b))
-            (funext λ w → funext λ a →
-              funext λ v → funext λ b →
+            (emb-ext λ w a v b →
                 ap (emb f w a v)
                   (absorb-l (noy g v b))) i
 
@@ -971,12 +937,10 @@ not `absorb-coh`. The `α₂₃` edge remains abstract.
         f ⨾ (idn ⨾ g)
         , sym (Path.assoc
             (emb-composite f (idn ⨾ g))
-            (funext λ w → funext λ a →
-              funext λ v → funext λ b →
+            (emb-ext λ w a v b →
                 ap (emb f w a v)
                   (noy-composite idn g b))
-            (funext λ w → funext λ a →
-              funext λ v → funext λ b →
+            (emb-ext λ w a v b →
                 ap (emb f w a v)
                   (absorb-l (noy g v b)))) i
 
@@ -1077,8 +1041,7 @@ the full Mac Lane triangle from the weak version.
           (λ w a v b → emb f w a v (noy g v b))
         pt₂ = f ⨾ (idn ⨾ g)
             , emb-composite f (idn ⨾ g)
-            ∙ funext λ w → funext λ a →
-              funext λ v → funext λ b →
+            ∙ emb-ext λ w a v b →
                 ap (emb f w a v)
                   (noy-composite idn g b)
               ∙ ap (emb f w a v)
@@ -1092,8 +1055,7 @@ the full Mac Lane triangle from the weak version.
           : (   idn ⨾ g
               , emb-composite idn g)
           ≡ (   g
-              , funext λ w → funext λ a →
-                funext λ v → funext λ b →
+              , emb-ext λ w a v b →
                   emb-noy g w a v b)
         unitl-σ =
           is-contr→is-prop (composable-contr idn g)
@@ -1104,8 +1066,7 @@ the full Mac Lane triangle from the weak version.
         γ₂₃-pt i =
           f ⨾ (unitl g i)
           , emb-composite f (unitl g i)
-          ∙ funext λ w → funext λ a →
-            funext λ v → funext λ b →
+          ∙ emb-ext λ w a v b →
               ap (emb f w a v)
                 ((λ j → unitl-σ i .snd j _ idn v b)
                 ∙ absorb-l (noy g v b))
@@ -1114,8 +1075,7 @@ the full Mac Lane triangle from the weak version.
         w₀ i =
           f ⨾ (idn ⨾ g)
           , emb-composite f (idn ⨾ g)
-          ∙ funext λ w → funext λ a →
-            funext λ v → funext λ b →
+          ∙ emb-ext λ w a v b →
               sym (ap-comp (emb f w a v)
                 (noy-composite idn g b)
                 (absorb-l (noy g v b))) i
@@ -1125,8 +1085,7 @@ the full Mac Lane triangle from the weak version.
         v₁ i =
           f ⨾ g
           , emb-composite f g
-          ∙ funext λ w → funext λ a →
-            funext λ v → funext λ b →
+          ∙ emb-ext λ w a v b →
               ap (ap (emb f w a v))
                 (absorb-l-noy-retract g v b) i
 
