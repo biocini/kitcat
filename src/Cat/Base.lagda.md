@@ -860,7 +860,7 @@ record functor
     map  : Cs.ob → Ds.ob
     hmap : ∀ {x y}
       → Cs.hom x y → Ds.hom (map x) (map y)
-    hmap-seq
+    preserves-comp
       : ∀ {x y z} (f : Cs.hom x y) (g : Cs.hom y z)
       → hmap (f Cs.⨾ g) ≡ hmap f Ds.⨾ hmap g
     preserves-neutral
@@ -870,7 +870,7 @@ record functor
   hmap-idn : ∀ {x} → hmap (Cs.idn {x}) ≡ Ds.idn
   hmap-idn = Db.idempotent-neutral→idn
     (preserves-neutral Cb.idn-is-neutral)
-    (sym (hmap-seq Cs.idn Cs.idn) ∙ ap hmap Cs.idem)
+    (sym (preserves-comp Cs.idn Cs.idn) ∙ ap hmap Cs.idem)
 
 {-# INLINE functor.constructor #-}
 ```
@@ -882,13 +882,13 @@ id-functor
   : ∀ {o h} (C : category o h) → functor C C
 id-functor C .functor.map x = x
 id-functor C .functor.hmap f = f
-id-functor C .functor.hmap-seq _ _ = refl
+id-functor C .functor.preserves-comp _ _ = refl
 id-functor C .functor.preserves-neutral n = n
 ```
 
 Functor composition maps objects and morphisms sequentially.
 Identity preservation chains through both functors; composition
-preservation uses `hmap-seq` of each functor plus `ap` to
+preservation uses `preserves-comp` of each functor plus `ap` to
 push the inner functor's equation through the outer.
 
 ```agda
@@ -907,9 +907,9 @@ _∘F_ {C = C} {D} {E} G F = FGF where
   FGF : functor C E
   FGF .functor.map x = G.map (F.map x)
   FGF .functor.hmap f = G.hmap (F.hmap f)
-  FGF .functor.hmap-seq f g =
-    ap G.hmap (F.hmap-seq f g)
-    ∙ G.hmap-seq (F.hmap f) (F.hmap g)
+  FGF .functor.preserves-comp f g =
+    ap G.hmap (F.preserves-comp f g)
+    ∙ G.preserves-comp (F.hmap f) (F.hmap g)
   FGF .functor.preserves-neutral n =
     G.preserves-neutral (F.preserves-neutral n)
 
