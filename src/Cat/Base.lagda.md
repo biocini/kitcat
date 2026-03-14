@@ -1,15 +1,11 @@
 Lane Biocini
-February 2026
+March 2026
 
-We ask that `fiber yon (λ _ → id)` and `fiber yon (λ w → yon g w ∘ yon
-f w)` are contractible. The contravariant conditions ask the same for
-`yon-op`. Contractibility subsumes existence (the center gives `idn`
-and `_⨾_`) and uniqueness (which gives the embedding properties). The
-covariant/contravariant pairing gives perfect op-symmetry, allowing
-an involutive opposite category operation to be defined -- following
-Carrette, I believe this to be essential for the "right" definition
-of category. In principle however each direction can be presented
-independently and we get many of the things we want.
+Universal properties in category theory say "there exists a unique
+morphism such that..." -- contractibility of a fiber. Contractibility
+gives an induction principle: to prove something about all solutions,
+it suffices to prove it for the canonical one. This module makes that
+pattern explicit.
 
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness --no-sized-types #-}
@@ -20,449 +16,509 @@ open import Core.Type
 open import Core.Base
 open import Core.Data.Sigma
 open import Core.Kan
-open import Core.Equiv
 open import Core.Transport
-open import Core.Path using (ap-comp)
-open import Core.Trait.Trunc
-  using ( Π-is-prop; Πi-is-prop )
-open import Core.Function.Base
-open import Core.Function.Embedding using (is-embedding; _↪_)
-
-record category o h : Type₊ (o ⊔ h) where
-  no-eta-equality
-  field
-    ob  : Type o
-    hom : ob → ob → Type h
-    yon : ∀ {x y} → hom x y → ∀ w → hom w x → hom w y
-    idn-contr
-     : ∀ {x} → is-contr (fiber (yon {x} {x}) (λ _ → id))
-    composable-contr
-      : ∀ {x y z} (f : hom x y) (g : hom y z)
-      → is-contr (fiber yon (λ w → yon g w ∘ yon f w))
-
-  idn : ∀ {x} → hom x x
-  idn = idn-contr .center .fst
-
-  _⨾_ : ∀ {x y z} → hom x y → hom y z → hom x z
-  f ⨾ g = composable-contr f g .center .fst
-  infixr 40 _⨾_
-
-  yon-op : ∀ {x y} → hom x y → ∀ z → hom y z → hom x z
-  yon-op {x} f z g = yon g x f
-
-  field
-    idn-op-contr
-      : ∀ {x}
-      → is-contr
-          (fiber (yon-op {x} {x}) (λ (_ : ob) → id))
-    composable-op-contr
-      : ∀ {x y z} (f : hom x y) (g : hom y z)
-      → is-contr
-          (fiber (yon-op {x} {z})
-            (λ w → yon-op f w ∘ yon-op g w))
-
-  {-# INLINE yon #-}
-  {-# INLINE _⨾_ #-}
-
-module Cat {o} {h} (C : category o h) where
-  open category C public
-
-  yon-idn : ∀ {x} → yon (idn {x}) ≡ (λ _ → id)
-  yon-idn = idn-contr .center .snd
-
-  yon-composite
-    : ∀ {x y z} (f : hom x y) (g : hom y z)
-    → yon (f ⨾ g) ≡ (λ w → yon g w ∘ yon f w)
-  yon-composite f g = composable-contr f g .center .snd
-
-  yon-idn-pt
-    : ∀ {x} (w : ob) (k : hom w x)
-    → yon idn w k ≡ k
-  yon-idn-pt w k i = yon-idn i w k
+open import Cat.Virtual
 ```
 
-### Contravariant identity
+## Composite witnesses
 
-The contravariant condition gives its own identity `op-idn`
-with `yon g x op-idn ≡ g` for all g. Both conditions applied to each
-other force `op-idn ≡ idn`.
-
-```agda
-  private
-    op-idn : ∀ {x} → hom x x
-    op-idn = idn-op-contr .center .fst
-
-    op-idn-wit
-      : ∀ {x} → yon-op (op-idn {x}) ≡ (λ _ → id)
-    op-idn-wit = idn-op-contr .center .snd
-
-    op-idn-pt
-      : ∀ {x} (z : ob) (g : hom x z)
-      → yon g x op-idn ≡ g
-    op-idn-pt z g i = op-idn-wit i z g
-
-    op-idn≡idn : ∀ {x} → op-idn {x} ≡ idn
-    op-idn≡idn =
-      sym (yon-idn-pt _ op-idn) ∙ op-idn-pt _ idn
-
-  yon-op-idn-pt
-    : ∀ {x} (z : ob) (g : hom x z)
-    → yon g x idn ≡ g
-  yon-op-idn-pt z g =
-    ap (yon g _) (sym op-idn≡idn) ∙ op-idn-pt z g
-```
-
-### yon-emb
-
-Any inhabited fiber of `yon` is contractible: `composable-contr idn m`
-gives contractibility of `fiber yon (yon m)` after transport along the
-identity witness. This is a consequence of the fact that our
-definition enforces that all composites exist due to the existence
-of unital morphisms at each object.
-
-In an earlier attempt at a definition I was able to show that given an
-arbitrary 2-cell type with a unary identity system fixed at some `f, g`
-compatible in the usual way over the canonical composition operator
-(i.e. `f ⨾ g` is well-typed), the 2-cells are equivalent to the identity
-type as soon as unital morphisms exist.
+A composite witness `f ⨾ g => s` asserts that `s` represents the
+same ternary operation as composing through `f` then `g`. This is
+the fiber type from `compose-contr`. `cast-path` extracts the
+hom-level equality from the emb-level witness via contractibility.
 
 ```agda
-  yon-image-contr
-    : ∀ {x y} (m : hom x y)
-    → is-contr (fiber yon (yon m))
-  yon-image-contr m =
-    subst (is-contr ∘ fiber yon) path (composable-contr idn m)
-    where
-      path : (λ w → yon m w ∘ yon idn w) ≡ yon m
-      path i w k = yon m w (yon-idn-pt w k i)
+module Cat {o h} (C : category o h) where
+  open Virtual C
 
-  yon-emb : ∀ {x y} → is-embedding (yon {x} {y})
-  yon-emb t (n , p) =
-    is-contr→is-prop
-      (subst (is-contr ∘ fiber yon) p (yon-image-contr n))
-      (n , p)
-```
-
-### yon-op-emb
-
-Dual construction using the contravariant  conditions.
-
-```agda
-  private
-    yon-op-image-contr
-      : ∀ {x y} (m : hom x y)
-      → is-contr (fiber yon-op (yon-op m))
-    yon-op-image-contr m =
-      subst (is-contr ∘ fiber yon-op) path (composable-op-contr idn m)
-      where
-        path
-          : (λ w → yon-op idn w ∘ yon-op m w)
-          ≡ yon-op m
-        path i w k = yon-op-idn-pt w (yon-op m w k) i
-
-  yon-op-emb
-    : ∀ {x y} → is-embedding (yon-op {x} {y})
-  yon-op-emb t (n , p) =
-    is-contr→is-prop
-      (subst (is-contr ∘ fiber yon-op) p
-        (yon-op-image-contr n))
-      (n , p)
-
-  yon-op-image-ind
-    : ∀ {u} {x y} (m : hom x y)
-    → (P : (n : hom x y) → yon-op n ≡ yon-op m → Type u)
-    → P m refl
-    → ∀ n q → P n q
-  yon-op-image-ind m P base n q =
-    coe01 (λ i → P (path i .fst) (path i .snd)) base
-    where
-      path : (m , refl) ≡ (n , q)
-      path = is-contr→is-prop (yon-op-image-contr m) (m , refl) (n , q)
-```
-
-### Composite vocabulary
-
-```agda
-  composite
-    : ∀ {x y z} → hom x y → hom y z → hom x z
-    → Type (o ⊔ h)
-  composite f g s = yon s ≡ λ w → yon g w ∘ yon f w
-  syntax composite f g s = f ⨾ g => s
-
-  is-composable
-    : ∀ {x y z} → hom x y → hom y z → Type (o ⊔ h)
-  is-composable f g = fiber yon (λ w → yon g w ∘ yon f w)
-
-  composite-contr
-    : ∀ {x y z} (f : hom x y) (g : hom y z)
-    → is-contr (is-composable f g)
-  composite-contr = composable-contr
+  _⨾_=>_ : ∀ {x y z} → hom x y → hom y z → hom x z
+          → Type _
+  _⨾_=>_ {x} {y} {z} f g s =
+    emb s ≡ (λ w a v b → emb f w a v (noy g v b))
 
   cast-path
-    : ∀ {x y z} {f : hom x y} {g : hom y z}
-      {s : hom x z}
+    : ∀ {x y z} {f : hom x y} {g : hom y z} {s : hom x z}
     → f ⨾ g => s → f ⨾ g ≡ s
   cast-path {f = f} {g} α =
-    ap fst (composite-contr f g .paths (_ , α))
+    ap fst (compose-contr f g .paths (_ , α))
+```
 
-  cast-pathp
-    : ∀ {x y z} {f : hom x y} {g : hom y z}
-      {s : hom x z}
-    → (α : f ⨾ g => s)
-    → PathP (λ i → f ⨾ g => (cast-path α i))
-        (yon-composite f g) α
-  cast-pathp {f = f} {g} α =
-    ap snd (composite-contr f g .paths (_ , α))
+## Terminal and initial objects
 
-  is-composable-is-prop
-    : ∀ {x y z} (f : hom x y) (g : hom y z)
-    → is-prop (is-composable f g)
-  is-composable-is-prop f g =
-    is-contr→is-prop (composite-contr f g)
+The simplest universal properties: `hom X T` is contractible for
+all `X` (terminal), or `hom I X` is contractible for all `X`
+(initial). The induction principle `!-ind` says: to prove `P` for
+all morphisms into `T`, prove it for the canonical one. The
+uniqueness rule `!-unique` follows from induction at `P = (! ≡_)`.
 
-  yon-image-ind
-    : ∀ {u} {x y} (m : hom x y)
-    → (P : (n : hom x y) → yon n ≡ yon m → Type u)
-    → P m refl
-    → ∀ n q → P n q
-  yon-image-ind m P base n q =
-    coe01 (λ i → P (path i .fst) (path i .snd)) base
+```agda
+  is-terminal : ob → Type (o ⊔ h)
+  is-terminal T = ∀ X → is-contr (hom X T)
+
+  module Terminal {T : ob} (term : is-terminal T) where
+    ! : ∀ {X} → hom X T
+    ! = term _ .center
+
+    !-ind
+      : ∀ {u} {X : ob} (P : hom X T → Type u)
+      → P !
+      → ∀ f → P f
+    !-ind = contr-ind (term _)
+
+    !-unique : ∀ {X} (f : hom X T) → ! ≡ f
+    !-unique = !-ind (! ≡_) refl
+
+  is-initial : ob → Type (o ⊔ h)
+  is-initial I = ∀ X → is-contr (hom I X)
+
+  module Initial {I : ob} (init : is-initial I) where
+    ¡ : ∀ {X} → hom I X
+    ¡ = init _ .center
+
+    ¡-ind
+      : ∀ {u} {X : ob} (P : hom I X → Type u)
+      → P ¡
+      → ∀ f → P f
+    ¡-ind P = contr-ind (init _) P
+
+    ¡-unique : ∀ {X} (f : hom I X) → ¡ ≡ f
+    ¡-unique = ¡-ind (¡ ≡_) refl
+```
+
+## Products
+
+The first compound universal property. A product cone over
+projections `π₁ : P → A` and `π₂ : P → B` from an object `X`
+consists of a mediating morphism `m : X → P` together with
+composite witnesses `m ⨾ π₁ => f` and `m ⨾ π₂ => g`. The
+product condition asks this cone type to be contractible for all
+`f` and `g`.
+
+The type-theoretic reading:
+
+- β-rules are the commuting conditions, extracted from the
+  composite witnesses
+- The η-rule is uniqueness of the mediating morphism, obtained by
+  induction at `Q = ⟨ f , g ⟩ ≡_`
+- Induction is the full dependent eliminator, subsuming both
+
+```agda
+  product-cone
+    : ∀ {A B P : ob} → hom P A → hom P B
+    → (X : ob) → hom X A → hom X B → Type (o ⊔ h)
+  product-cone {P = P} π₁ π₂ X f g =
+    Sigma (hom X P) λ m → (m ⨾ π₁ => f) × (m ⨾ π₂ => g)
+
+  is-product
+    : ∀ {A B P : ob}
+      (π₁ : hom P A) (π₂ : hom P B)
+    → Type (o ⊔ h)
+  is-product π₁ π₂ =
+    ∀ {X} (f : hom X _) (g : hom X _)
+    → is-contr (product-cone π₁ π₂ X f g)
+
+  module Product
+    {A B P : ob} {π₁ : hom P A} {π₂ : hom P B}
+    (prod : is-product π₁ π₂)
     where
-      path : (m , refl) ≡ (n , q)
-      path = is-contr→is-prop (yon-image-contr m) (m , refl) (n , q)
 
-  yon-inj
-    : ∀ {x y} {f g : hom x y}
-    → yon f ≡ yon g → f ≡ g
-  yon-inj {f = f} p = yon-image-ind f (λ n _ → f ≡ n) refl _ (sym p)
+    ⟨_,_⟩ : ∀ {X} → hom X A → hom X B → hom X P
+    ⟨ f , g ⟩ = prod f g .center .fst
 
-  yon-op-inj
-    : ∀ {x y} {f g : hom x y}
-    → yon-op f ≡ yon-op g → f ≡ g
-  yon-op-inj {f = f} p = yon-op-image-ind f (λ n _ → f ≡ n) refl _ (sym p)
+    ⟨,⟩-factors₁
+      : ∀ {X} (f : hom X A) (g : hom X B)
+      → ⟨ f , g ⟩ ⨾ π₁ => f
+    ⟨,⟩-factors₁ f g = prod f g .center .snd .fst
+
+    ⟨,⟩-factors₂
+      : ∀ {X} (f : hom X A) (g : hom X B)
+      → ⟨ f , g ⟩ ⨾ π₂ => g
+    ⟨,⟩-factors₂ f g = prod f g .center .snd .snd
+
+    ⟨,⟩-ind
+      : ∀ {u X} (f : hom X A) (g : hom X B)
+      → (Q : (m : hom X P)
+           → m ⨾ π₁ => f → m ⨾ π₂ => g
+           → Type u)
+      → Q ⟨ f , g ⟩
+          (⟨,⟩-factors₁ f g) (⟨,⟩-factors₂ f g)
+      → ∀ m α β → Q m α β
+    ⟨,⟩-ind f g Q base m α β =
+      contr-ind (prod f g)
+        (λ where (m , α , β) → Q m α β)
+        base (m , α , β)
+
+    ⟨,⟩-β₁
+      : ∀ {X} (f : hom X A) (g : hom X B)
+      → ⟨ f , g ⟩ ⨾ π₁ ≡ f
+    ⟨,⟩-β₁ f g = cast-path (⟨,⟩-factors₁ f g)
+
+    ⟨,⟩-β₂
+      : ∀ {X} (f : hom X A) (g : hom X B)
+      → ⟨ f , g ⟩ ⨾ π₂ ≡ g
+    ⟨,⟩-β₂ f g = cast-path (⟨,⟩-factors₂ f g)
+
+    ⟨,⟩-η
+      : ∀ {X} (f : hom X A) (g : hom X B)
+      → (m : hom X P)
+      → m ⨾ π₁ => f → m ⨾ π₂ => g
+      → ⟨ f , g ⟩ ≡ m
+    ⟨,⟩-η f g =
+      ⟨,⟩-ind f g (λ m _ _ → ⟨ f , g ⟩ ≡ m) refl
 ```
 
-### comp-eq and yon-nat
+## Coproducts
 
-The composition `f ⨾ g` equals `yon g x f`, the Yoneda pairing.
-This follows by evaluating the composition witness at `idn`.
-
-```agda
-  comp-eq
-    : ∀ {x y z} (f : hom x y) (g : hom y z)
-    → f ⨾ g ≡ yon g x f
-  comp-eq f g =
-    sym (yon-op-idn-pt _ (f ⨾ g))
-    ∙ (λ i → yon-composite f g i _ idn)
-    ∙ ap (yon g _) (yon-op-idn-pt _ f)
-```
-
-The naturality condition says precomposing with `f ⨾ g` decomposes
-as two precompositions. We extract this from the contractible
-contravariant composition fiber: the center gives `(r, α)`, and
-we show `r ≡ f ⨾ g` by evaluating `α` at the identity.
+Dual of products. A coproduct cocone over injections `ι₁ : A → S`
+and `ι₂ : B → S` from an object `X` consists of a mediating
+morphism `m : S → X` together with composite witnesses
+`ι₁ ⨾ m => f` and `ι₂ ⨾ m => g`. The mediating morphism goes
+*out* of the coproduct, reversing the product's direction. The
+same β/η reading applies.
 
 ```agda
-  yon-nat
-    : ∀ {x y z} (f : hom x y) (g : hom y z)
-      (w : ob) (k : hom z w)
-    → yon k x (f ⨾ g) ≡ yon (yon k y g) x f
-  yon-nat f g w k =
-    ap (yon k _) fg≡r ∙ (λ i → α i w k)
+  coproduct-cocone
+    : ∀ {A B S : ob} → hom A S → hom B S
+    → (X : ob) → hom A X → hom B X → Type (o ⊔ h)
+  coproduct-cocone {S = S} ι₁ ι₂ X f g =
+    Sigma (hom S X) λ m → (ι₁ ⨾ m => f) × (ι₂ ⨾ m => g)
+
+  is-coproduct
+    : ∀ {A B S : ob}
+      (ι₁ : hom A S) (ι₂ : hom B S)
+    → Type (o ⊔ h)
+  is-coproduct ι₁ ι₂ =
+    ∀ {X} (f : hom _ X) (g : hom _ X)
+    → is-contr (coproduct-cocone ι₁ ι₂ X f g)
+
+  module Coproduct
+    {A B S : ob} {ι₁ : hom A S} {ι₂ : hom B S}
+    (coprod : is-coproduct ι₁ ι₂)
     where
-      r : hom _ _
-      r = composable-op-contr f g .center .fst
+    copair : ∀ {X} → hom A X → hom B X → hom S X
+    copair f g = coprod f g .center .fst
 
-      α : yon-op r ≡ (λ w → yon-op f w ∘ yon-op g w)
-      α = composable-op-contr f g .center .snd
+    copair-factors₁
+      : ∀ {X} (f : hom A X) (g : hom B X)
+      → ι₁ ⨾ copair f g => f
+    copair-factors₁ f g = coprod f g .center .snd .fst
 
-      r≡yon-g-f : r ≡ yon g _ f
-      r≡yon-g-f =
-        sym (yon-idn-pt _ r)
-        ∙ (λ i → α i _ idn)
-        ∙ ap (λ h → yon h _ f) (yon-idn-pt _ g)
+    copair-factors₂
+      : ∀ {X} (f : hom A X) (g : hom B X)
+      → ι₂ ⨾ copair f g => g
+    copair-factors₂ f g = coprod f g .center .snd .snd
 
-      fg≡r : f ⨾ g ≡ r
-      fg≡r = comp-eq f g ∙ sym r≡yon-g-f
+    copair-ind
+      : ∀ {u X} (f : hom A X) (g : hom B X)
+      → (Q : (m : hom S X)
+           → ι₁ ⨾ m => f → ι₂ ⨾ m => g
+           → Type u)
+      → Q (copair f g)
+          (copair-factors₁ f g) (copair-factors₂ f g)
+      → ∀ m α β → Q m α β
+    copair-ind f g Q base m α β =
+      contr-ind (coprod f g)
+        (λ where (m , α , β) → Q m α β)
+        base (m , α , β)
+
+    copair-β₁
+      : ∀ {X} (f : hom A X) (g : hom B X)
+      → ι₁ ⨾ copair f g ≡ f
+    copair-β₁ f g = cast-path (copair-factors₁ f g)
+
+    copair-β₂
+      : ∀ {X} (f : hom A X) (g : hom B X)
+      → ι₂ ⨾ copair f g ≡ g
+    copair-β₂ f g = cast-path (copair-factors₂ f g)
+
+    copair-η
+      : ∀ {X} (f : hom A X) (g : hom B X)
+      → (m : hom S X)
+      → ι₁ ⨾ m => f → ι₂ ⨾ m => g
+      → copair f g ≡ m
+    copair-η f g =
+      copair-ind f g
+        (λ m _ _ → copair f g ≡ m) refl
 ```
 
-### Unit laws and associativity
+## Equalizers
+
+Given `f, g : hom A B`, an equalizer `e : hom E A` satisfies
+`e ⨾ f ≡ e ⨾ g` and has a conditional universal property: for
+any `h : hom X A` with `h ⨾ f ≡ h ⨾ g`, the cone
+`Σ m ∶ hom X E , (m ⨾ e => h)` is contractible. The
+precondition `h ⨾ f ≡ h ⨾ g` gates access to the mediating
+morphism.
 
 ```agda
-  opaque
-    unitr : ∀ {x y} (f : hom x y) → f ⨾ idn ≡ f
-    unitr f = cast-path wit where
-      wit : f ⨾ idn => f
-      wit i w k = yon-idn-pt w (yon f w k) (~ i)
+  equalizer-cone
+    : ∀ {A E : ob} → hom E A
+    → (X : ob) → hom X A → Type (o ⊔ h)
+  equalizer-cone {E = E} e X h =
+    Sigma (hom X E) λ m → m ⨾ e => h
 
-    unitl : ∀ {x y} (f : hom x y) → idn ⨾ f ≡ f
-    unitl f = cast-path wit where
-      wit : composite idn f f
-      wit i w k = yon f w (yon-idn-pt w k (~ i))
+  is-equalizer
+    : ∀ {A B E : ob}
+      (f g : hom A B) (e : hom E A)
+    → Type (o ⊔ h)
+  is-equalizer f g e =
+    (e ⨾ f ≡ e ⨾ g)
+    × (∀ {X} (h : hom X _) → h ⨾ f ≡ h ⨾ g
+       → is-contr (equalizer-cone e X h))
 
-    assoc
-      : ∀ {x y z w} (f : hom x y) (g : hom y z)
-        (h : hom z w)
-      → (f ⨾ g) ⨾ h ≡ f ⨾ (g ⨾ h)
-    assoc f g h = cast-path wit where
-      wit : composite (f ⨾ g) h (f ⨾ (g ⨾ h))
-      wit =
-        yon-composite f (g ⨾ h)
-        ∙ (λ i w k → yon-composite g h i w (yon f w k))
-        ∙ sym (λ i w k → yon h w (yon-composite f g i w k))
-```
-
-### Induction and crossing lemmas
-
-```agda
-  yon-ind
-    : ∀ {u} {x y z} (f : hom x y) (g : hom y z)
-    → (P : (s : hom x z) → f ⨾ g => s → Type u)
-    → P (f ⨾ g) (yon-composite f g)
-    → ∀ s q → P s q
-  yon-ind f g P base m p =
-    coe01 (λ i → P (path i .fst) (path i .snd)) base
+  module Equalizer
+    {A B E : ob} {f g : hom A B} {e : hom E A}
+    (eq : is-equalizer f g e)
     where
-      path : (f ⨾ g , yon-composite f g) ≡ (m , p)
-      path = composite-contr f g .paths (m , p)
 
-  idn-ind
-    : ∀ {u} {x}
-    → (P : (e : hom x x) → yon e ≡ (λ _ → id) → Type u)
-    → P idn yon-idn
-    → ∀ e q → P e q
-  idn-ind P base e q =
-    coe01 (λ i → P (path i .fst) (path i .snd)) base
+    equalizes : e ⨾ f ≡ e ⨾ g
+    equalizes = eq .fst
+
+    eq-med
+      : ∀ {X} (h : hom X A) (p : h ⨾ f ≡ h ⨾ g)
+      → hom X E
+    eq-med h p = eq .snd h p .center .fst
+
+    eq-factors
+      : ∀ {X} (h : hom X A) (p : h ⨾ f ≡ h ⨾ g)
+      → eq-med h p ⨾ e => h
+    eq-factors h p = eq .snd h p .center .snd
+
+    eq-ind
+      : ∀ {u X} (h : hom X A) (p : h ⨾ f ≡ h ⨾ g)
+      → (Q : (m : hom X E) → m ⨾ e => h → Type u)
+      → Q (eq-med h p) (eq-factors h p)
+      → ∀ m α → Q m α
+    eq-ind h p Q base m α =
+      contr-ind (eq .snd h p)
+        (λ where (m , α) → Q m α)
+        base (m , α)
+
+    eq-β
+      : ∀ {X} (h : hom X A) (p : h ⨾ f ≡ h ⨾ g)
+      → eq-med h p ⨾ e ≡ h
+    eq-β h p = cast-path (eq-factors h p)
+
+    eq-η
+      : ∀ {X} (h : hom X A) (p : h ⨾ f ≡ h ⨾ g)
+      → (m : hom X E)
+      → m ⨾ e => h
+      → eq-med h p ≡ m
+    eq-η h p =
+      eq-ind h p (λ m _ → eq-med h p ≡ m) refl
+```
+
+## Pullbacks
+
+A pullback of `f : hom A C` and `g : hom B C` consists of
+projections `p₁ : hom P A` and `p₂ : hom P B` satisfying the
+commuting square `p₁ ⨾ f ≡ p₂ ⨾ g`, together with a conditional
+universal property: for any `h₁ : hom X A` and `h₂ : hom X B`
+with `h₁ ⨾ f ≡ h₂ ⨾ g`, the product-shaped cone is contractible.
+The cone type is identical to `product-cone` -- the precondition
+`h₁ ⨾ f ≡ h₂ ⨾ g` is the only difference from products.
+
+```agda
+  pullback-cone = product-cone
+
+  is-pullback
+    : ∀ {A B C P : ob}
+      (p₁ : hom P A) (p₂ : hom P B)
+      (f : hom A C) (g : hom B C)
+    → Type (o ⊔ h)
+  is-pullback p₁ p₂ f g =
+    (p₁ ⨾ f ≡ p₂ ⨾ g)
+    × (∀ {X} (h₁ : hom X _) (h₂ : hom X _)
+       → h₁ ⨾ f ≡ h₂ ⨾ g
+       → is-contr (pullback-cone p₁ p₂ X h₁ h₂))
+
+  module Pullback
+    {A B C P : ob}
+    {p₁ : hom P A} {p₂ : hom P B}
+    {f : hom A C} {g : hom B C}
+    (pb : is-pullback p₁ p₂ f g)
     where
-      path : (idn , yon-idn) ≡ (e , q)
-      path = idn-contr .paths (e , q)
 
-  lcross
-    : ∀ {w x y z} (f : hom w x) (g : hom x y)
-      (h : hom y z)
-      {s : hom w y}
-    → f ⨾ g => s → s ⨾ h ≡ f ⨾ (g ⨾ h)
-  lcross f g h α =
-    sym (ap (_⨾ h) (cast-path α)) ∙ assoc f g h
+    square : p₁ ⨾ f ≡ p₂ ⨾ g
+    square = pb .fst
 
-  rcross
-    : ∀ {w x y z} (f : hom w x) (g : hom x y)
-      (h : hom y z)
-      {r : hom x z}
-    → g ⨾ h => r → (f ⨾ g) ⨾ h ≡ f ⨾ r
-  rcross f g h β =
-    assoc f g h ∙ ap (f ⨾_) (cast-path β)
+    pb-med
+      : ∀ {X} (h₁ : hom X A) (h₂ : hom X B)
+        (q : h₁ ⨾ f ≡ h₂ ⨾ g)
+      → hom X P
+    pb-med h₁ h₂ q = pb .snd h₁ h₂ q .center .fst
 
-  conj
-    : ∀ {w x y z} (f : hom w x) (g : hom x y)
-      (h : hom y z)
-      {s : hom w y} {r : hom x z}
-    → f ⨾ g => s → g ⨾ h => r
-    → s ⨾ h ≡ f ⨾ r
-  conj f g h α β =
-    pcom (ap (_⨾ h) (cast-path α))
-         (assoc f g h)
-         (ap (f ⨾_) (cast-path β))
+    pb-factors₁
+      : ∀ {X} (h₁ : hom X A) (h₂ : hom X B)
+        (q : h₁ ⨾ f ≡ h₂ ⨾ g)
+      → pb-med h₁ h₂ q ⨾ p₁ => h₁
+    pb-factors₁ h₁ h₂ q =
+      pb .snd h₁ h₂ q .center .snd .fst
+
+    pb-factors₂
+      : ∀ {X} (h₁ : hom X A) (h₂ : hom X B)
+        (q : h₁ ⨾ f ≡ h₂ ⨾ g)
+      → pb-med h₁ h₂ q ⨾ p₂ => h₂
+    pb-factors₂ h₁ h₂ q =
+      pb .snd h₁ h₂ q .center .snd .snd
+
+    pb-ind
+      : ∀ {u X} (h₁ : hom X A) (h₂ : hom X B)
+        (q : h₁ ⨾ f ≡ h₂ ⨾ g)
+      → (Q : (m : hom X P)
+           → m ⨾ p₁ => h₁ → m ⨾ p₂ => h₂
+           → Type u)
+      → Q (pb-med h₁ h₂ q)
+          (pb-factors₁ h₁ h₂ q)
+          (pb-factors₂ h₁ h₂ q)
+      → ∀ m α β → Q m α β
+    pb-ind h₁ h₂ q Q base m α β =
+      contr-ind (pb .snd h₁ h₂ q)
+        (λ where (m , α , β) → Q m α β)
+        base (m , α , β)
+
+    pb-β₁
+      : ∀ {X} (h₁ : hom X A) (h₂ : hom X B)
+        (q : h₁ ⨾ f ≡ h₂ ⨾ g)
+      → pb-med h₁ h₂ q ⨾ p₁ ≡ h₁
+    pb-β₁ h₁ h₂ q = cast-path (pb-factors₁ h₁ h₂ q)
+
+    pb-β₂
+      : ∀ {X} (h₁ : hom X A) (h₂ : hom X B)
+        (q : h₁ ⨾ f ≡ h₂ ⨾ g)
+      → pb-med h₁ h₂ q ⨾ p₂ ≡ h₂
+    pb-β₂ h₁ h₂ q = cast-path (pb-factors₂ h₁ h₂ q)
+
+    pb-η
+      : ∀ {X} (h₁ : hom X A) (h₂ : hom X B)
+        (q : h₁ ⨾ f ≡ h₂ ⨾ g)
+      → (m : hom X P)
+      → m ⨾ p₁ => h₁ → m ⨾ p₂ => h₂
+      → pb-med h₁ h₂ q ≡ m
+    pb-η h₁ h₂ q =
+      pb-ind h₁ h₂ q
+        (λ m _ _ → pb-med h₁ h₂ q ≡ m) refl
 ```
 
-### Embeddings
+## Morphism properties
+
+Whiskering operators apply a morphism to one side of a path.
+Left whiskering `h ◃ p` postcomposes `h` with a path between
+morphisms; right whiskering `p ▹ h` precomposes.
 
 ```agda
-  emb : ∀ {x y} → hom x y ↪ (∀ w → hom w x → hom w y)
-  emb .fst = yon
-  emb .snd = yon-emb
+  _▹_
+    : ∀ {x y z} {f f' : hom x y}
+    → f ≡ f' → (h : hom y z)
+    → f ⨾ h ≡ f' ⨾ h
+  γ ▹ h = ap (_⨾ h) γ
+  infixr 25 _▹_
 
-  emb-op
-    : ∀ {x y}
-    → hom x y ↪ (∀ z → hom y z → hom x z)
-  emb-op .fst = yon-op
-  emb-op .snd = yon-op-emb
-
-  emb-inj
-    : ∀ {x y} {f g : hom x y}
-    → (∀ w (h : hom w x) → h ⨾ f ≡ h ⨾ g)
-    → f ≡ g
-  emb-inj {f = f} {g} p =
-    pcom (unitl f) (p _ idn) (unitl g)
-
-  emb-op-inj
-    : ∀ {x y} {f g : hom x y}
-    → (∀ z (h : hom y z) → f ⨾ h ≡ g ⨾ h)
-    → f ≡ g
-  emb-op-inj {f = f} {g} p =
-    pcom (unitr f) (p _ idn) (unitr g)
+  _◃_
+    : ∀ {w x y} (h : hom w x)
+    → {f f' : hom x y} → f ≡ f'
+    → h ⨾ f ≡ h ⨾ f'
+  _◃_ h = ap (h ⨾_)
+  infixl 26 _◃_
 ```
 
-## Opposite category
+### Sections and retractions
 
-The opposite category swaps morphism direction. In op, `yon` becomes
-`yon-op` from the original category. The covariant and contravariant
- conditions swap.
+A morphism `f` has a section when there exists a right inverse
+`g` with `f ⨾ g ≡ idn`. It has a retraction when there exists
+a left inverse `g` with `g ⨾ f ≡ idn`.
 
 ```agda
-module _ {o h} (C : category o h) where
-  private module C = Cat C
+  has-section : ∀ {x y} → hom x y → Type h
+  has-section {y} f = Σ g ∶ hom y _ , f ⨾ g ≡ idn
 
-  op : category o h
-  op .category.ob = C.ob
-  op .category.hom = flip C.hom
-  op .category.yon = C.yon-op
-  op .category.idn-contr =
-    C.idn-op-contr
-  op .category.composable-contr f g =
-    C.composable-op-contr g f
-  op .category.idn-op-contr =
-    C.idn-contr
-  op .category.composable-op-contr f g =
-    C.composable-contr g f
+  has-retraction : ∀ {x y} → hom x y → Type h
+  has-retraction {x} f = Σ g ∶ hom _ x , g ⨾ f ≡ idn
 ```
 
-## Opposite involution
+### Mono and epi
 
-The structural fields (ob, hom, yon) are definitionally equal after
-double reversal. The  conditions are propositions (is-contr is
-a proposition), so `is-prop→PathP` fills them.
+A monomorphism is left-cancellable; an epimorphism is
+right-cancellable.
 
 ```agda
-module _ {o h} (C : category o h) where
-  private module C = Cat C
+  is-mono : ∀ {x y} → hom x y → Type (o ⊔ h)
+  is-mono {x} f = ∀ {w} {g h : hom w x} → g ⨾ f ≡ h ⨾ f → g ≡ h
 
-  op-invol : op (op C) ≡ C
-  op-invol i .category.ob = C.ob
-  op-invol i .category.hom = C.hom
-  op-invol i .category.yon {x} {y} = C.yon {x} {y}
-  op-invol i .category.idn-contr {x} =
-    is-prop→PathP
-      {A = λ _ → is-contr
-        (fiber (C.yon {x}) (λ _ → id))}
-      (λ _ → is-contr-is-prop _)
-      (category.idn-contr (op (op C)))
-      C.idn-contr i
-  op-invol i .category.composable-contr
-    {x} {y} {z} f g =
-    is-prop→PathP
-      {A = λ _ → is-contr
-        (fiber (C.yon {x} {z})
-          (λ w → C.yon {y} {z} g w
-               ∘ C.yon {x} {y} f w))}
-      (λ _ → is-contr-is-prop _)
-      (category.composable-contr (op (op C)) f g)
-      (C.composable-contr f g) i
-  op-invol i .category.idn-op-contr {x} =
-    is-prop→PathP
-      {A = λ _ → is-contr
-        (fiber (C.yon-op {x} {x}) (λ _ → id))}
-      (λ _ → is-contr-is-prop _)
-      (category.idn-op-contr (op (op C)))
-      C.idn-op-contr i
-  op-invol i .category.composable-op-contr
-    {x} {y} {z} f g =
-    is-prop→PathP
-      {A = λ _ → is-contr
-        (fiber (C.yon-op {x} {z})
-          (λ w → C.yon-op {x} {y} f w
-               ∘ C.yon-op {y} {z} g w))}
-      (λ _ → is-contr-is-prop _)
-      (category.composable-op-contr (op (op C)) f g)
-      (C.composable-op-contr f g) i
+  is-epi : ∀ {x y} → hom x y → Type (o ⊔ h)
+  is-epi {y} f = ∀ {z} {g h : hom y z} → f ⨾ g ≡ f ⨾ h → g ≡ h
+```
+
+### Isomorphisms
+
+An isomorphism consists of a morphism `f` together with an
+inverse `g` satisfying both `f ⨾ g ≡ idn` (left inverse) and
+`g ⨾ f ≡ idn` (right inverse).
+
+```agda
+  module _ {x y} (f : hom x y) where
+    left-inverse : hom y x → Type h
+    left-inverse g = f ⨾ g ≡ idn
+
+    right-inverse : hom y x → Type h
+    right-inverse g = g ⨾ f ≡ idn
+
+    is-iso : Type h
+    is-iso = Σ g ∶ hom y x , left-inverse g × right-inverse g
+
+  _≅_ : ob → ob → Type h
+  x ≅ y = Σ f ∶ hom x y , is-iso f
+  infix 4 _≅_
+```
+
+The identity is an isomorphism by `unitl` and `unitr`.
+Symmetry swaps the inverse and its witnesses.
+
+```agda
+  idn-iso : ∀ {x} → is-iso (idn {x})
+  idn-iso = idn , unitl idn , unitr idn
+
+  iso-refl : ∀ {x} → x ≅ x
+  iso-refl = idn , idn-iso
+
+  iso-sym : ∀ {x y} → x ≅ y → y ≅ x
+  iso-sym (f , g , p , q) = g , f , q , p
+```
+
+Composing isomorphisms requires associativity and whiskering
+to shuttle the inverse pair through the composite. The left
+inverse proof chains
+`(f ⨾ f') ⨾ (g' ⨾ g) ≡ f ⨾ (f' ⨾ (g' ⨾ g))`
+`≡ f ⨾ ((f' ⨾ g') ⨾ g) ≡ f ⨾ (idn ⨾ g) ≡ f ⨾ g ≡ idn`,
+and symmetrically for the right inverse.
+
+```agda
+  iso-cat : ∀ {x y z} → x ≅ y → y ≅ z → x ≅ z
+  iso-cat (f , g , p , q) (f' , g' , p' , q') = f ⨾ f'
+    , g' ⨾ g
+    , pcom (sym (assoc f f' (g' ⨾ g)))
+           (f ◃ sym (assoc f' g' g))
+           (pcom (f ◃ (sym p' ▹ g)) (f ◃ unitl g) p)
+    , pcom (sym (assoc g' g (f ⨾ f')))
+           (g' ◃ sym (assoc g f f'))
+           (pcom (g' ◃ (sym q ▹ f')) (g' ◃ unitl f') q')
+```
+
+### Inverse uniqueness
+
+Any two one-sided inverses of `f` agree: a left inverse `s`
+equals a right inverse `r` by sandwiching `f ⨾ s ≡ idn`
+between `r` and the unit laws.
+
+```agda
+  module _ {x y} {f : hom x y} (iso : is-iso f) where
+    private
+      g = iso .fst
+
+    inv-unique
+      : {s r : hom y x}
+      → left-inverse f s → right-inverse f r → s ≡ r
+    inv-unique {s} {r} p' q' =
+      pcom (unitl s) (sym q' ▹ s)
+        (pcom (sym (assoc r f s)) (r ◃ p') (unitr r))
 ```

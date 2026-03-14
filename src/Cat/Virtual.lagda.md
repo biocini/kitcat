@@ -134,7 +134,7 @@ record category o h : Type₊ (o ⊔ h) where
 ## Derived operations
 
 ```agda
-module Cat {o} {h} (C : category o h) where
+module Virtual {o} {h} (C : category o h) where
   open category C public
 ```
 
@@ -1022,7 +1022,7 @@ the full Mac Lane triangle identity.
 
 ```agda
 record 2-coherent {o h} (C : category o h) : Type (o ⊔ h) where
-  open Cat C
+  open Virtual C
   field
     absorb-coh
       : ∀ {x y} (f : hom x y) v (b : hom y v)
@@ -1042,7 +1042,7 @@ using `absorb-coh` to identify the abstract `α₂₃` edge.
 module 2-Cat
   {o h} (C : category o h) (coh : 2-coherent C)
   where
-  open Cat C public
+  open Virtual C public
   open 2-coherent coh public
 
   absorb-l-noy-retract
@@ -1068,7 +1068,7 @@ the full Mac Lane triangle from the weak version.
     module face₂₃-proof
       {x y z} (f : hom x y) (g : hom y z)
       where
-      open Cat.triangle-fibers C f g
+      open Virtual.triangle-fibers C f g
 
       private
         cc = composable-contr f g
@@ -1153,8 +1153,8 @@ the full Mac Lane triangle from the weak version.
       hom-identity
       (ap (_∙ α₂₃) face₁₂
       ∙ ap (assoc f idn g ∙_) face₂₃)
-    where open Cat.triangle-fibers C f g
-          open Cat.triangle C f g
+    where open Virtual.triangle-fibers C f g
+          open Virtual.triangle C f g
           open face₂₃-proof f g
 ```
 
@@ -1167,7 +1167,7 @@ right absorption/idempotency swap roles. Composition in `op` uses
 
 ```agda
 module _ {o h} (C : category o h) where
-  private module C = Cat C
+  private module C = Virtual C
 
   op : category o h
   op .category.ob = C.ob
@@ -1196,7 +1196,7 @@ contractibility is propositional.
 
 ```agda
 module _ {o h} (C : category o h) where
-  private module C = Cat C
+  private module C = Virtual C
 
   private
     uc : ∀ {x}
