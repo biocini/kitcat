@@ -44,8 +44,8 @@ syntax comparison-elim c (λ l → x) (λ e → y) (λ g → z) =
     eq: e => y
     gt: g => z
 
+-- Credit: agda-prelude
 -- The termination checker can't handle merge-like functions using 'with'.
--- Use this instead. -- from agda-prelude
 comparison-elim
   : ∀ {u v} {A : Type u} {B : Type v} {_<_ : A → A → Type u} {x y : A}
   → Comparison _<_ x y

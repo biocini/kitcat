@@ -51,11 +51,11 @@ module graph {u v} (G : Graph u v) where
   involutive = ∀ {x y} → G.₁ x y → G.₁ y x
   transitive = ∀ {x y z} → G.₁ x y → G.₁ y z → G.₁ x z
 
-  -- Fan (outward): edges out of a vertex
+  -- Edges out of a vertex
   fan : G.₀ → Type (u ⊔ v)
   fan x = Σ y ∶ G.₀ , x ~> y
 
-  -- Cofan (inward): edges into a vertex
+  -- Edges into a vertex
   cofan : G.₀ → Type (u ⊔ v)
   cofan y = Σ x ∶ G.₀ , x ~> y
 

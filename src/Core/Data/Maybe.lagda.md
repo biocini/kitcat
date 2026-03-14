@@ -2,7 +2,7 @@ The Maybe type with Map, Applicative, Monad, and Alternative instances.
 
 ```agda
 
-{-# OPTIONS --safe --erased-cubical --no-guardedness --no-sized-types #-}
+{-# OPTIONS --safe --erased-cubical --no-guardedness #-}
 
 module Core.Data.Maybe where
 

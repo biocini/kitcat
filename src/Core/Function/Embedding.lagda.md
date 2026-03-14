@@ -255,11 +255,10 @@ ap-is-embedding emb = is-equiv→is-embedding (is-embedding→ap-equiv emb)
 embedding-cancel-l
   : ∀ {u v w} {A : Type u} {B : Type v} {C : Type w} {f : B → C}
   → is-embedding f
-  → is-set B
   → {g h : A → B}
   → f ∘ g ≡ f ∘ h
   → g ≡ h
-embedding-cancel-l {f = f} emb B-set {g} {h} fg≡fh =
+embedding-cancel-l {f = f} emb {g} {h} fg≡fh =
   funext λ a → has-prop-fibers→injective f emb (happly fg≡fh a)
 ```
 

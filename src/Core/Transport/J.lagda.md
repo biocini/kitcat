@@ -1,7 +1,6 @@
 The J eliminator and substitution operations.
 
 ```agda
-
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
 
 module Core.Transport.J where

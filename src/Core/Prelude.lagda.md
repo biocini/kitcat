@@ -1,7 +1,6 @@
 Re-exports of Core foundation modules.
 
 ```agda
-
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
 
 module Core.Prelude where

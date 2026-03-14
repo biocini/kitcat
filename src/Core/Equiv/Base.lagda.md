@@ -5,8 +5,7 @@ Core definitions for equivalences: contractible fibers, quasi-inverses,
 and the fundamental construction `iso→equiv`.
 
 ```agda
-
-{-# OPTIONS --safe --erased-cubical --no-guardedness --no-sized-types #-}
+{-# OPTIONS --safe --erased-cubical --no-guardedness #-}
 
 module Core.Equiv.Base where
 

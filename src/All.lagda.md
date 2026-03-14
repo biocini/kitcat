@@ -25,12 +25,6 @@ import Core.Composite
 import Core.Groupoid
 import Core.Discrete
 import Core.Function
-import Core.Function.Embedding
-import Core.Function.Surjection
-import Core.Function.Image
-import Core.Function.Connected
-import Core.Function.Pullback
-import Core.Function.Partial.Graded
 import Core.Equiv.PropIndexed
 import Core.Set.Omega
 import Core.Prelude

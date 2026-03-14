@@ -33,16 +33,16 @@ module disp-graph {w z} (D : Disp-graph w z) where
   dep-cofan {y} v = Σ x ∶ V , Σ p ∶ (x ~> y) , Σ u ∶ Ob x , E p u v
 
 
-  -- Covariant fibration: unique lifts forward
+  -- Unique lifts forward
   is-cov-fib : Type (u ⊔ v ⊔ w ⊔ z)
   is-cov-fib = ∀ {x y} (p : x ~> y) (u : Ob x) → is-contr (Σ v ∶ Ob y , E p u v)
 
-  -- Contravariant fibration: unique lifts backward
+  -- Unique lifts backward
   is-ctrv-fib : Type (u ⊔ v ⊔ w ⊔ z)
   is-ctrv-fib = ∀ {x y} (p : x ~> y) (v : Ob y) → is-contr (Σ u ∶ Ob x , E p u v)
 
 
-  -- Pushforward (from covariant fibration)
+  -- Pushforward along a covariant fibration
   module is-cov-fib (fib : is-cov-fib) where
     push : ∀ {x y} → x ~> y → Ob x → Ob y
     push p u = fib p u .center .fst
@@ -55,7 +55,7 @@ module disp-graph {w z} (D : Disp-graph w z) where
       → (push p u , lift p u) ≡ (v , e)
     lift-unique p u v e = fib p u .paths (v , e)
 
-  -- Pullback (from contravariant fibration)
+  -- Pullback along a contravariant fibration
   module ctrv-fib (fib : is-ctrv-fib) where
     pull : ∀ {x y} → x ~> y → Ob y → Ob x
     pull p v = fib p v .center .fst

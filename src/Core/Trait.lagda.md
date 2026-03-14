@@ -25,6 +25,7 @@ open import Core.Trait.Eq public
 open import Core.Trait.Ord public
 open import Core.Trait.Show public
 open import Core.Trait.Cast public
+open import Core.Trait.Quiver public
 
 -- Algebraic structures
 open import Core.Trait.Semigroup public
@@ -33,6 +34,7 @@ open import Core.Trait.Group public
 open import Core.Trait.Num public
 
 -- Other
+open import Core.Trait.Alt public
 open import Core.Trait.Decidable public
 open import Core.Trait.Trunc public
 open import Core.Trait.Graphical public

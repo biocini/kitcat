@@ -1,7 +1,6 @@
 Advanced transport properties: contractibility, PathP lemmas, and identity systems.
 
 ```agda
-
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
 
 module Core.Transport.Properties where

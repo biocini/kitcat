@@ -17,7 +17,7 @@ open import Core.Base
 open import Core.Data.Sigma
 open import Core.Kan
 open import Core.Equiv
-open import Core.HLevel
+open import Core.HLevel.Base
 open import Core.Data.Trunc
 open Core.Data.Trunc.Trunc
 open import Core.Function.Surjection

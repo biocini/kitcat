@@ -23,6 +23,8 @@ Per 1lab.
 ```agda
 
 record Fin (n : Nat) : Type where
+  no-eta-equality
+  pattern
   constructor fin
   field
     lower : Nat
@@ -41,7 +43,7 @@ private variable
 
 pattern fzero = fin Z
 
-fsuc : Fin n -> Fin (S n)
+fsuc : Fin n → Fin (S n)
 fsuc (fin k ⦃ bounded = forget p ⦄) = fin (S k) ⦃ forget (s<s p) ⦄
 
 ```

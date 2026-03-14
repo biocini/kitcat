@@ -13,12 +13,11 @@ open import Core.Trait.Map using (Map)
 
 open import Agda.Builtin.Maybe
 
-private
-  map-maybe
-    : ∀ {ℓ ℓ'} {A : Type ℓ} {B : Type ℓ'}
-    → (A → B) → Maybe A → Maybe B
-  map-maybe f nothing  = nothing
-  map-maybe f (just x) = just (f x)
+map-maybe
+  : ∀ {ℓ ℓ'} {A : Type ℓ} {B : Type ℓ'}
+  → (A → B) → Maybe A → Maybe B
+map-maybe f nothing  = nothing
+map-maybe f (just x) = just (f x)
 
 instance
   Map-Maybe : Map (impl Maybe)

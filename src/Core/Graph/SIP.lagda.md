@@ -10,14 +10,21 @@ Reference: Sterling's reflexive graph lenses paper.
 ```agda
 
 {-# OPTIONS --safe --cubical --no-guardedness --no-sized-types #-}
--- Note: This module uses --cubical (not --erased-cubical) because it requires
--- computational content from univalence (ua, Glue) which are erased in
--- --erased-cubical mode. This follows the precedent of Core.Univalence and
--- Core.Glue. Modules importing this can still use --erased-cubical.
+-- Uses --cubical for computational univalence (ua, Glue); downstream
+-- modules can still use --erased-cubical.
 
 module Core.Graph.SIP where
 
-open import Core.Prelude
+open import Core.Univalence
+open import Core.Transport.Base using (is-prop→PathP)
+open import Core.HLevel.Base using (Σ-prop-path)
+open import Core.Equiv
+open import Core.Kan
+open import Core.Sub
+open import Core.Data.Sigma
+open import Core.Base
+open import Core.Type
+
 open import Core.Graph.Base
 open import Core.Graph.Reflexive.Base
 ```
@@ -170,9 +177,9 @@ paths in the total space are equivalent to structure-preserving equivalences.
                          → _preserves_ e s t → str-transport e s ≡ t
     str-transport-unique e s t p = ap fst (str-univ e s .paths (t , p))
 
-    -- Note: The full SIP equivalence (Total-equiv X Y ≃ (X ≡ Y)) requires
-    -- additional universe polymorphism in _preserves_ to handle the inverse
-    -- direction properly. For now we provide the key transport operations.
+    -- The full SIP equivalence (Total-equiv X Y ≃ (X ≡ Y)) requires
+    -- additional universe polymorphism in _preserves_ for the inverse
+    -- direction. For now we provide the key transport operations.
 ```
 
 
@@ -184,17 +191,13 @@ displayed graph over Univ, demonstrating SIP in action.
 ```agda
 
 module Magma-example where
-  -- Magma structure: a binary operation
   Magma-str : ∀ {u} → Type u → Type u
   Magma-str A = A → A → A
 
-  -- When an equivalence preserves magma structure:
-  -- The equivalence is a homomorphism: e (m x y) ≡ n (e x) (e y)
   _preserves-magma_ : ∀ {u} {A B : Type u} → A ≃ B → Magma-str A → Magma-str B → Type u
   _preserves-magma_ {A = A} {B} e m n =
     ∀ (x y : A) → e .fst (m x y) ≡ n (e .fst x) (e .fst y)
 
-  -- The displayed reflexive graph of magma structures
   Magma-disp : ∀ u → Standard-structure u u
   Magma-disp u .RxDisp.Disp-rx-graph.disp = mg
     where
@@ -204,20 +207,14 @@ module Magma-example where
     mg .Disp-graph.₂ = _preserves-magma_
   Magma-disp u .RxDisp.Disp-rx-graph.rx A m x y = refl
 
-  -- Magma structure is univalent when the carrier is a set
-  -- This is the standard assumption for algebraic structures in HoTT
-  -- Given e : A ≃ B and m : Magma-str A, there's a unique n : Magma-str B
-  -- such that e preserves m n
   Magma-is-univalent : ∀ {u} {A B : Type u} → is-set B
                      → (e : A ≃ B) (m : Magma-str A)
                      → is-contr (Σ n ∶ Magma-str B , _preserves-magma_ e m n)
   Magma-is-univalent {u} {A} {B} Bset e m = contr
     where
-    -- The transported structure: n x y = e (m (e⁻¹ x) (e⁻¹ y))
     n : Magma-str B
     n x y = e .fst (m (Equiv.inv e x) (Equiv.inv e y))
 
-    -- Proof that e preserves m n
     pres : _preserves-magma_ e m n
     pres x y =
       e .fst (m x y)
@@ -228,12 +225,11 @@ module Magma-example where
         ≡⟨ refl ⟩
       n (e .fst x) (e .fst y) ∎
 
-    -- Preservation proofs are propositional because B is a set
+    -- Follows from B being a set
     pres-is-prop : (n'' : Magma-str B) → is-prop (_preserves-magma_ e m n'')
     pres-is-prop n'' f g = funext λ x → funext λ y →
       Bset (e .fst (m x y)) (n'' (e .fst x) (e .fst y)) (f x y) (g x y)
 
-    -- Uniqueness: any other (n', p') equals (n, pres)
     unique : (fan : Σ n' ∶ Magma-str B , _preserves-magma_ e m n') → (n , pres) ≡ fan
     unique (n' , p') = Σ-prop-path pres-is-prop fst-eq
       where
@@ -252,18 +248,10 @@ module Magma-example where
     contr .center = n , pres
     contr .paths = unique
 
-  -- Bundled magma type
   Magma : ∀ u → Type (u ₊)
   Magma u = Std-str.Total (Magma-disp u)
 
-  -- Note: To apply Std-str.SIP, one would need to show that Magma-is-univalent
-  -- holds for all A B e m. This requires either:
-  -- 1. Restricting to set-based magmas (most common in practice)
-  -- 2. Using a modified structure definition with propositional preservation
-  --
-  -- Example usage with set assumption:
-  -- module Magma-SIP-Set {u} (Aset : (A : Type u) → is-set A) where
-  --   univ : Std-str.is-univalent-str (Magma-disp u)
-  --   univ e m = Magma-is-univalent (equiv→is-hlevel 2 e (Aset _)) e m
+  -- Applying Std-str.SIP requires Magma-is-univalent for all A B e m,
+  -- which needs either set-based magmas or propositional preservation.
 
 ```

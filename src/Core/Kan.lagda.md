@@ -1,7 +1,6 @@
 Kan operations: homogeneous and heterogeneous composition and filling.
 
 ```agda
-
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
 
 module Core.Kan where
@@ -123,6 +122,13 @@ total-contr-unique cc {α} {β} p q αp αq =
   is-contr→extend (cB (cA .paths a i)) (∂ i) λ where
     (i = i0) → cB (cA .center) .center
     (i = i1) → b
+
+TotalP
+  : ∀ {u v} {A : Type u} {B : A → Type v} {x} (a : B x)
+  → is-contr (Σ y ∶ A , Σ q ∶ (x ≡ y) , Σ b ∶ B y , PathP (λ i → B (q i)) a b)
+TotalP {x} a .center = x , refl , a , refl
+TotalP a .paths (y , q , b , α) i =
+  q i , (λ j → q (i ∧ j)) , α i , λ j → α (i ∧ j)
 
 ```
 Named wrappers for the primitives.

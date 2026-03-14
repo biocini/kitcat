@@ -32,7 +32,7 @@ fin-path {n = n} {x = fin _ ⦃ bounded = bx ⦄} {fin _ ⦃ bounded = by ⦄} p
   fin (p i) ⦃ is-prop→PathP (λ j → Irr-is-prop {A = p j Nat.< n}) bx by i ⦄
 
 fsuc-inj : {i j : Fin n} → fsuc i ≡ fsuc j → i ≡ j
-fsuc-inj p = fin-path (injS (ap lower p))
+fsuc-inj {i = fin ki} {j = fin kj} p = fin-path (injS (ap lower p))
   where
     injS : S m ≡ S n → m ≡ n
     injS p = ap pred p
@@ -42,7 +42,7 @@ fsuc-inj p = fin-path (injS (ap lower p))
         pred (S n) = n
 
 fzero≠fsuc : {i : Fin n} → ¬ (Path (Fin (S n)) fzero (fsuc i))
-fzero≠fsuc p = ¬z≡s (ap lower p)
+fzero≠fsuc {i = fin k} p = ¬z≡s (ap lower p)
   where
     ¬z≡s : ∀ {n} → ¬ (Z ≡ S n)
     ¬z≡s q = subst f q tt
@@ -70,37 +70,5 @@ Fin-discrete i j with Nat.DecEq-Nat (i .lower) (j .lower)
 
 Fin-is-set : is-set (Fin n)
 Fin-is-set = hedberg Fin-discrete
-
-```
-
-## Weaken Equivalence
-
-The view-based `weaken` from `Base` and the direct bound-manipulation version
-are pointwise equal. Both preserve the underlying natural number, differing
-only in how they construct the bound proof.
-
-```agda
-
--- Direct bound-manipulation weaken (as in Monotone)
-weaken-direct : Fin n → Fin (S n)
-weaken-direct (fin k ⦃ bounded = forget p ⦄) = fin k ⦃ forget (Nat.step p) ⦄
-
--- The view-based weaken preserves lower
-weaken-lower : (i : Fin n) → lower (weaken i) ≡ lower i
-weaken-lower i with fin-view i
-... | vz = refl
-... | vs j = ap S (weaken-lower j)
-
--- The two weaken functions are pointwise equal
-weaken≡weaken-direct : (i : Fin n) → weaken i ≡ weaken-direct i
-weaken≡weaken-direct i = fin-path (weaken-lower i)
-
--- lower of the direct weaken is unchanged
-lower-weaken : (j : Fin n) → lower (weaken-direct j) ≡ lower j
-lower-weaken (fin k) = refl
-
--- lower of fsuc is successor
-lower-fsuc : (j : Fin n) → lower (fsuc j) ≡ S (lower j)
-lower-fsuc (fin k) = refl
 
 ```

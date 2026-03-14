@@ -17,7 +17,6 @@ open import Core.Data.Trunc
 open Trunc
 open import Core.Equiv
 open import Core.Function.Embedding
-open import Core.HLevel
 open import Core.Transport.Properties using (prop-inhabited→is-contr)
 
 private variable

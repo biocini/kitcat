@@ -1,7 +1,7 @@
 Core path types, fibers, h-level predicates, and interval operations.
 
 ```agda
-{-# OPTIONS --safe --erased-cubical --no-guardedness --no-sized-types #-}
+{-# OPTIONS --safe --erased-cubical --no-guardedness #-}
 
 module Core.Base where
 
@@ -28,9 +28,6 @@ open import Agda.Primitive.Cubical public
            ; IsOne1     to is1-left  -- is1-left  : ∀ i j → IsOne i → IsOne (i ∨ j)
            ; IsOne2     to is1-right -- is1-right : ∀ i j → IsOne j → IsOne (i ∨ j)
            )
-
--- Import the core primitives early?
--- import Agda.Builtin.Cubical.HCompU
 
 private
   variable

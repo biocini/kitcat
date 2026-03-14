@@ -1,7 +1,6 @@
 Foundational transport, coercion, and the primitive `transp` operation.
 
 ```agda
-
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
 
 module Core.Transport.Base where

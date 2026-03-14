@@ -1,7 +1,6 @@
 Primitive types, universes, and basic combinators.
 
 ```agda
-
 {-# OPTIONS --safe --cubical-compatible --no-guardedness #-}
 
 module Core.Type where
@@ -38,11 +37,13 @@ Type₊ ℓ = Type (ℓ ₊)
 𝓤 = {u : Level} → Type u
 
 record Underlying {@0 ℓ} (A : Type ℓ) : Typeω where
+  no-eta-equality
   field
     ℓ-underlying : Level
     ⌞_⌟   : A → Type ℓ-underlying
 
 open Underlying ⦃ ... ⦄ public
+{-# INLINE Underlying.constructor #-}
 {-# DISPLAY Underlying.⌞_⌟ _ X = ⌞ X ⌟ #-}
 
 instance

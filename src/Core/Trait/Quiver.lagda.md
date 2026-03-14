@@ -1,4 +1,4 @@
-Effect: universe-polymorphic type constructors for functor/monad hierarchies.
+Quiver, semicategory, and functor records for graph-enriched structures.
 
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness --no-sized-types #-}

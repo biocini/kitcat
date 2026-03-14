@@ -3,8 +3,7 @@ bi-invertible maps, half-adjoint equivalences, and the three-for-two
 property.
 
 ```agda
-
-{-# OPTIONS --safe --erased-cubical --no-guardedness --no-sized-types #-}
+{-# OPTIONS --safe --erased-cubical --no-guardedness #-}
 
 module Core.Equiv.Properties where
 

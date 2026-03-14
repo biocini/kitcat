@@ -15,13 +15,6 @@ open import Core.Data.Maybe.Impl.Map
 
 open import Agda.Builtin.Maybe
 
-private
-  map-maybe
-    : ∀ {ℓ ℓ'} {A : Type ℓ} {B : Type ℓ'}
-    → (A → B) → Maybe A → Maybe B
-  map-maybe f nothing  = nothing
-  map-maybe f (just x) = just (f x)
-
 instance
   Applicative-Maybe : Applicative (impl Maybe)
   Applicative-Maybe .Applicative.Map-Applicative =

@@ -73,34 +73,34 @@ and implication.
 
 ```agda
 
-topOmega : Omega u
-topOmega .∣_∣ᴾ = Unit
-topOmega .has-is-prop _ _ = refl
+top-omega : Omega u
+top-omega .∣_∣ᴾ = Unit
+top-omega .has-is-prop _ _ = refl
 
-botOmega : Omega u
-botOmega .∣_∣ᴾ = Lift _ ⊥
-botOmega .has-is-prop (liftℓ ())
+bot-omega : Omega u
+bot-omega .∣_∣ᴾ = Lift _ ⊥
+bot-omega .has-is-prop (liftℓ ())
 
-_∧Omega_ : Omega u → Omega u → Omega u
-(P ∧Omega Q) .∣_∣ᴾ = (P holds) × (Q holds)
-(P ∧Omega Q) .has-is-prop =
+_∧-omega_ : Omega u → Omega u → Omega u
+(P ∧-omega Q) .∣_∣ᴾ = (P holds) × (Q holds)
+(P ∧-omega Q) .has-is-prop =
   is-prop-× (holds-is-prop P) (holds-is-prop Q)
 
-infixr 6 _∧Omega_
+infixr 6 _∧-omega_
 
-notOmega : Omega u → Omega u
-notOmega P .∣_∣ᴾ = P holds → ⊥
-notOmega P .has-is-prop = Π-is-prop λ _ → ⊥-elim
+not-omega : Omega u → Omega u
+not-omega P .∣_∣ᴾ = P holds → ⊥
+not-omega P .has-is-prop = Π-is-prop λ _ → ⊥-elim
   where
     ⊥-elim : is-prop ⊥
     ⊥-elim ()
 
-_→Omega_ : Omega u → Omega v → Omega (u ⊔ v)
-(P →Omega Q) .∣_∣ᴾ = P holds → Q holds
-(P →Omega Q) .has-is-prop =
+_→-omega_ : Omega u → Omega v → Omega (u ⊔ v)
+(P →-omega Q) .∣_∣ᴾ = P holds → Q holds
+(P →-omega Q) .has-is-prop =
   Π-is-prop λ _ → holds-is-prop Q
 
-infixr 5 _→Omega_
+infixr 5 _→-omega_
 ```
 
 
@@ -110,9 +110,9 @@ Disjunction requires propositional truncation of the coproduct.
 
 ```agda
 
-_∨Omega_ : Omega u → Omega u → Omega u
-(P ∨Omega Q) .∣_∣ᴾ = ∥ P holds ⊎ Q holds ∥
-(P ∨Omega Q) .has-is-prop = squash
+_∨-omega_ : Omega u → Omega u → Omega u
+(P ∨-omega Q) .∣_∣ᴾ = ∥ P holds ⊎ Q holds ∥
+(P ∨-omega Q) .has-is-prop = squash
 
-infixr 5 _∨Omega_
+infixr 5 _∨-omega_
 ```
