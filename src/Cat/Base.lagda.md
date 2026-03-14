@@ -839,7 +839,7 @@ neutral morphism equals the identity (cancel `_⨾ e` against
 ## Functors
 
 A functor maps objects and morphisms, preserving composition
-and neutrality. Identity preservation is derived: `hom-map idn`
+and neutrality. Identity preservation is derived: `hmap idn`
 is neutral (preserved) and idempotent (from comp preservation
 + `idem`), so it equals `idn` by `idempotent-neutral→idn`.
 
@@ -857,20 +857,20 @@ record functor
     module Db = Cat D
 
   field
-    ob-map  : Cs.ob → Ds.ob
-    hom-map : ∀ {x y}
-      → Cs.hom x y → Ds.hom (ob-map x) (ob-map y)
-    hom-map-seq
+    map  : Cs.ob → Ds.ob
+    hmap : ∀ {x y}
+      → Cs.hom x y → Ds.hom (map x) (map y)
+    hmap-seq
       : ∀ {x y z} (f : Cs.hom x y) (g : Cs.hom y z)
-      → hom-map (f Cs.⨾ g) ≡ hom-map f Ds.⨾ hom-map g
+      → hmap (f Cs.⨾ g) ≡ hmap f Ds.⨾ hmap g
     preserves-neutral
       : ∀ {x y} {f : Cs.hom x y}
-      → Cb.is-neutral f → Db.is-neutral (hom-map f)
+      → Cb.is-neutral f → Db.is-neutral (hmap f)
 
-  hom-map-idn : ∀ {x} → hom-map (Cs.idn {x}) ≡ Ds.idn
-  hom-map-idn = Db.idempotent-neutral→idn
+  hmap-idn : ∀ {x} → hmap (Cs.idn {x}) ≡ Ds.idn
+  hmap-idn = Db.idempotent-neutral→idn
     (preserves-neutral Cb.idn-is-neutral)
-    (sym (hom-map-seq Cs.idn Cs.idn) ∙ ap hom-map Cs.idem)
+    (sym (hmap-seq Cs.idn Cs.idn) ∙ ap hmap Cs.idem)
 
 {-# INLINE functor.constructor #-}
 ```
@@ -880,15 +880,15 @@ The identity functor maps everything to itself.
 ```agda
 id-functor
   : ∀ {o h} (C : category o h) → functor C C
-id-functor C .functor.ob-map x = x
-id-functor C .functor.hom-map f = f
-id-functor C .functor.hom-map-seq _ _ = refl
+id-functor C .functor.map x = x
+id-functor C .functor.hmap f = f
+id-functor C .functor.hmap-seq _ _ = refl
 id-functor C .functor.preserves-neutral n = n
 ```
 
 Functor composition maps objects and morphisms sequentially.
 Identity preservation chains through both functors; composition
-preservation uses `hom-map-seq` of each functor plus `ap` to
+preservation uses `hmap-seq` of each functor plus `ap` to
 push the inner functor's equation through the outer.
 
 ```agda
@@ -905,11 +905,11 @@ _∘F_ {C = C} {D} {E} G F = FGF where
   module E = Virtual E
 
   FGF : functor C E
-  FGF .functor.ob-map x = G.ob-map (F.ob-map x)
-  FGF .functor.hom-map f = G.hom-map (F.hom-map f)
-  FGF .functor.hom-map-seq f g =
-    ap G.hom-map (F.hom-map-seq f g)
-    ∙ G.hom-map-seq (F.hom-map f) (F.hom-map g)
+  FGF .functor.map x = G.map (F.map x)
+  FGF .functor.hmap f = G.hmap (F.hmap f)
+  FGF .functor.hmap-seq f g =
+    ap G.hmap (F.hmap-seq f g)
+    ∙ G.hmap-seq (F.hmap f) (F.hmap g)
   FGF .functor.preserves-neutral n =
     G.preserves-neutral (F.preserves-neutral n)
 
@@ -939,11 +939,11 @@ record nat-trans
 
   field
     component
-      : ∀ x → D.hom (F.ob-map x) (G.ob-map x)
+      : ∀ x → D.hom (F.map x) (G.map x)
     natural
       : ∀ {x y} (f : C.hom x y)
-      → F.hom-map f D.⨾ component y
-      ≡ component x D.⨾ G.hom-map f
+      → F.hmap f D.⨾ component y
+      ≡ component x D.⨾ G.hmap f
 
 {-# INLINE nat-trans.constructor #-}
 ```
@@ -964,7 +964,7 @@ nat-id {D = D} F = nt where
   nt : nat-trans F F
   nt .nat-trans.component _ = D.idn
   nt .nat-trans.natural f =
-    D.unitr (F.hom-map f) ∙ sym (D.unitl (F.hom-map f))
+    D.unitr (F.hmap f) ∙ sym (D.unitl (F.hmap f))
 ```
 
 Vertical composition of natural transformations composes the
@@ -990,18 +990,18 @@ nat-comp {D = D} {F} {G} {H} α β = αβ where
   αβ .nat-trans.component x =
     α.component x D.⨾ β.component x
   αβ .nat-trans.natural {x} {y} f =
-    F.hom-map f D.⨾ (α.component y D.⨾ β.component y)
-      ≡˘⟨ D.assoc (F.hom-map f)
+    F.hmap f D.⨾ (α.component y D.⨾ β.component y)
+      ≡˘⟨ D.assoc (F.hmap f)
             (α.component y) (β.component y) ⟩
-    (F.hom-map f D.⨾ α.component y) D.⨾ β.component y
+    (F.hmap f D.⨾ α.component y) D.⨾ β.component y
       ≡⟨ α.natural f Ca.▹ β.component y ⟩
-    (α.component x D.⨾ G.hom-map f) D.⨾ β.component y
+    (α.component x D.⨾ G.hmap f) D.⨾ β.component y
       ≡⟨ D.assoc (α.component x)
-            (G.hom-map f) (β.component y) ⟩
-    α.component x D.⨾ (G.hom-map f D.⨾ β.component y)
+            (G.hmap f) (β.component y) ⟩
+    α.component x D.⨾ (G.hmap f D.⨾ β.component y)
       ≡⟨ α.component x Ca.◃ β.natural f ⟩
-    α.component x D.⨾ (β.component x D.⨾ H.hom-map f)
+    α.component x D.⨾ (β.component x D.⨾ H.hmap f)
       ≡˘⟨ D.assoc (α.component x)
-            (β.component x) (H.hom-map f) ⟩
-    (α.component x D.⨾ β.component x) D.⨾ H.hom-map f ∎
+            (β.component x) (H.hmap f) ⟩
+    (α.component x D.⨾ β.component x) D.⨾ H.hmap f ∎
 ```
