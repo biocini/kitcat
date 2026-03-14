@@ -69,13 +69,13 @@ record category o h : Type₊ (o ⊔ h) where
   yon : ∀ {x y} → hom x y → ∀ w → hom w x → hom w y
   yon f w g = emb f w g _ idn
 
-  unit-eqv-l : ∀ {x} {z : ob}
+  unit-eqvl : ∀ {x} {z : ob}
     → is-equiv (λ (h : hom x z) → noy idn z h)
-  unit-eqv-l = unit .snd .fst .fst
+  unit-eqvl = unit .snd .fst .fst
 
-  unit-eqv-r : ∀ {x} {w : ob}
+  unit-eqvr : ∀ {x} {w : ob}
     → is-equiv (λ (g : hom w x) → yon idn w g)
-  unit-eqv-r = unit .snd .fst .snd
+  unit-eqvr = unit .snd .fst .snd
 
   yon-idpt : ∀ {x} → yon (idn {x}) x idn ≡ idn
   yon-idpt = unit .snd .snd
@@ -179,7 +179,7 @@ module Virtual {o} {h} (C : category o h) where
 
   absorb-l : ∀ {x} {z : ob} (h : hom x z)
     → noy idn z h ≡ h
-  absorb-l {x} h = equiv→lc unit-eqv-l noy-idn-idpt
+  absorb-l {x} h = equiv→lc unit-eqvl noy-idn-idpt
     where
       noy-idn-idpt : noy idn _ (noy idn _ h) ≡ noy idn _ h
       noy-idn-idpt =
@@ -188,7 +188,7 @@ module Virtual {o} {h} (C : category o h) where
 
   absorb-r : ∀ {x} {w : ob} (g : hom w x)
     → yon idn w g ≡ g
-  absorb-r {x} g = equiv→lc unit-eqv-r yon-idn-idpt
+  absorb-r {x} g = equiv→lc unit-eqvr yon-idn-idpt
     where
       yon-idn-idpt : yon idn _ (yon idn _ g) ≡ yon idn _ g
       yon-idn-idpt =
