@@ -76,6 +76,7 @@ import Cat.Coherence
 import Cat.Base
 import Cat.Groupoid
 import Cat.Data.Magmoid
+import Cat.Rezk
 -- import Cat.Units  -- WIP: proof error at line 382
 
 import Lib.CSet.Base
