@@ -810,16 +810,28 @@ the path, which is needed for triangle coherence.
       (f : hom x y) (g : hom y z)
       (h : hom z w) (k : hom w v)
     → assoc (f ⨾ g) h k ∙ assoc f g (h ⨾ k)
-    ≡ pcom (sym (ap (_⨾ k) (assoc f g h)))
-           (assoc f (g ⨾ h) k)
-           (ap (f ⨾_) (assoc g h k))
+    ≡ ap (_⨾ k) (assoc f g h)
+      ∙ assoc f (g ⨾ h) k
+      ∙ ap (f ⨾_) (assoc g h k)
   pentagon f g h k =
     pcom (ap (_∙ α₄₅) face₁₄
         ∙ ap (assoc (f ⨾ g) h k ∙_) face₄₅)
       hom-identity
       (λ i → pcom (sym (face₁₂ i)) (face₂₃ i) (face₃₅ i))
-    where open pentagon-fibers f g h k
-          open pentagon f g h k
+    ∙ pcom→∙
+        (ap (_⨾ k) (assoc f g h))
+        (assoc f (g ⨾ h) k)
+        (ap (f ⨾_) (assoc g h k))
+    where
+      open pentagon-fibers f g h k
+      open pentagon f g h k
+      pcom→∙
+        : ∀ {u} {A : Type u} {a b c d : A}
+          (p : a ≡ b) (q : b ≡ c) (r : c ≡ d)
+        → pcom (sym p) q r ≡ p ∙ q ∙ r
+      pcom→∙ p q r = pcom.unique
+        (sym p) q r
+        (p ∙ q ∙ r , cat.lcoh p q r)
 ```
 
 ### Weak triangle
