@@ -17,7 +17,6 @@ open import Core.Sub
 open import Core.Transport
 open import Core.Equiv
 open import Core.Glue
-open import Core.Composite using (_≡⟨_⟩_; _∎)
 open Core.Kan.Path using (unitl; unitr; invl; invr; assoc)
 
 private variable

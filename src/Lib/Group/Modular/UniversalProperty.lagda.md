@@ -10,8 +10,9 @@ module Lib.Group.Modular.UniversalProperty where
 
 open import Core.Base using (_≡_; refl; sym; ap; is-contr; Contr; funext)
 open import Core.Type using (Level; Type; 0ℓ; _∘_)
-open import Core.Kan using (_∙_)
+open import Core.Kan using (_∙_; _≡⟨_⟩_; _∎)
 open import Core.Data.Sigma using (Σ; _,_; fst; snd; _×_)
+open import Core.HLevel.Base using (is-prop-×)
 open import Core.Trait.Trunc using (Π-is-prop; Σ-prop-path)
 open import Core.Transport.J using (subst)
 open import Core.Transport.Base using (transport-refl)
@@ -25,16 +26,6 @@ open import Lib.Group.Modular.Multiplication
 private variable
   u : Level
 
-private
-  _≡⟨_⟩_ : ∀ {ℓ} {A : Type ℓ} (x : A) {y z : A}
-          → x ≡ y → y ≡ z → x ≡ z
-  x ≡⟨ p ⟩ q = p ∙ q
-
-  _∎ : ∀ {ℓ} {A : Type ℓ} (x : A) → x ≡ x
-  x ∎ = refl
-
-  infixr 2 _≡⟨_⟩_
-  infix  3 _∎
 ```
 
 
@@ -265,23 +256,15 @@ universal {X = X} X-set e sf rf sf² rf³ .is-contr.paths
       (funext (λ x →
         sym (hmap-unique e sf rf sf² rf³ f f-E f-s f-r x)))
     where
-      ×-is-prop
-        : ∀ {v w} {A : Type v} {B : Type w}
-        → ((x y : A) → x ≡ y)
-        → ((x y : B) → x ≡ y)
-        → (x y : A × B) → x ≡ y
-      ×-is-prop pa pb (a₁ , b₁) (a₂ , b₂) i =
-        pa a₁ a₂ i , pb b₁ b₂ i
-
       hom-prop
         : (a : PSL2Z → X)
         → (p q : (a E ≡ e)
                  × ((x : PSL2Z) → a (s x) ≡ sf (a x))
                  × ((x : PSL2Z) → a (r x) ≡ rf (a x)))
         → p ≡ q
-      hom-prop a = ×-is-prop
+      hom-prop a = is-prop-×
         (X-set (a E) e)
-        (×-is-prop
+        (is-prop-×
           (Π-is-prop (λ x → X-set (a (s x)) (sf (a x))))
           (Π-is-prop (λ x → X-set (a (r x)) (rf (a x)))))
 ```

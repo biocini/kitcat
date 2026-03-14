@@ -48,6 +48,13 @@ is-contr→is-hlevel : (n : Nat) → is-contr A → is-hlevel n A
 is-contr→is-hlevel Z c = c
 is-contr→is-hlevel (S n) c = is-hlevel-suc (is-contr→is-hlevel n c)
 
+⊤-is-contr : is-contr ⊤
+⊤-is-contr .center = tt
+⊤-is-contr .paths tt = refl
+
+⊤-is-prop : is-prop ⊤
+⊤-is-prop = is-contr→is-prop ⊤-is-contr
+
 is-prop→is-hlevel-suc : is-prop A → is-hlevel (S n) A
 is-prop→is-hlevel-suc {n = Z} p = p
 is-prop→is-hlevel-suc {n = S Z} p x y = is-prop→is-set p x y
@@ -187,6 +194,20 @@ PathP-is-hlevel'
   : ∀ {ℓ} {A : I → Type ℓ} {n} {x : A i0} {y : A i1}
   → ((i : I) → is-hlevel (S n) (A i)) → is-hlevel n (PathP A x y)
 PathP-is-hlevel' hl = PathP-is-hlevel (hl i1)
+
+is-set→SquareP
+  : ∀ {ℓ} (A : I → I → Type ℓ)
+  → ((i j : I) → is-set (A i j))
+  → {a₀₀ : A i0 i0} {a₀₁ : A i0 i1}
+    {a₁₀ : A i1 i0} {a₁₁ : A i1 i1}
+  → (p : PathP (λ j → A i0 j) a₀₀ a₀₁)
+  → (q : PathP (λ i → A i i0) a₀₀ a₁₀)
+  → (r : PathP (λ j → A i1 j) a₁₀ a₁₁)
+  → (s : PathP (λ i → A i i1) a₀₁ a₁₁)
+  → SquareP A p q r s
+is-set→SquareP A A-set p q r s =
+  is-prop→PathP (λ i → PathP-is-hlevel {n = S Z}
+    (A-set i i1)) p r
 
 equiv→is-hlevel
   : ∀ {ℓ ℓ'} {A : Type ℓ} {B : Type ℓ'} (n : Nat)

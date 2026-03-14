@@ -141,29 +141,6 @@ hconn {A} {y} {z} p q i j = hcom (∂ i ∨ ∂ j) sys
 {-# DISPLAY hcom _ (hconn.sys p q i j) = hconn p q i j #-}
 
 ```
-## Equational Reasoning
-```agda
-
-begin_ : ∀ {ℓ} {A : Type ℓ} {x y : A} → x ≡ y → x ≡ y
-begin p = p
-
-_≡⟨⟩_ : ∀ {ℓ} {A : Type ℓ} (x : A) {y : A} → x ≡ y → x ≡ y
-x ≡⟨⟩ p = p
-
-_≡⟨_⟩_ : ∀ {ℓ} {A : Type ℓ} (x : A) {y z : A} → x ≡ y → y ≡ z → x ≡ z
-x ≡⟨ p ⟩ q = p ∙ q
-
-_≡˘⟨_⟩_ : ∀ {ℓ} {A : Type ℓ} (x : A) {y z : A} → y ≡ x → y ≡ z → x ≡ z
-x ≡˘⟨ p ⟩ q = sym p ∙ q
-
-_∎ : ∀ {ℓ} {A : Type ℓ} (x : A) → x ≡ x
-x ∎ = refl
-
-infix  1 begin_
-infixr 2 _≡⟨⟩_ _≡⟨_⟩_ _≡˘⟨_⟩_
-infix  3 _∎
-
-```
 ## Higher Loop Operations
 ```agda
 

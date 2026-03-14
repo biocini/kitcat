@@ -11,7 +11,7 @@ module Lib.Group.Modular.Multiplication where
 
 open import Core.Base using (_≡_; refl; sym; ap)
 open import Core.Type using (Level; Type; 0ℓ)
-open import Core.Kan using (_∙_)
+open import Core.Kan using (_∙_; _≡⟨_⟩_; _∎)
 open import Core.Transport.Base using (transport-refl)
 
 open import Lib.Group.Modular.Induction
@@ -19,16 +19,6 @@ open import Lib.Group.Modular.Properties
 open import Lib.Group.Modular.Base
 open import Lib.Group.Modular.Type
 
-private
-  _≡⟨_⟩_ : ∀ {ℓ} {A : Type ℓ} (x : A) {y z : A}
-          → x ≡ y → y ≡ z → x ≡ z
-  x ≡⟨ p ⟩ q = p ∙ q
-
-  _∎ : ∀ {ℓ} {A : Type ℓ} (x : A) → x ≡ x
-  x ∎ = refl
-
-  infixr 2 _≡⟨_⟩_
-  infix  3 _∎
 ```
 
 

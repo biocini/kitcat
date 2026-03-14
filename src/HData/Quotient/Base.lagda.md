@@ -11,9 +11,7 @@ open import Core.Type
 open import Core.Base
 open import Core.Kan
 open import Core.Transport
-open import Core.Data.Nat using (Nat; S; Z)
-open import Core.Trait.Trunc
-  using (PathP-is-hlevel; is-prop→is-hlevel-suc; Π-is-prop)
+open import Core.HLevel.Base using (is-set→SquareP)
 
 private variable
   u v w : Level
@@ -63,20 +61,6 @@ For dependent elimination, the type family must land in sets.
     (ap g p) refl (ap g q) refl i j
   where
     g = /-elim P-set f f-resp
-
-    is-set→SquareP
-      : (A' : I → I → Type w)
-      → ((i j : I) → is-set (A' i j))
-      → {a00 : A' i0 i0} {a01 : A' i0 i1}
-        {a10 : A' i1 i0} {a11 : A' i1 i1}
-      → (p' : PathP (λ j → A' i0 j) a00 a01)
-      → (q' : PathP (λ i → A' i i0) a00 a10)
-      → (r' : PathP (λ j → A' i1 j) a10 a11)
-      → (s' : PathP (λ i → A' i i1) a01 a11)
-      → SquareP A' p' q' r' s'
-    is-set→SquareP A' A'-set p' q' r' s' =
-      is-prop→PathP (λ i → PathP-is-hlevel {n = S Z}
-        (A'-set i i1)) p' r'
 ```
 
 

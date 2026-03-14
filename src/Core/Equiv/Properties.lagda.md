@@ -13,11 +13,13 @@ open import Core.Transport.Base
 open import Core.Transport.J
 open import Core.Transport.Properties
   using (is-contr→loop-is-refl; transport⁻-transport;
-        is-contr-is-prop; is-contr-×; weak-funext)
+        is-contr-is-prop; is-contr-×; weak-funext;
+        prop-inhabited→is-contr; is-prop→is-set)
 open import Core.Type
 open import Core.Base
 open import Core.Data.Sigma
 open import Core.Data.Empty
+open import Core.HLevel.Base using (Σ-prop-path)
 open import Core.Kan
 open import Core.Sub
 
@@ -117,6 +119,18 @@ comp-equiv {f} {g} e d = ((f , e) ∙e (g , d)) .snd
 contr-equiv-⊤ : ∀ {u} {A : Type u} → is-contr A → A ≃ ⊤
 contr-equiv-⊤ c = iso→equiv (λ _ → tt) (λ _ → c .center)
                             (λ a → c .paths a) (λ { tt → refl })
+
+prop→endo-is-equiv
+  : ∀ {u} {A : Type u}
+  → is-prop A → (f : A → A) → is-equiv f
+prop→endo-is-equiv p f .eqv-fibers y =
+  prop-inhabited→is-contr fib-is-prop (y , p (f y) y)
+  where
+  fib-is-prop : is-prop (fiber f y)
+  fib-is-prop (a₁ , q₁) (a₂ , q₂) =
+    Σ-prop-path
+      (λ a → is-prop→is-set p (f a) y)
+      (p a₁ a₂)
 
 Σ-⊤-≃ : ∀ {v} {B : ⊤ → Type v} → Σ B ≃ B tt
 Σ-⊤-≃ = iso→equiv (λ { (tt , b) → b }) (λ b → tt , b) (λ _ → refl) (λ _ → refl)

@@ -11,7 +11,7 @@ cyclic groups Z/2 × Z/3.
 module Lib.Group.Modular.Abelianization where
 
 open import Core.Base using (_≡_; refl; sym; ap; ap2)
-open import Core.Kan using (_∙_)
+open import Core.Kan using (_∙_; _≡⟨_⟩_; _∎)
 open import Core.Type using (Type; 0ℓ; ⊤; tt)
 open import Core.Data.Sigma using (Σ; _,_; fst; snd; _×_)
 open import Core.Data.Sum using (_⊎_; inl; inr)
@@ -25,16 +25,6 @@ open import Lib.Group.Modular.Properties
 open import Lib.Group.Modular.Base
 open import Lib.Group.Modular.Type
 
-private
-  _≡⟨_⟩_ : ∀ {ℓ} {A : Type ℓ} (x : A) {y z : A}
-          → x ≡ y → y ≡ z → x ≡ z
-  x ≡⟨ p ⟩ q = p ∙ q
-
-  _∎ : ∀ {ℓ} {A : Type ℓ} (x : A) → x ≡ x
-  x ∎ = refl
-
-  infixr 2 _≡⟨_⟩_
-  infix  3 _∎
 ```
 
 

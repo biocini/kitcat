@@ -20,6 +20,8 @@ open import Core.Path using (_≢_; ⊎-disjoint)
 open import Core.Transport.J using (subst)
 open import Core.Trait.Eq using (Eq; Discrete)
 open import Core.Trait.Trunc using (Trunc; set-trunc)
+open import Core.Trait.Decidable using (dec-map)
+open import Core.Function.Embedding using (left-cancellable)
 
 open import Lib.Group.Modular.Type
 open import Lib.Group.Modular.Base
@@ -150,10 +152,6 @@ sr²s-θ (r- se) = refl
 Left-cancellation for the generators.
 
 ```agda
-private
-  left-cancellable : ∀ {u} {A : Type u} → (A → A) → Type u
-  left-cancellable {A = A} f = {x y : A} → f x ≡ f y → x ≡ y
-
 s-lc : left-cancellable s
 s-lc {x} {y} p = sym (s² x) ∙ ap s p ∙ s² y
 
@@ -232,12 +230,6 @@ proved by mutual recursion.
 
 ```agda
 private
-  +functor
-    : {A B : Type 0ℓ} → (A → B) → (B → A)
-    → Dec A → Dec B
-  +functor f _ (yes p) = yes (f p)
-  +functor _ g (no np) = no (λ b → np (g b))
-
   cw-is-not-ccw : cw ≢ ccw
   cw-is-not-ccw p = subst discrim p tt where
     discrim : R-sgn → Type 0ℓ
@@ -298,7 +290,7 @@ S-edge-is-discrete (cross _) e₁ = no λ p → subst d p tt where
   d e₁      = ⊥
   d (cross _) = ⊤
 S-edge-is-discrete (cross re₁) (cross re₂) =
-  +functor (ap cross) (λ p → ap cross-helper p)
+  dec-map (ap cross) (λ p → ap cross-helper p)
     (R-edge-is-discrete re₁ re₂)
 ```
 
@@ -316,12 +308,12 @@ PSL2Z decidable equality: four cases from the sum decomposition.
 
 ```agda
 PSL2Z-is-discrete (inl se₁) (inl se₂) =
-  +functor (ap inl) η-lc (S-edge-is-discrete se₁ se₂)
+  dec-map (ap inl) η-lc (S-edge-is-discrete se₁ se₂)
 PSL2Z-is-discrete (inl _) (inr _) = no ⊎-disjoint
 PSL2Z-is-discrete (inr _) (inl _) =
   no (λ p → ⊎-disjoint (sym p))
 PSL2Z-is-discrete (inr re₁) (inr re₂) =
-  +functor (ap inr) θ-lc (R-edge-is-discrete re₁ re₂)
+  dec-map (ap inr) θ-lc (R-edge-is-discrete re₁ re₂)
 ```
 
 

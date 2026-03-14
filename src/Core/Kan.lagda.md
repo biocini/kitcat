@@ -295,6 +295,28 @@ module pcom where
 open pcom public using () renaming (composite to pcom; fill to pfil)
 {-# DISPLAY hcom _ (pcom.sys p q r i) = pcom.composite p q r i #-}
 
+contr-face
+  : ∀ {u v} {X : Type u} {P : X → Type v}
+  → (c : is-contr (Σ P))
+  → {a b : X} {α α' : P a} {β β' : P b}
+  → (σ : (a , α) ≡ (b , β))
+  → (w : α ≡ α')
+    (core : (a , α') ≡ (b , β'))
+    (v : β' ≡ β)
+  → cong fst σ ≡ cong fst core
+contr-face c {a} {b} σ w core v =
+  pcom (sym (total-contr-unique c
+    (cong fst σ) (cong fst tri)
+    (cong snd σ) (cong snd tri)))
+  (pcom.ap (λ _ → fst) (sym w') core v')
+  (pcom.unit (cong fst core))
+  where
+    w' : (a , _) ≡ (a , _)
+    w' i = a , w i
+    v' : (b , _) ≡ (b , _)
+    v' i = b , v i
+    tri = pcom (sym w') core v'
+
 module pfil {A : I → Type} where
   module _ {w x : A i0} {y z : A i1} (p : x ≡ w) (q : x ≡ y ∶ A) (r : y ≡ z) where
     coh
@@ -462,6 +484,18 @@ module Path {A : Type u} where
     k (i = i0) → rfill p q j k
     k (k = i0) → sq j (~ i)
 
+  grp-cancel
+    : {a b c : A}
+      (p : b ≡ a) (q : c ≡ b)
+    → (sym p ∙ sym q) ∙ (q ∙ p) ≡ refl
+  grp-cancel p q =
+    pcom (sym (assoc (sym p ∙ sym q) q p))
+      (cong (_∙ p)
+        (pcom (assoc (sym p) (sym q) q)
+          (cong (sym p ∙_) (invl q))
+          (unitr (sym p))))
+      (invl p)
+
 cone : {x y z : A} (q : y ≡ z) (r : x ≡ z)
      → Square q (q ∙ sym r) r (λ _ → z)
 cone q r i j = hcom (∂ i ∨ j) λ where
@@ -479,6 +513,36 @@ cocone {x} p q i j = hcom (∂ i ∨ ~ j) λ where
   k (k = i0) → p (~ i ∧ j)
 
 ```
+
+## Chain Reasoning
+```agda
+
+module Chain where
+  begin_ : ∀ {ℓ} {A : Type ℓ} {x y : A} → x ≡ y → x ≡ y
+  begin p = p
+
+  _≡⟨⟩_ : ∀ {ℓ} {A : Type ℓ} (x : A) {y : A} → x ≡ y → x ≡ y
+  x ≡⟨⟩ p = p
+
+  _≡⟨_⟩_ : ∀ {ℓ} {A : Type ℓ} (x : A) {y z : A}
+          → x ≡ y → y ≡ z → x ≡ z
+  x ≡⟨ p ⟩ q = p ∙ q
+
+  _≡˘⟨_⟩_ : ∀ {ℓ} {A : Type ℓ} (x : A) {y z : A}
+           → y ≡ x → y ≡ z → x ≡ z
+  x ≡˘⟨ p ⟩ q = sym p ∙ q
+
+  _∎ : ∀ {ℓ} {A : Type ℓ} (x : A) → x ≡ x
+  x ∎ = refl
+
+  infix  1 begin_
+  infixr 2 _≡⟨⟩_ _≡⟨_⟩_ _≡˘⟨_⟩_
+  infix  3 _∎
+
+open Chain public
+
+```
+
 ## Triangles
 ```agda
 

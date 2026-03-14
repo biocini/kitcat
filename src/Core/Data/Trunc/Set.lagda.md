@@ -15,11 +15,10 @@ module Core.Data.Trunc.Set where
 open import Core.Type
 open import Core.Base
 open import Core.Data.Sigma using (snd)
-open import Core.Data.Nat using (Nat; S; Z)
 open import Core.Kan
 open import Core.Transport
 open import Core.Equiv
-open import Core.Trait.Trunc using (PathP-is-hlevel)
+open import Core.HLevel.Base using (is-set→SquareP)
 
 private variable
   u v : Level
@@ -89,20 +88,6 @@ For dependent elimination, the type family must land in sets.
     (ap go p) refl (ap go q) refl i j
   where
     go = ∥₀-elim B-set f
-
-    is-set→SquareP
-      : (A' : I → I → Type v)
-      → ((i j : I) → is-set (A' i j))
-      → {a00 : A' i0 i0} {a01 : A' i0 i1}
-        {a10 : A' i1 i0} {a11 : A' i1 i1}
-      → (p' : PathP (λ j → A' i0 j) a00 a01)
-      → (q' : PathP (λ i → A' i i0) a00 a10)
-      → (r' : PathP (λ j → A' i1 j) a10 a11)
-      → (s' : PathP (λ i → A' i i1) a01 a11)
-      → SquareP A' p' q' r' s'
-    is-set→SquareP A' A'-set {a00} {a01} {a10} {a11} p' q' r' s' =
-      is-prop→PathP (λ i → PathP-is-hlevel {n = S Z}
-        (A'-set i i1)) p' r'
 
 ```
 

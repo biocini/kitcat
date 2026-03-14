@@ -11,26 +11,11 @@ open import Core.Transport.Properties using (is-prop→is-set)
 open import Core.HLevel using (Π-is-set)
 open import Core.Base using (_≡_; refl; sym; ap; is-set)
 open import Core.Type using (Level; Type; _⊔_; id; _∘_; ⌞_⌟)
-open import Core.Kan using (_∙_)
+open import Core.Kan using (_∙_; _≡⟨_⟩_; _≡˘⟨_⟩_; _∎)
 open import Lib.Group.Base
 
 private variable
   u v w : Level
-
-private
-  _≡⟨_⟩_ : ∀ {ℓ} {A : Type ℓ} (x : A) {y z : A}
-          → x ≡ y → y ≡ z → x ≡ z
-  x ≡⟨ p ⟩ q = p ∙ q
-
-  _≡˘⟨_⟩_ : ∀ {ℓ} {A : Type ℓ} (x : A) {y z : A}
-           → y ≡ x → y ≡ z → x ≡ z
-  x ≡˘⟨ p ⟩ q = sym p ∙ q
-
-  _∎ : ∀ {ℓ} {A : Type ℓ} (x : A) → x ≡ x
-  x ∎ = refl
-
-  infixr 2 _≡⟨_⟩_ _≡˘⟨_⟩_
-  infix  3 _∎
 
 ```
 

@@ -466,38 +466,6 @@ the path, which is needed for triangle coherence.
                 (noy-composite g h b)
 ```
 
-### Contractible face extraction
-
-When a contractible Σ-type has two total paths `σ` and
-`pcom (sym w') core v'` between the same endpoints, where
-`w'` and `v'` only move the fiber (so `ap fst` is `refl`),
-we get `ap fst σ ≡ ap fst core` by distributing `fst` over
-the ternary composite and collapsing the trivial boundary.
-
-```agda
-  contr-face
-    : ∀ {u v} {X : Type u} {P : X → Type v}
-    → (c : is-contr (Σ P))
-    → {a b : X} {α α' : P a} {β β' : P b}
-    → (σ : (a , α) ≡ (b , β))
-    → (w : α ≡ α')
-      (core : (a , α') ≡ (b , β'))
-      (v : β' ≡ β)
-    → ap fst σ ≡ ap fst core
-  contr-face c {a} {b} σ w core v =
-    total-contr-unique c
-      (ap fst σ) (ap fst tri)
-      (ap snd σ) (ap snd tri)
-    ∙ pcom.ap (λ _ → fst) (sym w') core v'
-    ∙ pcom.unit (ap fst core)
-    where
-      w' : (a , _) ≡ (a , _)
-      w' i = a , w i
-      v' : (b , _) ≡ (b , _)
-      v' i = b , v i
-      tri = pcom (sym w') core v'
-```
-
 ### Pentagon
 
 ```agda
@@ -860,9 +828,9 @@ the ternary composite and collapsing the trivial boundary.
     hom-identity
       : α₁₄ ∙ α₄₅ ≡ pcom (sym α₁₂) α₂₃ α₃₅
     hom-identity =
-      sym (ap-comp fst σ₁₄ σ₄₅)
-      ∙ ap (ap fst) identity
-      ∙ pcom.ap (λ _ → fst) (sym σ₁₂) σ₂₃ σ₃₅
+      pcom (ap-comp fst σ₁₄ σ₄₅)
+        (ap (ap fst) identity)
+        (pcom.ap (λ _ → fst) (sym σ₁₂) σ₂₃ σ₃₅)
 
   pentagon
     : ∀ {x y z w v}
@@ -873,10 +841,10 @@ the ternary composite and collapsing the trivial boundary.
            (assoc f (g ⨾ h) k)
            (ap (f ⨾_) (assoc g h k))
   pentagon f g h k =
-    sym (ap (_∙ α₄₅) face₁₄
+    pcom (ap (_∙ α₄₅) face₁₄
         ∙ ap (assoc (f ⨾ g) h k ∙_) face₄₅)
-    ∙ hom-identity
-    ∙ (λ i → pcom (sym (face₁₂ i)) (face₂₃ i) (face₃₅ i))
+      hom-identity
+      (λ i → pcom (sym (face₁₂ i)) (face₂₃ i) (face₃₅ i))
     where open pentagon-fibers f g h k
           open pentagon f g h k
 ```
@@ -1039,9 +1007,9 @@ not `absorb-coh`. The `α₂₃` edge remains abstract.
     → ap (_⨾ g) (unitr f)
     ≡ assoc f idn g ∙ triangle-fibers.α₂₃ f g
   triangle-weak f g =
-    sym face₁₃
-    ∙ hom-identity
-    ∙ ap (_∙ α₂₃) face₁₂
+    pcom face₁₃
+      hom-identity
+      (ap (_∙ α₂₃) face₁₂)
     where open triangle-fibers f g
           open triangle f g
 ```
@@ -1077,19 +1045,6 @@ module 2-Cat
   open Cat C public
   open 2-coherent coh public
 
-  private
-    grp-cancel
-      : ∀ {u} {A : Type u} {a b c : A}
-        (p : b ≡ a) (q : c ≡ b)
-      → (sym p ∙ sym q) ∙ (q ∙ p) ≡ refl
-    grp-cancel p q =
-      Path.assoc (sym p ∙ sym q) q p
-      ∙ ap (_∙ p)
-          (sym (Path.assoc (sym p) (sym q) q)
-          ∙ ap (sym p ∙_) (Path.invl q)
-          ∙ Path.unitr (sym p))
-      ∙ Path.invl p
-
   absorb-l-noy-retract
     : ∀ {x y} (f : hom x y) v (b : hom y v)
     → emb-noy f _ idn v b ∙ absorb-l (noy f v b)
@@ -1097,7 +1052,7 @@ module 2-Cat
   absorb-l-noy-retract f v b =
     ap (emb-noy f _ idn v b ∙_)
       (absorb-coh f v b)
-    ∙ grp-cancel
+    ∙ Path.grp-cancel
         (ap (λ t → emb f _ t v b) (absorb-r idn))
         (interchange idn f _ idn v b)
 ```
@@ -1194,10 +1149,10 @@ the full Mac Lane triangle from the weak version.
     → ap (_⨾ g) (unitr f)
     ≡ assoc f idn g ∙ ap (f ⨾_) (unitl g)
   triangle f g =
-    sym face₁₃
-    ∙ hom-identity
-    ∙ ap (_∙ α₂₃) face₁₂
-    ∙ ap (assoc f idn g ∙_) face₂₃
+    pcom face₁₃
+      hom-identity
+      (ap (_∙ α₂₃) face₁₂
+      ∙ ap (assoc f idn g ∙_) face₂₃)
     where open Cat.triangle-fibers C f g
           open Cat.triangle C f g
           open face₂₃-proof f g

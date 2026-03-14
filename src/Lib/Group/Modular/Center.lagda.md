@@ -10,7 +10,7 @@ module Lib.Group.Modular.Center where
 
 open import Core.Base using (_≡_; refl; sym; ap)
 open import Core.Type using (Type; 0ℓ; _∘_)
-open import Core.Kan using (_∙_)
+open import Core.Kan using (_∙_; _≡⟨_⟩_; _∎)
 open import Core.Data.Sigma using (Σ; Σ-syntax; _,_; fst; snd)
 open import Core.Data.Empty using (⊥; ex-falso)
 open import Core.Path using (_≢_)
@@ -20,16 +20,6 @@ open import Lib.Group.Modular.Properties
 open import Lib.Group.Modular.Base
 open import Lib.Group.Modular.Type
 
-private
-  _≡⟨_⟩_ : ∀ {ℓ} {A : Type ℓ} (x : A) {y z : A}
-          → x ≡ y → y ≡ z → x ≡ z
-  x ≡⟨ p ⟩ q = p ∙ q
-
-  _∎ : ∀ {ℓ} {A : Type ℓ} (x : A) → x ≡ x
-  x ∎ = refl
-
-  infixr 2 _≡⟨_⟩_
-  infix  3 _∎
 ```
 
 

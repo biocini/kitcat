@@ -24,7 +24,7 @@ open import Core.Data.List.Base
 open import Core.Trait.Trunc
   using ( is-hlevel; is-contr→is-hlevel; is-prop→is-hlevel-suc
         ; ×-is-hlevel )
-open import Core.HLevel.Base using (equiv→is-hlevel)
+open import Core.HLevel.Base using (equiv→is-hlevel; ⊤-is-contr)
 
 private variable
   u v w : Level
@@ -155,10 +155,6 @@ List-is-hlevel {A = A} n ahl [] [] =
     nil-ids .to-path {b = _ ∷ _} ()
     nil-ids .to-path-over {b = []}    _ = refl
     nil-ids .to-path-over {b = _ ∷ _} ()
-
-    ⊤-is-contr : is-contr ⊤
-    ⊤-is-contr .center = tt
-    ⊤-is-contr .paths _ = refl
 
     nil-path-contr : is-contr ([] ≡ [])
     nil-path-contr = is-contr-equiv (Ids-based→equiv nil-ids) ⊤-is-contr
