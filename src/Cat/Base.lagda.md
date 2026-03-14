@@ -775,6 +775,37 @@ identity by η-expansion.
         ∙ copair-η-idn coprod
 ```
 
+## Biinvertibility
+
+A morphism is biinvertible if it has both a section and a
+retraction. Every isomorphism is biinvertible, and conversely:
+the section and retraction agree by `inv-unique`.
+
+```agda
+  is-biinv : ∀ {x y} → hom x y → Type h
+  is-biinv f = has-section f × has-retraction f
+
+  iso→biinv
+    : ∀ {x y} {f : hom x y}
+    → is-iso f → is-biinv f
+  iso→biinv i = iso→section i , iso→retraction i
+
+  biinv→iso
+    : ∀ {x y} {f : hom x y}
+    → is-biinv f → is-iso f
+  biinv→iso {f = f} ((s , fs) , (r , rf)) =
+    s , fs , ap (_⨾ f) s≡r ∙ rf
+    where
+      s≡r : s ≡ r
+      s≡r =
+        s             ≡˘⟨ unitl s ⟩
+        idn ⨾ s       ≡˘⟨ rf ▹ s ⟩
+        (r ⨾ f) ⨾ s   ≡⟨ assoc r f s ⟩
+        r ⨾ (f ⨾ s)   ≡⟨ r ◃ fs ⟩
+        r ⨾ idn       ≡⟨ unitr r ⟩
+        r ∎
+```
+
 ## Functors
 
 A functor between categories maps objects and morphisms,
@@ -804,4 +835,135 @@ record Functor
       → hom-map (f C.⨾ g) ≡ hom-map f D.⨾ hom-map g
 
 {-# INLINE Functor.constructor #-}
+```
+
+The identity functor maps everything to itself.
+
+```agda
+Id-Functor
+  : ∀ {o h} (C : category o h) → Functor C C
+Id-Functor C .Functor.ob-map x = x
+Id-Functor C .Functor.hom-map f = f
+Id-Functor C .Functor.hom-map-idn = refl
+Id-Functor C .Functor.hom-map-seq _ _ = refl
+```
+
+Functor composition maps objects and morphisms sequentially.
+Identity preservation chains through both functors; composition
+preservation uses `hom-map-seq` of each functor plus `ap` to
+push the inner functor's equation through the outer.
+
+```agda
+_∘F_
+  : ∀ {o₁ h₁ o₂ h₂ o₃ h₃}
+    {C : category o₁ h₁}
+    {D : category o₂ h₂}
+    {E : category o₃ h₃}
+  → Functor D E → Functor C D → Functor C E
+_∘F_ {C = C} {D} {E} G F = FGF where
+  module F = Functor F
+  module G = Functor G
+  module C = Virtual C
+  module E = Virtual E
+
+  FGF : Functor C E
+  FGF .Functor.ob-map x = G.ob-map (F.ob-map x)
+  FGF .Functor.hom-map f = G.hom-map (F.hom-map f)
+  FGF .Functor.hom-map-idn =
+    ap G.hom-map F.hom-map-idn ∙ G.hom-map-idn
+  FGF .Functor.hom-map-seq f g =
+    ap G.hom-map (F.hom-map-seq f g)
+    ∙ G.hom-map-seq (F.hom-map f) (F.hom-map g)
+
+infixr 30 _∘F_
+```
+
+## Natural transformations
+
+A natural transformation between functors `F` and `G` assigns
+to each object `x` a component morphism `F x → G x`, such that
+for any morphism `f : x → y`, the naturality square commutes:
+`F(f) ⨾ η y ≡ η x ⨾ G(f)`.
+
+```agda
+record NatTrans
+  {o h o' h'}
+  {C : category o h} {D : category o' h'}
+  (F G : Functor C D)
+  : Type (o ⊔ h ⊔ h')
+  where
+  no-eta-equality
+  private
+    module C = Virtual C
+    module D = Virtual D
+    module F = Functor F
+    module G = Functor G
+
+  field
+    component
+      : ∀ x → D.hom (F.ob-map x) (G.ob-map x)
+    natural
+      : ∀ {x y} (f : C.hom x y)
+      → F.hom-map f D.⨾ component y
+      ≡ component x D.⨾ G.hom-map f
+
+{-# INLINE NatTrans.constructor #-}
+```
+
+The identity natural transformation has `idn` as every
+component. Naturality follows from `unitl` and `unitr`.
+
+```agda
+nat-id
+  : ∀ {o h o' h'}
+    {C : category o h} {D : category o' h'}
+    (F : Functor C D)
+  → NatTrans F F
+nat-id {D = D} F = nt where
+  module D = Virtual D
+  module F = Functor F
+
+  nt : NatTrans F F
+  nt .NatTrans.component _ = D.idn
+  nt .NatTrans.natural f =
+    D.unitr (F.hom-map f) ∙ sym (D.unitl (F.hom-map f))
+```
+
+Vertical composition of natural transformations composes the
+components. Naturality of the composite follows from
+associativity and the naturality of each factor.
+
+```agda
+nat-comp
+  : ∀ {o h o' h'}
+    {C : category o h} {D : category o' h'}
+    {F G H : Functor C D}
+  → NatTrans F G → NatTrans G H → NatTrans F H
+nat-comp {D = D} {F} {G} {H} α β = αβ where
+  module D  = Virtual D
+  module Ca = Cat D
+  module F  = Functor F
+  module G  = Functor G
+  module H  = Functor H
+  module α  = NatTrans α
+  module β  = NatTrans β
+
+  αβ : NatTrans F H
+  αβ .NatTrans.component x =
+    α.component x D.⨾ β.component x
+  αβ .NatTrans.natural {x} {y} f =
+    F.hom-map f D.⨾ (α.component y D.⨾ β.component y)
+      ≡˘⟨ D.assoc (F.hom-map f)
+            (α.component y) (β.component y) ⟩
+    (F.hom-map f D.⨾ α.component y) D.⨾ β.component y
+      ≡⟨ α.natural f Ca.▹ β.component y ⟩
+    (α.component x D.⨾ G.hom-map f) D.⨾ β.component y
+      ≡⟨ D.assoc (α.component x)
+            (G.hom-map f) (β.component y) ⟩
+    α.component x D.⨾ (G.hom-map f D.⨾ β.component y)
+      ≡⟨ α.component x Ca.◃ β.natural f ⟩
+    α.component x D.⨾ (β.component x D.⨾ H.hom-map f)
+      ≡˘⟨ D.assoc (α.component x)
+            (β.component x) (H.hom-map f) ⟩
+    (α.component x D.⨾ β.component x) D.⨾ H.hom-map f ∎
 ```
