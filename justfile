@@ -102,6 +102,10 @@ html-serve:
 html-deploy:
     bin/html-deploy
 
+# Check ARCHITECTURE.md for drift against actual module status
+docs-check:
+    bin/docs-drift
+
 # Log a failed proof attempt and revert the module
 log-failure module:
     bin/log-failure {{module}}
