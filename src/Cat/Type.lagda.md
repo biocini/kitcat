@@ -1,11 +1,13 @@
 Lane Biocini
 March 2026
 
-Virtual categories with extensional compose-contr. The
-compose-contr field uses `fiber emb target` (a single
-function-level path) instead of a pointwise family. This
-makes the Σ-decomposition for displayed/product categories
-possible via `Σ-contr-contr`.
+Categories via ternary composition. The `compose-contr`
+field bundles the composite morphism and its characterizing
+equation into a contractible `fiber emb target`. The
+`interchange` field links the noy and yon views pointwise.
+The `yon-eval` field establishes `yon f x idn ≡ f`.
+All standard categorical structure (unit laws, associativity)
+follows from these. The identity is unique (`unit-is-prop`).
 
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
@@ -27,9 +29,9 @@ open import Core.Function.Embedding
 
 ## The category record
 
-Uses extensional `compose-contr`: the fiber is
-`Σ s, emb s ≡ target` (a single function-level path)
-rather than Cat.Virtual's pointwise family.
+The `compose-contr` fiber is `Σ s, emb s ≡ target`
+— a single function-level path characterizing the
+composite.
 
 ```agda
 record category o h : Type₊ (o ⊔ h) where
@@ -188,9 +190,9 @@ module Virtual {o} {h} (C : category o h) where
 
 ### Composable fiber and its eliminators
 
-`composable-contr` gives the pointwise fiber derived from the
-extensional `compose-contr`. `emb-ind` eliminates any `(s, q)`
-in the fiber back to the canonical center.
+`composable-contr` restates `compose-contr` with a pointwise
+equation. `emb-ind` eliminates any `(s, q)` in the fiber
+back to the canonical center.
 
 ```agda
   composable-contr
@@ -234,8 +236,8 @@ in the fiber back to the canonical center.
 
 ### Embedding property
 
-`emb-image-contr` derives the pointwise embedding fiber from
-`composable-contr idn f` via interchange and absorption.
+`emb-image-contr` shows the emb-fiber at any morphism is
+contractible, via interchange and absorption.
 
 ```agda
   emb-image-contr
@@ -350,9 +352,8 @@ in the fiber back to the canonical center.
 
 ### Coherent unit laws and associativity
 
-The unit laws and associativity work the same as in Cat.Virtual,
-but now the fibers use pointwise equations derived from the
-extensional `emb-composite` via `emb-composite-pt`.
+The unit laws and associativity are projections from
+contractible fibers.
 
 ```agda
   unitr : ∀ {x y} (f : hom x y) → f ⨾ idn ≡ f
@@ -392,8 +393,7 @@ extensional `emb-composite` via `emb-composite-pt`.
 
 ### Triple composite fiber (E₃-contr)
 
-The E₃ target and contractibility proof use the pointwise
-`emb-composite-pt` derived from the extensional fiber.
+The ternary composite fiber E₃ and its contractibility.
 
 ```agda
   E₃ : ∀ {x y z w} (f : hom x y) (g : hom y z)

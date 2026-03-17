@@ -1,16 +1,15 @@
 Lane Biocini
 March 2026
 
-Classified virtual categories with extensional compose-classified.
-Composition is gated by a propositional classifier on composable
-pairs. The `compose-classified` field uses `fiber emb target` (a
-single function-level path) instead of a pointwise family,
-matching Cat.Type. Interchange equates the noy and yon views for
-classified pairs. The combinator `⟨ f , g , c ⟩` is derived as
-the noy-side target.
+Virtual categories. Composition is gated by a propositional
+classifier on composable pairs. The `compose-classified`
+field gives a contractible `fiber emb target` when the
+classifier holds. Interchange equates the noy and yon views
+for classified pairs. The combinator `⟨ f , g , c ⟩` is
+derived as the noy-side target.
 
-Cat.Type is the special case where the classifier is
-contractible.
+Cat.Type.category is the special case where every pair
+composes (classifier is trivially ⊤).
 
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness --no-sized-types #-}
@@ -225,9 +224,9 @@ module Classified
 
 ### Composable fiber and its eliminators
 
-`composable-contr` gives the pointwise fiber derived from the
-extensional `compose-classified`. `emb-ind` eliminates any
-`(s, q)` in the fiber back to the canonical center.
+`composable-contr` restates `compose-classified` with a
+pointwise equation. `emb-ind` eliminates any `(s, q)` in
+the fiber back to the canonical center.
 
 ```agda
   composable-contr
@@ -266,8 +265,8 @@ extensional `compose-classified`. `emb-ind` eliminates any
 
 `emb-noy` and `emb-yon` express `emb f` in terms of `noy`
 and `yon` with the identity. `emb-image-contr` shows the
-pointwise emb-fiber is contractible. `emb-inj` derives
-injectivity of `emb`.
+emb-fiber is contractible. `emb-inj` derives injectivity
+of `emb`.
 
 ```agda
   emb-noy
@@ -335,9 +334,8 @@ injectivity of `emb`.
 
 ### Composite characterizations
 
-`emb-composite-ext` is trivially the extensional composite
-characterization. `noy-composite` and `yon-composite`
-specialize to the noy and yon views.
+`noy-composite` and `yon-composite` specialize the
+composite characterization to the noy and yon views.
 
 ```agda
   emb-composite-ext
@@ -429,8 +427,8 @@ The unit laws are projections from contractible fibers.
 
 The ternary fiber `E₃` is the common target for both
 association directions. Its contractibility follows from
-`composable-contr` transported along the pointwise expansion
-of `emb (comp f g cfg)`.
+`composable-contr` transported along the expansion of
+`emb (comp f g cfg)`.
 
 ```agda
   private
