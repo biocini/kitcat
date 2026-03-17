@@ -157,7 +157,6 @@ From the four axioms, the following are derived (not axiomatized):
 - **Embedding** `emb-is-embedding`, `emb-section`, `emb-retraction`
 - **Covariant families** — functors C → Type with `yon` action (Cat.Covariant)
 - **Yoneda lemma** — `nat-trans (hom-cov a) P ≅ P.Fib a` (Cat.Yoneda)
-- **Product categories** — `_×cat_` with component-wise structure (Cat.Product)
 - **Rezk completion** — HIT quotient by neutral morphisms, requires `--cubical` (Cat.Rezk)
 
 ### Relationship to simplicial HoTT

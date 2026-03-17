@@ -20,8 +20,19 @@ while read -r module status; do
     doc_status["$module"]="$status"
     doc_seen["$module"]=1
 done < <(awk -F'|' '/^\| Cat\.[A-Za-z.]+ +\|/ {
-    gsub(/^ +| +$/, "", $2); gsub(/^ +| +$/, "", $4);
-    print $2, $4
+    gsub(/^ +| +$/, "", $2); gsub(/^ +| +$/, "", $3); gsub(/^ +| +$/, "", $4);
+    if ($3 ~ /^[0-2]$/) print $2, $4
+}' "$arch")
+
+# --- Parse deferred modules table (not validated, just known) ---
+declare -A doc_deferred
+while read -r module; do
+    [ -z "$module" ] && continue
+    doc_deferred["$module"]=1
+    doc_seen["$module"]=1
+done < <(awk -F'|' '/^\| Cat\.[A-Za-z.]+ +\|/ {
+    gsub(/^ +| +$/, "", $2); gsub(/^ +| +$/, "", $3);
+    if ($3 !~ /^[0-2]$/) print $2
 }' "$arch")
 
 # --- Discover modules on disk ---

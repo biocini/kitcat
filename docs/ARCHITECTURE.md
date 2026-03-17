@@ -14,17 +14,14 @@ Define the core algebraic structures for categories.
 ```
 Cat.Virtual ─── canonical: emb primitive, four axioms
     │
-    ├── Cat.Classified ─── generalization: prop-classifier gates composition
-    │
-    ├── Cat.VirtualAlt ─── research: noy/yon primitive, emb derived
-    │
-    └── Cat.VirtualProposed ─── research: pointwise compose-contr variant
+    └── Cat.Classified ─── generalization: prop-classifier gates composition
 ```
 
 **Cat.Virtual** is the canonical record. All Stratum 1 theory
-imports it. The alternatives explore different primitive/derived
-splits and their consequences for identity uniqueness, pentagon
-provability, and displayed category constructions.
+imports it. Cat.Classified generalizes it with a propositional
+classifier gating composition. Research variants exploring
+alternative primitive/derived splits exist but are not committed
+(see Deferred modules).
 
 ### Stratum 1 — Core theory (built on Cat.Virtual)
 
@@ -35,9 +32,6 @@ Cat.Virtual
     ├── Cat.Groupoid ─── path groupoid instance
     ├── Cat.Covariant ── covariant families (C → Type)
     ├── Cat.Yoneda ───── Yoneda lemma (via Covariant)
-    ├── Cat.Product ──── product categories
-    ├── Cat.Displayed ── displayed categories (blocked)
-    ├── Cat.Slice ────── slice categories (blocked)
     └── Cat.Rezk ─────── Rezk completion HIT (--cubical)
 ```
 
@@ -71,16 +65,11 @@ Cat.Data.Magmoid ── base record (magmoid, virtual-graph)
 |--------|---------|--------|-------|
 | Cat.Virtual | 0 | complete | Canonical record, four axioms |
 | Cat.Classified | 0 | complete | Prop-classifier gates composition |
-| Cat.VirtualAlt | 0 | research | noy/yon primitive, unique identity, pentagon incomplete |
-| Cat.VirtualProposed | 0 | research | Pointwise compose-contr, untested for Displayed |
 | Cat.Base | 1 | complete | Universal properties, functors, nat-trans, adjunctions |
 | Cat.Coherence | 1 | complete | Pentagon from base, triangle from 2-coherent |
 | Cat.Groupoid | 1 | complete | Path groupoid instance on arbitrary types |
 | Cat.Covariant | 1 | complete | Covariant families, representable family |
 | Cat.Yoneda | 1 | complete | Yoneda lemma for covariant families |
-| Cat.Product | 1 | partial | Record complete, projection functors stuck |
-| Cat.Displayed | 1 | blocked | PathP without hom-sets |
-| Cat.Slice | 1 | blocked | PathP without hom-sets |
 | Cat.Rezk | 1 | partial | Encode/section done, retraction missing |
 | Cat.Data.Magmoid | 2 | complete | Base record (magmoid, virtual-graph) |
 | Cat.Data.Base | 2 | complete | Composability, neutrality, divisibility |
@@ -95,11 +84,25 @@ Cat.Data.Magmoid ── base record (magmoid, virtual-graph)
 | Cat.Data.Coh | 2 | complete | Pentagon type former over associative magmoid |
 | Cat.Data.Prod | 2 | complete | Product of virtual graphs |
 
+## Deferred modules
+
+The following modules exist as working copies but are not yet
+committed. They are not listed in the status table and
+`bin/docs-drift` does not track them.
+
+| Module | State | Reason |
+|--------|-------|--------|
+| Cat.Product | partial | Record complete, projection functors stuck |
+| Cat.Displayed | blocked | PathP without hom-sets (see below) |
+| Cat.Slice | blocked | PathP without hom-sets (see below) |
+| Cat.VirtualProposed | research | Pointwise compose-contr, untested |
+| Cat.VirtualAlt | archived | In `Stash/Cat/` — noy/yon primitive variant |
+
 ## The Displayed/Slice obstruction
 
-Both Cat.Displayed and Cat.Slice are blocked on the same technical
-issue: filling a PathP in a family `λ i → hom-type(α i)` without
-hom-sets.
+Both Cat.Displayed and Cat.Slice (deferred) are blocked on the
+same technical issue: filling a PathP in a family
+`λ i → hom-type(α i)` without hom-sets.
 
 In Cat.Slice, the morphism type `hom/X` bundles a triangle
 `emb fA ≡ target fB k`. The contraction obligation for
@@ -122,13 +125,12 @@ and displayed components simultaneously.
   `fiber emb target` form (as in Cat.VirtualProposed) may
   decouple the components. Untested.
 - The obstruction is orthogonal to the Weinberger program
-  (Displayed, Covariant, Yoneda, Cocartesian can proceed via
-  other routes). Slice appears only in Beck-Chevalley and base
-  change.
+  (Covariant, Yoneda, Cocartesian can proceed via other routes).
+  Slice appears only in Beck-Chevalley and base change.
 
-## Research variants
+## Research notes
 
-### Cat.VirtualAlt — noy/yon primitive
+### VirtualAlt — noy/yon primitive (archived in Stash/)
 
 Trades emb primacy for identity uniqueness. Binary idempotency
 `yon e x e ≡ e` forces `e ≡ idn` via Kraus chain. But the
@@ -140,12 +142,12 @@ of (unique identity, full pentagon from base, path groupoids on
 arbitrary types) — though the 2026-03-14 hybrid (Cat.Virtual +
 yon-eval + yon-idpt) comes close.
 
-### Cat.VirtualProposed — pointwise compose-contr
+### VirtualProposed — pointwise compose-contr (deferred)
 
 Uses `∀ w a v b → is-contr (fiber ...)` instead of the
 function-extensional `emb s ≡ target`. Hypothesis: this
 decouples base and displayed components in the Displayed/Slice
-obstruction. Not yet tested — no Stratum 1 module has been
+obstruction. Not yet tested — no committed module has been
 ported to it.
 
 ## Open frontiers
