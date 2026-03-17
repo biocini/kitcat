@@ -28,15 +28,20 @@ bench_module() {
     local module="$1"
     info "Benchmarking: $module"
 
-    local time_output
+    local time_output agda_err
     time_output=$(mktemp)
+    agda_err=$(mktemp)
+    trap 'rm -f "$time_output" "$agda_err"' RETURN
 
+    # Redirect Agda stderr to fd 3 → agda_err, so /usr/bin/time's
+    # stderr (the timing output) goes to time_output undisturbed.
     local status=0
-    if /usr/bin/time -p "$AGDA" "$module" > /dev/null 2>"$time_output"; then
+    if { /usr/bin/time -p sh -c '"$0" "$1" >/dev/null 2>&3' "$AGDA" "$module" 3>"$agda_err"; } 2>"$time_output"; then
         ok "$module"
     else
         status=1
         fail "$module"
+        [ -s "$agda_err" ] && cat "$agda_err" >&2
     fi
 
     local real_time user_time sys_time
@@ -45,7 +50,6 @@ bench_module() {
     sys_time=$(grep "^sys" "$time_output" | awk '{print $2}' || echo "N/A")
 
     echo "$module,$real_time,$user_time,$sys_time,$status" >> "$RESULTS_FILE"
-    rm -f "$time_output"
     return $status
 }
 

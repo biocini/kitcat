@@ -96,6 +96,7 @@ committed. They are not listed in the status table and
 | Cat.Displayed | blocked | PathP without hom-sets (see below) |
 | Cat.Slice | blocked | PathP without hom-sets (see below) |
 | Cat.VirtualProposed | research | Pointwise compose-contr, untested |
+| Cat.Type | research | Extensional compose-contr variant |
 | Cat.VirtualAlt | archived | In `Stash/Cat/` — noy/yon primitive variant |
 
 ## The Displayed/Slice obstruction

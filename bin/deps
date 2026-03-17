@@ -84,16 +84,17 @@ if $all && $dot; then
         [ "$f" = "src/All.lagda.md" ] && continue
         mod="$(to_dotpath "$f")"
         ns="$(echo "$mod" | cut -d. -f1)"
-        clusters[$ns]+="$mod "
+        clusters[$ns]+="${mod}"$'\n'
     done < <(fd -e lagda.md . src/ | grep -v Stash/ | sort)
 
     idx=0
     for ns in $(echo "${!clusters[@]}" | tr ' ' '\n' | sort); do
         echo "  subgraph cluster_${idx} {"
         echo "    label=\"${ns}\";"
-        for mod in ${clusters[$ns]}; do
-            echo "    \"${mod}\";"
-        done
+        # Split space-separated module names safely via read
+        while read -r mod; do
+            [ -n "$mod" ] && echo "    \"${mod}\";"
+        done <<< "${clusters[$ns]}"
         echo "  }"
         idx=$((idx + 1))
     done

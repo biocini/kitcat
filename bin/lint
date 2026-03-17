@@ -6,8 +6,6 @@ set -euo pipefail
 
 PROSE_WIDTH=72
 CODE_WIDTH=85
-EXPECTED_FLAGS="--safe --erased-cubical --no-guardedness"
-
 checks=()
 while [ $# -gt 0 ]; do
     case "$1" in
@@ -34,13 +32,13 @@ check_width() {
     while IFS= read -r line; do
         lineno=$((lineno + 1))
 
-        # Toggle code blocks
-        if [[ "$line" == '```'* ]]; then
-            if $in_code; then
-                in_code=false
-            else
-                in_code=true
-            fi
+        # Toggle code blocks — closing fence is bare ```, opening
+        # fence may have a language tag (```agda, ```bash, etc.)
+        if [[ "$line" == '```' ]]; then
+            in_code=false
+            continue
+        elif [[ "$line" == '```'* ]] && ! $in_code; then
+            in_code=true
             continue
         fi
 

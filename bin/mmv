@@ -42,7 +42,7 @@ fi
 affected_files=()
 while IFS= read -r f; do
     affected_files+=("$f")
-done < <(rg -lw --fixed-strings "$old_module" "${git_root}/src/" --glob '*.lagda.md' --glob '*.agda' 2>/dev/null || true)
+done < <(rg -l --fixed-strings "$old_module" "${git_root}/src/" --glob '*.lagda.md' --glob '*.agda' 2>/dev/null || true)
 
 updated=${#affected_files[@]}
 
@@ -80,10 +80,9 @@ for f in "${all_files[@]}"; do
     [ "$f" = "$old_file" ] && target="$new_file"
     [ -f "$target" ] || continue
 
-    if rg -qw --fixed-strings "$old_module" "$target" 2>/dev/null; then
-        # Escape dots for sed regex, use | delimiter to avoid issues with /
+    if rg -q --fixed-strings "$old_module" "$target" 2>/dev/null; then
         old_sed="$(echo "$old_module" | sed 's/\./\\./g')"
-        sed -i '' "s|${old_sed}|${new_module}|g" "$target"
+        perl -i -pe "s|${old_sed}|${new_module}|g" "$target"
         count=$((count + 1))
     fi
 done

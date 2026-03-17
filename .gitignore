@@ -4,3 +4,7 @@ _build/
 benchmarks/
 deps.svg
 Log/
+__pycache__/
+.DS_Store
+*.bak
+keys/

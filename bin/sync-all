@@ -100,15 +100,15 @@ fi
 # --fix mode
 if $fix; then
     if [ ${#missing[@]} -gt 0 ]; then
-        # Build a single sed script to insert all missing imports before the closing ```
-        sed_script=""
+        # Insert missing imports before the closing ``` using awk
+        imports=""
         for mod in "${missing[@]}"; do
-            sed_script+="import ${mod}\n"
+            imports+="import ${mod}\n"
         done
-        # Insert all at once before the last line
-        sed -i '' '$i\
-'"$(printf '%b' "$sed_script")"'
-' "$ALL"
+        awk -v new="$imports" '
+            /^```$/ && !seen++ { printf "%s", new }
+            { print }
+        ' "$ALL" > "${ALL}.tmp" && mv "${ALL}.tmp" "$ALL"
         for mod in "${missing[@]}"; do
             echo "Added: import $mod"
         done
@@ -117,7 +117,7 @@ if $fix; then
     if [ ${#stale[@]} -gt 0 ]; then
         for mod in "${stale[@]}"; do
             escaped="$(echo "$mod" | sed 's/\./\\./g')"
-            sed -i '' "/^import ${escaped}$/d" "$ALL"
+            grep -v "^import ${escaped}$" "$ALL" > "${ALL}.tmp" && mv "${ALL}.tmp" "$ALL"
             echo "Removed: import $mod"
         done
     fi

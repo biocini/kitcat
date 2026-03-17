@@ -6,7 +6,8 @@ set -euo pipefail
 # Uses a git worktree at _build/gh-pages so the generated site
 # lives on a separate branch without polluting the source tree.
 
-cd "$(git rev-parse --show-toplevel)"
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+cd "$REPO_ROOT"
 
 WORKTREE="_build/gh-pages"
 BRANCH="gh-pages"
@@ -23,6 +24,8 @@ fi
 if [ ! -d "$WORKTREE" ]; then
     echo "Adding worktree at $WORKTREE..."
     mkdir -p _build
+    # Clean up stale worktree entry if the directory was removed
+    git worktree prune 2>/dev/null || true
     git worktree add "$WORKTREE" "$BRANCH"
 fi
 
@@ -43,7 +46,7 @@ if git diff --cached --quiet; then
 fi
 
 timestamp="$(date -u +%Y-%m-%d\ %H:%M:%S\ UTC)"
-source_sha="$(git -C "$OLDPWD" rev-parse --short HEAD)"
+source_sha="$(git -C "$REPO_ROOT" rev-parse --short HEAD)"
 git commit -m "Deploy from ${source_sha} at ${timestamp}"
 
 echo ""
