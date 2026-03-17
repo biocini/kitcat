@@ -6,7 +6,7 @@ The path groupoid of a type, as a Cat.Virtual category.
 For any type `A`, the yon-unbiased embedding `emb q w p z r = pcom (sym p) q r`
 gives the ternary composition structure. The identity `refl` absorbs via
 `Path.unitl` and `Path.unitr`. Composition is path concatenation. Interchange
-follows from `pcom-split-l` and `pcom-split-r`.
+follows from `pcom.lsplit` and `pcom.rsplit`.
 
 The `category` record is from `Cat.Virtual`. Since Cat.Virtual imports
 `Core.Groupoid` (for `yon-unbiased.emb` and `emb-equiv`), the instance
@@ -22,60 +22,8 @@ open import Core.Base
 open import Core.Data.Sigma
 open import Core.Kan
 open import Core.Equiv.Base using (is-equiv; eqv-fibers; iso→equiv)
-open import Core.Groupoid
+open import Core.Groupoid.Virtual
 open import Cat.Virtual
-```
-
-## Coherence helpers
-
-These are the pcom coherences needed for the interchange proof. They
-live in `Core.Coherence` but that module has unfinished pentagon holes,
-so we reproduce the needed lemmas here.
-
-```agda
-private
-  module _ {u} {A : Type u} where
-    inv-sides-filler
-      : {x y z : A} (p : x ≡ y) (q : x ≡ z)
-      → Square p q (sym q) (sym p)
-    inv-sides-filler {x = x} p q i j =
-      hcom (∂ i ∨ ∂ j) λ where
-        k (i = i0) → p (k ∧ j)
-        k (i = i1) → q (~ j ∧ k)
-        k (j = i0) → q (i ∧ k)
-        k (j = i1) → p (~ i ∧ k)
-        k (k = i0) → x
-
-    pcom-leftright
-      : {x y z : A} (p : x ≡ y) (q : y ≡ z)
-      → pcom refl p q ≡ pcom (sym p) q refl
-    pcom-leftright p q i j =
-      hcom (∂ j) λ where
-        k (j = i0) → p (i ∧ (~ k))
-        k (j = i1) → q (k ∨ i)
-        k (k = i0) → inv-sides-filler q (sym p) (~ i) j
-
-    pcom-split-l
-      : {w x y z : A} (p : w ≡ x) (q : x ≡ y)
-        (r : y ≡ z)
-      → pcom (sym p) q r
-      ≡ pcom refl (pcom (sym p) q refl) r
-    pcom-split-l p q r j i =
-      hcom (∂ i) λ where
-        k (i = i0) → p (~ j ∧ ~ k)
-        k (i = i1) → r k
-        k (k = i0) → pfil (sym p) q refl i j
-
-    pcom-split-r
-      : {w x y z : A} (p : w ≡ x) (q : x ≡ y)
-        (r : y ≡ z)
-      → pcom (sym p) q r
-      ≡ pcom (sym p) (pcom refl q r) refl
-    pcom-split-r p q r j i =
-      hcom (∂ i) λ where
-        k (i = i0) → p (~ k)
-        k (i = i1) → r (j ∨ k)
-        k (k = i0) → pfil refl q r i j
 ```
 
 ## The path groupoid
@@ -100,7 +48,7 @@ module _ {u} (A : Type u) where
 The identity is `refl`. The left action `λ h → E refl x refl z h` equals
 `λ h → pcom refl refl h`, which is `λ h → refl ∙ h`. This is an
 equivalence via `Path.unitl`. The right action `λ g → E refl w g x refl`
-equals `λ g → pcom (sym g) refl refl`. By `pcom-leftright` this equals
+equals `λ g → pcom (sym g) refl refl`. By `pcom.lr` this equals
 `pcom refl g refl = g ∙ refl`, so the equivalence follows from `Path.unitr`.
 
 Yon-idempotency `E refl x refl x refl ≡ refl` follows from `pcom.unit`.
@@ -113,7 +61,7 @@ Yon-idempotency `E refl x refl x refl ≡ refl` follows from `pcom.unit`.
     right-act : {x w : A} (g : w ≡ x)
       → E refl w g x refl ≡ g
     right-act g =
-      sym (pcom-leftright g refl) ∙ Path.unitr g
+      sym (pcom.lr g refl) ∙ Path.unitr g
 
     left-eqv : {x : A} {z : A}
       → is-equiv
@@ -133,33 +81,74 @@ Yon-idempotency `E refl x refl x refl ≡ refl` follows from `pcom.unit`.
 
     gpd-unit : {x : A}
       → Σ e ∶ x ≡ x
-      , ( (∀ {z} → is-equiv
+      , (∀ {z} → is-equiv
               (λ (h : x ≡ z) → E e x e z h))
-        × (∀ {w} → is-equiv
-              (λ (g : w ≡ x) → E e w g x e)))
-      × (E e x e x e ≡ e)
+      × (∀ {w} → is-equiv
+              (λ (g : w ≡ x) → E e w g x e))
     gpd-unit = refl
-      , (left-eqv , right-eqv)
-      , pcom.unit refl
+      , left-eqv , right-eqv
 ```
 
 ### Compose contractibility
 
-Since `E` is an equivalence, every fiber `Σ s, E s ≡ T` is contractible.
-The target `T = λ w a v b → E f w a v (noy g v b)` is an element of
-the codomain of `E`, so `eqv-fibers E-equiv T` gives contractibility.
+Since `E` is an equivalence, every fiber `Σ s, E s ≡ T` is contractible
+(`eqv-fibers`). The pointwise version follows: the center is the same
+path, and the contraction converts through `funext`/`happly`.
 
 ```agda
     gpd-compose-contr
       : {x y z : A} (f : x ≡ y) (g : y ≡ z)
       → is-contr
           (Σ s ∶ x ≡ z
-          , E s
-            ≡ (λ w a v b →
-                E f w a v (E g _ refl v b)))
-    gpd-compose-contr f g =
-      eqv-fibers E-equiv
-        (λ w a v b → E f w a v (E g _ refl v b))
+          , ∀ w (a : w ≡ x) v (b : z ≡ v)
+            → E s w a v b
+            ≡ E f w a v (E g _ refl v b))
+    gpd-compose-contr {x} {y} {z} f g = c'
+      where
+        T : ∀ w → w ≡ x → ∀ v → z ≡ v → w ≡ v
+        T w a v b = E f w a v (E g _ refl v b)
+
+        ext-contr : is-contr (Σ s ∶ x ≡ z , E s ≡ T)
+        ext-contr = eqv-fibers E-equiv T
+
+        s₀ : x ≡ z
+        s₀ = ext-contr .center .fst
+
+        ext-eq : E s₀ ≡ T
+        ext-eq = ext-contr .center .snd
+
+        pw₀ : ∀ w (a : w ≡ x) v (b : z ≡ v)
+          → E s₀ w a v b ≡ T w a v b
+        pw₀ w a v b i = ext-eq i w a v b
+
+        c' : is-contr
+          (Σ s ∶ x ≡ z
+          , ∀ w (a : w ≡ x) v (b : z ≡ v)
+            → E s w a v b ≡ T w a v b)
+        c' .center = s₀ , pw₀
+        c' .paths (s , pw) = path
+          where
+            ext-path : E s ≡ T
+            ext-path = funext λ w → funext λ a →
+              funext λ v → funext λ b → pw w a v b
+
+            total-path
+              : (s₀ , ext-eq) ≡ (s , ext-path)
+            total-path = ext-contr .paths (s , ext-path)
+
+            s-path : s₀ ≡ s
+            s-path = ap fst total-path
+
+            path
+              : (s₀ , pw₀) ≡ (s , pw)
+            path i = s-path i , λ w a v b j →
+              let
+                ext-over
+                  : PathP
+                      (λ i → E (s-path i) ≡ T)
+                      ext-eq ext-path
+                ext-over = ap snd total-path
+              in ext-over i j w a v b
 ```
 
 ### Interchange
@@ -169,7 +158,7 @@ The interchange equation
 expands to
 `pcom (sym a) f (pcom refl g b) ≡ pcom (sym (pcom (sym a) f refl)) g b`.
 
-The proof chains `pcom-split-l`, `pcom-leftright`, and `sym pcom-split-r`.
+The proof chains `pcom.lsplit`, `pcom.lr`, and `sym pcom.rsplit`.
 
 ```agda
     gpd-interchange
@@ -178,10 +167,10 @@ The proof chains `pcom-split-l`, `pcom-leftright`, and `sym pcom-split-r`.
       → E f w a v (E g _ refl v b)
       ≡ E g w (E f w a _ refl) v b
     gpd-interchange f g w a v b =
-      pcom-split-l a f (pcom refl g b)
-      ∙ pcom-leftright
+      pcom.lsplit a f (pcom refl g b)
+      ∙ pcom.lr
           (pcom (sym a) f refl) (pcom refl g b)
-      ∙ sym (pcom-split-r
+      ∙ sym (pcom.rsplit
               (pcom (sym a) f refl) g b)
 ```
 

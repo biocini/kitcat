@@ -31,9 +31,10 @@ open import Core.Kan
 open import Core.Transport
 open import Core.Function.Base
 open import Core.Path.Base
-open import Core.Groupoid
-open import Core.Equiv.Base using (is-equiv; eqv-fibers)
-open import Core.Function.Embedding using (equiv→lc)
+open import Core.Groupoid.Virtual
+open import Core.Equiv.Base using (is-equiv; eqv-fibers; Equiv)
+open import Core.Function.Embedding
+  using (equiv→lc; is-embedding; is-embedding→ap-equiv)
 ```
 
 ## The category record
@@ -56,9 +57,8 @@ record category o h : Type₊ (o ⊔ h) where
         → ∀ w → hom w x → ∀ z → hom y z → hom w z
     unit : ∀ {x} →
       Σ e ∶ hom x x
-      , ( (∀ {z} → is-equiv (λ (h : hom x z) → emb e x e z h))
-        × (∀ {w} → is-equiv (λ (g : hom w x) → emb e w g x e)))
-      × (emb e x e x e ≡ e)
+      , (∀ {z} → is-equiv (λ (h : hom x z) → emb e x e z h))
+      × (∀ {w} → is-equiv (λ (g : hom w x) → emb e w g x e))
 
   idn : ∀ {x} → hom x x
   idn = unit .fst
@@ -71,22 +71,20 @@ record category o h : Type₊ (o ⊔ h) where
 
   unit-eqvl : ∀ {x} {z : ob}
     → is-equiv (λ (h : hom x z) → noy idn z h)
-  unit-eqvl = unit .snd .fst .fst
+  unit-eqvl = unit .snd .fst
 
   unit-eqvr : ∀ {x} {w : ob}
     → is-equiv (λ (g : hom w x) → yon idn w g)
-  unit-eqvr = unit .snd .fst .snd
-
-  yon-idpt : ∀ {x} → yon (idn {x}) x idn ≡ idn
-  yon-idpt = unit .snd .snd
+  unit-eqvr = unit .snd .snd
 
   field
     compose-contr
       : ∀ {x y z} (f : hom x y) (g : hom y z)
       → is-contr
           (Σ s ∶ hom x z
-          , emb s
-            ≡ (λ w a v b → emb f w a v (noy g v b)))
+          , ∀ w (a : hom w x) v (b : hom z v)
+            → emb s w a v b
+            ≡ emb f w a v (noy g v b))
 
     interchange
       : ∀ {x y z} (f : hom x y) (g : hom y z)
@@ -97,14 +95,18 @@ record category o h : Type₊ (o ⊔ h) where
     yon-eval
       : ∀ {x y} (f : hom x y) → yon f x idn ≡ f
 
+  yon-idpt : ∀ {x} → yon (idn {x}) x idn ≡ idn
+  yon-idpt = yon-eval idn
+
   _⨾_ : ∀ {x y z} → hom x y → hom y z → hom x z
   f ⨾ g = compose-contr f g .center .fst
   infixr 40 _⨾_
 
   emb-composite
     : ∀ {x y z} (f : hom x y) (g : hom y z)
-    → emb (f ⨾ g)
-    ≡ (λ w a v b → emb f w a v (noy g v b))
+      w (a : hom w x) v (b : hom z v)
+    → emb (f ⨾ g) w a v b
+    ≡ emb f w a v (noy g v b)
   emb-composite f g =
     compose-contr f g .center .snd
 
@@ -127,12 +129,19 @@ module Virtual {o} {h} (C : category o h) where
   emb-ext h =
     funext λ w → funext λ a → funext λ v → funext λ b → h w a v b
 
+  emb-composite-ext
+    : ∀ {x y z} (f : hom x y) (g : hom y z)
+    → emb (f ⨾ g)
+    ≡ (λ w a v b → emb f w a v (noy g v b))
+  emb-composite-ext f g =
+    emb-ext (emb-composite f g)
+
   emb-yon-composite
     : ∀ {x y z} (f : hom x y) (g : hom y z)
     → emb (f ⨾ g)
     ≡ (λ w a v b → emb g w (yon f w a) v b)
   emb-yon-composite f g =
-    emb-composite f g
+    emb-composite-ext f g
     ∙ emb-ext λ w a v b → interchange f g w a v b
 
   emb-yon-composite-pt
@@ -140,30 +149,23 @@ module Virtual {o} {h} (C : category o h) where
       w (a : hom w x) v (b : hom z v)
     → emb (f ⨾ g) w a v b
     ≡ emb g w (yon f w a) v b
-  emb-yon-composite-pt f g w a v b i =
-    emb-yon-composite f g i w a v b
-
-  emb-composite-pt
-    : ∀ {x y z} (f : hom x y) (g : hom y z)
-      w (a : hom w x) v (b : hom z v)
-    → emb (f ⨾ g) w a v b
-    ≡ emb f w a v (noy g v b)
-  emb-composite-pt f g w a v b i =
-    emb-composite f g i w a v b
+  emb-yon-composite-pt f g w a v b =
+    emb-composite f g w a v b
+    ∙ interchange f g w a v b
 
   noy-composite
     : ∀ {x y z} (g : hom x y) (h : hom y z)
       {v : ob} (b : hom z v)
     → noy (g ⨾ h) v b ≡ noy g v (noy h v b)
-  noy-composite g h {v} b i =
-    emb-composite g h i _ idn v b
+  noy-composite g h {v} b =
+    emb-composite g h _ idn v b
 
   yon-composite
     : ∀ {x y z} (f : hom x y) (g : hom y z)
       w (a : hom w x)
     → yon (f ⨾ g) w a ≡ yon g w (yon f w a)
   yon-composite f g w a =
-    emb-composite-pt f g w a _ idn
+    emb-composite f g w a _ idn
     ∙ interchange f g w a _ idn
 
   comp-eq
@@ -207,8 +209,10 @@ and `⨾-η` witnesses that the composite is unique.
   composable-contr
     : ∀ {x y z} (f : hom x y) (g : hom y z)
     → is-contr
-        (fiber (emb {x} {z})
-          (λ w a v b → emb f w a v (noy g v b)))
+        (Σ s ∶ hom x z
+        , ∀ w (a : hom w x) v (b : hom z v)
+          → emb s w a v b
+          ≡ emb f w a v (noy g v b))
   composable-contr f g .center =
     f ⨾ g , emb-composite f g
   composable-contr f g .paths (s , p) =
@@ -217,8 +221,9 @@ and `⨾-η` witnesses that the composite is unique.
   emb-ind
     : ∀ {u} {x y z} (f : hom x y) (g : hom y z)
     → (P : (s : hom x z)
-         → emb s
-           ≡ (λ w a v b → emb f w a v (noy g v b))
+         → (∀ w (a : hom w x) v (b : hom z v)
+             → emb s w a v b
+             ≡ emb f w a v (noy g v b))
          → Type u)
     → P (f ⨾ g) (emb-composite f g)
     → ∀ s q → P s q
@@ -230,57 +235,147 @@ and `⨾-η` witnesses that the composite is unique.
   ⨾-η
     : ∀ {x y z} (f : hom x y) (g : hom y z)
     → (s : hom x z)
-    → emb s
-      ≡ (λ w a v b → emb f w a v (noy g v b))
+    → (∀ w (a : hom w x) v (b : hom z v)
+        → emb s w a v b
+        ≡ emb f w a v (noy g v b))
     → f ⨾ g ≡ s
   ⨾-η f g = emb-ind f g (λ s _ → f ⨾ g ≡ s) refl
 ```
 
-### Embedding property and its eliminators
+### Embedding property
 
-`composable-contr idn f` gives `is-contr (fiber emb target)` where
-`target w a v b = emb idn w a v (noy f v b)`. By interchange,
-this equals `emb f w (yon idn w a) v b = emb f w a v b` via
-right absorption. So `fiber emb (emb f)` is contractible for
-every `f`, making `emb` an embedding.
-
-`emb-image-ind` eliminates any `(n, q)` in the image fiber back
-to `(m, refl)`, and `emb-inj` is faithful: `emb n ≡ emb m`
-implies `n ≡ m`.
+`composable-contr idn f` gives a contractible pointwise fiber
+over the noy-target. By interchange and right absorption, the
+target equals `emb f`, so `emb` is injective: pointwise
+equality `∀ w a v b → emb f w a v b ≡ emb g w a v b` implies
+`f ≡ g`. The function-extensional variant `emb-inj-ext` wraps
+this via `happly`. `emb-image-contr-ext` converts to the
+`fiber emb (emb f)` form for the embedding property.
 
 ```agda
   emb-image-contr
     : ∀ {x y} (f : hom x y)
-    → is-contr (fiber emb (emb f))
-  emb-image-contr f =
-    subst (is-contr ∘ fiber emb) path
-      (composable-contr idn f)
+    → is-contr
+        (Σ s ∶ hom x y
+        , ∀ w (a : hom w x) v (b : hom y v)
+          → emb s w a v b ≡ emb f w a v b)
+  emb-image-contr {x} {y} f = c'
     where
+      c : is-contr
+        (Σ s ∶ hom x y
+        , ∀ w (a : hom w x) v (b : hom y v)
+          → emb s w a v b
+          ≡ emb idn w a v (noy f v b))
+      c = composable-contr idn f
+
       path
-        : (λ w a v b → emb idn w a v (noy f v b))
-        ≡ emb f
-      path = emb-ext λ w a v b →
+        : (λ w (a : hom w x) v (b : hom y v)
+            → emb idn w a v (noy f v b))
+        ≡ (λ w (a : hom w x) v (b : hom y v)
+            → emb f w a v b)
+      path = funext λ w → funext λ a →
+        funext λ v → funext λ b →
           interchange idn f w a v b
           ∙ ap (λ t → emb f w t v b) (absorb-r a)
 
-  emb-image-ind
-    : ∀ {u} {x y} (m : hom x y)
-    → (P : (n : hom x y) → emb n ≡ emb m → Type u)
-    → P m refl
-    → ∀ n q → P n q
-  emb-image-ind m P base n q =
-    coe01 (λ i → P (path i .fst) (path i .snd)) base
+      c' : is-contr
+        (Σ s ∶ hom _ _
+        , ∀ w a v b → emb s w a v b ≡ emb f w a v b)
+      c' = subst (λ T → is-contr
+        (Σ s ∶ hom _ _
+        , ∀ w a v b → emb s w a v b ≡ T w a v b))
+        path c
+
+  emb-image-contr-ext
+    : ∀ {x y} (f : hom x y)
+    → is-contr (fiber emb (emb f))
+  emb-image-contr-ext {x} {y} f = c'
     where
-      path : (m , refl) ≡ (n , q)
-      path =
-        sym (emb-image-contr m .paths (m , refl))
-        ∙ emb-image-contr m .paths (n , q)
+      PW = Σ s ∶ hom x y
+         , ∀ w (a : hom w x) v (b : hom y v)
+           → emb s w a v b ≡ emb f w a v b
+
+      to-ext : PW → fiber emb (emb f)
+      to-ext (s , q) = s , emb-ext q
+
+      c = emb-image-contr f
+
+      c' : is-contr (fiber emb (emb f))
+      c' .center = to-ext (c .center)
+      c' .paths (s , p) =
+        ap to-ext
+          (c .paths
+            (s , λ w a v b i → p i w a v b))
 
   emb-inj
     : ∀ {x y} {f g : hom x y}
+    → (∀ w (a : hom w x) v (b : hom y v)
+        → emb f w a v b ≡ emb g w a v b)
+    → f ≡ g
+  emb-inj {f = f} {g} pw =
+    ap fst (sym p₁ ∙ p₂)
+    where
+      p₁ = emb-image-contr f .paths
+        (f , λ _ _ _ _ → refl)
+      p₂ = emb-image-contr f .paths
+        (g , λ w a v b → sym (pw w a v b))
+
+  emb-inj-ext
+    : ∀ {x y} {f g : hom x y}
     → emb f ≡ emb g → f ≡ g
-  emb-inj {f = f} {g} p =
-    emb-image-ind f (λ n _ → f ≡ n) refl g (sym p)
+  emb-inj-ext {f = f} {g} p =
+    emb-inj λ w a v b i → p i w a v b
+
+  emb-is-embedding
+    : ∀ {x y} → is-embedding (emb {x} {y})
+  emb-is-embedding t (f , p) (g , q) =
+    is-contr→is-prop
+      (subst (is-contr ∘ fiber emb) p
+        (emb-image-contr-ext f))
+      (f , p) (g , q)
+
+  emb-section
+    : ∀ {x y} {f g : hom x y}
+    → (p : f ≡ g) → emb-inj-ext (ap emb p) ≡ p
+  emb-section {f = f} =
+    J (λ g p → emb-inj-ext (ap emb p) ≡ p) emb-inj-ext-refl
+    where
+      pw-center = emb-image-contr f .paths
+        (f , λ _ _ _ _ → refl)
+
+      loop
+        : Path (Σ s ∶ hom _ _
+              , ∀ w a v b → emb s w a v b ≡ emb f w a v b)
+            (f , λ _ _ _ _ → refl)
+            (f , λ _ _ _ _ → refl)
+      loop = sym pw-center ∙ pw-center
+
+      loop≡refl : loop ≡ refl
+      loop≡refl =
+        is-contr→is-set (emb-image-contr f) _ _ loop refl
+
+      emb-inj-ext-refl : emb-inj-ext {f = f} refl ≡ refl
+      emb-inj-ext-refl =
+        ap (ap fst) loop≡refl
+
+  emb-retraction
+    : ∀ {x y} {f g : hom x y}
+    → (q : emb f ≡ emb g) → ap emb (emb-inj-ext q) ≡ q
+  emb-retraction {f = f} {g} q =
+    ap (ap emb) emb-inj-ext≡inv ∙ counit q
+    where
+      ap-emb-equiv : is-equiv (ap emb {x = f} {y = g})
+      ap-emb-equiv = is-embedding→ap-equiv emb-is-embedding
+
+      module E = Equiv (ap emb , ap-emb-equiv)
+
+      counit : (q : emb f ≡ emb g) → ap emb (E.inv q) ≡ q
+      counit = E.counit
+
+      emb-inj-ext≡inv : emb-inj-ext q ≡ E.inv q
+      emb-inj-ext≡inv =
+        ap emb-inj-ext (sym (counit q))
+        ∙ emb-section (E.inv q)
 ```
 
 ### Yon-characterized composite and its eliminator
@@ -290,6 +385,31 @@ giving a dual fiber with the same center. `emb-yon-ind`
 eliminates over this alternative characterization.
 
 ```agda
+  composable-contr-ext
+    : ∀ {x y z} (f : hom x y) (g : hom y z)
+    → is-contr
+        (fiber (emb {x} {z})
+          (λ w a v b → emb f w a v (noy g v b)))
+  composable-contr-ext {x} {z} f g = c'
+    where
+      target = λ w a v b → emb f w a v (noy g v b)
+
+      PW = Σ s ∶ hom x z
+         , ∀ w (a : hom w x) v (b : hom z v)
+           → emb s w a v b ≡ target w a v b
+
+      to-ext : PW → fiber emb target
+      to-ext (s , q) = s , emb-ext q
+
+      c = composable-contr f g
+
+      c' : is-contr (fiber emb target)
+      c' .center = to-ext (c .center)
+      c' .paths (s , p) =
+        ap to-ext
+          (c .paths
+            (s , λ w a v b i → p i w a v b))
+
   composable-yon
     : ∀ {x y z} (f : hom x y) (g : hom y z)
     → is-contr
@@ -297,7 +417,7 @@ eliminates over this alternative characterization.
           (λ w a v b → emb g w (yon f w a) v b))
   composable-yon f g =
     subst (is-contr ∘ fiber emb) path
-      (composable-contr f g)
+      (composable-contr-ext f g)
     where
       path
         : (λ w a v b → emb f w a v (noy g v b))
@@ -332,27 +452,25 @@ eliminates over this alternative characterization.
         → hom w v}
     → is-contr (fiber emb target)
     → is-contr
-        (fiber
-          {B = ∀ w → hom y w → ∀ v → hom v x
-            → hom v w}
-          (λ s w a v b → emb s v b w a)
-          (λ w a v b → target v b w a))
+        (Σ s ∶ hom x y
+        , ∀ w (a : hom y w) v (b : hom v x)
+          → emb s v b w a ≡ target v b w a)
   composable-swap c .center .fst =
     c .center .fst
-  composable-swap c .center .snd i w a v b =
+  composable-swap c .center .snd w a v b i =
     c .center .snd i v b w a
   composable-swap {target = target}
     c .paths (s' , q') i .fst =
     c .paths (s' , q'') i .fst
     where
       q'' : emb s' ≡ target
-      q'' i w a v b = q' i v b w a
+      q'' i w a v b = q' v b w a i
   composable-swap {target = target}
-    c .paths (s' , q') i .snd j w a v b =
+    c .paths (s' , q') i .snd w a v b j =
     c .paths (s' , q'') i .snd j v b w a
     where
       q'' : emb s' ≡ target
-      q'' i w a v b = q' i v b w a
+      q'' i w a v b = q' v b w a i
 ```
 
 ### Injectivity and decomposition
@@ -365,24 +483,22 @@ and `emb-inj`. The `emb-yon` and `emb-noy` lemmas express
   yon-inj
     : ∀ {x y} {f g : hom x y}
     → yon f ≡ yon g → f ≡ g
-  yon-inj {f = f} {g} p = emb-inj
-    (emb-ext λ w a v b →
-        ap (emb f w a v) (sym (absorb-l b))
-        ∙ interchange f idn w a v b
-        ∙ ap (λ t → emb idn w t v b) (λ i → p i w a)
-        ∙ sym (interchange g idn w a v b)
-        ∙ ap (emb g w a v) (absorb-l b))
+  yon-inj {f = f} {g} p = emb-inj λ w a v b →
+    ap (emb f w a v) (sym (absorb-l b))
+    ∙ interchange f idn w a v b
+    ∙ ap (λ t → emb idn w t v b) (λ i → p i w a)
+    ∙ sym (interchange g idn w a v b)
+    ∙ ap (emb g w a v) (absorb-l b)
 
   noy-inj
     : ∀ {x y} {f g : hom x y}
     → noy f ≡ noy g → f ≡ g
-  noy-inj {f = f} {g} p = emb-inj
-    (emb-ext λ w a v b →
-        ap (λ t → emb f w t v b) (sym (absorb-r a))
-        ∙ sym (interchange idn f w a v b)
-        ∙ ap (λ t → emb idn w a v t) (λ i → p i v b)
-        ∙ interchange idn g w a v b
-        ∙ ap (λ t → emb g w t v b) (absorb-r a))
+  noy-inj {f = f} {g} p = emb-inj λ w a v b →
+    ap (λ t → emb f w t v b) (sym (absorb-r a))
+    ∙ sym (interchange idn f w a v b)
+    ∙ ap (λ t → emb idn w a v t) (λ i → p i v b)
+    ∙ interchange idn g w a v b
+    ∙ ap (λ t → emb g w t v b) (absorb-r a)
 
   emb-yon
     : ∀ {x y} (f : hom x y)
@@ -459,14 +575,16 @@ the path, which is needed for triangle coherence.
     ap fst
       (is-contr→is-prop (emb-image-contr f) lhs rhs)
     where
-      lhs : fiber emb (emb f)
+      lhs : Σ s ∶ hom _ _
+          , ∀ w a v b → emb s w a v b ≡ emb f w a v b
       lhs = f ⨾ idn
-          , emb-composite f idn
-          ∙ emb-ext λ w a v b →
-              ap (emb f w a v) (absorb-l b)
+          , λ w a v b →
+              emb-composite f idn w a v b
+              ∙ ap (emb f w a v) (absorb-l b)
 
-      rhs : fiber emb (emb f)
-      rhs = f , refl
+      rhs : Σ s ∶ hom _ _
+          , ∀ w a v b → emb s w a v b ≡ emb f w a v b
+      rhs = f , λ _ _ _ _ → refl
 
   unitl : ∀ {x y} (f : hom x y) → idn ⨾ f ≡ f
   unitl f =
@@ -474,14 +592,17 @@ the path, which is needed for triangle coherence.
       (is-contr→is-prop (composable-contr idn f)
         lhs rhs)
     where
-      lhs : fiber emb
-        (λ w a v b → emb idn w a v (noy f v b))
+      lhs : Σ s ∶ hom _ _
+          , ∀ w a v b
+            → emb s w a v b
+            ≡ emb idn w a v (noy f v b)
       lhs = idn ⨾ f , emb-composite idn f
 
-      rhs : fiber emb
-        (λ w a v b → emb idn w a v (noy f v b))
-      rhs = f , emb-ext λ w a v b →
-          emb-noy f w a v b
+      rhs : Σ s ∶ hom _ _
+          , ∀ w a v b
+            → emb s w a v b
+            ≡ emb idn w a v (noy f v b)
+      rhs = f , emb-noy f
 
   private
     E₃ : ∀ {x y z w} (f : hom x y) (g : hom y z)
@@ -494,22 +615,51 @@ the path, which is needed for triangle coherence.
   E₃-contr
     : ∀ {x y z w} (f : hom x y) (g : hom y z)
       (h : hom z w)
-    → is-contr (fiber emb (E₃ f g h))
+    → is-contr
+        (Σ s ∶ hom x w
+        , ∀ w' (a : hom w' x) v (b : hom w v)
+          → emb s w' a v b ≡ E₃ f g h w' a v b)
   E₃-contr f g h .center .fst = (f ⨾ g) ⨾ h
-  E₃-contr f g h .center .snd =
-    emb-composite (f ⨾ g) h
-    ∙ emb-ext λ w a v b →
-        emb-composite-pt f g w a v (noy h v b)
+  E₃-contr f g h .center .snd w' a v b =
+    emb-composite (f ⨾ g) h w' a v b
+    ∙ emb-composite f g w' a v (noy h v b)
   E₃-contr f g h .paths =
     is-contr→is-prop
-      (subst (is-contr ∘ fiber emb) path
+      (subst (λ T → is-contr
+        (Σ s ∶ hom _ _
+        , ∀ w' a v b → emb s w' a v b ≡ T w' a v b))
+        path
         (composable-contr (f ⨾ g) h)) _
     where
-      path : (λ w a v b →
-                emb (f ⨾ g) w a v (noy h v b))
-            ≡ E₃ f g h
-      path = emb-ext λ w a v b →
-          emb-composite-pt f g w a v (noy h v b)
+      path
+        : (λ w' a v b →
+            emb (f ⨾ g) w' a v (noy h v b))
+        ≡ E₃ f g h
+      path = funext λ w' → funext λ a →
+        funext λ v → funext λ b →
+          emb-composite f g w' a v (noy h v b)
+
+  E₃-contr-ext
+    : ∀ {x y z w} (f : hom x y) (g : hom y z)
+      (h : hom z w)
+    → is-contr (fiber emb (E₃ f g h))
+  E₃-contr-ext {x} {w = w} f g h = c'
+    where
+      PW = Σ s ∶ hom x w
+         , ∀ w' (a : hom w' x) v (b : hom w v)
+           → emb s w' a v b ≡ E₃ f g h w' a v b
+
+      to-ext : PW → fiber emb (E₃ f g h)
+      to-ext (s , q) = s , emb-ext q
+
+      c = E₃-contr f g h
+
+      c' : is-contr (fiber emb (E₃ f g h))
+      c' .center = to-ext (c .center)
+      c' .paths (s , p) =
+        ap to-ext
+          (c .paths
+            (s , λ w' a v b i → p i w' a v b))
 
   E₃-ind
     : ∀ {u} {x y z w} (f : hom x y) (g : hom y z)
@@ -517,11 +667,11 @@ the path, which is needed for triangle coherence.
     → (P : (s : hom x w)
          → emb s ≡ E₃ f g h
          → Type u)
-    → P (E₃-contr f g h .center .fst)
-        (E₃-contr f g h .center .snd)
+    → P (E₃-contr-ext f g h .center .fst)
+        (E₃-contr-ext f g h .center .snd)
     → ∀ s q → P s q
   E₃-ind f g h P base s q =
-    contr-ind (E₃-contr f g h)
+    contr-ind (E₃-contr-ext f g h)
       (λ where (s , q) → P s q)
       base (s , q)
 
@@ -534,12 +684,14 @@ the path, which is needed for triangle coherence.
       (is-contr→is-prop (E₃-contr f g h)
         (E₃-contr f g h .center) rhs)
     where
-      rhs : fiber emb (E₃ f g h)
+      rhs : Σ s ∶ hom _ _
+          , ∀ w' a v b
+            → emb s w' a v b ≡ E₃ f g h w' a v b
       rhs = f ⨾ (g ⨾ h)
-          , emb-composite f (g ⨾ h)
-          ∙ emb-ext λ w a v b →
-              ap (emb f w a v)
-                (noy-composite g h b)
+          , λ w' a v b →
+              emb-composite f (g ⨾ h) w' a v b
+              ∙ ap (emb f w' a v)
+                  (noy-composite g h b)
 ```
 
 ## Opposite category
@@ -559,9 +711,8 @@ module _ {o h} (C : category o h) where
   op .category.emb f w a v b = C.emb f v b w a
   op .category.unit =
     C.idn
-    , (C.unit .snd .fst .snd
-      , C.unit .snd .fst .fst)
     , C.unit .snd .snd
+    , C.unit .snd .fst
   op .category.compose-contr f g =
     C.composable-swap (C.composable-yon g f)
   op .category.interchange f g w a v b =
@@ -596,9 +747,9 @@ module _ {o h} (C : category o h) where
     is-prop→PathP
       {A = λ _ → is-contr
         (Σ s ∶ C.hom x z
-        , C.emb s
-          ≡ (λ w a v b →
-              C.emb f w a v (C.noy g v b)))}
+        , ∀ w (a : C.hom w x) v (b : C.hom z v)
+          → C.emb s w a v b
+          ≡ C.emb f w a v (C.noy g v b))}
       (λ _ → is-contr-is-prop _)
       (category.compose-contr (op (op C)) f g)
       (C.compose-contr f g) i
