@@ -10,7 +10,7 @@ backward-forward round-trip uses `naturality` and `yon-eval`.
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness --no-sized-types #-}
 
-open import Cat.Virtual
+open import Cat.Type
 
 module Cat.Yoneda {o h} (C : category o h) where
 

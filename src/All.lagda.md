@@ -72,6 +72,7 @@ import Data.W
 import HData.Pushout
 import HData.Quotient
 
+import Cat.Type
 import Cat.Virtual
 import Cat.Coherence
 import Cat.Base

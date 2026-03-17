@@ -6,7 +6,7 @@ canonical example, with action given by `yon`.
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness --no-sized-types #-}
 
-open import Cat.Virtual
+open import Cat.Type
 
 module Cat.Covariant {o h} (C : category o h) where
 

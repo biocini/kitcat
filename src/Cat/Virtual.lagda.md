@@ -1,23 +1,16 @@
 Lane Biocini
 March 2026
 
-Categories via ternary composition. The `compose-contr` field
-bundles only the noy-characterization of the composite into a
-contractible type. The `interchange` field separately links the
-noy and yon views of composition. The `yon-eval` field
-establishes `yon f x idn ≡ f`.
+Classified virtual categories with extensional compose-classified.
+Composition is gated by a propositional classifier on composable
+pairs. The `compose-classified` field uses `fiber emb target` (a
+single function-level path) instead of a pointwise family,
+matching Cat.Type. Interchange equates the noy and yon views for
+classified pairs. The combinator `⟨ f , g , c ⟩` is derived as
+the noy-side target.
 
-The base `category` record has no coherence axioms beyond
-`unit` (neutrality + yon-idempotency of the identity),
-`compose-contr`, `interchange`, and `yon-eval`. All standard
-categorical structure (unit laws, associativity, pentagon)
-follows from these. The identity is unique (`unit-is-prop`).
-
-The triangle identity
-`ap (_⨾ g) (unitr f) ≡ assoc f idn g ∙ ap (f ⨾_) (unitl g)`
-separates into a weak form (provable from the base) and the
-full Mac Lane form (requiring `2-coherent`, which provides the
-`absorb-coh` coherence).
+Cat.Type is the special case where the classifier is
+contractible.
 
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness --no-sized-types #-}
@@ -29,32 +22,22 @@ open import Core.Base
 open import Core.Data.Sigma
 open import Core.Kan
 open import Core.Transport
-open import Core.Function.Base
-open import Core.Path.Base
-open import Core.Groupoid.Virtual
-open import Core.Equiv.Base using (is-equiv; eqv-fibers; Equiv)
-open import Core.Function.Embedding
-  using (equiv→lc; is-embedding; is-embedding→ap-equiv)
+open import Core.Equiv.Base using (is-equiv)
+open import Core.Function.Embedding using (equiv→lc)
+open import Core.HLevel.Base using (⊤-is-prop)
+import Cat.Type as T
 ```
 
-## The category record
-
-The record includes `noy` and `yon` as derived definitions
-inside the record, so that `compose-contr` can reference them.
-The `compose-contr` field bundles only the
-noy-characterization. The `interchange` field connects the noy
-and yon views pointwise. The `yon-eval` field establishes that
-`yon f x idn ≡ f`. Absorption (`absorb-l`, `absorb-r`) is
-derived from yon-idempotency + composition + left cancellation.
+## The virtual-category record
 
 ```agda
-record category o h : Type₊ (o ⊔ h) where
+record virtual-category o h p : Type₊ (o ⊔ h ⊔ p) where
   no-eta-equality
   field
     ob  : Type o
     hom : ob → ob → Type h
     emb : ∀ {x y} → hom x y
-        → ∀ w → hom w x → ∀ z → hom y z → hom w z
+        → ∀ w → hom w x → ∀ v → hom y v → hom w v
     unit : ∀ {x} →
       Σ e ∶ hom x x
       , (∀ {z} → is-equiv (λ (h : hom x z) → emb e x e z h))
@@ -78,427 +61,223 @@ record category o h : Type₊ (o ⊔ h) where
   unit-eqvr = unit .snd .snd
 
   field
-    compose-contr
-      : ∀ {x y z} (f : hom x y) (g : hom y z)
-      → is-contr
-          (Σ s ∶ hom x z
-          , ∀ w (a : hom w x) v (b : hom z v)
-            → emb s w a v b
-            ≡ emb f w a v (noy g v b))
+    yon-eval : ∀ {x y} (f : hom x y) → yon f x idn ≡ f
 
-    interchange
+    classifier : ∀ {x y z} → hom x y → hom y z → Type p
+    classifier-prop
+      : ∀ {x y z} {f : hom x y} {g : hom y z}
+      → is-prop (classifier f g)
+
+    compose-classified
       : ∀ {x y z} (f : hom x y) (g : hom y z)
-        w (a : hom w x) v (b : hom z v)
+      → classifier f g
+      → is-contr
+          (fiber (emb {x} {z})
+            (λ w a v b → emb f w a v (noy g v b)))
+
+    interchange-classified
+      : ∀ {x y z} (f : hom x y) (g : hom y z)
+      → classifier f g
+      → ∀ w (a : hom w x) v (b : hom z v)
       → emb f w a v (noy g v b)
       ≡ emb g w (yon f w a) v b
 
-    yon-eval
-      : ∀ {x y} (f : hom x y) → yon f x idn ≡ f
+    classifier-idn-l
+      : ∀ {x y} (f : hom x y) → classifier idn f
+    classifier-idn-r
+      : ∀ {x y} (f : hom x y) → classifier f idn
 
   yon-idpt : ∀ {x} → yon (idn {x}) x idn ≡ idn
   yon-idpt = yon-eval idn
 
-  _⨾_ : ∀ {x y z} → hom x y → hom y z → hom x z
-  f ⨾ g = compose-contr f g .center .fst
-  infixr 40 _⨾_
+  comp : ∀ {x y z} (f : hom x y) (g : hom y z)
+    → classifier f g → hom x z
+  comp f g c = compose-classified f g c .center .fst
 
   emb-composite
     : ∀ {x y z} (f : hom x y) (g : hom y z)
-      w (a : hom w x) v (b : hom z v)
-    → emb (f ⨾ g) w a v b
+    → (c : classifier f g)
+    → emb (comp f g c)
+    ≡ (λ w a v b → emb f w a v (noy g v b))
+  emb-composite f g c =
+    compose-classified f g c .center .snd
+
+  emb-composite-pt
+    : ∀ {x y z} (f : hom x y) (g : hom y z)
+    → (c : classifier f g)
+    → ∀ w (a : hom w x) v (b : hom z v)
+    → emb (comp f g c) w a v b
     ≡ emb f w a v (noy g v b)
-  emb-composite f g =
-    compose-contr f g .center .snd
+  emb-composite-pt f g c w a v b i =
+    emb-composite f g c i w a v b
 
-  {-# INLINE emb #-}
-  {-# INLINE _⨾_ #-}
+  field
+    classifier-assoc
+      : ∀ {x y z w}
+        {f : hom x y} {g : hom y z} {h : hom z w}
+      → (cfg : classifier f g) → (cgh : classifier g h)
+      → classifier (comp f g cfg) h
+      × classifier f (comp g h cgh)
 
+{-# INLINE virtual-category.constructor #-}
 ```
-
 
 ## Derived operations
 
+The combinator `⟨ f , g , c ⟩` is derived as the noy-side
+composition target. Both combinator-at-identity laws follow
+from absorb, which is derived from the standard chain:
+yon-composite → comp-eq → idem → absorb via left cancellation.
+
 ```agda
-module Virtual {o} {h} (C : category o h) where
-  open category C public
+module Classified
+  {o h p} (C : virtual-category o h p) where
+  open virtual-category C public
+
+  ⟨_,_,_⟩ : ∀ {x y z} (f : hom x y) (g : hom y z)
+    → classifier f g
+    → ∀ w → hom w x → ∀ v → hom z v → hom w v
+  ⟨ f , g , c ⟩ w a v b = emb f w a v (noy g v b)
 
   emb-ext
-    : ∀ {x y} {F G : ∀ w → hom w x → ∀ v → hom y v → hom w v}
-    → (∀ w (a : hom w x) v (b : hom y v) → F w a v b ≡ G w a v b)
+    : ∀ {x y}
+      {F G : ∀ w → hom w x → ∀ v → hom y v → hom w v}
+    → (∀ w (a : hom w x) v (b : hom y v)
+        → F w a v b ≡ G w a v b)
     → F ≡ G
   emb-ext h =
-    funext λ w → funext λ a → funext λ v → funext λ b → h w a v b
+    funext λ w → funext λ a → funext λ v → funext λ b →
+      h w a v b
 
-  emb-composite-ext
-    : ∀ {x y z} (f : hom x y) (g : hom y z)
-    → emb (f ⨾ g)
-    ≡ (λ w a v b → emb f w a v (noy g v b))
-  emb-composite-ext f g =
-    emb-ext (emb-composite f g)
+  private
+    idn-class : ∀ {x} → classifier (idn {x}) idn
+    idn-class = classifier-idn-l idn
 
-  emb-yon-composite
-    : ∀ {x y z} (f : hom x y) (g : hom y z)
-    → emb (f ⨾ g)
-    ≡ (λ w a v b → emb g w (yon f w a) v b)
-  emb-yon-composite f g =
-    emb-composite-ext f g
-    ∙ emb-ext λ w a v b → interchange f g w a v b
+    noy-composite-idn
+      : ∀ {x} {v : ob} (b : hom x v)
+      → noy (comp idn idn idn-class) v b
+      ≡ noy idn v (noy idn v b)
+    noy-composite-idn {x} b =
+      emb-composite-pt idn idn idn-class x idn _ b
 
-  emb-yon-composite-pt
-    : ∀ {x y z} (f : hom x y) (g : hom y z)
-      w (a : hom w x) v (b : hom z v)
-    → emb (f ⨾ g) w a v b
-    ≡ emb g w (yon f w a) v b
-  emb-yon-composite-pt f g w a v b =
-    emb-composite f g w a v b
-    ∙ interchange f g w a v b
+    yon-composite-idn
+      : ∀ {x} {w : ob} (a : hom w x)
+      → yon (comp idn idn idn-class) w a
+      ≡ yon idn w (yon idn w a)
+    yon-composite-idn {x} {w} a =
+      emb-composite-pt idn idn idn-class w a x idn
+      ∙ interchange-classified idn idn
+          idn-class w a x idn
 
-  noy-composite
-    : ∀ {x y z} (g : hom x y) (h : hom y z)
-      {v : ob} (b : hom z v)
-    → noy (g ⨾ h) v b ≡ noy g v (noy h v b)
-  noy-composite g h {v} b =
-    emb-composite g h _ idn v b
+    comp-eq-idn
+      : ∀ {x}
+      → comp (idn {x}) idn idn-class ≡ yon idn x idn
+    comp-eq-idn =
+      sym (yon-eval (comp idn idn idn-class))
+      ∙ yon-composite-idn idn
+      ∙ ap (yon idn _) (yon-eval idn)
 
-  yon-composite
-    : ∀ {x y z} (f : hom x y) (g : hom y z)
-      w (a : hom w x)
-    → yon (f ⨾ g) w a ≡ yon g w (yon f w a)
-  yon-composite f g w a =
-    emb-composite f g w a _ idn
-    ∙ interchange f g w a _ idn
+    idem : ∀ {x} → comp (idn {x}) idn idn-class ≡ idn
+    idem = comp-eq-idn ∙ yon-idpt
 
-  comp-eq
-    : ∀ {x y z} (f : hom x y) (g : hom y z)
-    → f ⨾ g ≡ yon g _ f
-  comp-eq f g =
-    sym (yon-eval (f ⨾ g))
-    ∙ yon-composite f g _ idn
-    ∙ ap (yon g _) (yon-eval f)
-
-  idem : ∀ {x} → idn {x} ⨾ idn ≡ idn
-  idem = comp-eq idn idn ∙ yon-idpt
-
-  absorb-l : ∀ {x} {z : ob} (h : hom x z)
-    → noy idn z h ≡ h
+  absorb-l : ∀ {x} {v : ob} (h : hom x v)
+    → noy idn v h ≡ h
   absorb-l {x} h = equiv→lc unit-eqvl noy-idn-idpt
     where
-      noy-idn-idpt : noy idn _ (noy idn _ h) ≡ noy idn _ h
+      noy-idn-idpt
+        : noy idn _ (noy idn _ h) ≡ noy idn _ h
       noy-idn-idpt =
-        sym (subst (λ t → noy t _ h ≡ noy idn _ (noy idn _ h))
-          idem (noy-composite idn idn h))
+        sym (subst
+          (λ t → noy t _ h
+            ≡ noy idn _ (noy idn _ h))
+          (idem {x}) (noy-composite-idn h))
 
   absorb-r : ∀ {x} {w : ob} (g : hom w x)
     → yon idn w g ≡ g
   absorb-r {x} g = equiv→lc unit-eqvr yon-idn-idpt
     where
-      yon-idn-idpt : yon idn _ (yon idn _ g) ≡ yon idn _ g
+      yon-idn-idpt
+        : yon idn _ (yon idn _ g) ≡ yon idn _ g
       yon-idn-idpt =
-        sym (subst (λ t → yon t _ g ≡ yon idn _ (yon idn _ g))
-          idem (yon-composite idn idn _ g))
+        sym (subst
+          (λ t → yon t _ g
+            ≡ yon idn _ (yon idn _ g))
+          (idem {x}) (yon-composite-idn g))
+
+  combinator-idn-l
+    : ∀ {x y} (f : hom x y)
+      w (a : hom w x) v (b : hom y v)
+    → ⟨ idn , f , classifier-idn-l f ⟩ w a v b
+    ≡ emb f w a v b
+  combinator-idn-l f w a v b =
+    interchange-classified idn f
+      (classifier-idn-l f) w a v b
+    ∙ ap (λ t → emb f w t v b) (absorb-r a)
+
+  combinator-idn-r
+    : ∀ {x y} (f : hom x y)
+      w (a : hom w x) v (b : hom y v)
+    → ⟨ f , idn , classifier-idn-r f ⟩ w a v b
+    ≡ emb f w a v b
+  combinator-idn-r f w a v b =
+    ap (emb f w a v) (absorb-l b)
 ```
 
 ### Composable fiber and its eliminators
 
-`composable-contr` restates the contractibility of the composite
-fiber with `(f ⨾ g, emb-composite f g)` as center. `emb-ind`
-eliminates any `(s, q)` in the fiber back to the canonical center,
-and `⨾-η` witnesses that the composite is unique.
+`composable-contr` gives the pointwise fiber derived from the
+extensional `compose-classified`. `emb-ind` eliminates any
+`(s, q)` in the fiber back to the canonical center.
 
 ```agda
   composable-contr
     : ∀ {x y z} (f : hom x y) (g : hom y z)
+    → (c : classifier f g)
     → is-contr
         (Σ s ∶ hom x z
         , ∀ w (a : hom w x) v (b : hom z v)
           → emb s w a v b
           ≡ emb f w a v (noy g v b))
-  composable-contr f g .center =
-    f ⨾ g , emb-composite f g
-  composable-contr f g .paths (s , p) =
-    compose-contr f g .paths (s , p)
+  composable-contr f g c .center =
+    comp f g c , emb-composite-pt f g c
+  composable-contr f g c .paths (s , p) i =
+    let ep = compose-classified f g c .paths
+              (s , emb-ext p)
+    in ep i .fst
+     , λ w a v b j → ep i .snd j w a v b
 
   emb-ind
     : ∀ {u} {x y z} (f : hom x y) (g : hom y z)
+      (c : classifier f g)
     → (P : (s : hom x z)
          → (∀ w (a : hom w x) v (b : hom z v)
              → emb s w a v b
              ≡ emb f w a v (noy g v b))
          → Type u)
-    → P (f ⨾ g) (emb-composite f g)
+    → P (comp f g c) (emb-composite-pt f g c)
     → ∀ s q → P s q
-  emb-ind f g P base s q =
-    contr-ind (composable-contr f g)
+  emb-ind f g c P base s q =
+    contr-ind (composable-contr f g c)
       (λ where (s , q) → P s q)
       base (s , q)
-
-  ⨾-η
-    : ∀ {x y z} (f : hom x y) (g : hom y z)
-    → (s : hom x z)
-    → (∀ w (a : hom w x) v (b : hom z v)
-        → emb s w a v b
-        ≡ emb f w a v (noy g v b))
-    → f ⨾ g ≡ s
-  ⨾-η f g = emb-ind f g (λ s _ → f ⨾ g ≡ s) refl
-```
-
-### Embedding property
-
-`composable-contr idn f` gives a contractible pointwise fiber
-over the noy-target. By interchange and right absorption, the
-target equals `emb f`, so `emb` is injective: pointwise
-equality `∀ w a v b → emb f w a v b ≡ emb g w a v b` implies
-`f ≡ g`. The function-extensional variant `emb-inj-ext` wraps
-this via `happly`. `emb-image-contr-ext` converts to the
-`fiber emb (emb f)` form for the embedding property.
-
-```agda
-  emb-image-contr
-    : ∀ {x y} (f : hom x y)
-    → is-contr
-        (Σ s ∶ hom x y
-        , ∀ w (a : hom w x) v (b : hom y v)
-          → emb s w a v b ≡ emb f w a v b)
-  emb-image-contr {x} {y} f = c'
-    where
-      c : is-contr
-        (Σ s ∶ hom x y
-        , ∀ w (a : hom w x) v (b : hom y v)
-          → emb s w a v b
-          ≡ emb idn w a v (noy f v b))
-      c = composable-contr idn f
-
-      path
-        : (λ w (a : hom w x) v (b : hom y v)
-            → emb idn w a v (noy f v b))
-        ≡ (λ w (a : hom w x) v (b : hom y v)
-            → emb f w a v b)
-      path = funext λ w → funext λ a →
-        funext λ v → funext λ b →
-          interchange idn f w a v b
-          ∙ ap (λ t → emb f w t v b) (absorb-r a)
-
-      c' : is-contr
-        (Σ s ∶ hom _ _
-        , ∀ w a v b → emb s w a v b ≡ emb f w a v b)
-      c' = subst (λ T → is-contr
-        (Σ s ∶ hom _ _
-        , ∀ w a v b → emb s w a v b ≡ T w a v b))
-        path c
-
-  emb-image-contr-ext
-    : ∀ {x y} (f : hom x y)
-    → is-contr (fiber emb (emb f))
-  emb-image-contr-ext {x} {y} f = c'
-    where
-      PW = Σ s ∶ hom x y
-         , ∀ w (a : hom w x) v (b : hom y v)
-           → emb s w a v b ≡ emb f w a v b
-
-      to-ext : PW → fiber emb (emb f)
-      to-ext (s , q) = s , emb-ext q
-
-      c = emb-image-contr f
-
-      c' : is-contr (fiber emb (emb f))
-      c' .center = to-ext (c .center)
-      c' .paths (s , p) =
-        ap to-ext
-          (c .paths
-            (s , λ w a v b i → p i w a v b))
-
-  emb-inj
-    : ∀ {x y} {f g : hom x y}
-    → (∀ w (a : hom w x) v (b : hom y v)
-        → emb f w a v b ≡ emb g w a v b)
-    → f ≡ g
-  emb-inj {f = f} {g} pw =
-    ap fst (sym p₁ ∙ p₂)
-    where
-      p₁ = emb-image-contr f .paths
-        (f , λ _ _ _ _ → refl)
-      p₂ = emb-image-contr f .paths
-        (g , λ w a v b → sym (pw w a v b))
-
-  emb-inj-ext
-    : ∀ {x y} {f g : hom x y}
-    → emb f ≡ emb g → f ≡ g
-  emb-inj-ext {f = f} {g} p =
-    emb-inj λ w a v b i → p i w a v b
-
-  emb-is-embedding
-    : ∀ {x y} → is-embedding (emb {x} {y})
-  emb-is-embedding t (f , p) (g , q) =
-    is-contr→is-prop
-      (subst (is-contr ∘ fiber emb) p
-        (emb-image-contr-ext f))
-      (f , p) (g , q)
-
-  emb-section
-    : ∀ {x y} {f g : hom x y}
-    → (p : f ≡ g) → emb-inj-ext (ap emb p) ≡ p
-  emb-section {f = f} =
-    J (λ g p → emb-inj-ext (ap emb p) ≡ p) emb-inj-ext-refl
-    where
-      pw-center = emb-image-contr f .paths
-        (f , λ _ _ _ _ → refl)
-
-      loop
-        : Path (Σ s ∶ hom _ _
-              , ∀ w a v b → emb s w a v b ≡ emb f w a v b)
-            (f , λ _ _ _ _ → refl)
-            (f , λ _ _ _ _ → refl)
-      loop = sym pw-center ∙ pw-center
-
-      loop≡refl : loop ≡ refl
-      loop≡refl =
-        is-contr→is-set (emb-image-contr f) _ _ loop refl
-
-      emb-inj-ext-refl : emb-inj-ext {f = f} refl ≡ refl
-      emb-inj-ext-refl =
-        ap (ap fst) loop≡refl
-
-  emb-retraction
-    : ∀ {x y} {f g : hom x y}
-    → (q : emb f ≡ emb g) → ap emb (emb-inj-ext q) ≡ q
-  emb-retraction {f = f} {g} q =
-    ap (ap emb) emb-inj-ext≡inv ∙ counit q
-    where
-      ap-emb-equiv : is-equiv (ap emb {x = f} {y = g})
-      ap-emb-equiv = is-embedding→ap-equiv emb-is-embedding
-
-      module E = Equiv (ap emb , ap-emb-equiv)
-
-      counit : (q : emb f ≡ emb g) → ap emb (E.inv q) ≡ q
-      counit = E.counit
-
-      emb-inj-ext≡inv : emb-inj-ext q ≡ E.inv q
-      emb-inj-ext≡inv =
-        ap emb-inj-ext (sym (counit q))
-        ∙ emb-section (E.inv q)
-```
-
-### Yon-characterized composite and its eliminator
-
-Interchange swaps `noy` for `yon` in the composite target,
-giving a dual fiber with the same center. `emb-yon-ind`
-eliminates over this alternative characterization.
-
-```agda
-  composable-contr-ext
-    : ∀ {x y z} (f : hom x y) (g : hom y z)
-    → is-contr
-        (fiber (emb {x} {z})
-          (λ w a v b → emb f w a v (noy g v b)))
-  composable-contr-ext {x} {z} f g = c'
-    where
-      target = λ w a v b → emb f w a v (noy g v b)
-
-      PW = Σ s ∶ hom x z
-         , ∀ w (a : hom w x) v (b : hom z v)
-           → emb s w a v b ≡ target w a v b
-
-      to-ext : PW → fiber emb target
-      to-ext (s , q) = s , emb-ext q
-
-      c = composable-contr f g
-
-      c' : is-contr (fiber emb target)
-      c' .center = to-ext (c .center)
-      c' .paths (s , p) =
-        ap to-ext
-          (c .paths
-            (s , λ w a v b i → p i w a v b))
-
-  composable-yon
-    : ∀ {x y z} (f : hom x y) (g : hom y z)
-    → is-contr
-        (fiber emb
-          (λ w a v b → emb g w (yon f w a) v b))
-  composable-yon f g =
-    subst (is-contr ∘ fiber emb) path
-      (composable-contr-ext f g)
-    where
-      path
-        : (λ w a v b → emb f w a v (noy g v b))
-        ≡ (λ w a v b → emb g w (yon f w a) v b)
-      path = emb-ext λ w a v b →
-        interchange f g w a v b
-
-  emb-yon-ind
-    : ∀ {u} {x y z} (f : hom x y) (g : hom y z)
-    → (P : (s : hom x z)
-         → emb s
-           ≡ (λ w a v b → emb g w (yon f w a) v b)
-         → Type u)
-    → P (f ⨾ g) (emb-yon-composite f g)
-    → ∀ s q → P s q
-  emb-yon-ind f g P base s q =
-    coe01 (λ i → P (path i .fst) (path i .snd)) base
-    where
-      path
-        : (f ⨾ g , emb-yon-composite f g) ≡ (s , q)
-      path =
-        sym (composable-yon f g .paths _)
-        ∙ composable-yon f g .paths (s , q)
-```
-
-### Argument swap
-
-```agda
-  composable-swap
-    : ∀ {x y}
-      {target : ∀ w → hom w x → ∀ v → hom y v
-        → hom w v}
-    → is-contr (fiber emb target)
-    → is-contr
-        (Σ s ∶ hom x y
-        , ∀ w (a : hom y w) v (b : hom v x)
-          → emb s v b w a ≡ target v b w a)
-  composable-swap c .center .fst =
-    c .center .fst
-  composable-swap c .center .snd w a v b i =
-    c .center .snd i v b w a
-  composable-swap {target = target}
-    c .paths (s' , q') i .fst =
-    c .paths (s' , q'') i .fst
-    where
-      q'' : emb s' ≡ target
-      q'' i w a v b = q' v b w a i
-  composable-swap {target = target}
-    c .paths (s' , q') i .snd w a v b j =
-    c .paths (s' , q'') i .snd j v b w a
-    where
-      q'' : emb s' ≡ target
-      q'' i w a v b = q' v b w a i
 ```
 
 ### Injectivity and decomposition
 
-Both `yon` and `noy` are injective, following from interchange
-and `emb-inj`. The `emb-yon` and `emb-noy` lemmas express
-`emb f` in terms of `yon` and `noy`.
+`emb-noy` and `emb-yon` express `emb f` in terms of `noy`
+and `yon` with the identity. `emb-image-contr` shows the
+pointwise emb-fiber is contractible. `emb-inj` derives
+injectivity of `emb`.
 
 ```agda
-  yon-inj
-    : ∀ {x y} {f g : hom x y}
-    → yon f ≡ yon g → f ≡ g
-  yon-inj {f = f} {g} p = emb-inj λ w a v b →
-    ap (emb f w a v) (sym (absorb-l b))
-    ∙ interchange f idn w a v b
-    ∙ ap (λ t → emb idn w t v b) (λ i → p i w a)
-    ∙ sym (interchange g idn w a v b)
-    ∙ ap (emb g w a v) (absorb-l b)
-
-  noy-inj
-    : ∀ {x y} {f g : hom x y}
-    → noy f ≡ noy g → f ≡ g
-  noy-inj {f = f} {g} p = emb-inj λ w a v b →
+  emb-noy
+    : ∀ {x y} (f : hom x y)
+      w (a : hom w x) v (b : hom y v)
+    → emb f w a v b ≡ emb idn w a v (noy f v b)
+  emb-noy f w a v b =
     ap (λ t → emb f w t v b) (sym (absorb-r a))
-    ∙ sym (interchange idn f w a v b)
-    ∙ ap (λ t → emb idn w a v t) (λ i → p i v b)
-    ∙ interchange idn g w a v b
-    ∙ ap (λ t → emb g w t v b) (absorb-r a)
+    ∙ sym (interchange-classified idn f
+        (classifier-idn-l f) w a v b)
 
   emb-yon
     : ∀ {x y} (f : hom x y)
@@ -506,104 +285,154 @@ and `emb-inj`. The `emb-yon` and `emb-noy` lemmas express
     → emb f w a v b ≡ emb idn w (yon f w a) v b
   emb-yon f w a v b =
     ap (emb f w a v) (sym (absorb-l b))
-    ∙ interchange f idn w a v b
+    ∙ interchange-classified f idn
+        (classifier-idn-r f) w a v b
 
-  emb-noy
+  emb-image-contr
     : ∀ {x y} (f : hom x y)
-      w (a : hom w x) v (b : hom y v)
-    → emb f w a v b ≡ emb idn w a v (noy f v b)
-  emb-noy f w a v b =
-    ap (λ t → emb f w t v b) (sym (absorb-r a))
-    ∙ sym (interchange idn f w a v b)
+    → is-contr
+        (Σ s ∶ hom x y
+        , ∀ w (a : hom w x) v (b : hom y v)
+          → emb s w a v b ≡ emb f w a v b)
+  emb-image-contr {x} {y} f = c' where
+    c : is-contr
+      (Σ s ∶ hom x y
+      , ∀ w (a : hom w x) v (b : hom y v)
+        → emb s w a v b
+        ≡ emb idn w a v (noy f v b))
+    c = composable-contr idn f (classifier-idn-l f)
+
+    path
+      : (λ w (a : hom w x) v (b : hom y v)
+          → emb idn w a v (noy f v b))
+      ≡ (λ w (a : hom w x) v (b : hom y v)
+          → emb f w a v b)
+    path = emb-ext λ w a v b →
+      combinator-idn-l f w a v b
+
+    c' : is-contr
+      (Σ s ∶ hom _ _
+      , ∀ w a v b
+        → emb s w a v b ≡ emb f w a v b)
+    c' = subst (λ T → is-contr
+      (Σ s ∶ hom _ _
+      , ∀ w a v b
+        → emb s w a v b ≡ T w a v b))
+      path c
+
+  emb-inj
+    : ∀ {x y} {f g : hom x y}
+    → (∀ w (a : hom w x) v (b : hom y v)
+        → emb f w a v b ≡ emb g w a v b)
+    → f ≡ g
+  emb-inj {f = f} {g} pw =
+    ap fst (sym p₁ ∙ p₂) where
+    p₁ = emb-image-contr f .paths
+      (f , λ _ _ _ _ → refl)
+    p₂ = emb-image-contr f .paths
+      (g , λ w a v b → sym (pw w a v b))
 ```
 
-### Identity uniqueness
+### Composite characterizations
 
-Any morphism satisfying the unit axioms equals `idn`. The
-right equiv factors as `(yon e w)²` via interchange and
-absorption. Since `yon e w` is idempotent (from yon-composite
-and the yon-idempotency axiom), left-cancelling by the right
-equiv gives `yon e w g ≡ g` for all `g`, hence `e ≡ idn`
-via `yon-eval`.
+`emb-composite-ext` is trivially the extensional composite
+characterization. `noy-composite` and `yon-composite`
+specialize to the noy and yon views.
 
 ```agda
-  unit-is-prop
-    : ∀ {x} (e : hom x x)
-    → (∀ {z} → is-equiv (λ (h : hom x z) → emb e x e z h))
-    → (∀ {w} → is-equiv (λ (g : hom w x) → emb e w g x e))
-    → yon e x e ≡ e
-    → e ≡ idn
-  unit-is-prop {x} e le re idpt =
-    sym (yon-eval e) ∙ yon-e-absorb idn
-    where
-      e-idem : e ⨾ e ≡ e
-      e-idem = comp-eq e e ∙ idpt
+  emb-composite-ext
+    : ∀ {x y z} (f : hom x y) (g : hom y z)
+    → (c : classifier f g)
+    → emb (comp f g c)
+    ≡ (λ w a v b → emb f w a v (noy g v b))
+  emb-composite-ext f g c = emb-composite f g c
 
-      yon-e-idpt : ∀ w (g : hom w x)
-        → yon e w (yon e w g) ≡ yon e w g
-      yon-e-idpt w g =
-        sym (sym (ap (λ t → yon t w g) e-idem)
-          ∙ yon-composite e e w g)
+  noy-composite
+    : ∀ {x y z} (g : hom x y) (h : hom y z)
+      (c : classifier g h)
+      {v : ob} (b : hom z v)
+    → noy (comp g h c) v b ≡ noy g v (noy h v b)
+  noy-composite g h c b =
+    emb-composite-pt g h c _ idn _ b
 
-      -- emb e w g x e ≡ (yon e w)²(g) via emb-yon + interchange
-      yon-e-squared : ∀ {w} (g : hom w x)
-        → emb e w g x e ≡ yon e w (yon e w g)
-      yon-e-squared {w} g =
-        emb-yon e w g x e
-        ∙ sym (ap (emb idn w (yon e w g) x) (yon-eval e))
-        ∙ interchange idn e w (yon e w g) x idn
-        ∙ ap (yon e w) (absorb-r (yon e w g))
+  yon-composite
+    : ∀ {x y z} (f : hom x y) (g : hom y z)
+      (c : classifier f g)
+      w (a : hom w x)
+    → yon (comp f g c) w a ≡ yon g w (yon f w a)
+  yon-composite f g c w a =
+    emb-composite-pt f g c w a _ idn
+    ∙ interchange-classified f g c w a _ idn
 
-      yon-e-absorb : ∀ {w} (g : hom w x) → yon e w g ≡ g
-      yon-e-absorb {w} g = equiv→lc re
-        (yon-e-squared (yon e w g)
-        ∙ yon-e-idpt w (yon e w g)
-        ∙ sym (yon-e-squared g))
+  comp-eq
+    : ∀ {x y z} (f : hom x y) (g : hom y z)
+    → (c : classifier f g)
+    → comp f g c ≡ yon g _ f
+  comp-eq f g c =
+    sym (yon-eval (comp f g c))
+    ∙ yon-composite f g c _ idn
+    ∙ ap (yon g _) (yon-eval f)
 ```
 
-### Coherent unit laws and associativity
+### Unit laws and associativity
 
-The unit laws and associativity are defined as projections from
-contractible fibers. Each law is `ap fst` of the unique path
-between two points in a contractible fiber of `emb`. This gives
-control over the emb-image at every intermediate point along
-the path, which is needed for triangle coherence.
+The unit laws are projections from contractible fibers.
+`unitr` uses `emb-image-contr`, `unitl` uses
+`composable-contr`.
 
 ```agda
-  unitr : ∀ {x y} (f : hom x y) → f ⨾ idn ≡ f
+  unitr
+    : ∀ {x y} (f : hom x y)
+    → comp f idn (classifier-idn-r f) ≡ f
   unitr f =
     ap fst
-      (is-contr→is-prop (emb-image-contr f) lhs rhs)
+      (is-contr→is-prop (emb-image-contr f)
+        lhs rhs)
     where
       lhs : Σ s ∶ hom _ _
-          , ∀ w a v b → emb s w a v b ≡ emb f w a v b
-      lhs = f ⨾ idn
+          , ∀ w a v b
+            → emb s w a v b ≡ emb f w a v b
+      lhs = comp f idn (classifier-idn-r f)
           , λ w a v b →
-              emb-composite f idn w a v b
+              emb-composite-pt f idn
+                (classifier-idn-r f) w a v b
               ∙ ap (emb f w a v) (absorb-l b)
 
       rhs : Σ s ∶ hom _ _
-          , ∀ w a v b → emb s w a v b ≡ emb f w a v b
+          , ∀ w a v b
+            → emb s w a v b ≡ emb f w a v b
       rhs = f , λ _ _ _ _ → refl
 
-  unitl : ∀ {x y} (f : hom x y) → idn ⨾ f ≡ f
+  unitl
+    : ∀ {x y} (f : hom x y)
+    → comp idn f (classifier-idn-l f) ≡ f
   unitl f =
     ap fst
-      (is-contr→is-prop (composable-contr idn f)
+      (is-contr→is-prop
+        (composable-contr idn f (classifier-idn-l f))
         lhs rhs)
     where
       lhs : Σ s ∶ hom _ _
           , ∀ w a v b
             → emb s w a v b
             ≡ emb idn w a v (noy f v b)
-      lhs = idn ⨾ f , emb-composite idn f
+      lhs = comp idn f (classifier-idn-l f)
+          , emb-composite-pt idn f
+              (classifier-idn-l f)
 
       rhs : Σ s ∶ hom _ _
           , ∀ w a v b
             → emb s w a v b
             ≡ emb idn w a v (noy f v b)
       rhs = f , emb-noy f
+```
 
+The ternary fiber `E₃` is the common target for both
+association directions. Its contractibility follows from
+`composable-contr` transported along the pointwise expansion
+of `emb (comp f g cfg)`.
+
+```agda
   private
     E₃ : ∀ {x y z w} (f : hom x y) (g : hom y z)
         (h : hom z w)
@@ -615,145 +444,150 @@ the path, which is needed for triangle coherence.
   E₃-contr
     : ∀ {x y z w} (f : hom x y) (g : hom y z)
       (h : hom z w)
+      (cfg : classifier f g) (cgh : classifier g h)
     → is-contr
         (Σ s ∶ hom x w
         , ∀ w' (a : hom w' x) v (b : hom w v)
-          → emb s w' a v b ≡ E₃ f g h w' a v b)
-  E₃-contr f g h .center .fst = (f ⨾ g) ⨾ h
-  E₃-contr f g h .center .snd w' a v b =
-    emb-composite (f ⨾ g) h w' a v b
-    ∙ emb-composite f g w' a v (noy h v b)
-  E₃-contr f g h .paths =
+          → emb s w' a v b
+          ≡ E₃ f g h w' a v b)
+  E₃-contr f g h cfg cgh .center .fst =
+    comp (comp f g cfg) h
+      (classifier-assoc cfg cgh .fst)
+  E₃-contr f g h cfg cgh .center .snd w' a v b =
+    emb-composite-pt (comp f g cfg) h
+      (classifier-assoc cfg cgh .fst) w' a v b
+    ∙ emb-composite-pt f g cfg w' a v (noy h v b)
+  E₃-contr f g h cfg cgh .paths =
     is-contr→is-prop
       (subst (λ T → is-contr
         (Σ s ∶ hom _ _
-        , ∀ w' a v b → emb s w' a v b ≡ T w' a v b))
+        , ∀ w' a v b
+          → emb s w' a v b ≡ T w' a v b))
         path
-        (composable-contr (f ⨾ g) h)) _
+        (composable-contr (comp f g cfg) h
+          (classifier-assoc cfg cgh .fst))) _
     where
       path
         : (λ w' a v b →
-            emb (f ⨾ g) w' a v (noy h v b))
+            emb (comp f g cfg) w' a v (noy h v b))
         ≡ E₃ f g h
       path = funext λ w' → funext λ a →
         funext λ v → funext λ b →
-          emb-composite f g w' a v (noy h v b)
-
-  E₃-contr-ext
-    : ∀ {x y z w} (f : hom x y) (g : hom y z)
-      (h : hom z w)
-    → is-contr (fiber emb (E₃ f g h))
-  E₃-contr-ext {x} {w = w} f g h = c'
-    where
-      PW = Σ s ∶ hom x w
-         , ∀ w' (a : hom w' x) v (b : hom w v)
-           → emb s w' a v b ≡ E₃ f g h w' a v b
-
-      to-ext : PW → fiber emb (E₃ f g h)
-      to-ext (s , q) = s , emb-ext q
-
-      c = E₃-contr f g h
-
-      c' : is-contr (fiber emb (E₃ f g h))
-      c' .center = to-ext (c .center)
-      c' .paths (s , p) =
-        ap to-ext
-          (c .paths
-            (s , λ w' a v b i → p i w' a v b))
-
-  E₃-ind
-    : ∀ {u} {x y z w} (f : hom x y) (g : hom y z)
-      (h : hom z w)
-    → (P : (s : hom x w)
-         → emb s ≡ E₃ f g h
-         → Type u)
-    → P (E₃-contr-ext f g h .center .fst)
-        (E₃-contr-ext f g h .center .snd)
-    → ∀ s q → P s q
-  E₃-ind f g h P base s q =
-    contr-ind (E₃-contr-ext f g h)
-      (λ where (s , q) → P s q)
-      base (s , q)
+          emb-composite-pt f g cfg
+            w' a v (noy h v b)
 
   assoc
     : ∀ {x y z w} (f : hom x y) (g : hom y z)
       (h : hom z w)
-    → (f ⨾ g) ⨾ h ≡ f ⨾ (g ⨾ h)
-  assoc f g h =
+      (cfg : classifier f g) (cgh : classifier g h)
+    → comp (comp f g cfg) h
+        (classifier-assoc cfg cgh .fst)
+    ≡ comp f (comp g h cgh)
+        (classifier-assoc cfg cgh .snd)
+  assoc f g h cfg cgh =
     ap fst
-      (is-contr→is-prop (E₃-contr f g h)
-        (E₃-contr f g h .center) rhs)
+      (is-contr→is-prop (E₃-contr f g h cfg cgh)
+        (E₃-contr f g h cfg cgh .center) rhs)
     where
       rhs : Σ s ∶ hom _ _
           , ∀ w' a v b
-            → emb s w' a v b ≡ E₃ f g h w' a v b
-      rhs = f ⨾ (g ⨾ h)
+            → emb s w' a v b
+            ≡ E₃ f g h w' a v b
+      rhs = comp f (comp g h cgh)
+              (classifier-assoc cfg cgh .snd)
           , λ w' a v b →
-              emb-composite f (g ⨾ h) w' a v b
+              emb-composite-pt f (comp g h cgh)
+                (classifier-assoc cfg cgh .snd)
+                w' a v b
               ∙ ap (emb f w' a v)
-                  (noy-composite g h b)
+                  (noy-composite g h cgh b)
 ```
 
-## Opposite category
+## From Cat.Type
 
-Swapping the two `(object, morphism)` pairs in `emb` reverses the
-direction of all hom-types. The identity is unchanged; left and
-right absorption/idempotency swap roles. Composition in `op` uses
-`composable-swap ∘ composable-yon` to reverse the composite fiber.
+Every `T.category` gives a virtual-category whose classifier
+is `⊤` — every pair composes.
 
 ```agda
-module _ {o h} (C : category o h) where
-  private module C = Virtual C
+module _ {o h} (C : T.category o h) where
+  private module C = T.Virtual C
 
-  op : category o h
-  op .category.ob = C.ob
-  op .category.hom x y = C.hom y x
-  op .category.emb f w a v b = C.emb f v b w a
-  op .category.unit =
-    C.idn
-    , C.unit .snd .snd
-    , C.unit .snd .fst
-  op .category.compose-contr f g =
-    C.composable-swap (C.composable-yon g f)
-  op .category.interchange f g w a v b =
-    sym (C.interchange g f v b w a)
-  op .category.yon-eval f = C.yon-eval f
+  from-category : virtual-category o h 0ℓ
+  from-category .virtual-category.ob = C.ob
+  from-category .virtual-category.hom = C.hom
+  from-category .virtual-category.emb = C.emb
+  from-category .virtual-category.unit = C.unit
+  from-category .virtual-category.yon-eval = C.yon-eval
+  from-category .virtual-category.classifier _ _ = ⊤
+  from-category .virtual-category.classifier-prop =
+    ⊤-is-prop
+  from-category .virtual-category.compose-classified
+    f g _ = C.compose-contr f g
+  from-category .virtual-category.interchange-classified
+    f g _ = C.interchange f g
+  from-category .virtual-category.classifier-idn-l _ = tt
+  from-category .virtual-category.classifier-idn-r _ = tt
+  from-category .virtual-category.classifier-assoc _ _ =
+    tt , tt
 ```
 
-### Opposite involution
+## To Cat.Type
 
-Double op is the identity on categories. The `ob`, `hom`, `emb`,
-and `interchange` fields are definitionally invariant (double swap
-is identity for both argument pairs and `sym`). The `unit` field
-uses Σ-eta: swapping `(a, b)` twice recovers `(a, b)`.
-The `compose-contr` field uses `is-prop→PathP` since
-contractibility is propositional.
+A virtual-category with a total classifier (every pair is
+classified) gives a `T.category`: composition and interchange
+are available unconditionally.
 
 ```agda
-module _ {o h} (C : category o h) where
-  private module C = Virtual C
+module _ {o h p} (C : virtual-category o h p) where
+  private module C' = Classified C
 
-  private
-    uc : ∀ {x}
-      → category.unit (op (op C)) {x} ≡ C.unit {x}
-    uc i = C.unit
-
-  op-invol : op (op C) ≡ C
-  op-invol i .category.ob = C.ob
-  op-invol i .category.hom = C.hom
-  op-invol i .category.emb = C.emb
-  op-invol i .category.unit {x} = uc {x} i
-  op-invol i .category.compose-contr {x} {y} {z} f g =
-    is-prop→PathP
-      {A = λ _ → is-contr
-        (Σ s ∶ C.hom x z
-        , ∀ w (a : C.hom w x) v (b : C.hom z v)
-          → C.emb s w a v b
-          ≡ C.emb f w a v (C.noy g v b))}
-      (λ _ → is-contr-is-prop _)
-      (category.compose-contr (op (op C)) f g)
-      (C.compose-contr f g) i
-  op-invol i .category.interchange f g w a v b =
-    C.interchange f g w a v b
-  op-invol i .category.yon-eval f = C.yon-eval f
+  to-category
+    : (total : ∀ {x y z} (f : C'.hom x y)
+        (g : C'.hom y z) → C'.classifier f g)
+    → T.category o h
+  to-category total .T.category.ob = C'.ob
+  to-category total .T.category.hom = C'.hom
+  to-category total .T.category.emb = C'.emb
+  to-category total .T.category.unit = C'.unit
+  to-category total .T.category.compose-contr f g =
+    C'.compose-classified f g (total f g)
+  to-category total .T.category.interchange f g =
+    C'.interchange-classified f g (total f g)
+  to-category total .T.category.yon-eval = C'.yon-eval
 ```
+
+### Round-trip
+
+Applying `to-category` to `from-category V` with the trivial
+witness recovers `V`. Each field is definitionally equal, so
+the path is constant.
+
+```agda
+module _ {o h} (V : T.category o h) where
+  private module C = T.Virtual V
+
+  to-category-from-category
+    : to-category (from-category V) (λ _ _ → tt) ≡ V
+  to-category-from-category i .T.category.ob = C.ob
+  to-category-from-category i .T.category.hom = C.hom
+  to-category-from-category i .T.category.emb = C.emb
+  to-category-from-category i .T.category.unit = C.unit
+  to-category-from-category i .T.category.compose-contr =
+    C.compose-contr
+  to-category-from-category i .T.category.interchange =
+    C.interchange
+  to-category-from-category i .T.category.yon-eval =
+    C.yon-eval
+```
+
+### Set-valued classifiers
+
+A set-valued classifier (h-level 2) would break interchange.
+With `is-set (classifier f g)`, distinct witnesses `c₁ c₂`
+could yield different composites via `compose-classified`,
+making the interchange equation depend on which witness is
+chosen. But `interchange` in `T.category` quantifies
+uniformly over all contexts — it cannot vary with the
+classifier value. Propositionally, `c₁ ≡ c₂` forces the
+composite to be unique regardless of witness, which is
+exactly what `classifier-prop` guarantees.

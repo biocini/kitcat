@@ -29,7 +29,7 @@ open import Core.Kan
 open import Core.Transport
 open import Core.Equiv
 open import Core.Univalence
-open import Cat.Virtual
+open import Cat.Type
 open import Cat.Base using (module Cat)
 ```
 

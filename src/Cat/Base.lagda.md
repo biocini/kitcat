@@ -19,7 +19,7 @@ open import Core.Kan
 open import Core.Transport
 open import Core.Equiv.Base using (is-equiv; aut; _≃_; Equiv)
 open import Core.Function.Embedding using (equiv→lc)
-open import Cat.Virtual
+open import Cat.Type
 ```
 
 ## Composite witnesses
@@ -42,8 +42,7 @@ module Cat {o h} (C : category o h) where
     : ∀ {x y z} {f : hom x y} {g : hom y z} {s : hom x z}
     → f ⨾ g => s → f ⨾ g ≡ s
   cast-path {f = f} {g} α =
-    ap fst (compose-contr f g .paths
-      (_ , λ w a v b i → α i w a v b))
+    ap fst (compose-contr f g .paths (_ , α))
 ```
 
 ## Terminal and initial objects
