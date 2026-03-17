@@ -1,0 +1,104 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# benchmark — typecheck performance benchmarking for kitcat
+
+AGDA="${AGDA:-agda}"
+BENCHMARK_DIR="benchmarks"
+TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+RESULTS_FILE="${BENCHMARK_DIR}/results_${TIMESTAMP}.csv"
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+NC='\033[0m'
+
+mkdir -p "$BENCHMARK_DIR"
+
+info()    { echo -e "${BLUE}[info]${NC} $*"; }
+ok()      { echo -e "${GREEN}[ok]${NC} $*"; }
+fail()    { echo -e "${RED}[fail]${NC} $*"; }
+
+init_results() {
+    echo "module,real_time,user_time,sys_time,status" > "$RESULTS_FILE"
+    info "Results: $RESULTS_FILE"
+}
+
+bench_module() {
+    local module="$1"
+    info "Benchmarking: $module"
+
+    local time_output
+    time_output=$(mktemp)
+
+    local status=0
+    if /usr/bin/time -p "$AGDA" "$module" > /dev/null 2>"$time_output"; then
+        ok "$module"
+    else
+        status=1
+        fail "$module"
+    fi
+
+    local real_time user_time sys_time
+    real_time=$(grep "^real" "$time_output" | awk '{print $2}' || echo "N/A")
+    user_time=$(grep "^user" "$time_output" | awk '{print $2}' || echo "N/A")
+    sys_time=$(grep "^sys" "$time_output" | awk '{print $2}' || echo "N/A")
+
+    echo "$module,$real_time,$user_time,$sys_time,$status" >> "$RESULTS_FILE"
+    rm -f "$time_output"
+    return $status
+}
+
+bench_all() {
+    info "Benchmarking entire codebase..."
+    local total=0 passed=0
+    while IFS= read -r f; do
+        total=$((total + 1))
+        bench_module "$f" && passed=$((passed + 1)) || true
+    done < <(fd -e lagda.md . src/ | grep -v Stash/ | sort)
+    info "Total: $passed/$total passed"
+}
+
+bench_quick() {
+    info "Quick benchmark (All only)..."
+    bench_module "src/All.lagda.md"
+}
+
+report() {
+    [ ! -f "$RESULTS_FILE" ] && return
+    local total passed
+    total=$(tail -n +2 "$RESULTS_FILE" | wc -l | tr -d ' ')
+    passed=$(tail -n +2 "$RESULTS_FILE" | awk -F',' '$5==0' | wc -l | tr -d ' ')
+
+    echo ""
+    echo "═══ kitcat benchmark ═══"
+    echo "Modules: $total  Passed: $passed  Failed: $((total - passed))"
+    echo ""
+    info "Top 5 slowest:"
+    tail -n +2 "$RESULTS_FILE" | sort -t',' -k2 -rn | head -5 | \
+        awk -F',' '{printf "  %-40s %ss\n", $1, $2}'
+    echo ""
+}
+
+main() {
+    local mode="${1:-quick}"
+    info "kitcat benchmark — $($AGDA --version | head -1)"
+    init_results
+
+    case "$mode" in
+        --all)   bench_all ;;
+        --quick) bench_quick ;;
+        -h|--help)
+            echo "Usage: benchmark [--all | --quick | FILE.lagda.md]"
+            exit 0 ;;
+        *.lagda.md)
+            [ -f "$mode" ] || { fail "Not found: $mode"; exit 1; }
+            bench_module "$mode" ;;
+        *)
+            bench_quick ;;
+    esac
+
+    report
+}
+
+main "$@"

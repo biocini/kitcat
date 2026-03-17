@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# html-deploy — build and deploy HTML docs to gh-pages branch
+#
+# Uses a git worktree at _build/gh-pages so the generated site
+# lives on a separate branch without polluting the source tree.
+
+cd "$(git rev-parse --show-toplevel)"
+
+WORKTREE="_build/gh-pages"
+BRANCH="gh-pages"
+
+# Ensure gh-pages branch exists (orphan if new)
+if ! git show-ref --verify --quiet "refs/heads/$BRANCH"; then
+    echo "Creating orphan branch '$BRANCH'..."
+    mkdir -p _build
+    git worktree add --orphan -b "$BRANCH" "$WORKTREE"
+    git -C "$WORKTREE" commit --allow-empty -m "Initialize gh-pages"
+fi
+
+# Set up worktree if not already present
+if [ ! -d "$WORKTREE" ]; then
+    echo "Adding worktree at $WORKTREE..."
+    mkdir -p _build
+    git worktree add "$WORKTREE" "$BRANCH"
+fi
+
+# Build into the worktree
+echo "Building site into worktree..."
+bin/html-build "$WORKTREE"
+
+# Commit and optionally push
+cd "$WORKTREE"
+
+# Add a .nojekyll file so GitHub serves raw HTML
+touch .nojekyll
+
+git add -A
+if git diff --cached --quiet; then
+    echo "No changes to deploy."
+    exit 0
+fi
+
+timestamp="$(date -u +%Y-%m-%d\ %H:%M:%S\ UTC)"
+source_sha="$(git -C "$OLDPWD" rev-parse --short HEAD)"
+git commit -m "Deploy from ${source_sha} at ${timestamp}"
+
+echo ""
+echo "Committed to $BRANCH. Push with:"
+echo "  git push origin $BRANCH"

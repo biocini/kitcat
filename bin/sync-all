@@ -1,0 +1,124 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ALL="src/All.lagda.md"
+fix=false
+
+[ "${1:-}" = "--fix" ] && fix=true
+
+# Extract active imports from All.lagda.md (lines like "import Foo.Bar")
+active_imports=()
+while IFS= read -r mod; do
+    active_imports+=("$mod")
+done < <(rg '^import ([A-Z][A-Za-z0-9.]*)' "$ALL" -or '$1' --no-filename)
+
+# Extract WIP (commented-out) imports
+wip_imports=()
+while IFS= read -r mod; do
+    wip_imports+=("$mod")
+done < <(rg '^\-\- import ([A-Z][A-Za-z0-9.]*)' "$ALL" -or '$1' --no-filename 2>/dev/null || true)
+
+# Build set of modules covered by aggregators.
+# An aggregator is any active import whose corresponding directory exists
+# and whose file contains "open import ... public" lines.
+covered=()
+for mod in "${active_imports[@]}"; do
+    mod_dir="src/$(echo "$mod" | tr '.' '/')"
+    mod_file="${mod_dir}.lagda.md"
+    if [ -d "$mod_dir" ] && [ -f "$mod_file" ]; then
+        while IFS= read -r reexport; do
+            covered+=("$reexport")
+        done < <(rg '^open import ([A-Z][A-Za-z0-9.]+) public' "$mod_file" -or '$1' --no-filename 2>/dev/null || true)
+    fi
+done
+
+# Build filesystem module set
+fs_modules=()
+while IFS= read -r f; do
+    mod="$(echo "$f" | sed 's|^src/||;s|\.lagda\.md$||' | tr '/' '.')"
+    fs_modules+=("$mod")
+done < <(fd -e lagda.md . src/ | grep -v 'src/All\.lagda\.md' | grep -v 'Stash/' | sort)
+
+# Helper: check if a value is in an array
+in_array() {
+    local needle="$1"; shift
+    for item in "$@"; do
+        [ "$item" = "$needle" ] && return 0
+    done
+    return 1
+}
+
+# Find missing: in filesystem but not in All and not covered by aggregator
+missing=()
+for mod in "${fs_modules[@]}"; do
+    if ! in_array "$mod" "${active_imports[@]}" && \
+       ! in_array "$mod" "${wip_imports[@]}" && \
+       ! in_array "$mod" "${covered[@]}"; then
+        missing+=("$mod")
+    fi
+done
+
+# Find stale: in All but file doesn't exist on filesystem
+stale=()
+for mod in "${active_imports[@]}"; do
+    f="src/$(echo "$mod" | tr '.' '/').lagda.md"
+    if [ ! -f "$f" ]; then
+        stale+=("$mod")
+    fi
+done
+
+# Report
+had_issues=false
+
+if [ ${#missing[@]} -gt 0 ]; then
+    had_issues=true
+    echo "Missing from All.lagda.md:"
+    for mod in "${missing[@]}"; do
+        echo "  + $mod"
+    done
+fi
+
+if [ ${#stale[@]} -gt 0 ]; then
+    had_issues=true
+    echo "Stale in All.lagda.md (file not found):"
+    for mod in "${stale[@]}"; do
+        echo "  - $mod"
+    done
+fi
+
+if [ ${#wip_imports[@]} -gt 0 ]; then
+    echo "WIP (commented out):"
+    for mod in "${wip_imports[@]}"; do
+        echo "  # $mod"
+    done
+fi
+
+if ! $had_issues && [ ${#wip_imports[@]} -eq 0 ]; then
+    echo "All.lagda.md is in sync."
+fi
+
+# --fix mode
+if $fix; then
+    if [ ${#missing[@]} -gt 0 ]; then
+        # Build a single sed script to insert all missing imports before the closing ```
+        sed_script=""
+        for mod in "${missing[@]}"; do
+            sed_script+="import ${mod}\n"
+        done
+        # Insert all at once before the last line
+        sed -i '' '$i\
+'"$(printf '%b' "$sed_script")"'
+' "$ALL"
+        for mod in "${missing[@]}"; do
+            echo "Added: import $mod"
+        done
+    fi
+
+    if [ ${#stale[@]} -gt 0 ]; then
+        for mod in "${stale[@]}"; do
+            escaped="$(echo "$mod" | sed 's/\./\\./g')"
+            sed -i '' "/^import ${escaped}$/d" "$ALL"
+            echo "Removed: import $mod"
+        done
+    fi
+fi

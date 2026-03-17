@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+usage() {
+    echo "Usage: new-module MODULE_PATH [--aggregator] [--flags FLAGS]"
+    echo ""
+    echo "Create a new .lagda.md module with correct boilerplate."
+    echo ""
+    echo "  MODULE_PATH   Dot-separated module path (e.g. Core.Data.Vec)"
+    echo "  --aggregator  Generate aggregator module (open import ... public)"
+    echo "  --flags FLAGS Override default OPTIONS flags"
+    echo ""
+    echo "Default flags: --safe --erased-cubical --no-guardedness --no-sized-types"
+    exit 1
+}
+
+[ $# -lt 1 ] && usage
+
+module_path="$1"
+shift
+
+aggregator=false
+flags="--safe --erased-cubical --no-guardedness --no-sized-types"
+
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --aggregator) aggregator=true; shift ;;
+        --flags) shift; flags="$1"; shift ;;
+        -h|--help) usage ;;
+        *) echo "Unknown option: $1"; usage ;;
+    esac
+done
+
+# Convert dot-path to file path
+rel_path="$(echo "$module_path" | tr '.' '/')"
+file="src/${rel_path}.lagda.md"
+
+if [ -f "$file" ]; then
+    echo "Error: $file already exists" >&2
+    exit 1
+fi
+
+# Create parent directories
+dir="$(dirname "$file")"
+mkdir -p "$dir"
+
+if $aggregator; then
+    # Scan for sibling .lagda.md files to re-export
+    imports=""
+    if [ -d "src/${rel_path}" ]; then
+        while IFS= read -r sibling; do
+            # Strip src/ prefix and .lagda.md suffix, convert / to .
+            mod="$(echo "$sibling" | sed 's|^src/||;s|\.lagda\.md$||' | tr '/' '.')"
+            imports="${imports}open import ${mod} public
+"
+        done < <(fd -e lagda.md --max-depth 1 . "src/${rel_path}" | sort)
+    fi
+
+    cat > "$file" << EOF
+\`\`\`agda
+
+{-# OPTIONS ${flags} #-}
+
+module ${module_path} where
+
+${imports}\`\`\`
+EOF
+else
+    cat > "$file" << EOF
+\`\`\`agda
+
+{-# OPTIONS ${flags} #-}
+
+module ${module_path} where
+
+\`\`\`
+EOF
+fi
+
+echo "$file"

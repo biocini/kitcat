@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# html-build — generate kitcat HTML documentation
+#
+# Pipeline:
+#   1. agda --html → _build/agda/ (raw Agda output)
+#   2. site/build.py → OUT_DIR (processed site)
+
+AGDA="${AGDA:-agda}"
+AGDA_OUT="_build/agda"
+OUT_DIR="${1:-_build/site}"
+SITE_DIR="site"
+
+echo "Generating Agda HTML..."
+mkdir -p "$AGDA_OUT"
+"$AGDA" --html --html-highlight=auto \
+    --highlight-occurrences \
+    --html-dir="$AGDA_OUT" \
+    src/All.lagda.md
+
+echo "Building site..."
+python3 "$SITE_DIR/build.py" "$AGDA_OUT" "$OUT_DIR" --site-dir "$SITE_DIR"
+
+echo "Done → $OUT_DIR"

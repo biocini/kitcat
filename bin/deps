@@ -1,0 +1,151 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+usage() {
+    echo "Usage: deps MODULE [--reverse] [--dot] [--all] [--orphans]"
+    echo ""
+    echo "Import dependency analysis for kitcat modules."
+    echo ""
+    echo "  MODULE       Dot-path or file path"
+    echo "  --reverse    Find modules that import the target"
+    echo "  --dot        Output DOT format for graphviz"
+    echo "  --all        Full library dependency graph"
+    echo "  --orphans    Modules not imported by any other (except All)"
+    exit 1
+}
+
+reverse=false
+dot=false
+all=false
+orphans=false
+module=""
+
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --reverse) reverse=true; shift ;;
+        --dot) dot=true; shift ;;
+        --all) all=true; shift ;;
+        --orphans) orphans=true; shift ;;
+        -h|--help) usage ;;
+        -*) echo "Unknown flag: $1"; usage ;;
+        *)
+            if [ -z "$module" ]; then
+                module="$1"
+            else
+                echo "Unexpected argument: $1"; usage
+            fi
+            shift ;;
+    esac
+done
+
+# Convert file path to dot-path if needed
+to_dotpath() {
+    echo "$1" | sed 's|^src/||;s|\.lagda\.md$||' | tr '/' '.'
+}
+
+to_filepath() {
+    echo "src/$(echo "$1" | tr '.' '/').lagda.md"
+}
+
+# Extract imports from a file
+extract_imports() {
+    local f="$1"
+    rg '^\s*(open )?import ([A-Z][A-Za-z0-9.]*)\b' "$f" -or '$2' --no-filename 2>/dev/null | sort -u
+}
+
+# --orphans mode
+if $orphans; then
+    # Collect all imports from non-All modules, deduplicated
+    imported_file="$(mktemp)"
+    trap 'rm -f "$imported_file"' EXIT
+    while IFS= read -r f; do
+        [ "$f" = "src/All.lagda.md" ] && continue
+        extract_imports "$f"
+    done < <(fd -e lagda.md . src/ | grep -v Stash/) | sort -u > "$imported_file"
+
+    # Report modules not imported by anything (except All)
+    while IFS= read -r f; do
+        [ "$f" = "src/All.lagda.md" ] && continue
+        mod="$(to_dotpath "$f")"
+        grep -qxF "$mod" "$imported_file" || echo "$mod"
+    done < <(fd -e lagda.md . src/ | grep -v Stash/ | sort)
+    exit 0
+fi
+
+# --all --dot: full library graph
+if $all && $dot; then
+    echo "digraph kitcat {"
+    echo '  rankdir=LR;'
+    echo '  node [shape=box, fontsize=10];'
+
+    # Cluster by top-level namespace
+    declare -A clusters
+    while IFS= read -r f; do
+        [ "$f" = "src/All.lagda.md" ] && continue
+        mod="$(to_dotpath "$f")"
+        ns="$(echo "$mod" | cut -d. -f1)"
+        clusters[$ns]+="$mod "
+    done < <(fd -e lagda.md . src/ | grep -v Stash/ | sort)
+
+    idx=0
+    for ns in $(echo "${!clusters[@]}" | tr ' ' '\n' | sort); do
+        echo "  subgraph cluster_${idx} {"
+        echo "    label=\"${ns}\";"
+        for mod in ${clusters[$ns]}; do
+            echo "    \"${mod}\";"
+        done
+        echo "  }"
+        idx=$((idx + 1))
+    done
+
+    # Edges
+    while IFS= read -r f; do
+        [ "$f" = "src/All.lagda.md" ] && continue
+        src_mod="$(to_dotpath "$f")"
+        while IFS= read -r imp; do
+            # Only include edges to modules that exist in src/
+            target="$(to_filepath "$imp")"
+            [ -f "$target" ] && echo "  \"${src_mod}\" -> \"${imp}\";"
+        done < <(extract_imports "$f")
+    done < <(fd -e lagda.md . src/ | grep -v Stash/ | sort)
+
+    echo "}"
+    exit 0
+fi
+
+# Single-module modes require a module argument
+[ -z "$module" ] && usage
+
+# Normalize to dot-path
+if [[ "$module" == *.lagda.md ]] || [[ "$module" == src/* ]]; then
+    module="$(to_dotpath "$module")"
+fi
+
+file="$(to_filepath "$module")"
+if [ ! -f "$file" ]; then
+    echo "Error: $file not found" >&2
+    exit 1
+fi
+
+if $reverse; then
+    # Find all files that import this module
+    escaped="$(echo "$module" | sed 's/\./\\./g')"
+    rg -l "import ${escaped}\\b" src/ --glob '*.lagda.md' | \
+        grep -v Stash/ | \
+        while IFS= read -r f; do
+            to_dotpath "$f"
+        done | sort
+elif $dot; then
+    # Single module as DOT
+    echo "digraph deps {"
+    echo '  rankdir=LR;'
+    echo '  node [shape=box, fontsize=10];'
+    echo "  \"${module}\" [style=bold];"
+    while IFS= read -r imp; do
+        echo "  \"${module}\" -> \"${imp}\";"
+    done < <(extract_imports "$file")
+    echo "}"
+else
+    # Plain list of imports
+    extract_imports "$file"
+fi

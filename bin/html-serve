@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# html-serve — preview the built site locally
+
+OUT_DIR="${1:-_build/site}"
+PORT="${2:-8080}"
+
+if [ ! -d "$OUT_DIR" ]; then
+    echo "No built site at $OUT_DIR — run 'just html' first." >&2
+    exit 1
+fi
+
+echo "Serving $OUT_DIR at http://localhost:$PORT"
+python3 -m http.server "$PORT" --directory "$OUT_DIR"
