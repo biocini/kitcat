@@ -10,7 +10,7 @@ usage() {
     echo "  --aggregator  Generate aggregator module (open import ... public)"
     echo "  --flags FLAGS Override default OPTIONS flags"
     echo ""
-    echo "Default flags: --safe --erased-cubical --no-guardedness --no-sized-types"
+    echo "Default flags: --safe --erased-cubical --no-guardedness"
     exit 1
 }
 
@@ -20,7 +20,7 @@ module_path="$1"
 shift
 
 aggregator=false
-flags="--safe --erased-cubical --no-guardedness --no-sized-types"
+flags="--safe --erased-cubical --no-guardedness"
 
 while [ $# -gt 0 ]; do
     case "$1" in

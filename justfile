@@ -101,3 +101,7 @@ html-serve:
 # Deploy HTML docs to gh-pages branch
 html-deploy:
     bin/html-deploy
+
+# Log a failed proof attempt and revert the module
+log-failure module:
+    bin/log-failure {{module}}

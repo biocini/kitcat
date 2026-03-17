@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# log-failure — preserve a failed proof attempt before reverting
+
+usage() {
+    echo "Usage: log-failure MODULE_PATH"
+    echo "  Copies the module to Log/<path>/<Module>-<timestamp>.lagda.md"
+    echo "  with module name sanitized for direct Agda-mode loading,"
+    echo "  then reverts the original."
+    exit 1
+}
+
+[ $# -lt 1 ] && usage
+
+module="$1"
+
+# Normalize to file path
+if [[ "$module" == *.lagda.md ]]; then
+    file="$module"
+    module="$(echo "$file" | sed 's|^src/||;s|\.lagda\.md$||' | tr '/' '.')"
+else
+    file="src/$(echo "$module" | tr '.' '/').lagda.md"
+fi
+
+[ -f "$file" ] || { echo "Error: $file not found" >&2; exit 1; }
+
+timestamp="$(date +%Y%m%d-%H%M%S)"
+rel="$(echo "$module" | tr '.' '/')"
+log_dir="Log/$(dirname "$rel")"
+base="$(basename "$rel")"
+log_file="${log_dir}/${base}-${timestamp}.lagda.md"
+
+mkdir -p "$log_dir"
+cp "$file" "$log_file"
+
+# Rewrite module declaration to a flat name so Agda-mode can load it directly.
+# The file isn't on any include path, so the name just needs to not conflict.
+flat_name="$(echo "${base}_${timestamp}" | tr '.-' '__')"
+sed -i '' "s|^module ${module}|module ${flat_name}|" "$log_file"
+
+# Revert the original
+git checkout -- "$file" 2>/dev/null || true
+
+echo "Logged: $log_file"
+echo "Reverted: $file"
