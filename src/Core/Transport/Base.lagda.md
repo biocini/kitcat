@@ -99,6 +99,9 @@ Singl-unique {x} = is-contr→is-prop (Singl-contr x)
 coe-filler : (A : I → Type u) (x : A i0) → PathP A x (coe01 A x)
 coe-filler A x i = coe0i A i x
 
+inv-coe-filler : (A : I → Type u) (y : A i1) → PathP A (coe01 (λ i → A (~ i)) y) y
+inv-coe-filler A y i = coe1i A i y
+
 transport-filler
   : ∀ {u} {A B : Type u} (P : A ≡ B) (x : A)
   → PathP (λ i → P i) x (transport P x)

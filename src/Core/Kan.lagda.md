@@ -30,6 +30,9 @@ Partial systems: the data for a composition problem.
 Sys : (φ : I) → Type u → Exo u
 Sys φ A = (i : I) → Partial (φ ∨ ~ i) A
 
+HSys : (i : I) → ((i : I) → Type (ℓ i)) → Exoω
+HSys φ A = (i : I) → Partial (φ ∨ ~ i) (A i)
+
 PartialsP : (i : I) → ((i : I) → Type (ℓ i)) → Exoω
 PartialsP φ A = (i : I) → Partial (φ ∨ ~ i) (A i)
 
@@ -252,7 +255,8 @@ Triple Path Composition, which one might frame as a virtual double category.
 
 module pcom where
   module base {A : I → Type u} {w x : A i0} {y z : A i1}
-    (p : x ≡ w) (q : x ≡ y ∶ A) (r : y ≡ z) where
+    (p : x ≡ w) (q : x ≡ y ∶ A) (r : y ≡ z)
+    where
     sys : (i : I) → Sys (∂ i) (A i)
     sys i k (i = i0) = p k
     sys i k (k = i0) = q i
@@ -269,7 +273,7 @@ module pcom where
 
     contr : is-contr (HComposite p q r)
     contr .center = composite , fill
-    contr .paths f1 = HComposite.unique p q r (composite , fill) f1
+    contr .paths = HComposite.unique p q r (composite , fill)
 
     fibers : (pf : HComposite p q r) → ctr ≡ pf
     fibers = contr .paths
@@ -282,7 +286,14 @@ module pcom where
   module _ {A : I → Type u} {x : A i0} {y : A i1}
     (q : x ≡ y ∶ A) where
     unit : composite refl q refl ≡ q
-    unit = unique refl q refl (q , λ i j → q i)
+    unit = unique refl q refl (q , λ i _ → q i)
+
+  module _ {A : Type u} {x y : A} (q : x ≡ y) where
+    ideml : composite refl refl q ≡ q
+    ideml = unique refl refl q (q , (λ i j → q (i ∧ j)))
+
+    idemr : composite (sym q) refl refl ≡ q
+    idemr = unique (sym q) refl refl (q , λ i j → q (i ∨ ~ j))
 
   module _ {A : I → Type u} {@0 v : Level} {B : I → Type v}
     (f : ∀ i → A i → B i)
@@ -292,9 +303,126 @@ module pcom where
     ap : (λ i → f i (composite p q r i))
        ≡ P.composite (λ j → f i0 (p j)) (λ i → f i (q i)) (λ j → f i1 (r j))
     ap = sym (P.unique
-               (λ j → f i0 (p j)) (λ i → f i (q i)) (λ j → f i1 (r j))
-               ( (λ i → f i (composite p q r i))
-               , λ i j → f i (fill p q r i j)))
+               ( λ j → f i0 (p j)) (λ i → f i (q i)) (λ j → f i1 (r j) )
+               ( (λ i → f i (composite p q r i) )
+               , λ i j → f i (fill p q r i j)) )
+
+  module _ {A : Type u} where
+    private
+      inv-sides-filler
+        : {x y z : A} (p : x ≡ y) (q : x ≡ z)
+        → Square p q (sym q) (sym p)
+      inv-sides-filler {x = x} p q i j =
+        hcom (∂ i ∨ ∂ j) λ where
+          k (i = i0) → p (k ∧ j)
+          k (i = i1) → q (~ j ∧ k)
+          k (j = i0) → q (i ∧ k)
+          k (j = i1) → p (~ i ∧ k)
+          k (k = i0) → x
+
+    lr
+      : {x y z : A} (p : x ≡ y) (q : y ≡ z)
+      → composite refl p q ≡ composite (sym p) q refl
+    lr p q i j =
+      hcom (∂ j) λ where
+        k (j = i0) → p (i ∧ (~ k))
+        k (j = i1) → q (k ∨ i)
+        k (k = i0) → inv-sides-filler q (sym p) (~ i) j
+
+    lsplit
+      : {w x y z : A} (p : w ≡ x) (q : x ≡ y)
+        (r : y ≡ z)
+      → composite (sym p) q r
+      ≡ composite refl (composite (sym p) q refl) r
+    lsplit p q r j i =
+      hcom (∂ i) λ where
+        k (i = i0) → p (~ j ∧ ~ k)
+        k (i = i1) → r k
+        k (k = i0) → fill (sym p) q refl i j
+
+    rsplit
+      : {w x y z : A} (p : w ≡ x) (q : x ≡ y)
+        (r : y ≡ z)
+      → composite (sym p) q r
+      ≡ composite (sym p) (composite refl q r) refl
+    rsplit p q r j i =
+      hcom (∂ i) λ where
+        k (i = i0) → p (~ k)
+        k (i = i1) → r (j ∨ k)
+        k (k = i0) → fill refl q r i j
+
+    catr
+      : {w x y z : A} (p : w ≡ x) (q : x ≡ y) (r : y ≡ z)
+      → composite (sym p) q r ≡ composite refl (composite refl p q) r
+    catr p q r =
+      composite refl (lsplit p q r)
+        (λ i → composite refl (lr p q (~ i)) r)
+
+    catl
+      : {w x y z : A} (p : w ≡ x) (q : x ≡ y) (r : y ≡ z)
+      → composite (sym p) q r ≡ composite refl p (composite refl q r)
+    catl p q r =
+      composite refl (rsplit p q r)
+        (sym (lr p (composite refl q r)))
+
+    private
+      invl-filler
+        : {x y : A} (p : x ≡ y)
+        → I → I → I → A
+      invl-filler p i j k =
+        hfil (i ∨ ∂ j) k λ where
+          l (i = i1) → p l
+          l (j = i0) → p l
+          l (j = i1) → p l
+          l (l = i0) → p i0
+
+    invl
+      : {x y : A} (p : x ≡ y)
+      → composite p refl p ≡ refl
+    invl p i j = invl-filler p i j i1
+
+  -- pcom-coe interaction: how ternary composition interacts
+  -- with transport between fibers of a type family.
+
+  module _ {A : I → Type u} where
+
+    private
+      -- Local abbreviations for transport along A and ∂.sym A
+      coe-A : (i : I) → A i0 → A i
+      coe-A i = transp (∂.extend A i) (~ i)
+
+      coe-A⁻ : (i : I) → A i1 → A (~ i)
+      coe-A⁻ i = transp (∂.extend (∂.sym A) i) (~ i)
+
+      coe-filler-A : (x : A i0) → PathP A x (coe-A i1 x)
+      coe-filler-A x i = coe-A i x
+
+    -- coe-fill: the round-trip through coe-filler.
+    -- pcom (sym a) (coe-filler x) refl gives PathP A w (coe01 A x).
+    -- Transporting back via com (∂.sym A) recovers a : w ≡ x.
+    -- coe-fill
+    --   : {w x : A i0} (a : w ≡ x)
+    --   → (j : I) → com (∂.sym A) (∂ j) (λ where
+    --       k (j = i0) → composite (sym a) (coe-filler-A x) refl (~ k)
+    --       k (k = i0) → coe-A i1 x
+    --       k (j = i1) → coe-A (~ k) x)
+    --     ≡ a j
+    -- -- The i=0 face must match inv (emb a) j, whose j=i0 face
+    -- -- is pcom (sym a) (coe-filler-A x) refl (~ k).
+    -- -- The i=1 face needs coe-A (~ k) (a j).
+    -- -- These differ at (j=i0): pcom involves coe-filler-A x
+    -- -- while coe involves a (~ i). The interpolation between
+    -- -- them requires composing in A (~ k) at each k.
+    -- coe-fill {w} {x} a j = {!!}
+
+    -- het: pcom already handles heterogeneous center argument.
+    -- This just documents that composite p q r : PathP A w z
+    -- when p : x ≡ w in A i0, q : PathP A x y, r : y ≡ z in A i1.
+    het
+      : {w x : A i0} {y z : A i1}
+        (p : x ≡ w) (q : PathP A x y) (r : y ≡ z)
+      → PathP A w z
+    het p q r = composite p q r
 
 open pcom public using () renaming (composite to pcom; fill to pfil)
 {-# DISPLAY hcom _ (pcom.sys p q r i) = pcom.composite p q r i #-}
@@ -353,6 +481,79 @@ conn {x} {y} {z} p q i j = hcom (∂ i ∨ ∂ j) sys
     sys k (j = i1) = q i
     sys k (i = i1) = q j
 {-# DISPLAY hcom _ (conn.sys p q i j) = conn p q i j #-}
+
+```
+## Composition uniqueness
+
+Any two fillers for the same system agree on their lids.
+
+```agda
+
+hcom-unique
+  : ∀ {@0 u} {A : Type u} {φ : I}
+  → (u : Sys φ A)
+  → (h2 : ∀ i → A [ (φ ∨ ~ i) ↦
+      (λ { (φ = i1) → u i 1=1; (i = i0) → sys-base φ u }) ])
+  → (hcom φ u ≡ outS (h2 i1))
+    [ φ ↦ (λ { (φ = i1) → (λ _ → u i1 1=1) }) ]
+hcom-unique {φ = φ} u h2 = inS λ i →
+  hcom (φ ∨ i) λ where
+    k (φ = i1) → u k 1=1
+    k (i = i1) → outS (h2 k)
+    k (k = i0) → sys-base φ u
+
+hcom-lid-unique
+  : ∀ {@0 u} {A : Type u} {φ : I}
+  → (u : Sys φ A)
+  → (h1 h2 : ∀ i → A [ (φ ∨ ~ i) ↦
+      (λ { (φ = i1) → u i 1=1; (i = i0) → sys-base φ u }) ])
+  → (outS (h1 i1) ≡ outS (h2 i1))
+    [ φ ↦ (λ { (φ = i1) → (λ _ → u i1 1=1) }) ]
+hcom-lid-unique {φ = φ} u h1 h2 = inS λ i →
+  hcom (φ ∨ ∂ i) λ where
+    k (φ = i1) → u k 1=1
+    k (i = i0) → outS (h1 k)
+    k (i = i1) → outS (h2 k)
+    k (k = i0) → sys-base φ u
+
+com-unique
+  : ∀ {@0 u} {A : I → Type u} {φ : I}
+  → (u : PartialsP φ A)
+  → (h2 : ∀ i → A i [ (φ ∨ ~ i) ↦
+      (λ { (φ = i1) → u i 1=1; (i = i0) → u i0 1=1 }) ])
+  → (com A φ u ≡ outS (h2 i1))
+    [ φ ↦ (λ { (φ = i1) → (λ _ → u i1 1=1) }) ]
+com-unique {A = A} {φ = φ} u h2 = inS λ i →
+  com A (φ ∨ i) λ where
+    k (φ = i1) → u k 1=1
+    k (i = i1) → outS (h2 k)
+    k (k = i0) → u i0 1=1
+
+com-lid-unique
+  : ∀ {@0 u} {A : I → Type u} {φ : I}
+  → (u : PartialsP φ A)
+  → (h1 h2 : ∀ i → A i [ (φ ∨ ~ i) ↦
+      (λ { (φ = i1) → u i 1=1; (i = i0) → u i0 1=1 }) ])
+  → (outS (h1 i1) ≡ outS (h2 i1))
+    [ φ ↦ (λ { (φ = i1) → (λ _ → u i1 1=1) }) ]
+com-lid-unique {A = A} {φ = φ} u h1 h2 = inS λ i →
+  com A (φ ∨ ∂ i) λ where
+    k (φ = i1) → u k 1=1
+    k (i = i0) → outS (h1 k)
+    k (i = i1) → outS (h2 k)
+    k (k = i0) → u i0 1=1
+
+hcom-cong
+  : ∀ {@0 u} {A : Type u} {φ : I}
+  → (u : Sys φ A) (u' : Sys φ A)
+  → (ueq : ∀ i → PartialP (φ ∨ ~ i)
+      (λ o → u i o ≡ u' i o))
+  → (hcom φ u ≡ hcom φ u')
+    [ φ ↦ (λ { (φ = i1) → ueq i1 1=1 }) ]
+hcom-cong {φ = φ} u u' ueq = inS λ j →
+  hcom φ λ where
+    i (φ = i1) → ueq i 1=1 j
+    i (i = i0) → ueq i0 1=1 j
 
 ```
 
@@ -445,6 +646,22 @@ module Path {A : Type u} where
 
     fill : SquareP (λ i j → x ≡ comp i .fst j) (cat.fill (λ _ → x) (λ _ → x)) refl refl refl
     fill = cong snd comp
+
+  unitl-filler
+    : {x y : A} (p : x ≡ y) → I → I → I → A
+  unitl-filler p k j i = cat.rfill refl p j (~ i ∧ k)
+
+  unitr-filler
+    : {x y : A} (p : x ≡ y) → I → I → I → A
+  unitr-filler p k j i = cat.fill p refl j (~ i ∧ k)
+
+  invl-filler
+    : {x y : A} (p : x ≡ y) → I → I → I → A
+  invl-filler p l i j = hfil (∂ j ∨ i) l (λ k _ → p (~ j ∨ k))
+
+  invr-filler
+    : {x y : A} (p : x ≡ y) → (l i j : I) → A
+  invr-filler p l i j = invl-filler (sym p) l i j
 
   open cat
   hsqueeze : {x y : A} {p q : x ≡ y} → p ∙ refl ≡ refl ∙ q → p ≡ q
@@ -610,5 +827,20 @@ square-sym-v
   → Square p q r s → Square (sym p) s (sym r) q
 square-sym-v sq i j = sq i (~ j)
 {-# INLINE square-sym-v #-}
+
+```
+
+## Dependent ap over composition
+
+```agda
+
+ap-comp-dep
+  : ∀ {@0 u v} {A : Type u} {B : A → Type v}
+    {x y z : A} (f : (a : A) → B a)
+    (p : x ≡ y) (q : y ≡ z)
+  → PathP (λ i → PathP (λ j → B (cat.fill p q j i))
+      (f x) (f (q i)))
+    (cong f p) (cong f (p ∙ q))
+ap-comp-dep f p q i j = f (cat.fill p q j i)
 
 ```

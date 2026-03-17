@@ -17,7 +17,9 @@ open import Core.Function.Image public
 open import Core.Function.Surjection public
 open import Core.Function.Connected public
 open import Core.Function.Partial public
+open import Core.Function.Partial.Properties public
 open import Core.Function.Partial.Fiber public hiding (η; ⊥ₗ)
 open import Core.Function.Partial.Graded public
+  hiding (η; ⊥ₗ)
 open import Core.Function.Pullback public
 ```

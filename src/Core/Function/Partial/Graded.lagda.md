@@ -1,10 +1,10 @@
-Graded monad on `LiftM` via the `(Nat, max, 0)` monoid.
+Graded monad on `hLiftM` via the `(Nat, max, 0)` monoid.
 
 Following Katsumata (2014) on parametric effect monads: a graded monad
 over `(Nat, max, 0)` tracks h-level bounds through monadic composition.
 
 This module uses `--cubical` (not `--erased-cubical`) because the monad
-laws construct paths between `LiftM` values via Glue types, which
+laws construct paths between `hLiftM` values via Glue types, which
 require full cubical for computational univalence.
 
 The unit has grade 0 and Kleisli extension at grades `n`, `m` produces
@@ -19,14 +19,14 @@ module Core.Function.Partial.Graded where
 open import Core.Type
 open import Core.Base
 open import Core.Data.Sigma
+open import Core.Data.Empty
 open import Core.Data.Nat using (Nat; Z; S)
 open import Core.Data.Nat.Base using (max; _≤_)
 import Core.Data.Nat.Properties as Nat
 open import Core.HLevel
   using ( is-hlevel; Σ-is-hlevel; is-hlevel-≤
-        ; is-hlevel-is-prop; nType )
-open import Core.Function.Partial
-  using (LiftM; LiftM-map; is-defined; value; definedness-trunc; η; ⊥ₗ)
+        ; is-hlevel-is-prop; nType
+        ; is-contr→is-hlevel; is-prop→is-hlevel-suc )
 
 open nType
 open import Core.Equiv using (_≃_; iso→equiv; aut; equiv-path; is-equiv)
@@ -44,19 +44,82 @@ private variable
 ```
 
 
-## Type former
+## The h-level-parameterized lifting
 
-A graded partial element bundles a grade with a `LiftM` value.
+`hLiftM u X n` classifies partial elements of `X` whose definedness
+predicate has h-level `n`. A value of type `hLiftM u X n` bundles an
+`nType u n` together with a map from the underlying type to `X`.
+The specialized n=1 version lives in `Core.Function.Partial` as
+`LiftM`.
 
 ```agda
-LiftG : (u : Level) → Type v → Type (u ₊ ⊔ v)
-LiftG u A = Σ n ∶ Nat , LiftM u A n
+record hLiftM u {v : Level} (X : Type v) (n : Nat) : Type (u ₊ ⊔ v) where
+  no-eta-equality
+  field
+    is-defined : nType u n
+    value      : ∣ is-defined ∣ → X
+
+open hLiftM public
+{-# INLINE hLiftM.constructor #-}
+
+definedness-hlevel
+  : ∀ {u v n} {X : Type v}
+  → (l : hLiftM u X n) → is-hlevel n (∣ is-defined l ∣)
+definedness-hlevel l = is-tr (is-defined l)
+
+definedness-trunc = definedness-hlevel
 ```
 
 
-## PathP for LiftM
+## Functorial action
 
-Build a `PathP` between `LiftM` values at different grades by Glue/unglue.
+```agda
+hLiftM-map
+  : ∀ {u v w n} {A : Type v} {B : Type w}
+  → (A → B) → hLiftM u A n → hLiftM u B n
+hLiftM-map f l .is-defined = is-defined l
+hLiftM-map f l .value = f ∘ value l
+```
+
+
+## Distinguished elements
+
+The unit `η` embeds `X` into `hLiftM u X n` via `Lift u ⊤`, which
+is contractible and thus has h-level `n` for any `n`. Bottom `⊥ₗ`
+uses the empty type, a proposition, so it works at any `S m`.
+
+```agda
+module _ {u : Level} where
+  private
+    ⊥-prop : is-prop (Lift u ⊥)
+    ⊥-prop (liftℓ e) = ex-falso e
+
+  η : ∀ {n v} {X : Type v} → X → hLiftM u X n
+  η x .is-defined .∣_∣ = Lift _ ⊤
+  η x .is-defined .is-tr = is-contr→is-hlevel _
+    (Contr (liftℓ tt) λ { (liftℓ tt) → refl })
+  η x .value _ = x
+
+  ⊥ₗ : ∀ {v m} {X : Type v} → hLiftM u X (S m)
+  ⊥ₗ .is-defined .∣_∣ = Lift _ ⊥
+  ⊥ₗ .is-defined .is-tr = is-prop→is-hlevel-suc ⊥-prop
+  ⊥ₗ .value e = ex-falso (e .lower)
+```
+
+
+## Type former
+
+A graded partial element bundles a grade with an `hLiftM` value.
+
+```agda
+LiftG : (u : Level) → Type v → Type (u ₊ ⊔ v)
+LiftG u A = Σ n ∶ Nat , hLiftM u A n
+```
+
+
+## PathP for hLiftM
+
+Build a `PathP` between `hLiftM` values at different grades by Glue/unglue.
 Given an equivalence `e` between the definedness types and a coherence
 proof relating the value functions through `e`, the construction glues
 the definedness types along `e` and corrects the value boundary via
@@ -65,21 +128,21 @@ the definedness types along `e` and corrects the value boundary via
 modules on TypeTopology)
 
 ```agda
-LiftM-pathp
+hLiftM-pathp
   : ∀ {u v} {X : Type v} {n m : Nat}
   → (p : n ≡ m)
-  → (l : LiftM u X n) (r : LiftM u X m)
+  → (l : hLiftM u X n) (r : hLiftM u X m)
   → (e : ∣ is-defined l ∣ ≃ ∣ is-defined r ∣)
   → (∀ d → value l d ≡ value r (e .fst d))
-  → PathP (λ i → LiftM u X (p i)) l r
-LiftM-pathp {u} {X = X} {n} {m} p l r e coh = path where
+  → PathP (λ i → hLiftM u X (p i)) l r
+hLiftM-pathp {u} {X = X} {n} {m} p l r e coh = path where
   D = ∣ is-defined r ∣
 
   Te : (i : I) → Partial (∂ i) (Σ T ∶ Type _ , T ≃ D)
   Te i (i = i0) = ∣ is-defined l ∣ , e
   Te i (i = i1) = D , aut
 
-  path : PathP (λ i → LiftM u X (p i)) l r
+  path : PathP (λ i → hLiftM u X (p i)) l r
   path i .is-defined .∣_∣ = Glue D (Te i)
   path i .is-defined .is-tr =
     is-prop→PathP
@@ -93,28 +156,28 @@ LiftM-pathp {u} {X = X} {n} {m} p l r e coh = path where
     j (j = i0) → value r (unglue (∂ i) {Te = Te i} d)
 ```
 
-Two `LiftM-pathp` calls with the same underlying function and coherence
+Two `hLiftM-pathp` calls with the same underlying function and coherence
 are equal when the base Nat paths are equal. The two equivalences share
 a common forward map and may differ only in their `is-equiv` proofs;
 since `is-equiv` is propositional, `equiv-path` connects them. The
-proof builds a dependent square in `LiftM u X (sq i j)` field-by-field:
+proof builds a dependent square in `hLiftM u X (sq i j)` field-by-field:
 Glue types vary continuously via `equiv-path`, the h-level field is
 automatic by `is-prop→SquareP`, and the value `hcom` has the same
 system at both `i`-boundaries because both equivalences share the
 same forward function.
 
 ```agda
-LiftM-pathp-ext
+hLiftM-pathp-ext
   : ∀ {u v} {X : Type v} {n m : Nat}
   → {p q : n ≡ m} (sq : p ≡ q)
-  → (l : LiftM u X n) (r : LiftM u X m)
+  → (l : hLiftM u X n) (r : hLiftM u X m)
   → {f : ∣ is-defined l ∣ → ∣ is-defined r ∣}
   → (e₁ e₂ : is-equiv f)
   → (coh : ∀ d → value l d ≡ value r (f d))
-  → PathP (λ i → PathP (λ j → LiftM u X (sq i j)) l r)
-      (LiftM-pathp p l r (f , e₁) coh)
-      (LiftM-pathp q l r (f , e₂) coh)
-LiftM-pathp-ext {u} {X = X} {n} {m} {p} {q} sq l r {f} e₁ e₂ coh =
+  → PathP (λ i → PathP (λ j → hLiftM u X (sq i j)) l r)
+      (hLiftM-pathp p l r (f , e₁) coh)
+      (hLiftM-pathp q l r (f , e₂) coh)
+hLiftM-pathp-ext {u} {X = X} {n} {m} {p} {q} sq l r {f} e₁ e₂ coh =
   ext
   where
   D = ∣ is-defined r ∣
@@ -125,16 +188,16 @@ LiftM-pathp-ext {u} {X = X} {n} {m} {p} {q} sq l r {f} e₁ e₂ coh =
   Te-sq i j (j = i0) = ∣ is-defined l ∣ , ep i
   Te-sq i j (j = i1) = D , aut
 
-  ext : PathP (λ i → PathP (λ j → LiftM u X (sq i j)) l r)
-    (LiftM-pathp p l r (f , e₁) coh)
-    (LiftM-pathp q l r (f , e₂) coh)
+  ext : PathP (λ i → PathP (λ j → hLiftM u X (sq i j)) l r)
+    (hLiftM-pathp p l r (f , e₁) coh)
+    (hLiftM-pathp q l r (f , e₂) coh)
   ext i j .is-defined .∣_∣ = Glue D (Te-sq i j)
   ext i j .is-defined .is-tr =
     is-prop→SquareP
       (λ i j → is-hlevel-is-prop {A = Glue D (Te-sq i j)} (sq i j))
-      (λ j → LiftM-pathp p l r (f , e₁) coh j .is-defined .is-tr)
+      (λ j → hLiftM-pathp p l r (f , e₁) coh j .is-defined .is-tr)
       (λ _ → definedness-trunc l)
-      (λ j → LiftM-pathp q l r (f , e₂) coh j .is-defined .is-tr)
+      (λ j → hLiftM-pathp q l r (f , e₂) coh j .is-defined .is-tr)
       (λ _ → definedness-trunc r)
       i j
   ext i j .value d = hcom (∂ j) λ where
@@ -150,14 +213,14 @@ The graded unit pins at grade `Z`. It is `η` specialized to the
 identity grade of `(Nat, max, 0)`.
 
 ```agda
-ηᵍ : A → LiftM u A Z
+ηᵍ : A → hLiftM u A Z
 ηᵍ = η
 ```
 
 
 ## Graded Kleisli extension
 
-Given `f : A → LiftM u B m`, extend over `a : LiftM u A n` to get a
+Given `f : A → hLiftM u B m`, extend over `a : hLiftM u A n` to get a
 result at grade `max n m`. Definedness of the composite requires both
 `a` and `f (value a p)` to be defined. The h-level of the product
 definedness type is bounded by `max n m` since each factor is bounded
@@ -165,7 +228,7 @@ by one of `n` or `m`.
 
 ```agda
 _♯ᵍ
-  : (A → LiftM u B m) → LiftM u A n → LiftM u B (max n m)
+  : (A → hLiftM u B m) → hLiftM u A n → hLiftM u B (max n m)
 _♯ᵍ {m = m} {n = n} f a .is-defined .∣_∣ =
   Σ p ∶ ∣ is-defined a ∣ , ∣ is-defined (f (value a p)) ∣
 _♯ᵍ {m = m} {n = n} f a .is-defined .is-tr =
@@ -183,7 +246,7 @@ _♯ᵍ {m = m} {n = n} f a .value (p , d) =
 Flatten a nested lifting by extending the identity.
 
 ```agda
-μᵍ : LiftM u (LiftM u A m) n → LiftM u A (max n m)
+μᵍ : hLiftM u (hLiftM u A m) n → hLiftM u A (max n m)
 μᵍ = _♯ᵍ id
 ```
 
@@ -196,7 +259,7 @@ right unit law and associativity require `PathP` over
 `Nat.max.unitr` and `Nat.max.assoc` respectively, since
 `max n Z` and `max (max n m) k` do not reduce for variable `n`.
 
-Each law uses `LiftM-pathp` with an equivalence between the
+Each law uses `hLiftM-pathp` with an equivalence between the
 definedness types. The value functions agree definitionally in
 every case, so the coherence argument is always `λ _ → refl`.
 
@@ -208,10 +271,10 @@ definedness type contracts from `Σ (Lift ⊤) (λ _ → D)` to `D`.
 ```agda
 ♯ᵍ-unitl
   : ∀ {u v w} {A : Type v} {B : Type w} {m : Nat}
-  → (f : A → LiftM u B m) (a : A)
+  → (f : A → hLiftM u B m) (a : A)
   → _♯ᵍ f (ηᵍ a) ≡ f a
 ♯ᵍ-unitl {u} {m = m} f a =
-  LiftM-pathp refl (_♯ᵍ f (ηᵍ a)) (f a) e (λ _ → refl)
+  hLiftM-pathp refl (_♯ᵍ f (ηᵍ a)) (f a) e (λ _ → refl)
   where
   e : (Σ p ∶ Lift u ⊤ , ∣ is-defined (f a) ∣)
     ≃ ∣ is-defined (f a) ∣
@@ -228,11 +291,11 @@ from `Σ D (λ _ → Lift ⊤)` to `D`.
 ```agda
 ♯ᵍ-unitr
   : ∀ {u v} {A : Type v} {n : Nat}
-  → (a : LiftM u A n)
-  → PathP (λ i → LiftM u A (Nat.max.unitr {n = n} i))
+  → (a : hLiftM u A n)
+  → PathP (λ i → hLiftM u A (Nat.max.unitr {n = n} i))
       (_♯ᵍ {m = Z} η a) a
 ♯ᵍ-unitr {u} {n = n} a =
-  LiftM-pathp Nat.max.unitr (_♯ᵍ {m = Z} η a) a e (λ _ → refl)
+  hLiftM-pathp Nat.max.unitr (_♯ᵍ {m = Z} η a) a e (λ _ → refl)
   where
   e : (Σ p ∶ ∣ is-defined a ∣ , Lift u ⊤)
     ≃ ∣ is-defined a ∣
@@ -252,14 +315,14 @@ re-associate from left-nested to right-nested Σ.
 ♯ᵍ-assoc
   : ∀ {u v w x} {A : Type v} {B : Type w} {C : Type x}
     {n m k : Nat}
-  → (a : LiftM u A n)
-    (f : A → LiftM u B m)
-    (g : B → LiftM u C k)
-  → PathP (λ i → LiftM u C (Nat.max.assoc n m k i))
+  → (a : hLiftM u A n)
+    (f : A → hLiftM u B m)
+    (g : B → hLiftM u C k)
+  → PathP (λ i → hLiftM u C (Nat.max.assoc n m k i))
       (_♯ᵍ g (_♯ᵍ f a))
       (_♯ᵍ (λ x → _♯ᵍ g (f x)) a)
 ♯ᵍ-assoc {u} {n = n} {m} {k} a f g =
-  LiftM-pathp (Nat.max.assoc n m k)
+  hLiftM-pathp (Nat.max.assoc n m k)
     (_♯ᵍ g (_♯ᵍ f a))
     (_♯ᵍ (λ x → _♯ᵍ g (f x)) a)
     e (λ _ → refl)
@@ -281,8 +344,8 @@ re-associate from left-nested to right-nested Σ.
 
 ## LiftG operations
 
-`LiftG u A = Σ n , LiftM u A n` bundles a grade with a partial
-element. The following operations package the graded `LiftM`
+`LiftG u A = Σ n , hLiftM u A n` bundles a grade with a partial
+element. The following operations package the graded `hLiftM`
 operations with their grade witnesses as Sigma pairs.
 
 The continuation `f` in `_♯G` has a fixed grade `m` — this is the
@@ -290,44 +353,44 @@ standard graded monad formulation where the grade tracks h-level
 bounds through composition.
 
 ```agda
-embedG : LiftM u A m → LiftG u A
+embedG : hLiftM u A m → LiftG u A
 embedG {m = m} la = m , la
 
 ηG : A → LiftG u A
 ηG = embedG ∘ ηᵍ
 
 _♯G
-  : (A → LiftM u B m) → LiftG u A → LiftG u B
+  : (A → hLiftM u B m) → LiftG u A → LiftG u B
 _♯G f (n , la) = max n _ , _♯ᵍ f la
 
 mapG : (A → B) → LiftG u A → LiftG u B
-mapG f (n , la) = n , LiftM-map f la
+mapG f (n , la) = n , hLiftM-map f la
 ```
 
 
 ## LiftG monad laws
 
 Each law is a Σ-path pairing the Nat component path (grade
-reassociation) with the `LiftM` `PathP` (definedness-type
+reassociation) with the `hLiftM` `PathP` (definedness-type
 reassociation).
 
 ### Left unit
 
 `_♯G f (ηG a) ≡ embedG (f a)` holds because `max Z m` reduces
 definitionally to `m`, so the Nat component is `refl` and the
-`LiftM` component is `♯ᵍ-unitl`.
+`hLiftM` component is `♯ᵍ-unitl`.
 
 ```agda
 ♯G-unitl
   : ∀ {u v w} {A : Type v} {B : Type w} {m : Nat}
-  → (f : A → LiftM u B m) (a : A)
+  → (f : A → hLiftM u B m) (a : A)
   → _♯G f (ηG a) ≡ embedG (f a)
 ♯G-unitl f a i = _ , ♯ᵍ-unitl f a i
 ```
 
 ### Right unit
 
-The Nat component is `Nat.max.unitr` and the `LiftM` component
+The Nat component is `Nat.max.unitr` and the `hLiftM` component
 is `♯ᵍ-unitr`.
 
 ```agda
@@ -340,7 +403,7 @@ is `♯ᵍ-unitr`.
 
 ### Associativity
 
-The Nat component is `Nat.max.assoc` and the `LiftM` component
+The Nat component is `Nat.max.assoc` and the `hLiftM` component
 is `♯ᵍ-assoc`.
 
 ```agda
@@ -348,8 +411,8 @@ is `♯ᵍ-assoc`.
   : ∀ {u v w x} {A : Type v} {B : Type w} {C : Type x}
     {m k : Nat}
   → (ga : LiftG u A)
-    (f : A → LiftM u B m)
-    (g : B → LiftM u C k)
+    (f : A → hLiftM u B m)
+    (g : B → hLiftM u C k)
   → _♯G g (_♯G f ga) ≡ _♯G (λ x → _♯ᵍ g (f x)) ga
 ♯G-assoc (n , la) f g i =
   Nat.max.assoc n _ _ i , ♯ᵍ-assoc la f g i
@@ -383,15 +446,15 @@ and the value functions are definitionally equal on both sides.
 ♯ᵍ-assoc4
   : ∀ {u v w x y} {A : Type v} {B : Type w} {C : Type x}
       {D : Type y} {n m k l : Nat}
-  → (a : LiftM u A n)
-    (f : A → LiftM u B m)
-    (g : B → LiftM u C k)
-    (h : C → LiftM u D l)
-  → PathP (λ i → LiftM u D (max-assoc4 n m k l i))
+  → (a : hLiftM u A n)
+    (f : A → hLiftM u B m)
+    (g : B → hLiftM u C k)
+    (h : C → hLiftM u D l)
+  → PathP (λ i → hLiftM u D (max-assoc4 n m k l i))
       (_♯ᵍ h (_♯ᵍ g (_♯ᵍ f a)))
       (_♯ᵍ (λ x → _♯ᵍ (λ y → _♯ᵍ h (g y)) (f x)) a)
 ♯ᵍ-assoc4 {u} {n = n} {m} {k} {l} a f g h =
-  LiftM-pathp (max-assoc4 n m k l)
+  hLiftM-pathp (max-assoc4 n m k l)
     (_♯ᵍ h (_♯ᵍ g (_♯ᵍ f a)))
     (_♯ᵍ (λ x → _♯ᵍ (λ y → _♯ᵍ h (g y)) (f x)) a)
     e (λ _ → refl)
@@ -415,13 +478,13 @@ and the value functions are definitionally equal on both sides.
 ```
 
 The pentagon states that the two factorizations of the 4-fold
-Sigma reassociation yield the same `LiftM` path. Instead of
+Sigma reassociation yield the same `hLiftM` path. Instead of
 composing `LiftG` paths with `_∙_` (which produces opaque `com`
 terms), we compose the underlying definedness-type equivalences
 with `_∙e_`. Both routes beta-reduce to the same forward function
 `(((p,d),gd),hd) → (p,d,gd,hd)`, so `equiv-path` gives
-equivalence equality, and `ap` on `LiftM-pathp` lifts this to
-`LiftM` path equality.
+equivalence equality, and `ap` on `hLiftM-pathp` lifts this to
+`hLiftM` path equality.
 
 The five vertices in `LiftG u D` arise from the four-fold Kleisli
 composition with all possible parenthesizations. The five edges
@@ -433,10 +496,10 @@ module pentagon
   {u v' w' x' y'} {A' : Type v'} {B' : Type w'}
   {C' : Type x'} {D' : Type y'}
   {n' m' k' l' : Nat}
-  (a : LiftM u A' n')
-  (f : A' → LiftM u B' m')
-  (g : B' → LiftM u C' k')
-  (h : C' → LiftM u D' l')
+  (a : hLiftM u A' n')
+  (f : A' → hLiftM u B' m')
+  (g : B' → hLiftM u C' k')
+  (h : C' → hLiftM u D' l')
   where
 
   private
@@ -474,7 +537,7 @@ components are determined by `max` associativity.
 
 Each edge is a `LiftG` path built from the corresponding
 `♯ᵍ-assoc` step. The Nat component is the `max` associativity
-path and the `LiftM` component is the `♯ᵍ-assoc` `PathP`.
+path and the `hLiftM` component is the `♯ᵍ-assoc` `PathP`.
 
 ```agda
   e13 : v1 ≡ v3
@@ -537,8 +600,8 @@ Sigma reassociation underlying the corresponding `♯ᵍ-assoc` step.
 Both routes have the same underlying forward function on
 definedness types: `(((p,d),gd),hd) → (p,d,gd,hd)`. We
 factor this out as `fwd` and transport the `is-equiv` proofs
-from the route compositions to `fwd`. Then `LiftM-pathp-ext`
-(with `sq = refl`) connects the two `LiftM-pathp` calls, since
+from the route compositions to `fwd`. Then `hLiftM-pathp-ext`
+(with `sq = refl`) connects the two `hLiftM-pathp` calls, since
 they share `fwd` and the coherence `(λ _ → refl)`.
 
 ```agda
@@ -567,11 +630,11 @@ they share `fwd` and the coherence `(λ _ → refl)`.
     eqv-B = subst is-equiv fwd-B (route-B-eqv .snd)
 
   pentagon
-    : LiftM-pathp (max-assoc4 n' m' k' l') (snd v1) (snd v4)
+    : hLiftM-pathp (max-assoc4 n' m' k' l') (snd v1) (snd v4)
         (fwd , eqv-A) (λ _ → refl)
-    ≡ LiftM-pathp (max-assoc4 n' m' k' l') (snd v1) (snd v4)
+    ≡ hLiftM-pathp (max-assoc4 n' m' k' l') (snd v1) (snd v4)
         (fwd , eqv-B) (λ _ → refl)
-  pentagon = LiftM-pathp-ext refl (snd v1) (snd v4)
+  pentagon = hLiftM-pathp-ext refl (snd v1) (snd v4)
     eqv-A eqv-B (λ _ → refl)
 ```
 
@@ -583,9 +646,9 @@ they share `fwd` and the coherence `(λ _ → refl)`.
   : ∀ {u v w x y} {A : Type v} {B : Type w} {C : Type x}
       {D : Type y} {m k l : Nat}
   → (ga : LiftG u A)
-    (f : A → LiftM u B m)
-    (g : B → LiftM u C k)
-    (h : C → LiftM u D l)
+    (f : A → hLiftM u B m)
+    (g : B → hLiftM u C k)
+    (h : C → hLiftM u D l)
   → _♯G h (_♯G g (_♯G f ga))
     ≡ _♯G (λ x → _♯ᵍ (λ y → _♯ᵍ h (g y)) (f x)) ga
 ♯G-assoc4 (n , la) f g h i =
@@ -614,8 +677,8 @@ second over the first, combining their grades via `max`.
 
 ```agda
 _>=>ᵍ_
-  : (A → LiftM u B m) → (B → LiftM u C k)
-  → (A → LiftM u C (max m k))
+  : (A → hLiftM u B m) → (B → hLiftM u C k)
+  → (A → hLiftM u C (max m k))
 (f >=>ᵍ g) a = _♯ᵍ g (f a)
 
 infixr 5 _>=>ᵍ_
@@ -633,7 +696,7 @@ Left unit: composing with `ηᵍ` on the left is identity. Since
 ```agda
 >=>ᵍ-unitl
   : ∀ {u v w} {A : Type v} {B : Type w} {m : Nat}
-  → (f : A → LiftM u B m)
+  → (f : A → hLiftM u B m)
   → (ηᵍ >=>ᵍ f) ≡ f
 >=>ᵍ-unitl f i a = ♯ᵍ-unitl f a i
 ```
@@ -645,8 +708,8 @@ for variable `m`.
 ```agda
 >=>ᵍ-unitr
   : ∀ {u v w} {A : Type v} {B : Type w} {m : Nat}
-  → (f : A → LiftM u B m)
-  → PathP (λ i → A → LiftM u B (Nat.max.unitr {n = m} i))
+  → (f : A → hLiftM u B m)
+  → PathP (λ i → A → hLiftM u B (Nat.max.unitr {n = m} i))
       (f >=>ᵍ ηᵍ) f
 >=>ᵍ-unitr f i a = ♯ᵍ-unitr (f a) i
 ```
@@ -657,10 +720,10 @@ Associativity: Kleisli composition is associative up to `max.assoc`.
 >=>ᵍ-assoc
   : ∀ {u v w x y} {A : Type v} {B : Type w} {C : Type x} {D : Type y}
     {m k l : Nat}
-  → (f : A → LiftM u B m)
-    (g : B → LiftM u C k)
-    (h : C → LiftM u D l)
-  → PathP (λ i → A → LiftM u D (Nat.max.assoc m k l i))
+  → (f : A → hLiftM u B m)
+    (g : B → hLiftM u C k)
+    (h : C → hLiftM u D l)
+  → PathP (λ i → A → hLiftM u D (Nat.max.assoc m k l i))
       ((f >=>ᵍ g) >=>ᵍ h) (f >=>ᵍ (g >=>ᵍ h))
 >=>ᵍ-assoc f g h i a = ♯ᵍ-assoc (f a) g h i
 ```
@@ -669,13 +732,13 @@ Associativity: Kleisli composition is associative up to `max.assoc`.
 ## Functor laws for mapG
 
 `mapG` is the functorial action on `LiftG`. It preserves identity
-and composition. Because `LiftM` has `no-eta-equality`, paths
-through `LiftM` must be constructed field-by-field via copatterns.
+and composition. Because `hLiftM` has `no-eta-equality`, paths
+through `hLiftM` must be constructed field-by-field via copatterns.
 
 ```agda
 mapG-id : (ga : LiftG u A) → mapG id ga ≡ ga
 mapG-id (n , la) i = n , p i where
-  p : LiftM-map id la ≡ la
+  p : hLiftM-map id la ≡ la
   p i .is-defined = is-defined la
   p i .value = value la
 
@@ -684,7 +747,7 @@ mapG-∘
   → (f : B → C) (g : A → B)
   → (ga : LiftG u A) → mapG f (mapG g ga) ≡ mapG (f ∘ g) ga
 mapG-∘ f g (n , la) i = n , p i where
-  p : LiftM-map f (LiftM-map g la) ≡ LiftM-map (f ∘ g) la
+  p : hLiftM-map f (hLiftM-map g la) ≡ hLiftM-map (f ∘ g) la
   p i .is-defined = is-defined la
   p i .value = f ∘ g ∘ value la
 ```
@@ -699,8 +762,8 @@ mapG-∘ f g (n , la) i = n , p i where
   : ∀ {u v w} {A : Type v} {B : Type w}
   → (f : A → B) (a : A)
   → mapG {u = u} f (ηG a) ≡ ηG (f a)
-η-natural f a i = Z , LiftM-pathp refl
-  (LiftM-map f (ηᵍ a)) (ηᵍ (f a)) aut (λ _ → refl) i
+η-natural f a i = Z , hLiftM-pathp refl
+  (hLiftM-map f (ηᵍ a)) (ηᵍ (f a)) aut (λ _ → refl) i
 ```
 
 

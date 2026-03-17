@@ -23,6 +23,7 @@ import Core.Homotopy
 import Core.Retract
 import Core.Composite
 import Core.Groupoid
+import Core.Groupoid.Virtual
 import Core.Discrete
 import Core.Function
 import Core.Equiv.PropIndexed
@@ -77,6 +78,11 @@ import Cat.Base
 import Cat.Groupoid
 import Cat.Data.Magmoid
 import Cat.Rezk
+import Cat.Covariant
+import Cat.Yoneda
+import Cat.VDC
+import Cat.Classified
+-- import Cat.Displayed  -- WIP: open holes in compose-contr contraction
 -- import Cat.Units  -- WIP: proof error at line 382
 
 import Lib.CSet.Base

@@ -27,7 +27,11 @@ fi
 
 timestamp="$(date +%Y%m%d-%H%M%S)"
 rel="$(echo "$module" | tr '.' '/')"
-log_dir="Log/$(dirname "$rel")"
+if [[ "$rel" == */* ]]; then
+    log_dir="Log/${rel%/*}"
+else
+    log_dir="Log"
+fi
 base="$(basename "$rel")"
 log_file="${log_dir}/${base}-${timestamp}.lagda.md"
 
@@ -37,7 +41,8 @@ cp "$file" "$log_file"
 # Rewrite module declaration to a flat name so Agda-mode can load it directly.
 # The file isn't on any include path, so the name just needs to not conflict.
 flat_name="$(echo "${base}_${timestamp}" | tr '.-' '__')"
-sed -i '' "s|^module ${module}|module ${flat_name}|" "$log_file"
+tmp="${log_file}.tmp"
+sed "s|^module ${module}|module ${flat_name}|" "$log_file" > "$tmp" && mv "$tmp" "$log_file"
 
 # Revert the original
 git checkout -- "$file" 2>/dev/null || true

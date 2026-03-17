@@ -42,7 +42,8 @@ module Cat {o h} (C : category o h) where
     : ∀ {x y z} {f : hom x y} {g : hom y z} {s : hom x z}
     → f ⨾ g => s → f ⨾ g ≡ s
   cast-path {f = f} {g} α =
-    ap fst (compose-contr f g .paths (_ , α))
+    ap fst (compose-contr f g .paths
+      (_ , λ w a v b i → α i w a v b))
 ```
 
 ## Terminal and initial objects
@@ -633,7 +634,7 @@ witness from a path and the canonical composite equation.
     : ∀ {x y z} {f : hom x y} {g : hom y z} {s : hom x z}
     → f ⨾ g ≡ s → f ⨾ g => s
   cast-path⁻¹ {f = f} {g} p =
-    ap emb (sym p) ∙ emb-composite f g
+    ap emb (sym p) ∙ emb-composite-ext f g
 ```
 
 ### Product η-expansion

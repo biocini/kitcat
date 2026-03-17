@@ -26,8 +26,10 @@ open import Core.Type
 open import Core.Base
 open import Core.Data.Nat.Type
 open import Core.Data.Sigma
-open import Core.Transport using (Singl-contr)
+open import Core.Equiv.Base using (_≃_; is-contr-equiv; iso→equiv)
+open import Core.Kan using (Σ-contr-contr)
 open import Core.Trait.Trunc using (is-hlevel; is-contr→is-hlevel)
+open import Core.Transport.Base using (Singl-contr)
 
 private variable
   u v : Level
@@ -74,7 +76,7 @@ X ⇀ᵍ Y = Πₚ {X = X} (λ _ → Y)
 ## Projections
 
 ```agda
-module Πₙ-mod {u v} {n : Nat} {X : Type u} {A : X → Type v} where
+module Πₙ {u v} {n : Nat} {X : Type u} {A : X → Type v} where
   graph : Πₙ n A → (x : X) → A x → Type v
   graph (R , _) = R
   {-# INLINE graph #-}
@@ -124,8 +126,8 @@ wherever both are defined.
 ## Backward-compatible propositional projections
 
 ```agda
-module Πₚ-mod {u v} {X : Type u} {A : X → Type v} where
-  open Πₙ-mod {n = 1} {X = X} {A = A} public
+module Πₚ {u v} {X : Type u} {A : X → Type v} where
+  open Πₙ {n = 1} {X = X} {A = A} public
 ```
 
 
@@ -139,11 +141,12 @@ n-truncated for any n.
 from-total
   : ∀ {u v n} {X : Type u} {A : X → Type v}
   → ((x : X) → A x) → Πₙ n A
-from-total {n = n} f = R , σ where
-  R : (_ : _) → _ → _
+from-total {v = v} {n = n} {X = X} {A = A} f =
+  R , σ where
+  R : (x : X) → A x → Type v
   R x a = f x ≡ a
 
-  σ : (_ : _) → is-hlevel n _
+  σ : (x : X) → is-hlevel n (Σ a ∶ A x , R x a)
   σ x = is-contr→is-hlevel n (Singl-contr (f x))
 ```
 
@@ -157,6 +160,63 @@ reflexivity.
 from-total-is-total
   : ∀ {u v n} {X : Type u} {A : X → Type v}
   → (f : (x : X) → A x)
-  → Πₙ-mod.is-total (from-total {n = n} f)
+  → Πₙ.is-total (from-total {n = n} f)
 from-total-is-total f x = f x , refl
+```
+
+Relational composition of graph relations. The composite
+`(R ⨾ᵍ T) x z` witnesses that some intermediate `y` exists
+with `R x y` and `T y z` both inhabited.
+
+```agda
+infixr 9 _⨾ᵍ_
+
+_⨾ᵍ_
+  : ∀ {u v w} {X : Type u} {Y : Type v}
+    {Z : Type w}
+  → (X → Y → Type v) → (Y → Z → Type w)
+  → X → Z → Type (v ⊔ w)
+(R ⨾ᵍ T) x z = Σ λ y → R x y × T y z
+```
+
+## Relational composition
+
+Composing two relations whose fibers are each contractible
+yields a relation with contractible fibers. The proof rearranges
+the nested Σ-type into a form where `Σ-contr-contr` applies,
+then transports back along the rearrangement equivalence.
+
+```agda
+contr-chain
+  : ∀ {u v w} {X : Type u} {Y : Type v} {Z : Type w}
+  → {R : X → Y → Type v} {T : Y → Z → Type w}
+  → ((x : X) → is-contr (Σ (R x)))
+  → ((y : Y) → is-contr (Σ (T y)))
+  → (x : X)
+  → is-contr (Σ ((R ⨾ᵍ T) x))
+contr-chain {Y = Y} {R = R} {T} cR cT x =
+  is-contr-equiv shuffle
+    (Σ-contr-contr (cR x) λ (y , _) → cT y)
+  where
+    Flat = Σ (λ (yr : Σ {A = Y} (R x)) → Σ (T (yr .fst)))
+
+    shuffle : Σ (λ z → Σ λ y → R x y × T y z) ≃ Flat
+    shuffle = iso→equiv
+      (λ (z , y , r , s) → (y , r) , z , s)
+      (λ ((y , r) , z , s) → z , y , r , s)
+      (λ _ → refl) (λ _ → refl)
+```
+
+Composing two `Πₙ 0` partial functions via `contr-chain`.
+Both `Y` and `Z` must live in the same universe so that the
+relational composite `R ⨾ᵍ T` lands back in `Type v`.
+
+```agda
+Πₙ-comp
+  : ∀ {u v} {X : Type u} {Y Z : Type v}
+  → Πₙ {X = X} 0 (λ _ → Y)
+  → Πₙ {X = Y} 0 (λ _ → Z)
+  → Πₙ {X = X} 0 (λ _ → Z)
+Πₙ-comp (R , cR) (T , cT) =
+  R ⨾ᵍ T , contr-chain cR cT
 ```

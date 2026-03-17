@@ -13,7 +13,8 @@ open import Core.Transport.J
 open import Core.Transport.Properties
   using (is-contr→loop-is-refl; transport⁻-transport;
         is-contr-is-prop; is-contr-×; weak-funext;
-        prop-inhabited→is-contr; is-prop→is-set)
+        prop-inhabited→is-contr; is-prop→is-set;
+        SinglP-contr; transport-equiv)
 open import Core.Type
 open import Core.Base
 open import Core.Data.Sigma
@@ -107,6 +108,78 @@ comp-equiv {f} {g} e d = ((f , e) ∙e (g , d)) .snd
   → (Σ (β , β') ∶ A × B , (f β , g β') ≡ (α , α'))
     ≃ ((Σ β ∶ A , f β ≡ α) × (Σ β' ∶ B , g β' ≡ α'))
 Σ-fiber-swap = Σ-equiv-snd (λ _ → ×-path-equiv) ∙e Σ-×-swap
+
+×-is-equiv
+  : ∀ {u v w z} {A : Type u} {B : Type v} {C : Type w} {D : Type z}
+    {f : A → C} {g : B → D}
+  → is-equiv f → is-equiv g
+  → is-equiv {A = A × B} (λ (x , y) → f x , g y)
+×-is-equiv ef eg .eqv-fibers (α , α') =
+  is-contr-equiv Σ-fiber-swap
+    (is-contr-× (ef .eqv-fibers α) (eg .eqv-fibers α'))
+
+private
+  SinglP-contr-rev
+    : ∀ {u} {A : I → Type u} (y : A i1)
+    → is-contr (Σ x ∶ A i0 , PathP A x y)
+  SinglP-contr-rev {A} y =
+    is-contr-equiv
+      (Σ-equiv-snd λ _ →
+        iso→equiv (λ p i → p (~ i)) (λ p i → p (~ i))
+          (λ _ → refl) (λ _ → refl))
+      (SinglP-contr {A = λ i → A (~ i)} y)
+
+Σ-dep-map-is-equiv
+  : ∀ {u v w z}
+    {A : Type u} {B : Type v}
+    {P : A → Type w} {Q : B → Type z}
+    {f : A → B} {g : ∀ a → P a → Q (f a)}
+  → is-equiv f → (∀ a → is-equiv (g a))
+  → is-equiv
+      (λ (ap : Σ P) → f (ap .fst) , g (ap .fst) (ap .snd))
+Σ-dep-map-is-equiv
+  {w = w} {z} {A = A} {P = P} {Q} {f} {g} ef eg =
+  comp-equiv snd-equiv fst-equiv
+  where
+    snd-equiv : is-equiv {A = Σ P} (λ (a , p) → a , g a p)
+    snd-equiv = Σ-equiv-snd (λ a → g a , eg a) .snd
+
+    D : ∀ {b} → Q b → fiber f b → Type z
+    D q (a , α) = Sigma (Q (f a)) λ q' →
+      PathP (λ i → Q (α i)) q' q
+
+    -- The change-of-base map (a, q') ↦ (f a, q') is an
+    -- equivalence when f is. The fiber at (b, q) decomposes
+    -- via Σ-path into Σ (a, α : f a ≡ b), Σ q', PathP Q∘α q' q.
+    -- The inner part is SinglP-contr-rev, the outer is fiber f b.
+    fst-equiv
+      : is-equiv {A = Sigma A (Q ∘ f)}
+          (λ (a , q') → f a , q')
+    fst-equiv .eqv-fibers (b , q) =
+      is-contr-equiv shuffle
+        (Σ-contr-contr (ef .eqv-fibers b) inner)
+      where
+        inner : (fib : fiber f b) → is-contr (D q fib)
+        inner (a , α) =
+          SinglP-contr-rev {A = λ i → Q (α i)} q
+
+        shuffle
+          : fiber (λ (a , q') → f a , q') (b , q)
+          ≃ Sigma (fiber f b) (D q)
+        shuffle = iso→equiv fwd bwd
+          (λ _ → refl) (λ _ → refl)
+          where
+            fwd : fiber _ (b , q)
+                → Sigma (fiber f b) (D q)
+            fwd ((a , q') , e) =
+              (a , ap fst e) , q' , ap snd e
+            bwd : Sigma (fiber f b) (D q)
+                → fiber _ (b , q)
+            bwd ((a , α) , q' , β) =
+              (a , q') , eq
+              where
+                eq : (f a , q') ≡ (b , q)
+                eq i = α i , β i
 
 Σ-assoc
   : ∀ {u v w} {A : Type u} {B : A → Type v} {C : (a : A) → B a → Type w}
