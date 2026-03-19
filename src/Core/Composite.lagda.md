@@ -6,7 +6,7 @@ Path composition structures and higher coherences.
 
 module Core.Composite where
 
-open import Core.Transport
+open import Core.Transport.Base
 open import Core.Base
 open import Core.Type
 open import Core.Data.Sigma

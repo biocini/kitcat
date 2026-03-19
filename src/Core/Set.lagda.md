@@ -13,14 +13,15 @@ This module uses `--cubical` (not `--erased-cubical`) because we need `ua` from
 module Core.Set where
 
 open import Core.Data.Nat using (Nat)
-open import Core.Transport
+open import Core.Transport.Base
+open import Core.Transport.Properties
 open import Core.Univalence
-open import Core.HLevel
-open import Core.Equiv
+open import Core.HLevel.Base
+open import Core.Equiv.Properties
 open import Core.Data.Sigma
 open import Core.Data.Empty
 open import Core.Data.Bool
-open import Core.Path
+open import Core.Path.Base
 open import Core.Base
 open import Core.Type
 open import Core.Kan

@@ -15,7 +15,8 @@ module Core.Discrete where
 open import Core.Type
 open import Core.Base
 open import Core.Kan
-open import Core.Transport
+open import Core.Transport.Base
+open import Core.Transport.J
 open import Core.Data.Dec
 open Dec
 open import Core.Data.Sigma

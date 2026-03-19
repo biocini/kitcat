@@ -10,7 +10,7 @@ open import HData.Quotient.Type
 open import Core.Type
 open import Core.Base
 open import Core.Kan
-open import Core.Transport
+open import Core.Transport.Base
 open import Core.HLevel.Base using (is-set→SquareP)
 
 private variable

@@ -16,7 +16,8 @@ open import Core.Data.Sigma
 open import Core.Data.Empty
 open import Core.Data.Nat.Type
 open import Core.Data.Nat.Base using (_+_)
-open import Core.Transport
+open import Core.Transport.Base
+open import Core.Transport.Properties
 open import Core.HLevel.Base public
 
 private variable

@@ -16,10 +16,13 @@ module Core.Retract where
 open import Core.Trait.Trunc
 open import Core.Data.Sigma
 open import Core.Data.Nat using (Nat)
-open import Core.Transport
+open import Core.Transport.Base
+open import Core.Transport.J
+open import Core.Transport.Properties
+  using (transport⁻-transport)
 open import Core.Type
 open import Core.Base
-open import Core.Equiv
+open import Core.Equiv.Base
 open import Core.Kan
 
 private variable

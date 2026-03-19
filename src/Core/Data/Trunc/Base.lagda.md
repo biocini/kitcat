@@ -9,7 +9,7 @@ module Core.Data.Trunc.Base where
 open import Core.Type
 open import Core.Base
 open import Core.Kan
-open import Core.Transport
+open import Core.Transport.Base
 open import Core.Data.Trunc.Type
 open import Core.Trait.Trunc using (Π-is-prop)
 

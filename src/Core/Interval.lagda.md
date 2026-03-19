@@ -9,7 +9,7 @@ module Core.Interval where
 open import Core.Type
 open import Core.Base
 open import Core.Kan
-open import Core.Transport
+open import Core.Transport.Base
 
 private variable ℓ : Level
 

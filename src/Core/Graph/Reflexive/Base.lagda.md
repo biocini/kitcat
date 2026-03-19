@@ -9,12 +9,13 @@ This module is based on Sterling's Reflexive Graph Lenses paper.
 module Core.Graph.Reflexive.Base where
 
 open import Core.Type
-open import Core.Equiv
+open import Core.Equiv.Base
 open import Core.Data.Sigma
 open import Core.Kan
-open import Core.HLevel
+open import Core.HLevel.Base
 open import Core.Base
-open import Core.Transport
+open import Core.Transport.Base
+open import Core.Transport.Properties
 open import Core.Trait.Cast
 open import Core.Graph.Base
 
