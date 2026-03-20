@@ -6,7 +6,7 @@ Homogeneous composition in the universe.
 module Core.HCompU where
 
 open import Core.Base
-open import Core.Path
+open import Core.Path.Base
 open import Core.Type
 open import Core.Data.Sigma
 open import Core.Kan

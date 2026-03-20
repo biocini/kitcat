@@ -15,7 +15,7 @@ open import Core.Data.Sigma
 open import Core.Data.Trunc
 open import Core.Data.Empty
 open import Core.Data.Sum
-open import Core.HLevel
+open import Core.HLevel.Base
 open import Core.Set
 open import Core.Base
 open import Core.Type

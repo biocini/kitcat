@@ -6,7 +6,7 @@ Foldable trait: types that can be folded to a summary value.
 module Core.Trait.Foldable where
 
 open import Core.Type using (Level; Type; Typeω; _⊔_)
-open import Core.Data.Bool using (Bool; false; true)
+open import Core.Data.Bool.Type using (Bool; false; true)
 open import Core.Data.Nat.Type
 open import Core.Trait.Effect
 open import Core.Trait.Semigroup

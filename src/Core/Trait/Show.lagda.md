@@ -8,7 +8,7 @@ module Core.Trait.Show where
 
 open import Core.Type
 open import Core.Data.String using (module String)
-open import Core.Data.Bool
+open import Core.Data.Bool.Type
 
 open String using (String)
 

@@ -23,7 +23,7 @@ open import Core.Data.Empty
 open import Core.Data.Nat using (Nat; Z; S)
 open import Core.Data.Nat.Base using (max; _≤_)
 import Core.Data.Nat.Properties as Nat
-open import Core.HLevel
+open import Core.HLevel.Base
   using ( is-hlevel; Σ-is-hlevel; is-hlevel-≤
         ; is-hlevel-is-prop; nType
         ; is-contr→is-hlevel; is-prop→is-hlevel-suc )

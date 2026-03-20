@@ -7,7 +7,7 @@ Pointed types: types equipped with a distinguished basepoint.
 module Core.Data.Pointed where
 
 open import Core.Type
-open import Core.Data.Sigma
+open import Core.Data.Sigma.Type
 
 Type* : ∀ u → Type (u ₊)
 Type* u = Σ A ∶ Type u , A

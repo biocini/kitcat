@@ -21,7 +21,7 @@ open import Core.Data.Sigma
 open import Core.Data.Empty
 open import Core.Data.Dec.Type using (Dec; yes; no)
 open import Core.Data.Maybe using (Maybe; nothing; just)
-open import Core.HLevel using (Σ-is-prop)
+open import Core.HLevel.Base using (Σ-is-prop)
 open import Core.Set using (propext)
 open import Core.Transport.Base using (is-prop→PathP; coe01)
 open import Core.Transport.Properties using (is-prop-is-prop)
