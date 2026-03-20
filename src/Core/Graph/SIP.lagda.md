@@ -18,7 +18,7 @@ module Core.Graph.SIP where
 open import Core.Univalence
 open import Core.Transport.Base using (is-prop→PathP)
 open import Core.HLevel.Base using (Σ-prop-path)
-open import Core.Equiv
+open import Core.Equiv.Properties
 open import Core.Kan
 open import Core.Sub
 open import Core.Data.Sigma

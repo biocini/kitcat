@@ -12,7 +12,7 @@ open import Core.Base
 open import Core.Kan
 open import Core.Data.Sigma
 open import Core.Transport
-open import Core.Equiv
+open import Core.Equiv.Base
 
 open Core.Transport public
   using ( is-identity-system; is-based-identity-system

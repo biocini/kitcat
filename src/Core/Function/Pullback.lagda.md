@@ -8,7 +8,7 @@ module Core.Function.Pullback where
 open import Core.Type
 open import Core.Base
 open import Core.Data.Sigma
-open import Core.Equiv
+open import Core.Equiv.Base
 open import Core.Kan
 
 Pullback

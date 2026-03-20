@@ -17,7 +17,7 @@ open import Core.Data.Sigma
 open import Core.Data.Trunc
 open Trunc
 open import Core.Function.Embedding
-open import Core.Equiv
+open import Core.Equiv.Base
 open import Core.Function.Surjection
 
 private variable
