@@ -20,10 +20,10 @@ open import Core.Type
 open import Core.Base
 open import Core.Data.Sigma
 open import Core.Data.Nat
-open import Core.HLevel
+open import Core.HLevel.Base
 open import Core.Kan
-open import Core.Transport
-open import Core.Equiv
+open import Core.Transport.Base
+open import Core.Equiv.Base
 
 import Cat.Data.Base
 

@@ -16,16 +16,16 @@ private module X where
   open import Agda.Primitive.Cubical public using (primTransp; primHComp)
 
 primitive
-  prim^glueU : {@0 ℓ : Level} {φ : I} {T : I → Partial φ (Type ℓ)}
+  prim^glueU : {ℓ : Level} {φ : I} {T : I → Partial φ (Type ℓ)}
              → {A : Type ℓ [ φ ↦ T i0 ]}
              → PartialP φ (T i1) → outS A → X.primHComp T (outS A)
-  prim^unglueU : {@0 ℓ : Level} {φ : I} {T : I → Partial φ (Type ℓ)}
+  prim^unglueU : {ℓ : Level} {φ : I} {T : I → Partial φ (Type ℓ)}
                → {A : Type ℓ [ φ ↦ T i0 ]}
                → X.primHComp T (outS A) → outS A
   -- Needed for transp.
   primFaceForall : (I → I) → I
 
-transp-proof : ∀ {@0 l} (E : I → Type l) (φ : I)
+transp-proof : ∀ {l} (E : I → Type l) (φ : I)
             → (a : Partial φ (E i0))
             → (b : E i1 [ φ ↦ (λ o → transp (λ i → E i) i0 (a o)) ] )
             → Σ λ (x : E i0) → (transp E i0 x ≡ outS b)

@@ -15,10 +15,10 @@ module Cat.Data.Iso (M : magmoids) (u : ∀ x → N.unital M x) where
 open import Core.Type
 open import Core.Base
 open import Core.Data.Sigma
-open import Core.HLevel
+open import Core.HLevel.Base
 open import Core.Kan using (pcom; _∙_)
-open import Core.Transport
-open import Core.Equiv hiding (_≃_)
+open import Core.Transport.Base
+open import Core.Equiv.Base hiding (_≃_)
 
 open import Cat.Data.Base M hiding (assoc)
 open N M

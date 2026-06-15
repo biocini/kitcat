@@ -20,7 +20,8 @@ open import Core.Type
 open import Core.Base
 open import Core.Data.Sigma
 open import Core.Kan
-open import Core.Transport
+open import Core.Transport.Base
+open import Core.Transport.J
 open import Core.Equiv.Base using (is-equiv)
 open import Core.Function.Embedding using (equiv→lc)
 open import Core.HLevel.Base using (⊤-is-prop)

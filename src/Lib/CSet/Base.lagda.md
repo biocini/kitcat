@@ -21,9 +21,9 @@ open import Core.Data.Nat
 open import Core.Data.Fin.Type
 open import Core.Data.Fin.Base
 open import Core.Kan
-open import Core.Equiv
+open import Core.Equiv.Base
 open import Core.Trait.Trunc
-open import Core.Transport
+open import Core.Transport.Base
 
 open import Lib.SSet.Base
   using (Spine; [_]; _⨾_; vertex; edge; _⨾ₚ_/ₚ_)

@@ -26,8 +26,9 @@ open import Core.Type
 open import Core.Base
 open import Core.Data.Sigma
 open import Core.Kan
-open import Core.Transport
-open import Core.Equiv
+open import Core.Transport.Base
+open import Core.Transport.J
+open import Core.Equiv.Properties
 open import Core.Univalence
 open import Cat.Type
 open import Cat.Base using (module Cat)

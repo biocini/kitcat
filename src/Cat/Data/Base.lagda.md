@@ -19,10 +19,10 @@ open import Core.Type
 open import Core.Base
 open import Core.Data.Sigma
 open import Core.Data.Nat
-open import Core.HLevel
+open import Core.HLevel.Base
 open import Core.Kan
-open import Core.Transport
-open import Core.Equiv renaming (_≃_ to _≃e_)
+open import Core.Transport.Base
+open import Core.Equiv.Properties renaming (_≃_ to _≃e_)
 open import Core.Function.Surjection using (is-surjective)
 open import Core.Function.Embedding using (is-embedding; is-embedding→injective)
 

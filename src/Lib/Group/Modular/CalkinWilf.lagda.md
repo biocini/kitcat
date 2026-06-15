@@ -14,7 +14,7 @@ open import Core.Base using (_≡_; refl; sym; ap)
 open import Core.Type using (Type; 0ℓ; ⊤; tt)
 open import Core.Kan using (_∙_)
 open import Core.Data.Empty using (⊥)
-open import Core.Path using (_≢_)
+open import Core.Path.Base using (_≢_)
 open import Core.Transport.Base using (transport-refl)
 open import Core.Transport.J using (subst)
 

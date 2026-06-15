@@ -158,6 +158,27 @@ module Virtual {o} {h} (C : category o h) where
     emb-composite-pt f g w a _ idn
     ∙ interchange f g w a _ idn
 
+  -- Two-step expansion of a left-nested composite
+  -- ((f ⨾ g) ⨾ h) into the E₃ target, pointwise.
+  emb-nest
+    : ∀ {x y z w} (f : hom x y) (g : hom y z)
+      (h : hom z w)
+      w' (a : hom w' x) v (b : hom w v)
+    → emb ((f ⨾ g) ⨾ h) w' a v b
+    ≡ emb f w' a v (noy g v (noy h v b))
+  emb-nest f g h w' a v b =
+    emb-composite-pt (f ⨾ g) h w' a v b
+    ∙ emb-composite-pt f g w' a v (noy h v b)
+
+  emb-nest-ext
+    : ∀ {x y z w} (f : hom x y) (g : hom y z)
+      (h : hom z w)
+    → emb ((f ⨾ g) ⨾ h)
+    ≡ (λ w' a v b →
+        emb f w' a v (noy g v (noy h v b)))
+  emb-nest-ext f g h =
+    emb-ext (emb-nest f g h)
+
   comp-eq
     : ∀ {x y z} (f : hom x y) (g : hom y z)
     → f ⨾ g ≡ yon g _ f
@@ -411,9 +432,7 @@ The ternary composite fiber E₃ and its contractibility.
         , ∀ w' (a : hom w' x) v (b : hom w v)
           → emb s w' a v b ≡ E₃ f g h w' a v b)
   E₃-contr f g h .center .fst = (f ⨾ g) ⨾ h
-  E₃-contr f g h .center .snd w' a v b =
-    emb-composite-pt (f ⨾ g) h w' a v b
-    ∙ emb-composite-pt f g w' a v (noy h v b)
+  E₃-contr f g h .center .snd = emb-nest f g h
   E₃-contr f g h .paths =
     is-contr→is-prop
       (subst (λ T → is-contr

@@ -18,8 +18,8 @@ open X public renaming (primTransp to transp) using () public
 
 private
   variable
-    @0 ℓ : I → Level
-    @0 u : Level
+    ℓ : I → Level
+    u : Level
     A : Type u
     U : I → Type u
 
@@ -75,7 +75,7 @@ No reason to change what 1lab did for the following two lemmas:
 
 ```agda
 
-is-contr→extend : ∀ {@0 ℓ} {A : Type ℓ} → is-contr A
+is-contr→extend : ∀ {ℓ} {A : Type ℓ} → is-contr A
                 → (i : I) (p : Partial i A) →  A [ i ↦ p ]
 is-contr→extend c i p = inS do
   hcom (∂ i) λ where
@@ -219,11 +219,11 @@ kext φ P g f = com (∂.cover φ P f) (∂ φ) sys
     sys k (φ = i1) = g k (f k)
 {-# DISPLAY com (∂.cover φ P f) φ (kext.sys φ P g f) = kext φ P g f #-}
 
-HComposite : ∀ {@0 u} {A : I → Type u} {w x : A i0} {y z : A i1}
+HComposite : ∀ {u} {A : I → Type u} {w x : A i0} {y z : A i1}
             → (p : x ≡ w) (q : x ≡ y ∶ A) (r : y ≡ z) → Type u
 HComposite {A} {w} {z} p q r = Σ (λ (s : PathP A w z) → HCell p q r s)
 
-module HComposite {@0 u} {A : I → Type u} {w x : A i0} {y z : A i1}
+module HComposite {u} {A : I → Type u} {w x : A i0} {y z : A i1}
   (p : x ≡ w) (q : x ≡ y ∶ A) (r : y ≡ z)
   (α β : HComposite p q r)
   where
@@ -295,7 +295,7 @@ module pcom where
     idemr : composite (sym q) refl refl ≡ q
     idemr = unique (sym q) refl refl (q , λ i j → q (i ∨ ~ j))
 
-  module _ {A : I → Type u} {@0 v : Level} {B : I → Type v}
+  module _ {A : I → Type u} {v : Level} {B : I → Type v}
     (f : ∀ i → A i → B i)
     {w x : A i0} {y z : A i1}
     (p : x ≡ w) (q : x ≡ y ∶ A) (r : y ≡ z) where
@@ -490,7 +490,7 @@ Any two fillers for the same system agree on their lids.
 ```agda
 
 hcom-unique
-  : ∀ {@0 u} {A : Type u} {φ : I}
+  : ∀ {u} {A : Type u} {φ : I}
   → (u : Sys φ A)
   → (h2 : ∀ i → A [ (φ ∨ ~ i) ↦
       (λ { (φ = i1) → u i 1=1; (i = i0) → sys-base φ u }) ])
@@ -503,7 +503,7 @@ hcom-unique {φ = φ} u h2 = inS λ i →
     k (k = i0) → sys-base φ u
 
 hcom-lid-unique
-  : ∀ {@0 u} {A : Type u} {φ : I}
+  : ∀ {u} {A : Type u} {φ : I}
   → (u : Sys φ A)
   → (h1 h2 : ∀ i → A [ (φ ∨ ~ i) ↦
       (λ { (φ = i1) → u i 1=1; (i = i0) → sys-base φ u }) ])
@@ -517,7 +517,7 @@ hcom-lid-unique {φ = φ} u h1 h2 = inS λ i →
     k (k = i0) → sys-base φ u
 
 com-unique
-  : ∀ {@0 u} {A : I → Type u} {φ : I}
+  : ∀ {u} {A : I → Type u} {φ : I}
   → (u : PartialsP φ A)
   → (h2 : ∀ i → A i [ (φ ∨ ~ i) ↦
       (λ { (φ = i1) → u i 1=1; (i = i0) → u i0 1=1 }) ])
@@ -530,7 +530,7 @@ com-unique {A = A} {φ = φ} u h2 = inS λ i →
     k (k = i0) → u i0 1=1
 
 com-lid-unique
-  : ∀ {@0 u} {A : I → Type u} {φ : I}
+  : ∀ {u} {A : I → Type u} {φ : I}
   → (u : PartialsP φ A)
   → (h1 h2 : ∀ i → A i [ (φ ∨ ~ i) ↦
       (λ { (φ = i1) → u i 1=1; (i = i0) → u i0 1=1 }) ])
@@ -544,7 +544,7 @@ com-lid-unique {A = A} {φ = φ} u h1 h2 = inS λ i →
     k (k = i0) → u i0 1=1
 
 hcom-cong
-  : ∀ {@0 u} {A : Type u} {φ : I}
+  : ∀ {u} {A : Type u} {φ : I}
   → (u : Sys φ A) (u' : Sys φ A)
   → (ueq : ∀ i → PartialP (φ ∨ ~ i)
       (λ o → u i o ≡ u' i o))
@@ -636,7 +636,7 @@ module Path {A : Type u} where
     fill : SquareP (λ i j → q j ≡ comp i .fst j) (cat.lcoh p q r) refl (cat.rcoh p q r) refl
     fill = cong snd comp
 
-  idem : ∀ {@0 u} {A : Type u} (x : A) → refl ∙ refl ≡ refl {x = x}
+  idem : ∀ {u} {A : Type u} (x : A) → refl ∙ refl ≡ refl {x = x}
   idem x = cong fst comp
     module idem where
     private
@@ -767,7 +767,7 @@ open Chain public
 ## Triangles
 ```agda
 
-module Triangle {@0 ℓ} {A : Type ℓ} {x y z : A}
+module Triangle {ℓ} {A : Type ℓ} {x y z : A}
   (p : x ≡ y) (q : y ≡ z) (r : x ≡ z)
   (sq : Triangle p q r)
   where
@@ -835,7 +835,7 @@ square-sym-v sq i j = sq i (~ j)
 ```agda
 
 ap-comp-dep
-  : ∀ {@0 u v} {A : Type u} {B : A → Type v}
+  : ∀ {u v} {A : Type u} {B : A → Type v}
     {x y z : A} (f : (a : A) → B a)
     (p : x ≡ y) (q : y ≡ z)
   → PathP (λ i → PathP (λ j → B (cat.fill p q j i))

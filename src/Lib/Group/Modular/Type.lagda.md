@@ -10,8 +10,8 @@ for common group words.
 
 module Lib.Group.Modular.Type where
 
-open import Core.Data.Sum using (_⊎_; inl; inr)
-open import Core.Data.Bool using (Bool; true; false)
+open import Core.Data.Sum.Type using (_⊎_; inl; inr)
+open import Core.Data.Bool.Type using (Bool; true; false)
 open import Core.Type using (Type; 0ℓ)
 ```
 

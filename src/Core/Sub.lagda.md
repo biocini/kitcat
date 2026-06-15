@@ -22,4 +22,3 @@ partial-pushout
     → A (is1-right i j z) [ (i ∧ j) ↦ (λ { (i ∧ j = i1) → ai 1=1 }) ])
   → PartialP (i ∨ j) A
 partial-pushout i j u v = primPOr i j (λ z → outS (u z)) (λ z → outS (v z))
-

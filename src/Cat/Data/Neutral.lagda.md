@@ -20,10 +20,11 @@ open import Core.Type
 open import Core.Base
 open import Core.Data.Sigma
 open import Core.Data.Nat
-open import Core.HLevel
+open import Core.HLevel.Base
 open import Core.Kan
-open import Core.Transport
-open import Core.Equiv
+open import Core.Transport.Base
+open import Core.Transport.J
+open import Core.Equiv.Properties
 open import Core.Function.Surjection
   using (is-surjective; equiv→surjective
        ; surjective+embedding→equiv)

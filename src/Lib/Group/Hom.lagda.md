@@ -8,7 +8,7 @@ Adapted from TypeTopology, Groups.Type (lines 188--271).
 module Lib.Group.Hom where
 
 open import Core.Transport.Properties using (is-prop→is-set)
-open import Core.HLevel using (Π-is-set)
+open import Core.HLevel.Base using (Π-is-set)
 open import Core.Base using (_≡_; refl; sym; ap; is-set)
 open import Core.Type using (Level; Type; _⊔_; id; _∘_; ⌞_⌟)
 open import Core.Kan using (_∙_; _≡⟨_⟩_; _≡˘⟨_⟩_; _∎)

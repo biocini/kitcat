@@ -31,8 +31,8 @@ open import Agda.Primitive.Cubical public
 
 private
   variable
-    @0 ℓ : I → Level
-    @0 u v : Level
+    ℓ : I → Level
+    u v : Level
     A : Type u
 
 ILevel : Type
@@ -71,15 +71,15 @@ open import Agda.Builtin.Cubical.Path public
 ∂ i = ~ i ∨ i
 
 module ∂ where
-  contract : {@0 ℓ : I → Level} (A : ∀ i → Type (ℓ i)) (i j : I) → Type (ℓ (i ∨ j))
+  contract : {ℓ : I → Level} (A : ∀ i → Type (ℓ i)) (i j : I) → Type (ℓ (i ∨ j))
   contract A i j = A (i ∨ j)
   {-# INLINE contract #-}
 
-  extend : {@0 ℓ : I → Level} (A : ∀ i → Type (ℓ i)) (i j : I) → Type (ℓ (i ∧ j))
+  extend : {ℓ : I → Level} (A : ∀ i → Type (ℓ i)) (i j : I) → Type (ℓ (i ∧ j))
   extend A i j = A (i ∧ j)
   {-# INLINE extend #-}
 
-  cover : {@0 ℓ : I → Level} {@0 A : ∀ i → Type (ℓ i)}
+  cover : {ℓ : I → Level} {@0 A : ∀ i → Type (ℓ i)}
         → (φ : I)
         → (P : ∀ k → A (φ ∧ k) → Type (ℓ (φ ∧ k)))
         → (∀ k → A k)
@@ -87,7 +87,7 @@ module ∂ where
   cover φ P f i = P (φ ∧ i) (f (φ ∧ i))
   {-# INLINE cover #-}
 
-  sym : {@0 ℓ : I → Level} (A : ∀ i → Type (ℓ i)) (i : I) → Type (ℓ (~ i))
+  sym : {ℓ : I → Level} (A : ∀ i → Type (ℓ i)) (i : I) → Type (ℓ (~ i))
   sym A i = A (~ i)
   {-# INLINE sym #-}
 
@@ -158,7 +158,7 @@ apd : {@0 A : I → Type u} {@0 B : ∀ i → A i → Type v}
 apd f p i = f i (p i)
 {-# INLINE apd #-}
 
-ap2 : ∀ {@0 w} {@0 A : Type u} {@0 B : A → Type v} {@0 C : ∀ x → B x → Type w}
+ap2 : ∀ {w} {@0 A : Type u} {@0 B : A → Type v} {@0 C : ∀ x → B x → Type w}
   → (f : ∀ x a → C x a)
   → {x y : A} (p : x ≡ y)
   → {a : B x} {b : B y}
@@ -167,7 +167,7 @@ ap2 : ∀ {@0 w} {@0 A : Type u} {@0 B : A → Type v} {@0 C : ∀ x → B x →
 ap2 f p q i = f (p i) (q i)
 {-# INLINE ap2 #-}
 
-ap2s : ∀ {@0 w} {@0 A : Type u} {@0 B : Type v} {@0 C : Type w}
+ap2s : ∀ {w} {@0 A : Type u} {@0 B : Type v} {@0 C : Type w}
     → (f : A → B → C)
     → {a₁ a₂ : A} {b₁ b₂ : B}
     → a₁ ≡ a₂

@@ -532,7 +532,10 @@ projection (flipped).
 
 ```
 
-### Identity uniqueness
+### Left cancellation and identity uniqueness
+
+`lcancel` derives `q₁ ≡ q₂` from `p ∙ q₁ ≡ p ∙ q₂`
+by pre-composing with `sym p`.
 
 Any loop `e : x ≡ x` satisfying yon-idempotency
 `yon e x e ≡ e` equals `refl`. The proof left-cancels `e`
@@ -541,17 +544,16 @@ the hypothesis, and `pcom.idemr`.
 
 ```agda
 
-  private
-    lcancel : {x y : A} (e : x ≡ x) {q₁ q₂ : x ≡ y}
-      → e ∙ q₁ ≡ e ∙ q₂ → q₁ ≡ q₂
-    lcancel e {q₁} {q₂} p =
-      sym (unitl q₁)
-      ∙ ap (_∙ q₁) (sym (invl e))
-      ∙ sym (assoc (sym e) e q₁)
-      ∙ ap (sym e ∙_) p
-      ∙ assoc (sym e) e q₂
-      ∙ ap (_∙ q₂) (invl e)
-      ∙ unitl q₂
+  lcancel : {x y z : A} (p : x ≡ y) {q₁ q₂ : y ≡ z}
+    → p ∙ q₁ ≡ p ∙ q₂ → q₁ ≡ q₂
+  lcancel p {q₁} {q₂} h =
+    sym (unitl q₁)
+    ∙ ap (_∙ q₁) (sym (invl p))
+    ∙ sym (assoc (sym p) p q₁)
+    ∙ ap (sym p ∙_) h
+    ∙ assoc (sym p) p q₂
+    ∙ ap (_∙ q₂) (invl p)
+    ∙ unitl q₂
 
   unit-is-prop : {x : A} (e : x ≡ x)
     → yon e x e ≡ e → e ≡ refl

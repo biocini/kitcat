@@ -15,7 +15,7 @@ open Virtual C
 open import Core.Type
 open import Core.Base
 open import Core.Data.Sigma
-open import Core.Transport using (Singl-contr)
+open import Core.Transport.Base using (Singl-contr)
 ```
 
 ## The covariant record

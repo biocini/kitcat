@@ -15,7 +15,8 @@ open import Core.Type
 open import Core.Base
 open import Core.Data.Sigma
 open import Core.Kan
-open import Core.Transport
+open import Core.Transport.Base
+open import Core.Transport.J
 open import Core.Path.Base using (ap-comp)
 open import Cat.Type
 ```
@@ -73,6 +74,19 @@ module _ {o h} (C : category o h) where
     contr-ind (E₄-contr f g h k)
       (λ where (s , q) → P s q)
       base (s , q)
+
+  private
+    assoc-σ
+      : ∀ {x y z w}
+        (f : hom x y) (g : hom y z) (h : hom z w)
+      → E₃-contr-ext f g h .center
+      ≡ (   f ⨾ (g ⨾ h)
+          , emb-composite f (g ⨾ h)
+          ∙ emb-ext λ w' a v' b →
+              ap (emb f w' a v')
+                (noy-composite g h b))
+    assoc-σ f g h =
+      is-contr→is-prop (E₃-contr-ext f g h) _ _
 
   module pentagon-fibers
     {x y z w v}
@@ -156,18 +170,6 @@ module _ {o h} (C : category o h) where
       (σ₁₄ ∙ σ₄₅) (pcom (sym σ₁₂) σ₂₃ σ₃₅)
 
     private
-      assoc-σ
-        : ∀ {x y z w}
-          (f : hom x y) (g : hom y z) (h : hom z w)
-        → E₃-contr-ext f g h .center
-        ≡ (   f ⨾ (g ⨾ h)
-            , emb-composite f (g ⨾ h)
-            ∙ emb-ext λ w' a v' b →
-                ap (emb f w' a v')
-                  (noy-composite g h b))
-      assoc-σ f g h =
-        is-contr→is-prop (E₃-contr-ext f g h) _ _
-
       γ₁₂ : pt₁ ≡ pt₂
       γ₁₂ i =
         assoc f g h i ⨾ k
@@ -186,8 +188,7 @@ module _ {o h} (C : category o h) where
                 _ idn v' b))
 
       v₃ : pt₃ ≡ γ₃₅-pt i0
-      v₃ i =
-        f ⨾ ((g ⨾ h) ⨾ k)
+      v₃ i = _
         , emb-composite f ((g ⨾ h) ⨾ k)
         ∙ emb-ext λ w' a v' b →
             sym (ap-comp (emb f w' a v')
@@ -196,8 +197,7 @@ module _ {o h} (C : category o h) where
                 (noy k v' b))) i
 
       v₅ : γ₃₅-pt i1 ≡ pt₅
-      v₅ i =
-        f ⨾ (g ⨾ (h ⨾ k))
+      v₅ i = _
         , emb-composite f (g ⨾ (h ⨾ k))
         ∙ emb-ext λ w' a v' b →
             ap-comp (emb f w' a v')
@@ -214,8 +214,7 @@ module _ {o h} (C : category o h) where
               (noy-composite g h (noy k v' b))
 
       w₂ : pt₂ ≡ γ₂₃-pt i0
-      w₂ i =
-        (f ⨾ (g ⨾ h)) ⨾ k
+      w₂ i = _
         , Path.assoc
             (emb-composite (f ⨾ (g ⨾ h)) k)
             (emb-ext λ w' a v' b →
@@ -227,8 +226,7 @@ module _ {o h} (C : category o h) where
                     (noy k v' b))) i
 
       w₃ : γ₂₃-pt i1 ≡ pt₃
-      w₃ i =
-        f ⨾ ((g ⨾ h) ⨾ k)
+      w₃ i = _
         , sym (Path.assoc
             (emb-composite f ((g ⨾ h) ⨾ k))
             (emb-ext λ w' a v' b →
@@ -248,8 +246,7 @@ module _ {o h} (C : category o h) where
               (noy-composite h k b)
 
       w₄ : pt₄ ≡ γ₄₅-pt i0
-      w₄ i =
-        (f ⨾ g) ⨾ (h ⨾ k)
+      w₄ i = _
         , Path.assoc
             (emb-composite (f ⨾ g) (h ⨾ k))
             (emb-ext λ w' a v' b →
@@ -261,8 +258,7 @@ module _ {o h} (C : category o h) where
                   (noy-composite h k b)) i
 
       w₅ : γ₄₅-pt i1 ≡ pt₅
-      w₅ i =
-        f ⨾ (g ⨾ (h ⨾ k))
+      w₅ i = _
         , sym (Path.assoc
             (emb-composite f (g ⨾ (h ⨾ k)))
             (emb-ext λ w' a v' b →
@@ -282,8 +278,7 @@ module _ {o h} (C : category o h) where
               (noy h v' (noy k v' b))
 
       w₁ : pt₁ ≡ γ₁₄-pt i0
-      w₁ i =
-        ((f ⨾ g) ⨾ h) ⨾ k
+      w₁ i = _
         , Path.assoc
             (emb-composite ((f ⨾ g) ⨾ h) k)
             (emb-ext λ w' a v' b →
@@ -317,8 +312,7 @@ module _ {o h} (C : category o h) where
           (noy-composite h k b i) j))
 
       w₁₄ : γ₁₄-pt i1 ≡ pt₄
-      w₁₄ i =
-        (f ⨾ g) ⨾ (h ⨾ k)
+      w₁₄ i = _
         , (sym (Path.assoc A₁₄ B₁₄ C₁₄)
           ∙ ap (A₁₄ ∙_) N₁₄) i
         where
@@ -487,33 +481,19 @@ not `absorb-coh`. The `α₂₃` edge remains abstract.
             unitr-σ i .snd j w a v (noy g v b))
 
       v₃ : γ₁₃-pt i1 ≡ pt₃
-      v₃ i =
-        f ⨾ g
-        , Path.unitr (emb-composite f g) i
-
-      assoc-σ-fig
-        : E₃-contr-ext f idn g .center
-        ≡ (   f ⨾ (idn ⨾ g)
-            , emb-composite f (idn ⨾ g)
-            ∙ emb-ext λ w' a v' b →
-                ap (emb f w' a v')
-                  (noy-composite idn g b))
-      assoc-σ-fig =
-        is-contr→is-prop
-          (E₃-contr-ext f idn g) _ _
+      v₃ i = _ , Path.unitr (emb-composite f g) i
 
       γ₁₂-pt : ∀ i → fiber emb
         (λ w a v b → emb f w a v (noy g v b))
       γ₁₂-pt i =
         assoc f idn g i
-        , assoc-σ-fig i .snd
+        , assoc-σ f idn g i .snd
         ∙ emb-ext λ w a v b →
             ap (emb f w a v)
               (absorb-l (noy g v b))
 
       w₁ : pt₁ ≡ γ₁₂-pt i0
-      w₁ i =
-        (f ⨾ idn) ⨾ g
+      w₁ i = _
         , Path.assoc
             (emb-composite (f ⨾ idn) g)
             (emb-ext λ w a v b →
@@ -524,8 +504,7 @@ not `absorb-coh`. The `α₂₃` edge remains abstract.
                   (absorb-l (noy g v b))) i
 
       w₂ : γ₁₂-pt i1 ≡ pt₂
-      w₂ i =
-        f ⨾ (idn ⨾ g)
+      w₂ i = _
         , sym (Path.assoc
             (emb-composite f (idn ⨾ g))
             (emb-ext λ w a v b →
@@ -674,8 +653,7 @@ triangle from the weak version.
                 ∙ absorb-l (noy g v b))
 
         w₀ : pt₂ ≡ γ₂₃-pt i0
-        w₀ i =
-          f ⨾ (idn ⨾ g)
+        w₀ i = _
           , emb-composite f (idn ⨾ g)
           ∙ emb-ext λ w a v b →
               sym (ap-comp (emb f w a v)
@@ -685,8 +663,7 @@ triangle from the weak version.
         v₁ : γ₂₃-pt i1
           ≡ (f ⨾ g
             , emb-composite f g ∙ refl)
-        v₁ i =
-          f ⨾ g
+        v₁ i = _
           , emb-composite f g
           ∙ emb-ext λ w a v b →
               ap (ap (emb f w a v))
@@ -696,9 +673,7 @@ triangle from the weak version.
           : (f ⨾ g
             , emb-composite f g ∙ refl)
           ≡ pt₃
-        v₂ i =
-          f ⨾ g
-          , Path.unitr (emb-composite f g) i
+        v₂ i = _ , Path.unitr (emb-composite f g) i
 
       face₂₃ : α₂₃ ≡ ap (f ⨾_) (unitl g)
       face₂₃ =

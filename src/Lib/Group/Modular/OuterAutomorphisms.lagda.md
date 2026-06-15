@@ -15,7 +15,7 @@ open import Core.Kan using (_∙_)
 open import Core.Data.Sum using (_⊎_; inl; inr)
 open import Core.Data.Sigma using (Σ; Σ-syntax; _,_; fst; snd)
 open import Core.Data.Empty using (⊥; ex-falso)
-open import Core.Path using (_≢_)
+open import Core.Path.Base using (_≢_)
 
 open import Lib.Group.Modular.Multiplication
 open import Lib.Group.Modular.Inverse

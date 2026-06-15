@@ -17,9 +17,6 @@ module Pushout where
 module Susp where
   open import HData.Pushout.Suspension public
 
-module Join where
-  open import HData.Pushout.Join public
-
 module Pushout-properties where
   open import HData.Pushout.Properties public
 ```

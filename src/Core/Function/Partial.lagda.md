@@ -22,9 +22,6 @@ open import Core.Data.Empty
 open import Core.Data.Dec.Type using (Dec; yes; no)
 open import Core.Data.Maybe using (Maybe; nothing; just)
 open import Core.HLevel.Base using (Σ-is-prop)
-open import Core.Set using (propext)
-open import Core.Transport.Base using (is-prop→PathP; coe01)
-open import Core.Transport.Properties using (is-prop-is-prop)
 open import Core.Kan using (hcom)
 
 private variable
@@ -167,67 +164,3 @@ module _ {u : Level} {v : Level} {B : Type v} where
 ```
 
 
-## Path between LiftM values
-
-Two `LiftM` values are equal when their definedness types are
-logically equivalent and their value functions agree through the
-equivalence. Propositional extensionality gives the type path.
-
-```agda
-LiftM-path
-  : ∀ {u v} {X : Type v}
-  → (l r : LiftM u X)
-  → (p : is-defined l → is-defined r)
-  → (q : is-defined r → is-defined l)
-  → (∀ d → value l d ≡ value r (p d))
-  → l ≡ r
-LiftM-path l r p q coh i .is-defined =
-  propext (def-prop l) (def-prop r) p q i
-LiftM-path l r p q coh i .def-prop =
-  is-prop→PathP
-    (λ i → is-prop-is-prop
-      (propext (def-prop l) (def-prop r) p q i))
-    (def-prop l) (def-prop r) i
-LiftM-path l r p q coh i .value d =
-  hcom (∂ i) λ where
-    j (i = i0) → coh d (~ j)
-    j (i = i1) → value r d
-    j (j = i0) → value r
-      (coe01 (λ i → propext (def-prop l) (def-prop r) p q i)
-        i d)
-```
-
-
-## Monad laws
-
-Each uses `LiftM-path` with the logical equivalence between
-propositional definedness types. The value functions agree
-definitionally in all cases.
-
-```agda
-♯-unitl
-  : ∀ {u v w} {A : Type v} {B : Type w}
-  → (f : A → LiftM u B) (a : A)
-  → (f ♯) (η a) ≡ f a
-♯-unitl f a = LiftM-path ((f ♯) (η a)) (f a)
-  snd (λ d → liftℓ tt , d) (λ _ → refl)
-
-♯-unitr
-  : ∀ {u v} {A : Type v}
-  → (a : LiftM u A)
-  → (η ♯) a ≡ a
-♯-unitr a = LiftM-path ((η ♯) a) a
-  fst (λ d → d , liftℓ tt) (λ _ → refl)
-
-♯-assoc
-  : ∀ {u v w x} {A : Type v} {B : Type w} {C : Type x}
-  → (a : LiftM u A)
-    (f : A → LiftM u B)
-    (g : B → LiftM u C)
-  → (g ♯) ((f ♯) a) ≡ ((λ x → (g ♯) (f x)) ♯) a
-♯-assoc a f g = LiftM-path
-  ((g ♯) ((f ♯) a)) (((λ x → (g ♯) (f x)) ♯) a)
-  (λ ((p , d) , gd) → p , d , gd)
-  (λ (p , d , gd) → (p , d) , gd)
-  (λ _ → refl)
-```

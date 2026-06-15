@@ -17,7 +17,7 @@ open import Core.Data.Sigma using (Σ; _,_; fst; snd; _×_)
 open import Core.Data.Sum using (_⊎_; inl; inr)
 open import Core.Data.Bool using (Bool; true; false)
 open import Core.Data.Empty using (⊥; ex-falso)
-open import Core.Path using (_≢_)
+open import Core.Path.Base using (_≢_)
 open import Core.Transport.J using (subst)
 
 open import Lib.Group.Modular.Multiplication
