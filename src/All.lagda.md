@@ -1,125 +1,95 @@
-```agda
 
+```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness --no-sized-types #-}
 
 module All where
 
-import Core.Type
-import Core.Type.Exo
-import Core.Base
-import Core.Sub
-import Core.Kan
-import Core.Glue
-import Core.HCompU
-import Core.Interval
-import Core.Transport
-import Core.Equiv
-import Core.IdSys
-import Core.Path
-import Core.Univalence
-import Core.Set
-import Core.HLevel
-import Core.Homotopy
-import Core.Retract
-import Core.Composite
-import Core.Groupoid
-import Core.Groupoid.Virtual
-import Core.Discrete
-import Core.Function
-import Core.Equiv.PropIndexed
-import Core.Set.Omega
-import Core.Prelude
-
-import Core.Data.Sigma
-import Core.Data.Sum
-import Core.Data.Empty
-import Core.Data.Bool
-import Core.Data.Dec
-import Core.Data.Nat
-import Core.Data.Fin
-import Core.Data.Int
-import Core.Data.List
-import Core.Data.Trunc
-import Core.Data.Maybe
-import Core.Data.Pointed
-import Core.Data.Id
-import Core.Data.String
-
-import Core.Prim.Char
-import Core.Prim.Float
-import Core.Prim.Strict
-import Core.Prim.Word64
-
-import Core.Trait
-import Core.Trait.Quiver
-import Core.Trait.Alt
-
-import Core.Graph.Base
-import Core.Graph.Displayed
-import Core.Graph.Reflexive.Base
-import Core.Graph.Reflexive.Displayed
-import Core.Graph.Reflexive.Lens.Contravariant
-import Core.Graph.Reflexive.Lens.Covariant
-import Core.Graph.SIP
-
-import Data.Bin
-import Data.Result
-import Data.SnocList
-import Data.Tree
-import Data.Trie
-import Data.W
-
-import HData.Pushout
-import HData.Quotient
-
+import Cat.Base
+import Cat.Coherence
+import Cat.Covariant
+import Cat.Data.Base
+import Cat.Data.Coh
+import Cat.Data.Eqv
+import Cat.Data.Het
+import Cat.Data.Iso
+import Cat.Data.Magmoid
+import Cat.Data.Map
+import Cat.Data.Nat
+import Cat.Data.Neutral
+import Cat.Data.Neutral.Eq
+import Cat.Data.Unit
+import Cat.Groupoid
+import Cat.Rezk
 import Cat.Type
 import Cat.Virtual
-import Cat.Coherence
-import Cat.Base
-import Cat.Groupoid
-import Cat.Data.Magmoid
-import Cat.Rezk
-import Cat.Covariant
+import Cat.Virtual.Product
 import Cat.Yoneda
-import Cat.VDC
-import Cat.Classified
--- import Cat.Displayed  -- WIP: open holes in compose-contr contraction
--- import Cat.Units  -- WIP: proof error at line 382
 
-import Lib.CSet.Base
-import Lib.CSet.Cube
-import Lib.CSet.Marking
-import Lib.CSet.Marking.Compute
-import Lib.Combinatorics.BinTree
-import Lib.Combinatorics.Catalan
-import Lib.Combinatorics.Catalan.Factorization
-import Lib.Group.Base
-import Lib.Group.Hom
-import Lib.Group.Iso
-import Lib.Group.Opposite
-import Lib.Group.Modular.Type
-import Lib.Group.Modular.Base
-import Lib.Group.Modular.Group
-import Lib.Group.Modular.Properties
-import Lib.Group.Modular.Induction
-import Lib.Group.Modular.Inverse
-import Lib.Group.Modular.Multiplication
-import Lib.Group.Modular.CalkinWilf
-import Lib.Group.Modular.Depth
-import Lib.Group.Modular.Depth.Filtration
-import Lib.Group.Modular.Abelianization
-import Lib.Group.Modular.Center
-import Lib.Group.Modular.CommutatorSubgroup
-import Lib.Group.Modular.OuterAutomorphisms
-import Lib.Group.Modular.Transposition
-import Lib.Group.Modular.Twist
-import Lib.Group.Modular.UniversalProperty
-import Lib.SSet.Base
--- import Lib.SSet.Segal  -- WIP: uses old precategory record
--- import Lib.SSet.Simplex  -- WIP: uses old precategory record
-import Lib.SSet.Catalan.Base
+import Core.Data.Bool
+import Core.Data.Empty
+import Core.Data.Fin
+import Core.Data.Fin.Monotone
+import Core.Data.Id
+import Core.Data.List
+import Core.Data.Maybe
+import Core.Data.Nat
+import Core.Data.Pointed
+import Core.Data.String
+import Core.Data.Sum
+import Core.Data.Trunc
+import Core.Discrete
+import Core.Equiv.PropIndexed
+import Core.Function
+import Core.Function.Partial.Graph
+import Core.Glue
+import Core.Groupoid
+import Core.Groupoid.Virtual
+import Core.IdSys
+import Core.Interval
+import Core.Prelude
+import Core.Type.Exo
 
-import Net
+import Data.Thin.Base
+import Data.Thin.Tri
+import Data.Thin.Type
+import Data.Tree
+import Data.Tree.BinTree
+import Data.W
+
+import HData.Join
+import HData.Pushout
+import HData.Quotient
+import HData.Thinning
+import HData.Thinning.Properties
+
 import Test.Scratch
 
+-- import Cat.Slice  -- WIP: open holes at L211/262/280
+-- import Core.Coherence  -- WIP: open face holes at L149/152/155/183
+-- import Core.Path.Coherence  -- WIP: open cell/hcomp holes at L52/67/94-99
+-- import Core.Path.Composition  -- WIP: open test-* holes at L425/453/476
+-- import Data.Thin.Category  -- WIP: emb-compose-contr hole at L142
+-- import Data.Thin.Separated  -- WIP: UnequalTerms de Bruijn mismatch at L116
+-- import Data.Thin.Cover  -- WIP: copU hole at L96
+-- import Data.Thin.Properties  -- WIP: law holes at L32/35/39
+-- import Cat.Data.Prod  -- WIP: mid-edit, MetaCannotDependOn at L124
+-- import Cat.Displayed  -- WIP: open holes in compose-contr contraction
+-- import Cat.Units  -- WIP: proof error at line 382
+-- import Cat.Product  -- WIP: mid-edit, MetaCannotDependOn at L237
+-- import HData.Rack  -- WIP: pre-existing unsolved metas at L31-34, unrelated to ternary port
+import Lib.Relation.Binary
+import Lib.Relation.Unary
+import Lib.Ternary.Bundles
+import Lib.Ternary.Core
+import Lib.Ternary.Structures
+import Lib.Ternary.Structures.Syntax
+import Lib.Ternary.Construct.Empty
+import Lib.Ternary.Construct.Unit
+import Lib.Ternary.Respect.Propositional
+import Lib.Ternary.Construct.Function
+import Lib.Ternary.Construct.Product
+import Cat.Dep
+import Cat.Monoidal
+import Cat.Monoidal.Bifunctor
+import Cat.Monoidal.Coherence
 ```

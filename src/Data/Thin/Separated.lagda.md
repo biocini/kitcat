@@ -119,7 +119,6 @@ decode-refl ks oz = refl
 
 ```
 
-
 ## Thin-is-set
 
 `code t₁ t₂` is propositional, `decode ∘ encode` is a section, and
@@ -141,7 +140,6 @@ Thin-is-set ks t₁ t₂ =
         ∙ decode-refl ks t₁)
 
 ```
-
 
 ## Conversions
 
@@ -169,7 +167,6 @@ retraction (os θ) =
 retraction oz = refl
 
 ```
-
 
 ## Main result
 

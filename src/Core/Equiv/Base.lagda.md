@@ -61,7 +61,6 @@ qinv f g sec retr .is-qinv.inv = g
 qinv f g sec retr .is-qinv.sec = sec
 qinv f g sec retr .is-qinv.retr = retr
 
-
 -- Credit: 1lab fiberwise-equiv module
 module qinv {u v} {A : Type u} {B : Type v} {f : A → B} (e : is-qinv f) where
   private

@@ -22,11 +22,19 @@ open import Core.Sub using (inS; outS)
 open import Core.Equiv.Base
   using (is-equiv; eqv-fibers; is-contr-equiv; iso→equiv; _≃_)
 open import Core.Equiv.Properties
-  using (×-is-equiv; esym; Σ-fiber-swap; Σ-equiv-snd; Σ-×-swap;
-         _∙e_)
-open import Core.Transport.Base using (coe10; contr-ind)
+  using ( ×-is-equiv; esym; Σ-fiber-swap; Σ-equiv-snd; Σ-×-swap
+        ; _∙e_; comp-equiv; ×-path-equiv)
+open import Core.Transport.Base using (contr-ind)
+open import Core.Transport.J using (J; subst)
 open import Core.Transport.Properties
   using (is-contr-×; prop-inhabited→is-contr)
+open import Core.Function.Embedding
+  using ( is-embedding; is-embedding→contr-fibers
+        ; is-embedding→ap-equiv; ap-equiv→image-fibers-contr
+        ; image-fibers-contr→is-embedding
+        ; is-equiv→is-embedding )
+open import Core.HLevel.Base
+  using (is-prop-×; is-prop-equiv)
 open import Cat.Type
 open import Cat.Base using (functor)
 ```
@@ -84,14 +92,12 @@ private
 
 ## The product category
 
-The product compose-contr fiber decomposes via an equivalence
-(with refl round-trips) into a product of "overcounted" factors.
-Each overcounted factor `Σ s₁, (∀ D-args → C.emb s₁ ≡ target₁)`
-is propositional: given two elements, the morphism path comes
-from the contractible extensional fiber, and the equation PathP
-is coerced via `total-contr-unique` (which equates the
-first-component paths from different D-arg evaluations). Since
-each factor is also inhabited, it is contractible.
+The product composition fiber is the fiber of the componentwise
+ternary embedding `emb×`. We prove `emb×` is an embedding by
+showing that `ap emb×` is an equivalence. The key step is an
+equivalence between pairs of component `emb`-paths and `emb×`-paths,
+proved by restricting to dummy identities and using the
+contractibility of each component's `emb`-fiber.
 
 ```agda
 module _ {o₁ h₁ o₂ h₂}
@@ -142,129 +148,174 @@ module _ {o₁ h₁ o₂ h₂}
       {x₁ = x₁} {x₂ = x₂}
       {z₁ = z₁} {z₂ = z₂}
       f₁ f₂ g₁ g₂ =
-      is-contr-equiv (esym split-equiv)
-        (is-contr-× F₁-contr F₂-contr)
+      is-embedding→contr-fibers emb×-is-embedding
+        ((f₁ C.⨾ g₁ , f₂ D.⨾ g₂) , emb×-composite)
       where
-        target₁ = λ w₁ (a₁ : C.hom w₁ x₁) v₁
-          (b₁ : C.hom z₁ v₁) →
-          C.emb f₁ w₁ a₁ v₁ (C.noy g₁ v₁ b₁)
+        sym-sym
+          : ∀ {ℓ} {A : Type ℓ} {a b : A}
+            (p : a ≡ b)
+          → sym (sym p) ≡ p
+        sym-sym p = J (λ b p → sym (sym p) ≡ p) refl p
 
-        target₂ = λ w₂ (a₂ : D.hom w₂ x₂) v₂
-          (b₂ : D.hom z₂ v₂) →
-          D.emb f₂ w₂ a₂ v₂ (D.noy g₂ v₂ b₂)
+        -- Equivalence between componentwise emb-paths and emb×-paths.
+        emb×-≡-equiv
+          : ∀ {s₁ s₁' : C.hom x₁ z₁}
+              {s₂ s₂' : D.hom x₂ z₂}
+          → (C.emb s₁ ≡ C.emb s₁')
+          × (D.emb s₂ ≡ D.emb s₂')
+          ≃ (emb× s₁ s₂ ≡ emb× s₁' s₂')
+        emb×-≡-equiv {s₁ = s₁} {s₁' = s₁'}
+          {s₂ = s₂} {s₂' = s₂'} =
+          iso→equiv fwd bwd (λ _ → refl) retr
+          where
+            fwd
+              : (C.emb s₁ ≡ C.emb s₁')
+              × (D.emb s₂ ≡ D.emb s₂')
+              → emb× s₁ s₂ ≡ emb× s₁' s₂'
+            fwd (α , β) i w a v b =
+              α i (fst w) (fst a) (fst v) (fst b)
+              , β i (snd w) (snd a) (snd v) (snd b)
 
-        -- Pointwise compose-contr for each component
-        cc₁ = C.composable-contr f₁ g₁
-        cc₂ = D.composable-contr f₂ g₂
+            bwd
+              : emb× s₁ s₂ ≡ emb× s₁' s₂'
+              → (C.emb s₁ ≡ C.emb s₁')
+              × (D.emb s₂ ≡ D.emb s₂')
+            bwd γ =
+              let
+                α = λ i w₁ a₁ v₁ b₁ →
+                      fst (γ i (w₁ , x₂) (a₁ , D.idn)
+                             (v₁ , z₂) (b₁ , D.idn))
+                β = λ i w₂ a₂ v₂ b₂ →
+                      snd (γ i (x₁ , w₂) (C.idn , a₂)
+                             (z₁ , v₂) (C.idn , b₂))
+              in α , β
 
-        -- The cc₁ fiber type, with B explicit
-        CC₁ = Σ s₁ ∶ C.hom x₁ z₁
-            , ∀ w (a : C.hom w x₁) v (b : C.hom z₁ v)
-              → C.emb s₁ w a v b ≡ target₁ w a v b
+            retr
+              : (γ : emb× s₁ s₂ ≡ emb× s₁' s₂')
+              → fwd (bwd γ) ≡ γ
+            retr γ =
+              funext λ i → funext λ w → funext λ a
+                → funext λ v → funext λ b →
+                  Σ-path (V-eq i w a v b) (W-eq i w a v b)
+              where
+                V-eq
+                  : ∀ i w a v b
+                  → fst (fwd (bwd γ) i w a v b)
+                    ≡ fst (γ i w a v b)
+                V-eq i w a v b =
+                  let
+                    w₂ = snd w; a₂ = snd a
+                    v₂ = snd v; b₂ = snd b
 
-        CC₂ = Σ s₂ ∶ D.hom x₂ z₂
-            , ∀ w (a : D.hom w x₂) v (b : D.hom z₂ v)
-              → D.emb s₂ w a v b ≡ target₂ w a v b
+                    δC
+                      : C.emb s₁ ≡ C.emb s₁'
+                    δC i w₁ a₁ v₁ b₁ =
+                      fst (γ i (w₁ , w₂) (a₁ , a₂)
+                             (v₁ , v₂) (b₁ , b₂))
 
-        -- Overcounted factors with pointwise equalities
-        F₁ : Type _
-        F₁ = Σ s₁ ∶ C.hom x₁ z₁
-           , ∀ w₂ (a₂ : D.hom w₂ x₂) v₂
-               (b₂ : D.hom z₂ v₂)
-               w₁ (a₁ : C.hom w₁ x₁) v₁
-               (b₁ : C.hom z₁ v₁)
-             → C.emb s₁ w₁ a₁ v₁ b₁
-               ≡ target₁ w₁ a₁ v₁ b₁
+                    δC-dummy
+                      : C.emb s₁ ≡ C.emb s₁'
+                    δC-dummy i w₁ a₁ v₁ b₁ =
+                      fst (γ i (w₁ , x₂) (a₁ , D.idn)
+                             (v₁ , z₂) (b₁ , D.idn))
 
-        F₂ : Type _
-        F₂ = Σ s₂ ∶ D.hom x₂ z₂
-           , ∀ w₁ (a₁ : C.hom w₁ x₁) v₁
-               (b₁ : C.hom z₁ v₁)
-               w₂ (a₂ : D.hom w₂ x₂) v₂
-               (b₂ : D.hom z₂ v₂)
-             → D.emb s₂ w₂ a₂ v₂ b₂
-               ≡ target₂ w₂ a₂ v₂ b₂
+                    fib : fiber C.emb (C.emb s₁)
+                    fib = s₁' , sym δC
 
-        fwd
-          : F₁ × F₂
-          → Σ s ∶ C.hom x₁ z₁ × D.hom x₂ z₂
-            , emb× (fst s) (snd s)
-              ≡ target× f₁ f₂ g₁ g₂
-        fwd ((s₁ , g₁') , (s₂ , g₂')) =
-          (s₁ , s₂)
-          , λ i (w₁ , w₂) (a₁ , a₂)
-                (v₁ , v₂) (b₁ , b₂) →
-              g₁' w₂ a₂ v₂ b₂ w₁ a₁ v₁ b₁ i
-            , g₂' w₁ a₁ v₁ b₁ w₂ a₂ v₂ b₂ i
+                    fib-dummy : fiber C.emb (C.emb s₁)
+                    fib-dummy = s₁' , sym δC-dummy
 
-        bwd
-          : Σ s ∶ C.hom x₁ z₁ × D.hom x₂ z₂
-            , emb× (fst s) (snd s)
-              ≡ target× f₁ f₂ g₁ g₂
-          → F₁ × F₂
-        bwd ((s₁ , s₂) , p) =
-          ( s₁
-          , λ w₂ a₂ v₂ b₂ w₁ a₁ v₁ b₁ i →
-              fst (p i (w₁ , w₂) (a₁ , a₂)
-                     (v₁ , v₂) (b₁ , b₂)))
-          , ( s₂
-            , λ w₁ a₁ v₁ b₁ w₂ a₂ v₂ b₂ i →
-                snd (p i (w₁ , w₂) (a₁ , a₂)
-                       (v₁ , v₂) (b₁ , b₂)))
+                    eq : fib ≡ fib-dummy
+                    eq = is-contr→is-prop
+                           (is-embedding→contr-fibers
+                             C.emb-is-embedding (s₁ , refl))
+                           fib fib-dummy
 
-        split-equiv
-          : (F₁ × F₂) ≃
-            Σ s ∶ C.hom x₁ z₁ × D.hom x₂ z₂
-            , emb× (fst s) (snd s)
-              ≡ target× f₁ f₂ g₁ g₂
-        split-equiv .fst = fwd
-        split-equiv .snd = iso→equiv fwd bwd
-          (λ _ → refl) (λ _ → refl) .snd
+                    δC≡δC-dummy : δC ≡ δC-dummy
+                    δC≡δC-dummy =
+                      sym (sym-sym δC)
+                      ∙ ap sym (ap snd eq)
+                      ∙ sym-sym δC-dummy
+                  in ap (λ p → p _ w a v b)
+                       (sym δC≡δC-dummy)
 
-        -- Typed snd projectors that avoid metavariable
-        -- issues from no-eta-equality record projections.
-        cc₁-snd : (x : CC₁)
-          → ∀ w (a : C.hom w x₁) v (b : C.hom z₁ v)
-          → C.emb (x .fst) w a v b
-            ≡ target₁ w a v b
-        cc₁-snd x = x .snd
+                W-eq
+                  : ∀ i w a v b
+                  → snd (fwd (bwd γ) i w a v b)
+                    ≡ snd (γ i w a v b)
+                W-eq i w a v b =
+                  let
+                    w₁ = fst w; a₁ = fst a
+                    v₁ = fst v; b₁ = fst b
 
-        cc₂-snd : (x : CC₂)
-          → ∀ w (a : D.hom w x₂) v (b : D.hom z₂ v)
-          → D.emb (x .fst) w a v b
-            ≡ target₂ w a v b
-        cc₂-snd x = x .snd
+                    δD
+                      : D.emb s₂ ≡ D.emb s₂'
+                    δD i w₂ a₂ v₂ b₂ =
+                      snd (γ i (w₁ , w₂) (a₁ , a₂)
+                             (v₁ , v₂) (b₁ , b₂))
 
-        abstract
-          F₁-contr : is-contr F₁
-          F₁-contr .center =
-            C._⨾_ f₁ g₁
-            , λ _ _ _ _ →
-                C.emb-composite-pt f₁ g₁
-          F₁-contr .paths (s₁ , g') i =
-            fst (cc₁-pt i)
-            , λ w₂ a₂ v₂ b₂ →
-                cc₁-snd (cc₁-wt w₂ a₂ v₂ b₂ i)
-            where
-              cc₁-pt = cc₁ .paths
-                (s₁ , g' x₂ D.idn z₂ D.idn)
-              cc₁-wt = λ w₂ a₂ v₂ b₂ →
-                cc₁ .paths (s₁ , g' w₂ a₂ v₂ b₂)
+                    δD-dummy
+                      : D.emb s₂ ≡ D.emb s₂'
+                    δD-dummy i w₂ a₂ v₂ b₂ =
+                      snd (γ i (x₁ , w₂) (C.idn , a₂)
+                             (z₁ , v₂) (C.idn , b₂))
 
-          F₂-contr : is-contr F₂
-          F₂-contr .center =
-            D._⨾_ f₂ g₂
-            , λ _ _ _ _ →
-                D.emb-composite-pt f₂ g₂
-          F₂-contr .paths (s₂ , g') i =
-            fst (cc₂-pt i)
-            , λ w₁ a₁ v₁ b₁ →
-                cc₂-snd (cc₂-wt w₁ a₁ v₁ b₁ i)
-            where
-              cc₂-pt = cc₂ .paths
-                (s₂ , g' x₁ C.idn z₁ C.idn)
-              cc₂-wt = λ w₁ a₁ v₁ b₁ →
-                cc₂ .paths (s₂ , g' w₁ a₁ v₁ b₁)
+                    fib : fiber D.emb (D.emb s₂)
+                    fib = s₂' , sym δD
+
+                    fib-dummy : fiber D.emb (D.emb s₂)
+                    fib-dummy = s₂' , sym δD-dummy
+
+                    eq : fib ≡ fib-dummy
+                    eq = is-contr→is-prop
+                           (is-embedding→contr-fibers
+                             D.emb-is-embedding (s₂ , refl))
+                           fib fib-dummy
+
+                    δD≡δD-dummy : δD ≡ δD-dummy
+                    δD≡δD-dummy =
+                      sym (sym-sym δD)
+                      ∙ ap sym (ap snd eq)
+                      ∙ sym-sym δD-dummy
+                  in ap (λ p → p _ w a v b)
+                       (sym δD≡δD-dummy)
+
+        -- `ap emb×` is an equivalence by composing the component
+        -- ap-equivalences with emb×-≡-equiv.
+        emb×-ap-equiv
+          : ∀ {s s' : C.hom x₁ z₁ × D.hom x₂ z₂}
+          → is-equiv (ap emb× {x = s} {s'})
+        emb×-ap-equiv {s = s} {s' = s'} =
+          subst is-equiv path
+            (comp-equiv (esym ×-path-equiv .snd)
+              (comp-equiv
+                (×-is-equiv
+                  (is-embedding→ap-equiv C.emb-is-embedding)
+                  (is-embedding→ap-equiv D.emb-is-embedding))
+                (emb×-≡-equiv .snd)))
+          where
+            path
+              : (λ p → emb×-≡-equiv .fst
+                  (ap C.emb (ap fst p) , ap D.emb (ap snd p)))
+              ≡ ap emb×
+            path = refl
+
+        emb×-is-embedding : is-embedding emb×
+        emb×-is-embedding =
+          image-fibers-contr→is-embedding λ s →
+            ap-equiv→image-fibers-contr λ s' →
+              emb×-ap-equiv {s = s} {s' = s'}
+
+        emb×-composite
+          : emb× (f₁ C.⨾ g₁) (f₂ D.⨾ g₂)
+            ≡ target× f₁ f₂ g₁ g₂
+        emb×-composite =
+          funext λ w → funext λ a → funext λ v → funext λ b →
+            Σ-path
+              (C.emb-composite-pt f₁ g₁
+                (fst w) (fst a) (fst v) (fst b))
+              (D.emb-composite-pt f₂ g₂
+                (snd w) (snd a) (snd v) (snd b))
 
   _×cat_ : category (o₁ ⊔ o₂) (h₁ ⊔ h₂)
   _×cat_ .category.ob = C.ob × D.ob
@@ -289,7 +340,6 @@ module _ {o₁ h₁ o₂ h₂}
     C.yon-eval f₁ i , D.yon-eval f₂ i
 ```
 
-
 ## Projection functors
 
 ```agda
@@ -299,17 +349,17 @@ module _ {o₁ h₁ o₂ h₂}
     module C = Virtual C
     module D = Virtual D
 
-  -- π₁ : functor (C ×cat D) C
-  -- π₁ .functor.map = fst
-  -- π₁ .functor.hmap = fst
-  -- π₁ .functor.preserves-comp _ _ = ?
-  -- π₁ .functor.preserves-neutral {f = f₁ , f₂} (nl , nr) =
-  --   (×-is-equiv-fst D.idn nl) , (×-is-equiv-fst D.idn nr)
+  π₁ : functor (C ×cat D) C
+  π₁ .functor.map = fst
+  π₁ .functor.hmap = fst
+  π₁ .functor.preserves-comp _ _ = refl
+  π₁ .functor.preserves-neutral {f = f₁ , f₂} (nl , nr) =
+    (×-is-equiv-fst D.idn nl) , (×-is-equiv-fst D.idn nr)
 
-  -- π₂ : functor (C ×cat D) D
-  -- π₂ .functor.map = snd
-  -- π₂ .functor.hmap = snd
-  -- π₂ .functor.preserves-comp _ _ = refl
-  -- π₂ .functor.preserves-neutral {f = f₁ , f₂} (nl , nr) =
-  --   (×-is-equiv-snd C.idn nl) , (×-is-equiv-snd C.idn nr)
+  π₂ : functor (C ×cat D) D
+  π₂ .functor.map = snd
+  π₂ .functor.hmap = snd
+  π₂ .functor.preserves-comp _ _ = refl
+  π₂ .functor.preserves-neutral {f = f₁ , f₂} (nl , nr) =
+    (×-is-equiv-snd C.idn nl) , (×-is-equiv-snd C.idn nr)
 ```

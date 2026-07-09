@@ -1,124 +1,148 @@
 #!/usr/bin/env bash
+# sync-all — keep src/All.lagda.md in sync with the filesystem.
+#
+# All.lagda.md is the whole-library typecheck target. It must contain
+# AGGREGATOR ROOTS ONLY: a module belongs in All iff no other managed
+# module publicly re-exports it (via `open import ... public`). Such a
+# module is reachable from All through its re-exporter, so a direct
+# entry would be redundant.
+#
+# Usage:
+#   sync-all                # report drift (missing / stale / redundant)
+#   sync-all --fix          # add missing roots, drop stale + redundant
+#   sync-all --regenerate   # rewrite All from scratch (grouped, sorted)
+#
+# Test/* is unmanaged: never added automatically, existing entries kept.
 set -euo pipefail
 
 ALL="src/All.lagda.md"
 fix=false
-
-[ "${1:-}" = "--fix" ] && fix=true
-
-# Extract active imports from All.lagda.md (lines like "import Foo.Bar")
-active_imports=()
-while IFS= read -r mod; do
-    active_imports+=("$mod")
-done < <(rg '^import ([A-Z][A-Za-z0-9.]*)' "$ALL" -or '$1' --no-filename)
-
-# Extract WIP (commented-out) imports
-wip_imports=()
-while IFS= read -r mod; do
-    wip_imports+=("$mod")
-done < <(rg '^\-\- import ([A-Z][A-Za-z0-9.]*)' "$ALL" -or '$1' --no-filename 2>/dev/null || true)
-
-# Build set of modules covered by aggregators.
-# An aggregator is any active import whose corresponding directory exists
-# and whose file contains "open import ... public" lines.
-covered=()
-for mod in "${active_imports[@]}"; do
-    mod_dir="src/$(echo "$mod" | tr '.' '/')"
-    mod_file="${mod_dir}.lagda.md"
-    if [ -d "$mod_dir" ] && [ -f "$mod_file" ]; then
-        while IFS= read -r reexport; do
-            covered+=("$reexport")
-        done < <(rg '^open import ([A-Z][A-Za-z0-9.]+) public' "$mod_file" -or '$1' --no-filename 2>/dev/null || true)
-    fi
+regen=false
+for arg in "$@"; do
+  case "$arg" in
+    --fix) fix=true ;;
+    --regenerate) regen=true ;;
+    -h|--help)
+      sed -n '2,/^$/s/^# \{0,1\}//p' "$0"; exit 0 ;;
+    *) echo "sync-all: unknown argument '$arg'" >&2; exit 2 ;;
+  esac
 done
 
-# Build filesystem module set
-fs_modules=()
-while IFS= read -r f; do
-    mod="$(echo "$f" | sed 's|^src/||;s|\.lagda\.md$||' | tr '/' '.')"
-    fs_modules+=("$mod")
-done < <(fd -e lagda.md . src/ | grep -v 'src/All\.lagda\.md' | grep -v 'Stash/' | sort)
+# ── managed modules: everything on disk except All, Stash, Test ───────
+ALL_MODS="$(mktemp)"
+trap 'rm -f "$ALL_MODS" "$REEXPORTED" "$ROOTS" "$ACTIVE" "$WIP"' EXIT
+REEXPORTED="$(mktemp)"; ROOTS="$(mktemp)"; ACTIVE="$(mktemp)"; WIP="$(mktemp)"
 
-# Helper: check if a value is in an array
-in_array() {
-    local needle="$1"; shift
-    for item in "$@"; do
-        [ "$item" = "$needle" ] && return 0
-    done
-    return 1
+fd -e lagda.md . src/ \
+  | grep -v '^src/All\.lagda\.md$' \
+  | grep -v '^src/Stash/' \
+  | grep -v '^src/Test/' \
+  | sed 's|^src/||; s|\.lagda\.md$||; s|/|.|g' \
+  | sort -u > "$ALL_MODS"
+
+# ── publicly re-exported targets, from managed modules only ──────────
+# Matches `open import M ... public` regardless of leading indentation.
+# Test modules are excluded: their re-exports do not help All reach
+# anything, since Test is not part of the managed set.
+rg --no-filename \
+  --glob '!src/All.lagda.md' --glob '!src/Stash/**' --glob '!src/Test/**' \
+  '^[[:space:]]*open import ([A-Z][A-Za-z0-9._]*) .*public' src/ \
+  -or '$1' | sort -u > "$REEXPORTED"
+
+# ── roots: managed modules that nothing re-exports ───────────────────
+comm -23 "$ALL_MODS" "$REEXPORTED" > "$ROOTS"
+
+# ── current state of All.lagda.md ────────────────────────────────────
+# Active imports: lines like `import Foo.Bar` (All uses bare `import`).
+rg '^import ([A-Z][A-Za-z0-9.]*)' "$ALL" -or '$1' --no-filename \
+  | sort -u > "$ACTIVE"
+# WIP: commented-out imports, preserved verbatim across --fix/--regenerate.
+rg '^-- import ([A-Z][A-Za-z0-9.]*)' "$ALL" -or '$1' --no-filename \
+  | sort -u > "$WIP"
+
+# Roots the user has chosen to keep as Test entries are unmanaged:
+# subtract current Test/* imports from "missing" so we never re-add them.
+TEST_ENTRIES="$(mktemp)"; trap 'rm -f "$ALL_MODS" "$REEXPORTED" "$ROOTS" "$ACTIVE" "$WIP" "$TEST_ENTRIES"' EXIT
+rg '^import (Test\.[A-Za-z0-9.]*)' "$ALL" -or '$1' --no-filename \
+  | sort -u > "$TEST_ENTRIES"
+
+missing_comm() { comm -23 "$ROOTS" "$ACTIVE" | comm -23 - "$WIP"; }
+# stale: active import whose source file no longer exists. Checked by
+# file presence (not set membership) so unmanaged Test/* entries are
+# only flagged when genuinely gone.
+stale_comm() {
+  local f mod
+  while IFS= read -r mod; do
+    f="src/$(printf '%s' "$mod" | tr '.' '/').lagda.md"
+    [ -f "$f" ] || printf '%s\n' "$mod"
+  done < "$ACTIVE"
+}
+# redundant: active imports that some module re-exports (covered) AND
+# are not roots themselves. Test/* and WIP are exempt.
+redundant_comm() {
+  comm -12 "$ACTIVE" "$REEXPORTED" \
+    | comm -23 - "$TEST_ENTRIES" \
+    | comm -23 - "$ROOTS"
 }
 
-# Find missing: in filesystem but not in All and not covered by aggregator
-missing=()
-for mod in "${fs_modules[@]}"; do
-    if ! in_array "$mod" "${active_imports[@]}" && \
-       ! in_array "$mod" "${wip_imports[@]}" && \
-       ! in_array "$mod" "${covered[@]}"; then
-        missing+=("$mod")
-    fi
-done
+# ── report ───────────────────────────────────────────────────────────
+missing="$(missing_comm)"; stale="$(stale_comm)"; redundant="$(redundant_comm)"
+issues=0
+[ -n "$missing" ]  && { issues=1; printf '%s\n' "Missing from All (roots not imported):"; printf '  + %s\n' $missing; }
+[ -n "$stale" ]    && { issues=1; printf '%s\n' "Stale in All (file not found):";          printf '  - %s\n' $stale; }
+[ -n "$redundant" ]&& { issues=1; printf '%s\n' "Redundant in All (re-exported by another module):"; printf '  ~ %s\n' $redundant; }
+[ -s "$WIP" ]      && { printf '%s\n' "WIP (commented out):"; printf '  # %s\n' $(cat "$WIP"); }
+[ "$issues" -eq 0 ] && [ ! -s "$WIP" ] && echo "All.lagda.md is in sync."
 
-# Find stale: in All but file doesn't exist on filesystem
-stale=()
-for mod in "${active_imports[@]}"; do
-    f="src/$(echo "$mod" | tr '.' '/').lagda.md"
-    if [ ! -f "$f" ]; then
-        stale+=("$mod")
-    fi
-done
-
-# Report
-had_issues=false
-
-if [ ${#missing[@]} -gt 0 ]; then
-    had_issues=true
-    echo "Missing from All.lagda.md:"
-    for mod in "${missing[@]}"; do
-        echo "  + $mod"
-    done
+# ── regenerate: full clean rebuild, grouped by top-level namespace ───
+if $regen; then
+  # Preserve the prose header (everything up to and including the opening
+  # ```agda fence) and the module/OPTIONS lines; replace the import body.
+  # Collect manual Test/* entries to preserve.
+  header_top=$(rg -n '^```agda\s*$' "$ALL" | head -1 | cut -d: -f1)
+  if [ -z "$header_top" ]; then
+    echo "sync-all: no \`agda code fence found in $ALL" >&2; exit 1
+  fi
+  # Keep through the module line.
+  mod_line=$(rg -n '^module All where' "$ALL" | head -1 | cut -d: -f1)
+  keep_upto=${mod_line:-$header_top}
+  {
+    sed -n "1,${keep_upto}p" "$ALL"
+    echo ""
+    # Group roots by top-level namespace, sorted within group.
+    cat <(comm -23 "$ROOTS" "$WIP") "$TEST_ENTRIES" | sort -u \
+      | awk -F. '{print $1"\t"$0}' \
+      | sort -k1,1 -k2,2 \
+      | awk -F'\t' 'NR>1 && $1!=prev{print ""} {print "import "$2; prev=$1}'
+    [ -s "$WIP" ] && {
+      echo ""
+      rg '^-- import ' "$ALL" --no-filename || true
+    }
+    echo '```'
+  } > "${ALL}.tmp" && mv "${ALL}.tmp" "$ALL"
+  echo "Regenerated $ALL ($(wc -l < "$ALL" | tr -d ' ') lines)."
+  exit 0
 fi
 
-if [ ${#stale[@]} -gt 0 ]; then
-    had_issues=true
-    echo "Stale in All.lagda.md (file not found):"
-    for mod in "${stale[@]}"; do
-        echo "  - $mod"
-    done
-fi
-
-if [ ${#wip_imports[@]} -gt 0 ]; then
-    echo "WIP (commented out):"
-    for mod in "${wip_imports[@]}"; do
-        echo "  # $mod"
-    done
-fi
-
-if ! $had_issues && [ ${#wip_imports[@]} -eq 0 ]; then
-    echo "All.lagda.md is in sync."
-fi
-
-# --fix mode
+# ── fix: surgical — drop stale/redundant, append missing roots ───────
 if $fix; then
-    if [ ${#missing[@]} -gt 0 ]; then
-        # Insert missing imports before the closing ``` using awk
-        imports=""
-        for mod in "${missing[@]}"; do
-            imports+="import ${mod}\n"
-        done
-        awk -v new="$imports" '
-            /^```$/ && !seen++ { printf "%s", new }
-            { print }
-        ' "$ALL" > "${ALL}.tmp" && mv "${ALL}.tmp" "$ALL"
-        for mod in "${missing[@]}"; do
-            echo "Added: import $mod"
-        done
+  changed=0
+  # Remove stale and redundant active imports.
+  for mod in $stale $redundant; do
+    esc=$(printf '%s' "$mod" | sed 's/\./\\./g')
+    # delete only bare `import Mod` lines, never `-- import Mod` (WIP)
+    if rg -q "^import ${esc}\$" "$ALL"; then
+      rg -v "^import ${esc}\$" "$ALL" > "${ALL}.tmp" && mv "${ALL}.tmp" "$ALL"
+      echo "Removed: import $mod"; changed=1
     fi
-
-    if [ ${#stale[@]} -gt 0 ]; then
-        for mod in "${stale[@]}"; do
-            escaped="$(echo "$mod" | sed 's/\./\\./g')"
-            grep -v "^import ${escaped}$" "$ALL" > "${ALL}.tmp" && mv "${ALL}.tmp" "$ALL"
-            echo "Removed: import $mod"
-        done
-    fi
+  done
+  # Append missing roots before the closing fence.
+  if [ -n "$missing" ]; then
+    imports=""; for mod in $missing; do imports+="import ${mod}\n"; done
+    awk -v new="$imports" '/^```$/ && !done { printf "%s", new; done=1 } { print }' \
+      "$ALL" > "${ALL}.tmp" && mv "${ALL}.tmp" "$ALL"
+    for mod in $missing; do echo "Added: import $mod"; done
+    changed=1
+  fi
+  $changed || echo "Nothing to fix."
 fi

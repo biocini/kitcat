@@ -12,7 +12,8 @@ module Core.Homotopy where
 
 open import Core.Type using (Level; Type; _⊔_; _∘_)
 open import Core.Base using (_≡_; refl; sym; _~_; ap)
-open import Core.Kan using (_∙_)
+open import Core.Kan using (_∙_; module Path)
+open import Core.Transport.J using (J)
 
 private variable
   u v w : Level
@@ -55,4 +56,21 @@ module _ {u v w} {A : Type u} {B : Type v} {C : Type w} where
 -- Use htpy.inv explicitly for homotopy inversion.
 open htpy public using (eqv; cat)
 
+```
+
+## Naturality
+
+For a homotopy `η : k ~ l`, transporting a path `q` through `k`
+first and crossing `η` at the endpoint agrees with crossing `η`
+at the start and transporting through `l`.
+
+```agda
+homotopy-natural
+  : {k l : A → C} (η : ∀ x → k x ≡ l x)
+    {a b : A} (q : a ≡ b)
+  → ap k q ∙ η b ≡ η a ∙ ap l q
+homotopy-natural {k = k} {l = l} η {a = a} q =
+  J (λ b' q' → ap k q' ∙ η b' ≡ η a ∙ ap l q')
+    (Path.unitl (η a) ∙ sym (Path.unitr (η a)))
+    q
 ```

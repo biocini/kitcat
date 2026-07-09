@@ -14,6 +14,7 @@ module Core.Function.Embedding where
 
 open import Core.Transport
 open import Core.Equiv
+open import Core.Homotopy using (homotopy-natural)
 open import Core.Base
 open import Core.Path
 open import Core.Type
@@ -23,6 +24,8 @@ open import Core.Kan
 open Core.Kan.Path
 open import Core.Sub
 open import Core.HLevel.Base
+  using ( Σ-prop-path; Σ-prop²; Path-is-hlevel; equiv→is-hlevel
+        ; is-hlevel; is-prop-equiv; retract→is-hlevel; Π-is-prop )
 open import Core.Trait.Trunc using (Σ-prop-path) public
 open import Core.Data.Fin.Type using (Fin; lower)
 open import Core.Data.Fin.Properties using (fin-path)
@@ -247,6 +250,71 @@ ap-is-embedding
   → {x y : A}
   → is-embedding (ap f {x} {y})
 ap-is-embedding emb = is-equiv→is-embedding (is-embedding→ap-equiv emb)
+
+equiv→lc-section
+  : ∀ {u v} {A : Type u} {B : Type v} {f : A → B}
+  → (e : is-equiv f) {a b : A} (p : f a ≡ f b)
+  → ap f (equiv→lc e p) ≡ p
+equiv→lc-section {A = A} {f = f} e {a} {b} p =
+    ap (λ z → ap f (equiv→lc e z)) (sym (H.counit p))
+  ∙ ap (ap f) (linv (H.inv p))
+  ∙ H.counit p
+  where
+    module H =
+      Equiv (ap f {a} {b}
+            , is-embedding→ap-equiv (is-equiv→is-embedding e) {a} {b})
+
+    linv : {x y : A} (q : x ≡ y) → equiv→lc e (ap f q) ≡ q
+    linv {x} {y} q =
+        Path.lwhisker (sym (η x))
+          (homotopy-natural {k = g ∘ f} {l = λ z → z} η q)
+      ∙ Path.assoc (sym (η x)) (η x) q
+      ∙ Path.rwhisker q (Path.invl (η x))
+      ∙ Path.unitl q
+      where
+        g = Equiv.inv (f , e)
+        η = Equiv.unit (f , e)
+
+image-fibers-contr→is-embedding
+  : ∀ {u v} {A : Type u} {B : Type v} {f : A → B}
+  → (∀ x → is-contr (fiber f (f x)))
+  → is-embedding f
+image-fibers-contr→is-embedding {f = f} contr y p q =
+  is-contr→is-prop
+    (subst (is-contr ∘ fiber f) (p .snd)
+      (contr (p .fst)))
+    p q
+
+ap-equiv→image-fibers-contr
+  : ∀ {u v} {A : Type u} {B : Type v} {f : A → B} {x}
+  → (∀ y → is-equiv (ap f {x} {y}))
+  → is-contr (fiber f (f x))
+ap-equiv→image-fibers-contr {f = f} {x = x} ap-eq = contr
+  where
+    module E {y} = Equiv (ap f , ap-eq y)
+
+    transport-path-left
+      : ∀ {a b} (α : a ≡ b)
+      → transport (λ i → f (α i) ≡ f a) refl ≡ sym (ap f α)
+    transport-path-left {a = a} α =
+      J (λ b α → transport (λ i → f (α i) ≡ f a) refl ≡ sym (ap f α))
+        (transport-refl refl) α
+
+    sym-sym : ∀ {a b} (p : a ≡ b) → sym (sym p) ≡ p
+    sym-sym p = J (λ b p → sym (sym p) ≡ p) refl p
+
+    contr : is-contr (fiber f (f x))
+    contr .center = x , refl
+    contr .paths (y , p) i =
+      ( α i
+      , Path-over.to-pathp {A = λ i → f (α i) ≡ f x} {x = refl} {y = p}
+          ( transport-path-left α
+            ∙ ap sym (E.counit (sym p))
+            ∙ sym-sym p
+          ) i
+      )
+      where
+        α = E.inv (sym p)
 ```
 
 ### Left cancellation for embeddings
@@ -291,7 +359,6 @@ embedding-cancel-l {f = f} emb {g} {h} fg≡fh =
         third-path i j = p (~ i ∨ j)
 ```
 
-
 ## Embedding and propositions
 
 ```agda
@@ -315,7 +382,6 @@ Emb-is-prop B-prop (f , ef) (g , eg) =
   Σ-prop-path (λ h → Π-is-prop λ y → is-prop-is-prop _)
     (funext λ x → B-prop (f x) (g x))
 ```
-
 
 ## Fin embeds into Nat
 
