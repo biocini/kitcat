@@ -86,4 +86,5 @@ import Test.Scratch
 import Cat.Monoidal.Indiscrete
 import Cat.Monoidal.Twist
 import Cat.Monoidal.Braid
+import Cat.Monoidal.Hexagon
 ```
