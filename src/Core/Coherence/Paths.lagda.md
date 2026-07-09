@@ -9,7 +9,7 @@ via `pcom.lsplit` and `yon-composite` from `Core.Groupoid`.
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
 
-module Core.Coherence where
+module Core.Coherence.Paths where
 
 open import Core.Base
 open import Core.Type using (Level; Type; _₊)

@@ -18,6 +18,7 @@ open import Core.Kan
 open import Core.Transport.Base
 open import Core.Transport.J
 open import Core.Path.Base using (ap-comp)
+open import Core.Coherence.Base using (coh-project)
 open import Cat.Type
 ```
 
@@ -93,9 +94,9 @@ module _ {o h} (C : category o h) where
     (f : hom x y) (g : hom y z)
     (h : hom z w) (k : hom w v)
     where
-    private
-      E₄c = E₄-contr f g h k
+    E₄c = E₄-contr f g h k
 
+    private
       pt₁ : fiber emb (E₄ f g h k)
       pt₁ = E₄c .center
 
@@ -369,8 +370,8 @@ module _ {o h} (C : category o h) where
     hom-identity
       : α₁₄ ∙ α₄₅ ≡ pcom (sym α₁₂) α₂₃ α₃₅
     hom-identity =
-      pcom (ap-comp fst σ₁₄ σ₄₅)
-        (ap (ap fst) identity)
+      coh-project E₄c fst (σ₁₄ ∙ σ₄₅) (pcom (sym σ₁₂) σ₂₃ σ₃₅)
+        (ap-comp fst σ₁₄ σ₄₅)
         (pcom.ap (λ _ → fst) (sym σ₁₂) σ₂₃ σ₃₅)
 
   pentagon

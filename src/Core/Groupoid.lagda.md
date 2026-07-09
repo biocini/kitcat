@@ -615,4 +615,4 @@ preserves identity (definitional), distributes over composition
 
 ```
 
-Pentagon and triangle coherences live in `Core.Coherence`.
+Pentagon and triangle coherences live in `Core.Coherence.Paths`.

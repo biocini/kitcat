@@ -72,7 +72,7 @@ import Test.Scratch
 
 -- import Cat.Rezk  -- WIP: decode-gen holes at L203/204
 -- import Cat.Slice  -- WIP: open holes at L211/262/280
--- import Core.Coherence  -- WIP: open face holes at L149/152/155/183
+-- import Core.Coherence.Paths  -- WIP: open face holes at L149/152/155/183
 -- import Core.Path.Coherence  -- WIP: open cell/hcomp holes at L52/67/94-99
 -- import Core.Path.Composition  -- WIP: open test-* holes at L425/453/476
 -- import Data.Thin.Category  -- WIP: emb-compose-contr hole at L142
@@ -87,4 +87,5 @@ import Cat.Monoidal.Indiscrete
 import Cat.Monoidal.Twist
 import Cat.Monoidal.Braid
 import Cat.Monoidal.Hexagon
+import Core.Coherence.Base
 ```

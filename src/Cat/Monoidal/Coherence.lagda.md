@@ -24,6 +24,7 @@ open import Core.Kan
 open import Core.Transport.Base using (contr-ind)
 open import Core.Transport.J using (subst)
 open import Core.Path.Base using (ap-comp)
+open import Core.Coherence.Base using (coh-project)
 open import Cat.Type
 open import Cat.Monoidal
 ```
@@ -86,9 +87,9 @@ in scope here through `open monoidal M`.
 
 ```agda
   module pentagon-fibers (w x y z : ob) where
-    private
-      E₄c = tensor-E₄-contr w x y z
+    E₄c = tensor-E₄-contr w x y z
 
+    private
       pt₁ : fiber tensor-emb (tensor-E₄ w x y z)
       pt₁ = E₄c .center
 
@@ -341,8 +342,8 @@ in scope here through `open monoidal M`.
     hom-identity
       : α₁₄ ∙ α₄₅ ≡ pcom (sym α₁₂) α₂₃ α₃₅
     hom-identity =
-      pcom (ap-comp fst σ₁₄ σ₄₅)
-        (ap (ap fst) identity)
+      coh-project E₄c fst (σ₁₄ ∙ σ₄₅) (pcom (sym σ₁₂) σ₂₃ σ₃₅)
+        (ap-comp fst σ₁₄ σ₄₅)
         (pcom.ap (λ _ → fst) (sym σ₁₂) σ₂₃ σ₃₅)
 
   ⊗-pentagon

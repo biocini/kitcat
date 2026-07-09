@@ -26,6 +26,7 @@ open import Core.Base hiding (I)
 open import Core.Data.Sigma
 open import Core.Kan
 open import Core.Path.Base using (ap-comp)
+open import Core.Coherence.Base using (coh-project-glued)
 open import Cat.Type
 open import Cat.Monoidal
 open import Cat.Monoidal.Braid
@@ -97,9 +98,9 @@ module ⊗-Braided-Cat
   open category C using (ob)
 
   module hexagon-fibers (x y z : ob) where
-    private
-      C₃ = tensor-E₃-contr-ext y z x
+    C₃ = tensor-E₃-contr-ext y z x
 
+    private
       NB : (λ l r → tensor-emb (y ⊗ z) l (noy x r)) ≡ tensor-E₃ y z x
       NB = tensor-emb-ext λ l r → tensor-emb-comp-pt y z l (noy x r)
 
@@ -194,17 +195,12 @@ module ⊗-Braided-Cat
       : pcom (sym α₁₂) α₂₃ α₃₄
       ≡ pcom (sym α₁₅) α₅₆ α₆₄
     hom-identity =
-      pcom (pcom.ap (λ _ → fst) (sym σ₁₂) σ₂₃ σ₃₄)
-        (ap (ap fst) identity)
-        r-step
-      where
-        r-step
-          : ap fst (μ ∙ pcom (sym σ₁₅) σ₅₆ σ₆₄)
-          ≡ pcom (sym α₁₅) α₅₆ α₆₄
-        r-step =
-          ap-comp fst μ (pcom (sym σ₁₅) σ₅₆ σ₆₄)
-          ∙ Path.unitl (ap fst (pcom (sym σ₁₅) σ₅₆ σ₆₄))
-          ∙ pcom.ap (λ _ → fst) (sym σ₁₅) σ₅₆ σ₆₄
+      coh-project-glued C₃ fst μ
+        (pcom (sym σ₁₂) σ₂₃ σ₃₄) (pcom (sym σ₁₅) σ₅₆ σ₆₄)
+        (pcom.ap (λ _ → fst) (sym σ₁₂) σ₂₃ σ₃₄)
+        (pcom.ap (λ _ → fst) (sym σ₁₅) σ₅₆ σ₆₄)
+        refl
+      ∙ Path.unitl (pcom (sym α₁₅) α₅₆ α₆₄)
 
     face₃₄ : α₃₄ ≡ ⊗-assoc y z x
     face₃₄ = contr-face C₃ σ₃₄ w-refl (assoc-σ y z x) refl
