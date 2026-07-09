@@ -184,13 +184,6 @@ module ⊗-Braided-Cat
     μ i = (x ⊗ y) ⊗ z
         , tensor-emb-nest-ext x y z ∙ hexagon-emb-ext x y z i
 
-    identity
-      : pcom (sym σ₁₂) σ₂₃ σ₃₄
-      ≡ μ ∙ pcom (sym σ₁₅) σ₅₆ σ₆₄
-    identity = is-contr→is-set C₃ pt₁-L pt₄
-      (pcom (sym σ₁₂) σ₂₃ σ₃₄)
-      (μ ∙ pcom (sym σ₁₅) σ₅₆ σ₆₄)
-
     hom-identity
       : pcom (sym α₁₂) α₂₃ α₃₄
       ≡ pcom (sym α₁₅) α₅₆ α₆₄

@@ -166,10 +166,6 @@ module _ {o h} (C : category o h) where
     α₃₅ : f ⨾ ((g ⨾ h) ⨾ k) ≡ f ⨾ (g ⨾ (h ⨾ k))
     α₃₅ = ap fst σ₃₅
 
-    identity : σ₁₄ ∙ σ₄₅ ≡ pcom (sym σ₁₂) σ₂₃ σ₃₅
-    identity = is-contr→is-set E₄c pt₁ pt₅
-      (σ₁₄ ∙ σ₄₅) (pcom (sym σ₁₂) σ₂₃ σ₃₅)
-
     private
       γ₁₂ : pt₁ ≡ pt₂
       γ₁₂ i =
@@ -451,10 +447,6 @@ not `absorb-coh`. The `α₂₃` edge remains abstract.
     α₂₃ : f ⨾ (idn ⨾ g) ≡ f ⨾ g
     α₂₃ = ap fst σ₂₃
 
-    identity : σ₁₃ ≡ σ₁₂ ∙ σ₂₃
-    identity = is-contr→is-set cc pt₁ pt₃
-      σ₁₃ (σ₁₂ ∙ σ₂₃)
-
     private
       unitr-σ
         : (   f ⨾ idn
@@ -526,8 +518,8 @@ not `absorb-coh`. The `α₂₃` edge remains abstract.
     hom-identity
       : α₁₃ ≡ α₁₂ ∙ α₂₃
     hom-identity =
-      ap (ap fst) identity
-      ∙ ap-comp fst σ₁₂ σ₂₃
+      coh-project (compose-contr f g) fst σ₁₃ (σ₁₂ ∙ σ₂₃) refl
+        (ap-comp fst σ₁₂ σ₂₃)
 
   triangle-weak
     : ∀ {x y z}

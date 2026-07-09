@@ -157,10 +157,6 @@ in scope here through `open monoidal M`.
     α₃₅ : w ⊗ ((x ⊗ y) ⊗ z) ≡ w ⊗ (x ⊗ (y ⊗ z))
     α₃₅ = ap fst σ₃₅
 
-    identity : σ₁₄ ∙ σ₄₅ ≡ pcom (sym σ₁₂) σ₂₃ σ₃₅
-    identity = is-contr→is-set E₄c pt₁ pt₅
-      (σ₁₄ ∙ σ₄₅) (pcom (sym σ₁₂) σ₂₃ σ₃₅)
-
     private
       γ₁₂ : pt₁ ≡ pt₂
       γ₁₂ i =
@@ -418,10 +414,6 @@ The weak triangle uses only `absorb-l` from the unit, not
     α₂₃ : x ⊗ (I ⊗ z) ≡ x ⊗ z
     α₂₃ = ap fst σ₂₃
 
-    identity : σ₁₃ ≡ σ₁₂ ∙ σ₂₃
-    identity = is-contr→is-set cc pt₁ pt₃
-      σ₁₃ (σ₁₂ ∙ σ₂₃)
-
     private
       unitr-σ
         : (   x ⊗ I
@@ -490,8 +482,8 @@ The weak triangle uses only `absorb-l` from the unit, not
     hom-identity
       : α₁₃ ≡ α₁₂ ∙ α₂₃
     hom-identity =
-      ap (ap fst) identity
-      ∙ ap-comp fst σ₁₂ σ₂₃
+      coh-project (tensor-compose-contr x z) fst σ₁₃ (σ₁₂ ∙ σ₂₃) refl
+        (ap-comp fst σ₁₂ σ₂₃)
 
   ⊗-triangle-weak
     : (x z : ob)
