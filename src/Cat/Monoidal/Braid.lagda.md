@@ -22,13 +22,13 @@ so the only half it does not give us is moving the swapped factor
 from a `yon` on the left flank to a `noy` on the right flank. Once
 that half is a field, the full braid `tensor-braid` composes it
 after interchange, `tensor-emb-ext` promotes it to a path of
-operations `tensor-braid-ext`, and `β` is read off a contractible
+operations `tensor-braid-ext`, and `⊗-braid` is read off a contractible
 composition fiber exactly as the associator is.
 
-Invertibility is free: `β` is a path in `ob`, so its symmetry is
-its inverse — there is no separate axiom, unlike the classical
-definition where the braiding's invertibility is an imposed
-condition on a natural transformation.
+Invertibility is free: `⊗-braid` is a path in `ob`, so its
+symmetry is its inverse — there is no separate axiom, unlike the
+classical definition where the braiding's invertibility is an
+imposed condition on a natural transformation.
 
 The hexagon coherences are *not* free. They are cross-target
 2-paths relating the braid to the associator, and they are
@@ -44,6 +44,8 @@ open import Core.Base hiding (I)
 open import Core.Data.Sigma
 open import Core.Kan
 
+open import Cat.Base using (module Cat)
+open import Cat.Iso using (idtoiso)
 open import Cat.Type
 open import Cat.Monoidal
 ```
@@ -58,6 +60,7 @@ definitions (which use `where`) follow the last field.
 record braided {o h} {C : category o h} (M : monoidal C) : Type (o ⊔ h) where
   open monoidal M
   open category C using (ob)
+  open Cat C using (_≅_)
 
   field
     tensor-flank-swap
@@ -74,8 +77,8 @@ record braided {o h} {C : category o h} (M : monoidal C) : Type (o ⊔ h) where
 ## The object braiding
 
 `tensor-braid-ext` promotes the pointwise braid to a path between
-the two representing operations. `β` supplies an explicit rhs
-fiber point — the object `x ⊗ y` together with the witness
+the two representing operations. `⊗-braid` supplies an explicit
+rhs fiber point — the object `x ⊗ y` together with the witness
 `tensor-emb-composite x y ∙ tensor-braid-ext x y`, which composes
 the composite equation with the promoted braid to land at
 `λ l r → tensor-emb y l (noy x r)` — and then projects the
@@ -90,8 +93,8 @@ component is `x ⊗ y` definitionally, so no transport is needed.
     ≡ (λ l r → tensor-emb y l (noy x r))
   tensor-braid-ext x y = tensor-emb-ext (tensor-braid x y)
 
-  β : (x y : ob) → x ⊗ y ≡ y ⊗ x
-  β x y =
+  ⊗-braid : (x y : ob) → x ⊗ y ≡ y ⊗ x
+  ⊗-braid x y =
     ap fst
       (is-contr→is-prop (tensor-compose-contr y x)
         P₁ (tensor-compose-contr y x .center))
@@ -99,6 +102,19 @@ component is `x ⊗ y` definitionally, so no transport is needed.
       P₁ : fiber tensor-emb (λ l r → tensor-emb y l (noy x r))
       P₁ = x ⊗ y , tensor-emb-composite x y ∙ tensor-braid-ext x y
 
-  β-inv : (x y : ob) → y ⊗ x ≡ x ⊗ y
-  β-inv x y = sym (β x y)
+  ⊗-braid-inv : (x y : ob) → y ⊗ x ≡ x ⊗ y
+  ⊗-braid-inv x y = sym (⊗-braid x y)
+```
+
+## The braiding isomorphism
+
+`⊗-braiding` packages the object braiding as an honest `_≅_`,
+mirroring `⊗-associator` in `Cat.Monoidal.Iso`. Invertibility is
+free: `⊗-braid` is a path, so `idtoiso` lands in `_≅_` with no
+extra datum. The naturality square is deferred — it needs the
+morphism-tier braiding field.
+
+```agda
+  ⊗-braiding : (x y : ob) → (x ⊗ y) ≅ (y ⊗ x)
+  ⊗-braiding x y = idtoiso C (⊗-braid x y)
 ```
