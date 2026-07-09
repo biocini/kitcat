@@ -19,7 +19,8 @@ open import Core.Type
 open import Core.Base
 open import Core.Data.Sigma
 open import Core.Data.Empty
-open import Core.HLevel.Base using (Σ-prop-path)
+open import Core.HLevel.Base using (Σ-prop-path; Σ-is-hlevel; Path-is-hlevel)
+open import Core.Data.Nat.Type using (Z)
 open import Core.Kan
 open import Core.Sub
 
@@ -203,6 +204,13 @@ prop→endo-is-equiv p f .eqv-fibers y =
     Σ-prop-path
       (λ a → is-prop→is-set p (f a) y)
       (p a₁ a₂)
+
+contr→contr→is-equiv
+  : ∀ {u v} {A : Type u} {B : Type v}
+  → is-contr A → is-contr B → (f : A → B) → is-equiv f
+contr→contr→is-equiv acontr bcontr f .eqv-fibers y =
+  Σ-is-hlevel Z acontr
+    (λ x → Path-is-hlevel {n = Z} (is-contr→is-prop bcontr))
 
 Σ-⊤-≃ : ∀ {v} {B : ⊤ → Type v} → Σ B ≃ B tt
 Σ-⊤-≃ = iso→equiv (λ { (tt , b) → b }) (λ b → tt , b) (λ _ → refl) (λ _ → refl)

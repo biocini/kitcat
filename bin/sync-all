@@ -144,5 +144,5 @@ if $fix; then
     for mod in $missing; do echo "Added: import $mod"; done
     changed=1
   fi
-  $changed || echo "Nothing to fix."
+  [ "$changed" -eq 0 ] && echo "Nothing to fix." || true
 fi

@@ -7,19 +7,13 @@ module All where
 import Cat.Base
 import Cat.Coherence
 import Cat.Covariant
-import Cat.Data.Base
-import Cat.Data.Coh
-import Cat.Data.Eqv
-import Cat.Data.Het
-import Cat.Data.Iso
-import Cat.Data.Magmoid
-import Cat.Data.Map
-import Cat.Data.Nat
-import Cat.Data.Neutral
-import Cat.Data.Neutral.Eq
-import Cat.Data.Unit
+import Cat.Dep
 import Cat.Groupoid
-import Cat.Rezk
+import Cat.Iso
+import Cat.Monoidal
+import Cat.Monoidal.Bifunctor
+import Cat.Monoidal.Coherence
+import Cat.Monoidal.Iso
 import Cat.Type
 import Cat.Virtual
 import Cat.Virtual.Product
@@ -62,8 +56,21 @@ import HData.Quotient
 import HData.Thinning
 import HData.Thinning.Properties
 
+import Lib.Relation.Binary
+import Lib.Relation.Unary
+import Lib.Ternary.Bundles
+import Lib.Ternary.Construct.Empty
+import Lib.Ternary.Construct.Function
+import Lib.Ternary.Construct.Product
+import Lib.Ternary.Construct.Unit
+import Lib.Ternary.Core
+import Lib.Ternary.Respect.Propositional
+import Lib.Ternary.Structures
+import Lib.Ternary.Structures.Syntax
+
 import Test.Scratch
 
+-- import Cat.Rezk  -- WIP: decode-gen holes at L203/204
 -- import Cat.Slice  -- WIP: open holes at L211/262/280
 -- import Core.Coherence  -- WIP: open face holes at L149/152/155/183
 -- import Core.Path.Coherence  -- WIP: open cell/hcomp holes at L52/67/94-99
@@ -72,24 +79,11 @@ import Test.Scratch
 -- import Data.Thin.Separated  -- WIP: UnequalTerms de Bruijn mismatch at L116
 -- import Data.Thin.Cover  -- WIP: copU hole at L96
 -- import Data.Thin.Properties  -- WIP: law holes at L32/35/39
--- import Cat.Data.Prod  -- WIP: mid-edit, MetaCannotDependOn at L124
 -- import Cat.Displayed  -- WIP: open holes in compose-contr contraction
 -- import Cat.Units  -- WIP: proof error at line 382
 -- import Cat.Product  -- WIP: mid-edit, MetaCannotDependOn at L237
 -- import HData.Rack  -- WIP: pre-existing unsolved metas at L31-34, unrelated to ternary port
-import Lib.Relation.Binary
-import Lib.Relation.Unary
-import Lib.Ternary.Bundles
-import Lib.Ternary.Core
-import Lib.Ternary.Structures
-import Lib.Ternary.Structures.Syntax
-import Lib.Ternary.Construct.Empty
-import Lib.Ternary.Construct.Unit
-import Lib.Ternary.Respect.Propositional
-import Lib.Ternary.Construct.Function
-import Lib.Ternary.Construct.Product
-import Cat.Dep
-import Cat.Monoidal
-import Cat.Monoidal.Bifunctor
-import Cat.Monoidal.Coherence
+import Cat.Monoidal.Indiscrete
+import Cat.Monoidal.Twist
+import Cat.Monoidal.Braid
 ```

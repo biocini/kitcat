@@ -48,3 +48,45 @@ infix 4 _≢_
 _≢_ : {A : Type u} → A → A → Type u
 x ≢ y = ¬ (x ≡ y)
 ```
+
+## Cancellation
+
+Left- and right-cancellation for `_∙_`, and the conjugation
+cancellation: a loop `ζ` conjugated into a composite that agrees
+with the plain composite must be trivial.
+
+```agda
+cancell
+  : ∀ {u} {A : Type u} {a b c : A}
+  → (p : a ≡ b) (s : b ≡ c)
+  → sym p ∙ p ∙ s ≡ s
+cancell p s =
+  Path.assoc (sym p) p s
+  ∙ ap (_∙ s) (Path.invl p)
+  ∙ Path.unitl s
+
+cancelr
+  : ∀ {u} {A : Type u} {a b c : A}
+  → (q : b ≡ c) (t : a ≡ b)
+  → (t ∙ q) ∙ sym q ≡ t
+cancelr q t =
+  sym (Path.assoc t q (sym q))
+  ∙ ap (t ∙_) (Path.invr q)
+  ∙ Path.unitr t
+
+conj-cancel
+  : ∀ {u} {A : Type u} {a b c : A}
+  → (p : a ≡ b) (q : b ≡ c) (ζ : b ≡ b)
+  → p ∙ q ≡ p ∙ ζ ∙ q
+  → ζ ≡ refl
+conj-cancel p q ζ h =
+  sym (cancelr q ζ)
+  ∙ ap (_∙ sym q) (sym cancel-left)
+  ∙ Path.invr q
+  where
+    cancel-left : q ≡ ζ ∙ q
+    cancel-left =
+      sym (cancell p q)
+      ∙ ap (sym p ∙_) h
+      ∙ cancell p (ζ ∙ q)
+```

@@ -1,15 +1,16 @@
 Lane Biocini
 July 2026
 
-Native pentagon coherence for the monoidal tensor. This is
-the erased-object-index image of the pentagon section of
-`Cat.Coherence`, applied to `tensor-emb` in place of the
-delooped `emb`. The five reassociations of a fourfold tensor
-sit in a fiber over `tensor-E₄` that the base axioms make
-contractible; the pentagon is the `ap fst` image of the two
-traversals of that fiber agreeing, forced by
-`is-contr→is-set`. Triangle coherence extends this same
-submodule in a later pass.
+Native pentagon and triangle coherence for the monoidal
+tensor. This is the erased-object-index image of the
+coherence section of `Cat.Coherence`, applied to `tensor-emb`
+in place of the delooped `emb`. The five reassociations of a
+fourfold tensor sit in a fiber over `tensor-E₄` that the base
+axioms make contractible; the pentagon is the `ap fst` image
+of the two traversals of that fiber agreeing, forced by
+`is-contr→is-set`. The weak triangle holds from the base
+axioms; the full Mac Lane triangle requires
+`monoidal-2-coherent`, which supplies `absorb-coh`.
 
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
@@ -380,9 +381,287 @@ module _ {o h} {C : category o h} (M : monoidal C) where
         (p ∙ q ∙ r , cat.lcoh p q r)
 ```
 
-## Deferred
+## Weak triangle
 
-Triangle coherence — the weak triangle from the base axioms,
-the `2-coherent` record supplying `absorb-coh`, and the full
-Mac Lane triangle — is the next pass and extends this
-submodule, mirroring the triangle section of `Cat.Coherence`.
+The weak triangle uses only `absorb-l` from the unit, not
+`absorb-coh`. The `α₂₃` edge remains abstract.
+
+```agda
+  module triangle-fibers (x z : ob) where
+    private
+      cc = tensor-compose-contr x z
+
+      pt₁ : fiber tensor-emb
+        (λ l r → tensor-emb x l (noy z r))
+      pt₁ = (x ⊗ I) ⊗ z
+          , tensor-emb-composite (x ⊗ I) z
+          ∙ tensor-emb-ext λ l r →
+              tensor-emb-comp-pt x I l (noy z r)
+            ∙ ap (tensor-emb x l)
+                (absorb-l (noy z r))
+
+      pt₂ : fiber tensor-emb
+        (λ l r → tensor-emb x l (noy z r))
+      pt₂ = x ⊗ (I ⊗ z)
+          , tensor-emb-composite x (I ⊗ z)
+          ∙ tensor-emb-ext λ l r →
+              ap (tensor-emb x l)
+                (tensor-noy-composite I z r)
+            ∙ ap (tensor-emb x l)
+                (absorb-l (noy z r))
+
+      pt₃ : fiber tensor-emb
+        (λ l r → tensor-emb x l (noy z r))
+      pt₃ = x ⊗ z , tensor-emb-composite x z
+
+    σ₁₃ : pt₁ ≡ pt₃
+    σ₁₃ = is-contr→is-prop cc pt₁ pt₃
+
+    σ₁₂ : pt₁ ≡ pt₂
+    σ₁₂ = is-contr→is-prop cc pt₁ pt₂
+
+    σ₂₃ : pt₂ ≡ pt₃
+    σ₂₃ = is-contr→is-prop cc pt₂ pt₃
+
+    α₁₃ : (x ⊗ I) ⊗ z ≡ x ⊗ z
+    α₁₃ = ap fst σ₁₃
+
+    α₁₂ : (x ⊗ I) ⊗ z ≡ x ⊗ (I ⊗ z)
+    α₁₂ = ap fst σ₁₂
+
+    α₂₃ : x ⊗ (I ⊗ z) ≡ x ⊗ z
+    α₂₃ = ap fst σ₂₃
+
+    identity : σ₁₃ ≡ σ₁₂ ∙ σ₂₃
+    identity = is-contr→is-set cc pt₁ pt₃
+      σ₁₃ (σ₁₂ ∙ σ₂₃)
+
+    private
+      unitr-σ
+        : (   x ⊗ I
+            , tensor-emb-composite x I
+            ∙ tensor-emb-ext λ l r →
+                ap (tensor-emb x l) (absorb-l r))
+        ≡ (x , refl)
+      unitr-σ =
+        is-contr→is-prop
+          (tensor-emb-image-contr-ext x) _ _
+
+      γ₁₃-pt : ∀ i → fiber tensor-emb
+        (λ l r → tensor-emb x l (noy z r))
+      γ₁₃-pt i =
+        ⊗-unitr x i ⊗ z
+        , tensor-emb-composite (⊗-unitr x i) z
+        ∙ (λ j l r →
+            unitr-σ i .snd j l (noy z r))
+
+      v₃ : γ₁₃-pt i1 ≡ pt₃
+      v₃ i = _ , Path.unitr (tensor-emb-composite x z) i
+
+      γ₁₂-pt : ∀ i → fiber tensor-emb
+        (λ l r → tensor-emb x l (noy z r))
+      γ₁₂-pt i =
+        ⊗-assoc x I z i
+        , assoc-σ x I z i .snd
+        ∙ tensor-emb-ext λ l r →
+            ap (tensor-emb x l)
+              (absorb-l (noy z r))
+
+      w₁ : pt₁ ≡ γ₁₂-pt i0
+      w₁ i = _
+        , Path.assoc
+            (tensor-emb-composite (x ⊗ I) z)
+            (tensor-emb-ext λ l r →
+                tensor-emb-comp-pt x I l (noy z r))
+            (tensor-emb-ext λ l r →
+                ap (tensor-emb x l)
+                  (absorb-l (noy z r))) i
+
+      w₂ : γ₁₂-pt i1 ≡ pt₂
+      w₂ i = _
+        , sym (Path.assoc
+            (tensor-emb-composite x (I ⊗ z))
+            (tensor-emb-ext λ l r →
+                ap (tensor-emb x l)
+                  (tensor-noy-composite I z r))
+            (tensor-emb-ext λ l r →
+                ap (tensor-emb x l)
+                  (absorb-l (noy z r)))) i
+
+    face₁₃ : α₁₃ ≡ ap (_⊗ z) (⊗-unitr x)
+    face₁₃ =
+      contr-face cc σ₁₃
+        refl (λ i → γ₁₃-pt i) (ap snd v₃)
+
+    face₁₂ : α₁₂ ≡ ⊗-assoc x I z
+    face₁₂ =
+      contr-face cc σ₁₂
+        (ap snd w₁) (λ i → γ₁₂-pt i) (ap snd w₂)
+
+  module triangle (x z : ob) where
+    open triangle-fibers x z
+
+    hom-identity
+      : α₁₃ ≡ α₁₂ ∙ α₂₃
+    hom-identity =
+      ap (ap fst) identity
+      ∙ ap-comp fst σ₁₂ σ₂₃
+
+  ⊗-triangle-weak
+    : (x z : ob)
+    → ap (_⊗ z) (⊗-unitr x)
+    ≡ ⊗-assoc x I z ∙ triangle-fibers.α₂₃ x z
+  ⊗-triangle-weak x z =
+    pcom face₁₃
+      hom-identity
+      (ap (_∙ α₂₃) face₁₂)
+    where open triangle-fibers x z
+          open triangle x z
+```
+
+## 2-coherence
+
+The `absorb-coh` field is the additional coherence needed to
+identify `α₂₃` with `ap (x ⊗_) (⊗-unitl z)` and obtain the
+full Mac Lane triangle identity.
+
+```agda
+record monoidal-2-coherent {o h}
+  {C : category o h} (M : monoidal C) : Type (o ⊔ h)
+  where
+  open monoidal M
+  open category C using (ob)
+  field
+    absorb-coh
+      : (x r : ob)
+      → absorb-l (noy x r)
+      ≡ tensor-interchange I x I r
+        ∙ ap (λ t → tensor-emb x t r)
+            (absorb-r I)
+```
+
+## Full Mac Lane triangle
+
+The `⊗-2-Cat` module opens both `monoidal M` and
+`monoidal-2-coherent coh`, then derives the full triangle
+`ap (_⊗ z) (⊗-unitr x) ≡ ⊗-assoc x I z ∙ ap (x ⊗_) (⊗-unitl z)`
+using `absorb-coh` to identify the abstract `α₂₃` edge.
+
+```agda
+module ⊗-2-Cat
+  {o h} {C : category o h}
+  (M : monoidal C)
+  (coh : monoidal-2-coherent M)
+  where
+  open monoidal M public
+  open monoidal-2-coherent coh public
+  open category C using (ob)
+
+  absorb-l-noy-retract
+    : (x r : ob)
+    → tensor-emb-noy x I r ∙ absorb-l (noy x r)
+    ≡ refl
+  absorb-l-noy-retract x r =
+    ap (tensor-emb-noy x I r ∙_)
+      (absorb-coh x r)
+    ∙ Path.grp-cancel
+        (ap (λ t → tensor-emb x t r)
+          (absorb-r I))
+        (tensor-interchange I x I r)
+```
+
+### Full triangle face₂₃
+
+The `face₂₃` identification requires `absorb-l-noy-retract`,
+which in turn requires `absorb-coh`. This is what separates
+the full Mac Lane triangle from the weak version.
+
+```agda
+  private
+    module face₂₃-proof (x z : ob) where
+      open triangle-fibers M x z
+
+      private
+        cc = tensor-compose-contr x z
+
+        pt₂ : fiber tensor-emb
+          (λ l r →
+            tensor-emb x l (noy z r))
+        pt₂ = x ⊗ (I ⊗ z)
+            , tensor-emb-composite x (I ⊗ z)
+            ∙ tensor-emb-ext λ l r →
+                ap (tensor-emb x l)
+                  (tensor-noy-composite I z r)
+              ∙ ap (tensor-emb x l)
+                  (absorb-l (noy z r))
+
+        pt₃ : fiber tensor-emb
+          (λ l r →
+            tensor-emb x l (noy z r))
+        pt₃ = x ⊗ z , tensor-emb-composite x z
+
+        unitl-σ
+          : (   I ⊗ z
+              , tensor-emb-composite I z)
+          ≡ (   z
+              , tensor-emb-ext λ l r →
+                  tensor-emb-noy z l r)
+        unitl-σ =
+          is-contr→is-prop
+            (tensor-compose-contr I z) _ _
+
+        γ₂₃-pt : ∀ i → fiber tensor-emb
+          (λ l r →
+            tensor-emb x l (noy z r))
+        γ₂₃-pt i =
+          x ⊗ (⊗-unitl z i)
+          , tensor-emb-composite x (⊗-unitl z i)
+          ∙ tensor-emb-ext λ l r →
+              ap (tensor-emb x l)
+                ((λ j →
+                    unitl-σ i .snd j I r)
+                ∙ absorb-l (noy z r))
+
+        w₀ : pt₂ ≡ γ₂₃-pt i0
+        w₀ i = _
+          , tensor-emb-composite x (I ⊗ z)
+          ∙ tensor-emb-ext λ l r →
+              sym (ap-comp (tensor-emb x l)
+                (tensor-noy-composite I z r)
+                (absorb-l (noy z r))) i
+
+        v₁ : γ₂₃-pt i1
+          ≡ (x ⊗ z
+            , tensor-emb-composite x z ∙ refl)
+        v₁ i = _
+          , tensor-emb-composite x z
+          ∙ tensor-emb-ext λ l r →
+              ap (ap (tensor-emb x l))
+                (absorb-l-noy-retract z r) i
+
+        v₂
+          : (x ⊗ z
+            , tensor-emb-composite x z ∙ refl)
+          ≡ pt₃
+        v₂ i = _
+          , Path.unitr (tensor-emb-composite x z) i
+
+      face₂₃ : α₂₃ ≡ ap (x ⊗_) (⊗-unitl z)
+      face₂₃ =
+        contr-face cc σ₂₃
+          (ap snd w₀) (λ i → γ₂₃-pt i)
+          (ap snd v₁ ∙ ap snd v₂)
+
+  ⊗-triangle
+    : (x z : ob)
+    → ap (_⊗ z) (⊗-unitr x)
+    ≡ ⊗-assoc x I z ∙ ap (x ⊗_) (⊗-unitl z)
+  ⊗-triangle x z =
+    pcom face₁₃
+      hom-identity
+      (ap (_∙ α₂₃) face₁₂
+      ∙ ap (⊗-assoc x I z ∙_) face₂₃)
+    where open triangle-fibers M x z
+          open triangle M x z
+          open face₂₃-proof x z
+```

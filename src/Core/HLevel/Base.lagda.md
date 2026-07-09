@@ -96,6 +96,12 @@ PathP-is-hlevel {A = A} {x = x} {y = y} hl =
     pathp-eq : (coe01 A x ≡ y) ≡ PathP A x y
     pathp-eq i = PathP (∂.contract A (~ i)) (coe-filler A x (~ i)) y
 
+PathP-is-contr : ∀ {A : I → Type ℓ}
+               → is-contr (A i1)
+               → (a₀ : A i0) (a₁ : A i1)
+               → is-contr (PathP A a₀ a₁)
+PathP-is-contr c a₀ a₁ = PathP-is-hlevel {n = Z} (is-contr→is-prop c)
+
 Π-is-prop : {B : A → Type ℓ'}
           → ((a : A) → is-prop (B a))
           → is-prop ((a : A) → B a)
