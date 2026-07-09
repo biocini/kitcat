@@ -394,13 +394,6 @@ module _ {o h} (C : category o h) where
     where
       open pentagon-fibers f g h k
       open pentagon f g h k
-      pcom→∙
-        : ∀ {u} {A : Type u} {a b c d : A}
-          (p : a ≡ b) (q : b ≡ c) (r : c ≡ d)
-        → pcom (sym p) q r ≡ p ∙ q ∙ r
-      pcom→∙ p q r = pcom.unique
-        (sym p) q r
-        (p ∙ q ∙ r , cat.lcoh p q r)
 ```
 
 ## Weak triangle

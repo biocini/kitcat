@@ -96,25 +96,6 @@ module ⊗-Braided-Cat
   open braided-coherent BC
   open category C using (ob)
 
-  private
-    assoc-σ
-      : (a b c : ob)
-      → tensor-E₃-contr-ext a b c .center
-      ≡ ( a ⊗ (b ⊗ c)
-        , tensor-emb-composite a (b ⊗ c)
-        ∙ tensor-emb-ext λ l r →
-            ap (tensor-emb a l) (tensor-noy-composite b c r))
-    assoc-σ a b c =
-      is-contr→is-prop (tensor-E₃-contr-ext a b c) _ _
-
-    pcom→∙
-      : ∀ {u} {A : Type u} {a b c d : A}
-        (p : a ≡ b) (q : b ≡ c) (r : c ≡ d)
-      → pcom (sym p) q r ≡ p ∙ q ∙ r
-    pcom→∙ p q r = pcom.unique
-      (sym p) q r
-      (p ∙ q ∙ r , cat.lcoh p q r)
-
   module hexagon-fibers (x y z : ob) where
     private
       C₃ = tensor-E₃-contr-ext y z x

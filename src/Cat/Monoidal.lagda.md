@@ -537,6 +537,19 @@ extended triple fiber.
       c' .paths (s , p) =
         ap to-ext (c .paths (s , λ l r i → p i l r))
 
+  -- The extended triple fiber's center identifies with the
+  -- right-nested associator target x ⊗ (y ⊗ z). The pentagon,
+  -- triangle, and hexagon consume this identification.
+  assoc-σ
+    : (x y z : C.ob)
+    → tensor-E₃-contr-ext x y z .center
+    ≡ ( x ⊗ (y ⊗ z)
+      , tensor-emb-composite x (y ⊗ z)
+      ∙ tensor-emb-ext λ l r →
+          ap (tensor-emb x l) (tensor-noy-composite y z r))
+  assoc-σ x y z =
+    is-contr→is-prop (tensor-E₃-contr-ext x y z) _ _
+
   tensor-emb-image-contr-ext
     : (x : C.ob)
     → is-contr (fiber tensor-emb (tensor-emb x))

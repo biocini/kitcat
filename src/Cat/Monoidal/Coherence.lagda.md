@@ -77,18 +77,10 @@ module _ {o h} {C : category o h} (M : monoidal C) where
 
 ## The associator fiber path
 
-```agda
-  private
-    assoc-σ
-      : (x y z : ob)
-      → tensor-E₃-contr-ext x y z .center
-      ≡ ( x ⊗ (y ⊗ z)
-        , tensor-emb-composite x (y ⊗ z)
-        ∙ tensor-emb-ext λ l r →
-            ap (tensor-emb x l) (tensor-noy-composite y z r))
-    assoc-σ x y z =
-      is-contr→is-prop (tensor-E₃-contr-ext x y z) _ _
-```
+`assoc-σ` — the identification of the extended triple fiber's
+center with the right-nested associator target `x ⊗ (y ⊗ z)` —
+is a derived definition of the `monoidal` record (`Cat.Monoidal`),
+in scope here through `open monoidal M`.
 
 ## Pentagon fibers
 
@@ -372,13 +364,6 @@ module _ {o h} {C : category o h} (M : monoidal C) where
     where
       open pentagon-fibers w x y z
       open pentagon w x y z
-      pcom→∙
-        : ∀ {u} {A : Type u} {a b c d : A}
-          (p : a ≡ b) (q : b ≡ c) (r : c ≡ d)
-        → pcom (sym p) q r ≡ p ∙ q ∙ r
-      pcom→∙ p q r = pcom.unique
-        (sym p) q r
-        (p ∙ q ∙ r , cat.lcoh p q r)
 ```
 
 ## Weak triangle
