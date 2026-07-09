@@ -181,11 +181,13 @@ ambiguity.
 
 ### Classified virtual categories
 
-Cat.Classified generalizes Cat.Virtual by gating composition with a
+Cat.Virtual generalizes Cat.Type by gating composition with a
 propositional classifier `classifier : hom x y → hom y z → Type p`
 on composable pairs. `compose-contr` and `interchange` fire only
-when the classifier holds. Cat.Virtual is recovered by setting the
-classifier to `⊤` (contractible — always composable).
+when the classifier holds. The plain category Cat.Type is recovered
+by setting the classifier to `⊤` (contractible — always composable).
+The former separate `Cat.Classified` module is folded into
+Cat.Virtual.
 
 The intended application is duploids, where composition is gated by
 polarity: the classifier is the join `(is-pos f × is-pos g) ⊔
@@ -196,7 +198,7 @@ into monad laws.
 
 The classifier algebra — closure under whiskering, op,
 intersection/union — gives a maximal sub-category: the universally
-classifiable morphisms form a genuine Cat.Virtual.
+classifiable morphisms form a genuine (un-gated) Cat.Type.
 
 ### The coherence boundary
 
@@ -239,7 +241,7 @@ gap is the virtual structure.
 
 ### Identity uniqueness and 2-torsion
 
-Cat.Virtual's unit conditions reduce to e² = refl in path
+Cat.Type's unit conditions reduce to e² = refl in path
 groupoids: left absorption `emb e x e z h ≡ h` at h = refl gives
 `e ∙ e ≡ refl`. The space K(ℤ/2, 1) = RP∞ has a nontrivial
 element α with α² = refl; both refl and α satisfy all unit axioms.
@@ -247,7 +249,7 @@ element α with α² = refl; both refl and α satisfy all unit axioms.
 
 Binary idempotency `yon e x e ≡ e` (the VirtualAlt formulation)
 immediately forces e ≡ refl by right-composition with sym e. This
-is strictly stronger than Cat.Virtual's action-idempotency.
+is strictly stronger than Cat.Type's action-idempotency.
 
 The ℤ/2 gauge freedom: the map `f ↦ yon f x idn` is always an
 involution (order ≤ 2). This is S₂ (symmetric), not B∞ (braided).
@@ -255,13 +257,13 @@ The obstruction maps onto the braided/symmetric distinction:
 2-torsion-free categories (braid-like) have unique identities;
 2-torsion categories (symmetric-like) have involution ambiguity.
 
-Cat.Virtual derives `unit-is-prop` via the Kraus chain using the
+Cat.Type derives `unit-is-prop` via the Kraus chain using the
 full axiom set (compose-contr + interchange + yon-eval), resolving
 the tension without requiring binary idempotency.
 
 ### Interchange propositionality
 
-Can `is-category` (the conjunction of all Cat.Virtual fields) be a
+Can `is-category` (the conjunction of all Cat.Type fields) be a
 property — a proposition that any two inhabitants are equal?
 
 - **unit**: yes — `unit-is-prop` via Kraus chain
@@ -279,6 +281,102 @@ This is the structural gap between strict 2-categories (interchange
 = identity, propositional) and wild ∞-categories (interchange =
 higher cell with its own coherences).
 
+## Monoidal Categories
+
+A monoidal category is a one-object bicategory. Kitcat presents it
+natively, over the same `category` record (Cat.Type), rather than
+by delooping onto a Unit-object category. The object-level tensor
+is read off a ternary `tensor-emb : ob → ob → ob → ob` — the
+erased-object-index image of `category.emb`, with the two Unit hom
+indices dropped. A parallel morphism-tier `htensor-emb` acts on
+three parallel 2-cells (a trifunctor action). From `tensor-emb`
+plus a unit, `tensor-compose-contr`, `tensor-interchange`, and
+`tensor-yon-eval`, the binary tensor `_⊗_`, the associator, the
+unitors, and unit uniqueness all derive exactly as Cat.Type derives
+`_⨾_`, `assoc`, and the unit laws.
+
+### Coherence is free where the fiber is fixed
+
+The monoidal coherences run on the same h-level-0 fiber
+contractibility that drives Cat.Coherence, and it draws a sharp
+line between what is *free* and what is *irreducible data*.
+
+A coherence obtained as `ap fst` of paths in a contractible
+`tensor-emb`-fiber is free (forced by `is-contr→is-set`) **iff all
+its vertices live in one fixed fiber**. The pentagon qualifies: the
+five bracketings of a fourfold tensor all represent the same
+operation `λ l r → tensor-emb x l (noy y (noy z r))`, so they are
+fiber points of a single `tensor-E₄`, and the pentagon is a 2-path
+in that one contractible fiber. Free.
+
+The **triangle's** full form is the first place the fiber closes
+only with extra data. The weak triangle is free; the full Mac Lane
+triangle needs `absorb-coh` (a field of `monoidal-2-coherent`),
+which bridges two *different* fibers — the left-absorption and the
+interchange-plus-right-absorption decompositions of the same
+object.
+
+### absorb-coh is genuinely independent (a π₀ obstruction)
+
+`absorb-coh` is not derivable from the base monoidal axioms. It
+demands a comparison between two members of the `tensor-interchange`
+family that the base never makes — concretely, that the interchange
+loop at the generic tuple `(I,x,I,r)` equals the loop at the
+degenerate tuple `(I,I,I,I)`. Perturbing `tensor-interchange` by a
+loop family `ω` gives a defect `ω(I,x,I,r) − ω(I,I,I,I)`: a
+*balanced difference* that vanishes on any connected carrier (a
+uniform 2-torsion twist cancels), so only a **π₀-separated** carrier
+(`S¹ × ℤ/2`, with `x` in a different component from `I`) refutes it.
+The `Cat.Monoidal.Indiscrete` builder and `Cat.Monoidal.Twist`
+(`twist-reduces-to-omega`) formalize the algebraic core; the
+concrete carrier is a deferred `--cubical` island.
+
+### Braiding: free scaffolding, irreducible hexagon
+
+The braiding relocates the same free/field boundary one categorical
+dimension up. Unlike the associator, the braid *moves* the
+`tensor-emb` target — `x⊗y` and `y⊗x` represent different
+operations — so it cannot be fiber-derived; it needs one field
+(`tensor-flank-swap`, the half that `tensor-interchange` does not
+already supply). But everything *around* it is free: the object
+braiding `⊗-braid : x⊗y ≡ y⊗x`, its invertibility (it is a path),
+its naturality, and the *reduction* of each hexagon to a
+target-level 2-path all fall out of the fibers.
+
+The **hexagon** itself is irreducible. Its six vertices span three
+target-permutations, so it is a 2-path in `E ≃ ob` (not a set),
+which `is-contr→is-set` cannot force — it is a genuine field
+(`hexagon-emb`), consumed only as a witness-move that vanishes on
+projection, so the derived object `⊗-hexagon` stays honest.
+
+### The coherence tower tracks the sphere
+
+Climbing the coherence tower, the irreducible residues track the
+homotopy groups of the sphere, and the perturbation defects shift
+from balanced to unbalanced:
+
+| Level | Coherence | Defect | Obstruction |
+|-------|-----------|--------|-------------|
+| E₁ | `absorb-coh` (triangle) | `ω(I,x,I,r) − ω(I,I,I,I)` | π₀ (component separation) |
+| E₂ | hexagon | `−ζ` (odd) | π₁, any nontrivial loop |
+| E₂ | `β² = id` (symmetric) | `2ζ` (even) | π₁, 2-torsion |
+| E₃ | syllepsis | η | π₁ˢ = ℤ/2 (Hopf) |
+
+The `absorb-coh` defect is a balanced difference — it vanishes on
+connected carriers, which is why it is a π₀ phenomenon. The braid
+defects are unbalanced sums, nonzero even for a constant twist on a
+connected carrier, so they are π₁. The symmetric gate `β² = id` is
+the even (2-torsion) sub-case: this is where the classical
+braided/symmetric distinction becomes the ℤ/2 = ⟨η⟩ of the first
+stable stem, deriving (rather than assuming) the 2-torsion story of
+the identity-uniqueness discussion above. Unlike the
+Eckmann–Hilton / syllepsis setting, which works in `Ω²` with two
+concatenations and *derives* the braid as a path, the `monoidal`
+record has one tensor and no such input — so the braid is
+irreducible data — but its coherence residue lands on the same
+E₁→E₂→E₃ ladder, with the stable Hopf class η at the syllepsis
+rung.
+
 ## References
 
 - **STYLEGUIDE.md** — Formatting and naming conventions
@@ -288,3 +386,6 @@ higher cell with its own coherences).
 - **Capriotti–Kraus** (arXiv:1707.03693) — Univalent higher categories
 - **Petrakis** (arXiv:2205.06651) — Univalent typoids
 - **Sterling** (jonmsterling.com/005B) — Virtual bicategory theory
+- **Kelly** (J. Algebra 1964) — Mac Lane coherence, triangle not forced by pentagon
+- **Joyal–Street** (Adv. Math. 1993) — Braided monoidal categories, hexagons
+- **Sojakova** (LICS 2022) — The syllepsis in HoTT (Eckmann–Hilton, η at E₃)
