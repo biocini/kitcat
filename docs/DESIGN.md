@@ -445,10 +445,49 @@ asserted or used. The two instances make this concrete: `Type-codep`
 fills `idn` with an identity morphism (`C.idn`), `Monoidal-codep` fills
 it with the tensor unit *object* `I`; the shared role is "anchor", not
 "two-sided unit". This is the noy-side structure through the pentagon.
-The full four-axiom wiring — the unit equivalence (mirroring
-`Cat.Type`'s `unit`), `unitl`/`unitr` and absorption, `emb-image-contr`,
-`unit-is-prop` (Kraus), and interchange/`yon-eval` — is a next
-milestone, to be designed and spiked, not bolted on.
+
+### The identity fragment: two layers over the anchor
+
+The scope note above is resolved by two extension records
+(`Cat.Codep.Coupling`, `Cat.Codep.Unit`) that characterize the anchor
+without touching the base.
+
+The **coupling** layer adds the two representable actions — `noy`
+(acting on the acted slot) and `yon` (acting on the passenger binder)
+— together with the two axioms relating them: `interchange` (the
+actions commute; this is the L3.5 profunctorial link) and `yon-eval`
+(the passenger action at the identity is the identity). From the
+coupling *alone* the identity idempotency `idem : idn ⨾ idn ≡ idn`
+derives, via `yon-composite` + `comp-eq`. This is the **linchpin**:
+idempotency precedes absorption, and the two are not circular. The
+guarantee is structural — `CouplingDerived`, the module that proves
+`idem`, has no access to `absorb-l` (which lives downstream in the
+unit layer), so the module boundary *enforces* absorption-freeness
+rather than merely observing it.
+
+The **unit** layer adds invertibility of the identity's two actions
+(`unit-l-equiv`, `unit-r-equiv`). From these, absorption
+(`absorb-l`/`absorb-r`) cancels the identity, the codependent identity
+law `·-idn` (`F · idn ≡ F`) follows, the unit laws `unitl`/`unitr`
+project from the contractible image fiber `emb-image-contr`, and
+identity uniqueness `unit-is-prop` follows by the Kraus chain: `yon e`
+squares to itself and is idempotent, so it absorbs, forcing `e ≡ idn`.
+
+The uniqueness hypothesis is the **binary** yon-idempotency
+`yon e e ≡ e`, obtained via `yon-eval`. This gives `e² = e` (not
+`e² = 1`), which forces `e = idn` in the representable setting —
+excluding the involution ambiguity (`e² = 1`) that a ternary
+idempotency would admit. Involutions are excluded; the identity is
+genuinely unique.
+
+Together the two layers give the refactor blueprint
+`Cat.Type.category ≅ codep-category + codep-coupling + codep-unit`:
+the four-axiom canonical record decomposes into one representability
+axiom plus the coupling and unit characterizations of its anchor. The
+same decomposition instantiates over `Cat.Monoidal` (the anchor being
+the tensor unit `I`), where the generic `absorb-l` coincides with the
+concrete one definitionally, and `unitl`/`unit-is-prop` specialize in
+statement (two fibers giving the same edge).
 
 ## References
 

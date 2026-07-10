@@ -123,10 +123,13 @@ contractible composition fibers). All lax-substitution structure and
 the Mac Lane pentagon are derived generically.
 
 ```
-Cat.Codep ─── aggregator (Base + Coherence)
+Cat.Codep ─── aggregator (Base + Coherence + Coupling + Unit)
     ├── Cat.Codep.Base ────── 4-field record + derived carrier/action
     ├── Cat.Codep.Coherence ─ assoc + 5 pentagon faces + pentagon
-    └── Cat.Codep.Instances ─ Type-codep, Monoidal-codep + checks
+    ├── Cat.Codep.Coupling ── noy/yon + interchange, yon-eval, idem
+    ├── Cat.Codep.Unit ────── unit equivalences + absorb, unitl/r,
+    │                         emb-image-contr, unit-is-prop
+    └── Cat.Codep.Instances ─ Type/Monoidal codep + coupling + unit
 ```
 
 **Cat.Codep.Base** is the record. `idn` is the representable anchor —
@@ -138,13 +141,23 @@ extracted from representability rather than primitive.
 from `compose-contr`/`emb-comp` — no unit law is consumed. The
 inner-associator face uses the emb–act link (`act = emb @ idn`).
 
+**Cat.Codep.Coupling** adds the two representable actions `noy`/`yon`
+and the `codep-coupling` record (`interchange`, `yon-eval`), then
+derives `yon-composite`, `comp-eq`, and `idem : idn ⨾ idn ≡ idn`. The
+`CouplingDerived` module has no access to `absorb-l`, so `idem`'s
+absorption-freeness is enforced by the module boundary.
+
+**Cat.Codep.Unit** adds `codep-unit` (the two identity-action
+equivalences) and derives the unit fragment: `absorb-l`/`absorb-r`,
+the identity law `·-idn`, `unitl`/`unitr`, `emb-image-contr`, and
+`unit-is-prop` (Kraus). This closes the noy-side four-axiom wiring:
+`Cat.Type.category ≅ codep-category + codep-coupling + codep-unit`.
+
 **Cat.Codep.Instances** derives `Type-codep` from `Cat.Type.category`
 (anchor = identity morphism) and `Monoidal-codep` from
-`Cat.Monoidal.monoidal` over `⊤` (anchor = tensor unit object), and
-checks the generic `assoc`/`pentagon` specialize at both. This is the
-noy-side structure through the pentagon; the full four-axiom wiring
-(unit equivalence, unitl/unitr, emb-image-contr, unit-is-prop,
-interchange/yon-eval) is a next milestone.
+`Cat.Monoidal.monoidal` over `⊤` (anchor = tensor unit object), fills
+their coupling + unit layers, and checks that the generic `assoc`,
+`pentagon`, and unit fragment specialize at both.
 
 ## Module status
 
@@ -168,10 +181,12 @@ interchange/yon-eval) is a next milestone.
 | Cat.Monoidal.Hexagon | 2 | partial | hexagon-emb field + ⊗-hexagon (H1); H2 open |
 | Cat.Monoidal.Indiscrete | 2 | complete | Builder: object data + ⊤-homs → monoidal C |
 | Cat.Monoidal.Twist | 2 | complete | absorb-coh independence core (twist-reduces-to-omega) |
-| Cat.Codep | 3 | complete | Aggregator: Base + Coherence |
+| Cat.Codep | 3 | complete | Aggregator: Base + Coherence + Coupling + Unit |
 | Cat.Codep.Base | 3 | complete | 4-field representable record; carrier/action derived |
 | Cat.Codep.Coherence | 3 | complete | assoc + 5 pentagon faces + named pentagon (from compose-contr) |
-| Cat.Codep.Instances | 3 | complete | Type-codep, Monoidal-codep; generic assoc/pentagon specialize |
+| Cat.Codep.Coupling | 3 | complete | noy/yon + interchange/yon-eval; idem (absorption-free by boundary) |
+| Cat.Codep.Unit | 3 | complete | unit equivalences; absorb, ·-idn, unitl/r, emb-image-contr, unit-is-prop |
+| Cat.Codep.Instances | 3 | complete | Type/Monoidal codep + coupling + unit; generic theorems specialize |
 
 ## Deferred modules
 
