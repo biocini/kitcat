@@ -1,4 +1,5 @@
-Representable codependent categories: the 4-field record, its
+Representable codependent categories: the trilayer presentation
+(`codep-structure` / `codep-axioms` / `codep-category` bundle), its
 associativity/pentagon coherence, and the coupling + unit layers.
 `Cat.Codep.Instances` (the concrete `Cat.Type` and `Cat.Monoidal`
 instances) is kept separate, imported on demand.

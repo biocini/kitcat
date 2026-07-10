@@ -1,22 +1,23 @@
 Lane Biocini
 July 2026
 
-The coupling layer over `codep-category`: the profunctorial link
-between the two representable actions. `pre` acts on the acted slot,
-`post` on the passenger binder; both are `emb` at a re-anchored
-identity context. `codep-coupling` records the two axioms relating
-them — `interchange` (the two actions commute) and `post-eval` (the
-passenger action at the identity is the identity).
+The coupling-derived laws. The coupling axioms themselves —
+`interchange` and `post-eval` — now live in `codep-axioms`
+(`Cat.Codep.Base`), alongside the two representable actions
+`pre`/`post` in `codep-structure`. `coupling-laws` gates on the bundle
+`(C : codep-category o h)` (one object, one gate) and derives the
+identity idempotency block from them.
 
-`CouplingDerived` derives `post-comp`, `comp-eq`, and the identity
-idempotency `idem : idn ⨾ idn ≡ idn` from the coupling ALONE. This
-module has no access to `absorb-l` (which lives downstream in
-`Cat.Codep.Unit`), so `idem`'s absorption-freeness is enforced by the
-module boundary, not merely observed — the linchpin of the unit
-fragment (idempotency precedes absorption; the two are not circular).
-
-`pre-comp` is free: it is the base `act-comp` at the identity
-binder, so it is not re-derived here.
+The provenance of `idem` — that idempotency is derivable from the
+*coupling* sub-theory alone, never touching `unit-eqvl`/`unit-eqvr` or
+`absorb` — is stated as a standalone theorem, the lemma
+`idem-from-coupling`. Its hypotheses are exactly `compose-contr`,
+`interchange`, `post-eval` (passed explicitly, and nothing else), so
+its typechecked signature IS the minimality/absorption-freeness fact
+(machine-checked non-usage of the unit axioms). `coupling-laws`
+instantiates it and its siblings `post-comp`/`comp-eq` at the bundle's
+fields. The interchange-independence research item references this
+lemma directly.
 
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
@@ -31,70 +32,84 @@ open import Core.Kan using (_∙_)
 open import Cat.Codep.Base
 ```
 
-## The two representable actions
+## The coupling sub-theory, hypothesis-explicit
 
-`pre g b` acts `g` on the acted slot at the identity binder; `post f a`
-acts `f` on the passenger binder at the identity acted slot.
+Each of `post-comp`/`comp-eq`/`idem` is a standalone lemma whose
+hypotheses (`cc`, `ic`, and for the latter two `pe`) are listed in its
+own signature — nothing else is in scope. `idem-from-coupling` is the
+provenance theorem: its signature's hypothesis list machine-checks that
+idempotency never touches `unit-eqvl`/`unit-eqvr` or `absorb`. The `⨾`
+in the statements is the extraction `cc f g .center .fst`.
 
 ```agda
-module Helpers {o h} {ob : Type o} (R : codep-category {o} {h} ob) where
-  open codep-category R
+post-comp-from-coupling
+  : ∀ {o h} {ob : Type o} (S : codep-structure {o} {h} ob)
+    (open codep-structure S)
+    (cc : ∀ {x y z} (f : hom x y) (g : hom y z)
+        → is-contr (is-representable (emb f · g)))
+    (ic : ∀ {x y z} (f : hom x y) (g : hom y z)
+          {w} (a : hom w x) {v} (b : hom z v)
+        → emb f ((v , (w , a)) , pre g b) ≡ emb g ((v , (w , post f a)) , b))
+  → ∀ {x y z} (f : hom x y) (g : hom y z) {w} (a : hom w x)
+  → post (cc f g .center .fst) a ≡ post g (post f a)
+post-comp-from-coupling S cc ic f g {w} a =
+  happly (cc f g .center .snd) ((_ , (w , a)) , idn _)
+  ∙ ic f g a (idn _)
+  where open codep-structure S
 
-  pre : ∀ {y z} (g : hom y z) {v} → hom z v → hom y v
-  pre {y} g {v} b = emb g ((v , (y , idn y)) , b)
+comp-eq-from-coupling
+  : ∀ {o h} {ob : Type o} (S : codep-structure {o} {h} ob)
+    (open codep-structure S)
+    (cc : ∀ {x y z} (f : hom x y) (g : hom y z)
+        → is-contr (is-representable (emb f · g)))
+    (ic : ∀ {x y z} (f : hom x y) (g : hom y z)
+          {w} (a : hom w x) {v} (b : hom z v)
+        → emb f ((v , (w , a)) , pre g b) ≡ emb g ((v , (w , post f a)) , b))
+    (pe : ∀ {x y} (f : hom x y) → post f (idn x) ≡ f)
+  → ∀ {x y z} (f : hom x y) (g : hom y z)
+  → cc f g .center .fst ≡ post g f
+comp-eq-from-coupling S cc ic pe f g =
+  sym (pe (cc f g .center .fst))
+  ∙ post-comp-from-coupling S cc ic f g (idn _)
+  ∙ ap (λ t → post g t) (pe f)
+  where open codep-structure S
 
-  post : ∀ {x y} (f : hom x y) {w} → hom w x → hom w y
-  post {x} {y} f {w} a = emb f ((y , (w , a)) , idn y)
+idem-from-coupling
+  : ∀ {o h} {ob : Type o} (S : codep-structure {o} {h} ob)
+    (open codep-structure S)
+    (cc : ∀ {x y z} (f : hom x y) (g : hom y z)
+        → is-contr (is-representable (emb f · g)))
+    (ic : ∀ {x y z} (f : hom x y) (g : hom y z)
+          {w} (a : hom w x) {v} (b : hom z v)
+        → emb f ((v , (w , a)) , pre g b) ≡ emb g ((v , (w , post f a)) , b))
+    (pe : ∀ {x y} (f : hom x y) → post f (idn x) ≡ f)
+  → ∀ {x} → cc (idn x) (idn x) .center .fst ≡ idn x
+idem-from-coupling S cc ic pe {x} =
+  comp-eq-from-coupling S cc ic pe (idn x) (idn x) ∙ pe (idn x)
+  where open codep-structure S
 ```
 
-## The coupling record
+## The bundle-gated coupling-laws
+
+`post-comp`, `comp-eq`, `idem` instantiate the from-coupling lemmas at
+`C`'s fields; `pre-comp` is `act-comp` at the identity binder.
 
 ```agda
-record codep-coupling {o h} {ob : Type o}
-  (R : codep-category {o} {h} ob) : Type (o ⊔ h) where
-  no-eta-equality
-  open codep-category R
-  open Helpers R
-  field
-    interchange
-      : ∀ {x y z} (f : hom x y) (g : hom y z)
-        {w} (a : hom w x) {v} (b : hom z v)
-      → emb f ((v , (w , a)) , pre g b)
-      ≡ emb g ((v , (w , post f a)) , b)
-    post-eval
-      : ∀ {x y} (f : hom x y) → post f (idn x) ≡ f
-```
-
-## Composition of actions, and identity idempotency
-
-`post-comp` combines `emb-comp` with `interchange`; `comp-eq`
-reads a composite as a `post`-action; `idem` follows with `post-eval`.
-
-```agda
-module CouplingDerived {o h} {ob : Type o}
-  (R : codep-category {o} {h} ob) (Coup : codep-coupling R) where
-  open codep-category R
-  open Helpers R
-  open codep-coupling Coup
+module coupling-laws {o h} (C : codep-category o h) where
+  open codep-category C
 
   post-comp
     : ∀ {x y z} (f : hom x y) (g : hom y z) {w} (a : hom w x)
     → post (f ⨾ g) a ≡ post g (post f a)
-  post-comp f g {w} a =
-    happly (emb-comp f g) ((_ , (w , a)) , idn _)
-    ∙ interchange f g a (idn _)
+  post-comp f g =
+    post-comp-from-coupling structure compose-contr interchange f g
 
   comp-eq : ∀ {x y z} (f : hom x y) (g : hom y z) → f ⨾ g ≡ post g f
   comp-eq f g =
-    sym (post-eval (f ⨾ g))
-    ∙ post-comp f g (idn _)
-    ∙ ap (λ t → post g t) (post-eval f)
-
-  post-idpt : ∀ {x} → post (idn x) (idn x) ≡ idn x
-  post-idpt = post-eval (idn _)
+    comp-eq-from-coupling structure compose-contr interchange post-eval f g
 
   idem : ∀ {x} → idn x ⨾ idn x ≡ idn x
-  idem = comp-eq (idn _) (idn _) ∙ post-idpt
+  idem = idem-from-coupling structure compose-contr interchange post-eval
 
   -- pre-comp is act-comp at the identity binder.
   pre-comp

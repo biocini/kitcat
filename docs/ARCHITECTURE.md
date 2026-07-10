@@ -116,48 +116,63 @@ deferred `--cubical` island).
 
 ### Stratum 3 — Representable codependent categories
 
-A four-field presentation abstracting over both `Cat.Type` and
+A trilayer presentation abstracting over both `Cat.Type` and
 `Cat.Monoidal`. A category is `hom` + `idn` + a representable
-embedding `emb` into `loose` morphisms + one axiom (`compose-contr`,
-contractible composition fibers). All lax-substitution structure and
-the Mac Lane pentagon are derived generically.
+embedding `emb` into `composite` morphisms + five axioms
+(`compose-contr` for composition; `interchange`, `post-eval`,
+`unit-eqvl`, `unit-eqvr` for the anchor). All lax-substitution
+structure and the Mac Lane pentagon are derived generically.
 
 ```
 Cat.Codep ─── aggregator (Base + Coherence + Coupling + Unit)
-    ├── Cat.Codep.Base ────── 4-field record + derived carrier/action
-    ├── Cat.Codep.Coherence ─ assoc + 5 pentagon faces + pentagon
-    ├── Cat.Codep.Coupling ── noy/yon + interchange, yon-eval, idem
-    ├── Cat.Codep.Unit ────── unit equivalences + absorb, unitl/r,
+    ├── Cat.Codep.Base ────── structure/axioms(5)/bundle records
+    ├── Cat.Codep.Coherence ─ assoc-tower + pentagon-fibers + pentagon
+    ├── Cat.Codep.Coupling ── idem-from-coupling lemma + coupling-laws
+    ├── Cat.Codep.Unit ────── unit-laws: absorb, unitl/r,
     │                         emb-image-contr, unit-is-prop
-    └── Cat.Codep.Instances ─ Type/Monoidal codep + coupling + unit
+    └── Cat.Codep.Instances ─ walking-arrow + type/monoidal triples
 ```
 
-**Cat.Codep.Base** is the record. `idn` is the representable anchor —
-the slot the action reads at, posited not characterized: no unit laws
-or identity uniqueness are asserted or used. Composition `_⨾_` is
-extracted from representability rather than primitive.
+**Cat.Codep.Base** holds the three records: `codep-structure`
+(operations `hom`/`idn`/`emb`, the two actions `pre`/`post`, + all
+axiom-free derived notions), `codep-axioms` (the five axioms +
+extraction, over a structure value), and the `codep-category` bundle
+(fields `ob`, `structure`, `axioms`, re-exporting both). The axioms
+record is complete, so the bundle IS the category. Splitting the axioms
+off the operations makes naive multi-object instances termination-safe.
+`idn` is the representable anchor, characterized as a unit by the two
+unit axioms. Composition `_⨾_` is extracted from representability.
 
 **Cat.Codep.Coherence** derives `assoc` and the full pentagon purely
 from `compose-contr`/`emb-comp` — no unit law is consumed. The
-inner-associator face uses the emb–act link (`act = emb @ idn`).
+submodules gate on the bundle and follow the `Cat.Coherence` vocabulary
+(`assoc-tower`, `pentagon-tower`/`pentagon-fibers`, `face₃₅-proof`,
+`pentagon`). The inner-associator face uses the emb–act link
+(`act = emb @ idn`).
 
-**Cat.Codep.Coupling** adds the two representable actions `noy`/`yon`
-and the `codep-coupling` record (`interchange`, `yon-eval`), then
-derives `yon-composite`, `comp-eq`, and `idem : idn ⨾ idn ≡ idn`. The
-`CouplingDerived` module has no access to `absorb-l`, so `idem`'s
-absorption-freeness is enforced by the module boundary.
+**Cat.Codep.Coupling** states `idem-from-coupling`, the lemma that
+derives `idem : idn ⨾ idn ≡ idn` from `compose-contr`/`interchange`/
+`post-eval` alone — its explicit hypothesis list machine-checks that
+idempotency never touches `unit-eqvl`/`unit-eqvr` or `absorb`
+(idempotency precedes absorption; not circular). The bundle-gated
+`coupling-laws (C)` module derives `post-comp`/`comp-eq`/`pre-comp` and
+instantiates the lemma for `idem`.
 
-**Cat.Codep.Unit** adds `codep-unit` (the two identity-action
-equivalences) and derives the unit fragment: `absorb-l`/`absorb-r`,
-the identity law `·-idn`, `unitl`/`unitr`, `emb-image-contr`, and
-`unit-is-prop` (Kraus). This closes the noy-side four-axiom wiring:
-`Cat.Type.category ≅ codep-category + codep-coupling + codep-unit`.
+**Cat.Codep.Unit** — the bundle-gated `unit-laws (C)` module derives
+the unit fragment from the two unit axioms: `absorb-l`/`absorb-r`, the
+identity law `·-idn`, `unitl`/`unitr`, `emb-image-contr`, and
+`unit-is-prop` (Kraus). This closes the pre-side wiring, now literally:
+`Cat.Type.category ≅ codep-category`.
 
-**Cat.Codep.Instances** derives `Type-codep` from `Cat.Type.category`
-(anchor = identity morphism) and `Monoidal-codep` from
-`Cat.Monoidal.monoidal` over `⊤` (anchor = tensor unit object), fills
-their coupling + unit layers, and checks that the generic `assoc`,
-`pentagon`, and unit fragment specialize at both.
+**Cat.Codep.Instances** opens with `walking-arrow` — the interval
+category **2** as a direct triple, the simplest example and the
+regression guard for the termination class the split defeats (its five
+axioms are prop-level; its `emb` is an equivalence). Then the `Type-*`
+triple from `Cat.Type.category` (anchor = identity morphism) and the
+`Monoidal-*` triple from `Cat.Monoidal.monoidal` over `⊤` (anchor =
+tensor unit object); the merged coupling/unit fills are name-identical
+to the source category's (`unit-eqvl = C.unit-eqvl`). Each checks that
+the generic `assoc`, `pentagon`, and unit fragment specialize.
 
 ## Module status
 
@@ -182,11 +197,11 @@ their coupling + unit layers, and checks that the generic `assoc`,
 | Cat.Monoidal.Indiscrete | 2 | complete | Builder: object data + ⊤-homs → monoidal C |
 | Cat.Monoidal.Twist | 2 | complete | absorb-coh independence core (twist-reduces-to-omega) |
 | Cat.Codep | 3 | complete | Aggregator: Base + Coherence + Coupling + Unit |
-| Cat.Codep.Base | 3 | complete | 4-field representable record; carrier/action derived |
-| Cat.Codep.Coherence | 3 | complete | assoc + 5 pentagon faces + named pentagon (from compose-contr) |
-| Cat.Codep.Coupling | 3 | complete | noy/yon + interchange/yon-eval; idem (absorption-free by boundary) |
-| Cat.Codep.Unit | 3 | complete | unit equivalences; absorb, ·-idn, unitl/r, emb-image-contr, unit-is-prop |
-| Cat.Codep.Instances | 3 | complete | Type/Monoidal codep + coupling + unit; generic theorems specialize |
+| Cat.Codep.Base | 3 | complete | trilayer records: structure / axioms (5 fields) / bundle; carrier & action derived |
+| Cat.Codep.Coherence | 3 | complete | assoc-tower + pentagon-fibers + 5 faces + named pentagon (from compose-contr) |
+| Cat.Codep.Coupling | 3 | complete | idem-from-coupling lemma (absorption-free by hypothesis) + bundle-gated coupling-laws |
+| Cat.Codep.Unit | 3 | complete | unit-laws: absorb, ·-idn, unitl/r, emb-image-contr, unit-is-prop |
+| Cat.Codep.Instances | 3 | complete | walking-arrow + type/monoidal triples (5-axiom fills); generic theorems specialize |
 
 ## Deferred modules
 

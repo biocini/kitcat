@@ -2,8 +2,12 @@ Lane Biocini
 July 2026
 
 Associativity and the Mac Lane pentagon for representable codependent
-categories. Everything is purely associativity: it consumes only
-`compose-contr` and `emb-comp`, never a unit law.
+categories. The tower gates on the bundle `(C : codep-category o h)`;
+everything is purely associativity — it consumes only `compose-contr`
+and `emb-comp`, never a unit law. The submodules follow the
+`Cat.Coherence` vocabulary: `pentagon-fibers`, `face₃₅-proof` (mirroring
+`face₂₃-proof`), and the final `pentagon`, with `assoc-tower` and
+`pentagon-tower` the E₃/E₄ derivations.
 
 `assoc` is the projection of a path in the contractible triple-composite
 fiber. The five pentagon faces (`face₁₂`, `face₂₃`, `face₁₄`, `face₄₅`,
@@ -37,9 +41,8 @@ open import Cat.Codep.Base
 ## Triple composite, assoc-σ, assoc
 
 ```agda
-module Derived {o h} {ob : Type o}
-  (R : codep-category {o} {h} ob) where
-  open codep-category R
+module assoc-tower {o h} (C : codep-category o h) where
+  open codep-category C
 
   E₃ : ∀ {x y z w} (f : hom x y) (g : hom y z) (h : hom z w) → composite x w
   E₃ f g h = emb f · g · h
@@ -67,10 +70,9 @@ module Derived {o h} {ob : Type o}
 ## The quadruple composite and the five faces
 
 ```agda
-module Pentagon {o h} {ob : Type o}
-  (R : codep-category {o} {h} ob) where
-  open codep-category R
-  open Derived R
+module pentagon-tower {o h} (C : codep-category o h) where
+  open codep-category C
+  open assoc-tower C
 
   E₄ : ∀ {x y z w v}
        (f : hom x y) (g : hom y z) (h : hom z w) (k : hom w v)
@@ -95,7 +97,7 @@ module Pentagon {o h} {ob : Type o}
       path₄ = ap (_· k) (emb-comp (f ⨾ g) h)
             ∙ ap (λ o → o · h · k) (emb-comp f g)
 
-  module PentagonFibers {x y z w v}
+  module pentagon-fibers {x y z w v}
     (f : hom x y) (g : hom y z) (h : hom z w) (k : hom w v)
     where
     E₄c = E₄-contr f g h k
@@ -270,16 +272,15 @@ on the E₃ fiber, and the two bridges collapse to a single `ap-comp Φ`
 each — no pentagon coherence remains.
 
 ```agda
-module Pentagon35 {o h} {ob : Type o}
-  (R : codep-category {o} {h} ob)
+module face₃₅-proof {o h} (C : codep-category o h)
   {x y z w v}
-  (f : codep-category.hom R x y) (g : codep-category.hom R y z)
-  (h : codep-category.hom R z w) (k : codep-category.hom R w v)
+  (f : codep-category.hom C x y) (g : codep-category.hom C y z)
+  (h : codep-category.hom C z w) (k : codep-category.hom C w v)
   where
-  open codep-category R
-  open Derived R
-  open Pentagon R
-  open PentagonFibers f g h k
+  open codep-category C
+  open assoc-tower C
+  open pentagon-tower C
+  open pentagon-fibers f g h k
 
   Φ : composite y v → composite x v
   Φ L γ = emb f (γ .fst , L (at y (γ .fst) , γ .snd))
@@ -309,17 +310,16 @@ All five faces + the fiber pentagon assemble into the named Mac Lane
 pentagon identity, matching `Cat.Coherence.pentagon`.
 
 ```agda
-module Pentagon5 {o h} {ob : Type o}
-  (R : codep-category {o} {h} ob)
+module pentagon {o h} (C : codep-category o h)
   {x y z w v}
-  (f : codep-category.hom R x y) (g : codep-category.hom R y z)
-  (h : codep-category.hom R z w) (k : codep-category.hom R w v)
+  (f : codep-category.hom C x y) (g : codep-category.hom C y z)
+  (h : codep-category.hom C z w) (k : codep-category.hom C w v)
   where
-  open codep-category R
-  open Derived R
-  open Pentagon R
-  open PentagonFibers f g h k
-  open Pentagon35 R f g h k using (face₃₅)
+  open codep-category C
+  open assoc-tower C
+  open pentagon-tower C
+  open pentagon-fibers f g h k
+  open face₃₅-proof C f g h k using (face₃₅)
 
   pentagon
     : assoc (f ⨾ g) h k ∙ assoc f g (h ⨾ k)

@@ -41,9 +41,14 @@ workshop. Renames marked *at refactor* apply when `Cat.Type` /
 | `emb` | the representation primitive `hom x y → composite x y`; an embedding by `emb-image-contr` | house, **settled** (Lane) |
 | `pre f` | the pre-slot action `f ⨾_` — precomposition with f | conventional; **replaces `noy`** |
 | `post f` | the post-slot action `_⨾ f` — postcomposition with f | conventional; **replaces `yon`** |
-| `compose-contr` | contractibility of the representation fiber over a composite — the sole categorical axiom of `codep-category` | house (canonical spelling; `tensor-compose-contr`, `composable-contr` variants die at refactor) |
+| `compose-contr` | contractibility of the representation fiber over a composite — the first of the five `codep-axioms` fields | house (canonical spelling; `tensor-compose-contr`, `composable-contr` variants die at refactor) |
+| `codep-structure` | trilayer layer 1: operations `hom`/`idn`/`emb`, the two actions `pre`/`post`, + all axiom-free derived (carrier, `composite`, `_·_`, `is-representable`) — no laws | house (Group-on split, 2026-07) |
+| `codep-axioms` | trilayer layer 2: the five axioms — `compose-contr`, `interchange`, `post-eval`, `unit-eqvl`, `unit-eqvr` — plus extraction (`_⨾_`, `emb-comp`, laws), over a structure value | house |
+| `codep-category` | trilayer layer 3: the universe-ranging bundle — fields `ob`/`structure`/`axioms`. The axioms are complete, so the bundle IS the category: `Cat.Type.category ≅ codep-category` | house (bundled object) |
+| `coupling-laws`, `unit-laws` | the bundle-gated derived-law modules (`(C : codep-category o h)`): coupling → `post-comp`/`comp-eq`/`idem`/`pre-comp`; unit → absorption, `unitl`/`unitr`, `unit-is-prop` | house (kebab, 2026-07) |
+| `idem-from-coupling` | the provenance lemma: `idem` derivable from `compose-contr`+`interchange`+`post-eval` alone — its explicit hypothesis list machine-checks non-usage of the unit axioms | house (the record-boundary guarantee, now a theorem) |
 | `binder`, `pass`, `fam`, `at`, `acted`, `ctx` | the codep carrier decomposition; `at` re-anchors a passenger (definitionally idempotent) | house (the re-anchoring mechanism has no CwF analogue — CwF posits substitution, codep derives it) |
-| `unit` | the canonical binder-point `unit y = (y , idn y)` — what `at` re-anchors to; `unit-l-equiv`/`unit-r-equiv` assert its actions invertible | house (was `idn-b`; the `-b` plumbing tier is retired — `fam-b` inlined into `fam`, 2026-07-09 modularity pass) |
+| `unit` | the canonical binder-point `unit y = (y , idn y)` — what `at` re-anchors to; `unit-eqvl`/`unit-eqvr` assert its actions invertible | house (was `idn-b`; the `-b` plumbing tier is retired — `fam-b` inlined into `fam`, 2026-07-09 modularity pass) |
 | `sub`, `_·_` | substitution on contexts / codependent application | conventional (CwF) |
 | `act` | the derived lax action `emb g` at the identity context | house (Petrakis's dep-application, codependent side) |
 | `composite` | the represented Π-type `(γ : ctx x y) → fam (γ .fst)`. An element is a FORMAL composite: for any candidate context relating x and y, a `fam` witness. Replaces `loose` | house (Lane); continuous with Core.Kan |
@@ -73,7 +78,8 @@ workshop. Renames marked *at refactor* apply when `Cat.Type` /
 | `absorb-l`, `absorb-r` | identity absorption (`pre idn ≡ id`, `post idn ≡ id` pointwise) | house, already uniform |
 | `unitl`, `unitr` | unit laws | conventional; matches Core's path-groupoid law names (`idl`/`idr` divergence from 1lab is deliberate) |
 | `post-eval` | `post f idn ≡ f` — evaluation at the identity recovers the morphism | **replaces `yon-eval`** |
-| `post-idpt`, `idem` | binary idempotency; `idn ⨾ idn ≡ idn` | **replaces `yon-idpt`**; `idem` unchanged |
+| `idem` | binary idempotency `idn ⨾ idn ≡ idn`, from `idem-from-coupling`. `post-idpt` is now inlined (it is `pe (idn x)` inside the lemma) — no standalone Codep symbol | house; survives as Cat.Type's `yon-idpt` until the refactor renames it |
+| `unit-eqvl`, `unit-eqvr` | the two unit-equivalence axioms `is-equiv (pre idn)` / `is-equiv (post idn)` (in `codep-axioms`) | **rename** of `unit-l-equiv`/`unit-r-equiv`; matches `Cat.Type`'s `C.unit-eqvl`/`C.unit-eqvr` |
 | `unit-is-prop` | identity uniqueness (Kraus chain: binary hypothesis, `e² = e`, involutions excluded) | house (bare spelling survives; `tensor-` prefix dies at refactor) |
 | `interchange` | the pre- and post-actions commute (the profunctor coupling) | house |
 | Kraus chain | the idempotent-equivalence uniqueness argument | house attribution label (technique after N. Kraus; not his term) |
@@ -104,7 +110,7 @@ workshop. Renames marked *at refactor* apply when `Cat.Type` /
 |---|---|---|---|
 | `noy` / `yon` | `pre` / `post` | `Cat.Codep.*` | now |
 | `noy` / `yon` | `pre` / `post` | `Cat.Type`, `Cat.Monoidal`, `Cat.Virtual`, slices | at refactor |
-| `yon-eval` / `yon-idpt` | `post-eval` / `post-idpt` | everywhere | with the above |
+| `yon-eval` / `yon-idpt` | `post-eval` / (absorbed into `idem-from-coupling`) | everywhere | with the above |
 | `hnoy` / `hyon` | `hpre` / `hpost` | `Cat.Monoidal.Bifunctor` | at refactor |
 | `I` | `𝟙` | `Cat.Monoidal.*` | at refactor |
 | `2-coherent` | `triangle-coherent` | `Cat.Coherence` | at refactor |
@@ -130,7 +136,7 @@ suffixes without adding them here.
 | `-contr` | a contractibility statement | `compose-contr`, `E₄-contr` |
 | `-comp` | compatibility with composition | `act-comp`, `sub-comp`, `·-comp`, `emb-comp` |
 | `-eval` | evaluation at the identity | `post-eval` |
-| `-idpt` | idempotency | `post-idpt` |
+| `-idpt` | idempotency | `post-idpt` (Cat.Type's `yon-idpt`; absorbed into `idem-from-coupling` in Codep) |
 | `-coh` | an irreducible (paid) coherence field | `absorb-coh` |
 | `-ext` | extensionality / pointwise-to-path | `composite-ext` |
 | `-ind` | an eliminator | `E₃-ind` |

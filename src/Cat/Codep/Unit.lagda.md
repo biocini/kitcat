@@ -1,17 +1,19 @@
 Lane Biocini
 July 2026
 
-The unit layer over `codep-category` + `codep-coupling`. `codep-unit`
-adds the two axioms that make the anchor a genuine unit: the identity's
-acted and passenger actions are equivalences. From these the full unit
-fragment derives — absorption (`absorb-l`, `absorb-r`), the codependent
-identity law `·-idn` (`F · idn ≡ F`), the unit laws `unitl`/`unitr`
-(fiber-projected), `emb-image-contr`, and identity uniqueness
-`unit-is-prop` via the Kraus chain.
+The unit-derived laws. The two unit equivalences — `unit-eqvl`,
+`unit-eqvr` — are now axioms in `codep-axioms` (`Cat.Codep.Base`);
+`unit-laws` gates on the bundle `(C : codep-category o h)` (one object,
+one gate) and derives the unit fragment: absorption (`absorb-l`,
+`absorb-r`), the codependent identity law `·-idn` (`F · idn ≡ F`), the
+unit laws `unitl`/`unitr` (fiber-projected), `emb-image-contr`, and
+identity uniqueness `unit-is-prop` via the Kraus chain.
 
-Together with `Cat.Codep.Coupling` this closes the pre-side four-axiom
-wiring: `Cat.Type.category ≅ codep-category + codep-coupling +
-codep-unit`.
+The idempotency block comes from `coupling-laws C`; that `idem`
+precedes absorption — never touching the unit axioms — is the
+machine-checked lemma `idem-from-coupling` (its hypothesis list is the
+theorem). With the coupling layer this closes the pre-side wiring, now
+literally: `Cat.Type.category ≅ codep-category`.
 
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
@@ -31,40 +33,18 @@ open import Cat.Codep.Base
 open import Cat.Codep.Coupling
 ```
 
-## The unit record
-
-The identity's acted action `pre (idn x)` and passenger action
-`post (idn x)` are equivalences.
-
-```agda
-record codep-unit {o h} {ob : Type o}
-  (R : codep-category {o} {h} ob) (Coup : codep-coupling R)
-  : Type (o ⊔ h) where
-  no-eta-equality
-  open codep-category R
-  open Helpers R
-  field
-    unit-l-equiv : ∀ {x} {v} → is-equiv (pre (idn x) {v})
-    unit-r-equiv : ∀ {x} {w} → is-equiv (post (idn x) {w})
-```
-
 ## Absorption and the identity law
 
 `absorb-l`/`absorb-r` cancel the identity's actions via the unit
 equivalences; `·-idn` is the headline codependent identity law.
 
 ```agda
-module UnitDerived {o h} {ob : Type o}
-  (R : codep-category {o} {h} ob)
-  (Coup : codep-coupling R) (U : codep-unit R Coup) where
-  open codep-category R
-  open Helpers R
-  open codep-coupling Coup
-  open codep-unit U
-  open CouplingDerived R Coup
+module unit-laws {o h} (C : codep-category o h) where
+  open codep-category C
+  open coupling-laws C
 
   absorb-l : ∀ {x v} (b : hom x v) → pre (idn x) b ≡ b
-  absorb-l {x} b = equiv→lc unit-l-equiv pre-idn-idpt
+  absorb-l {x} b = equiv→lc unit-eqvl pre-idn-idpt
     where
       pre-idn-idpt : pre (idn x) (pre (idn x) b) ≡ pre (idn x) b
       pre-idn-idpt =
@@ -72,7 +52,7 @@ module UnitDerived {o h} {ob : Type o}
           idem (pre-comp (idn x) (idn x) b))
 
   absorb-r : ∀ {w x} (a : hom w x) → post (idn x) a ≡ a
-  absorb-r {w} {x} a = equiv→lc unit-r-equiv post-idn-idpt
+  absorb-r {w} {x} a = equiv→lc unit-eqvr post-idn-idpt
     where
       post-idn-idpt : post (idn x) (post (idn x) a) ≡ post (idn x) a
       post-idn-idpt =
