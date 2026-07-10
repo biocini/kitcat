@@ -88,4 +88,6 @@ import Cat.Monoidal.Twist
 import Cat.Monoidal.Braid
 import Cat.Monoidal.Hexagon
 import Core.Coherence.Base
+import Cat.Codep
+import Cat.Codep.Instances
 ```

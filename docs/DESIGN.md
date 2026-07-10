@@ -377,6 +377,79 @@ irreducible data — but its coherence residue lands on the same
 E₁→E₂→E₃ ladder, with the stable Hopf class η at the syllepsis
 rung.
 
+## Representable Codependent Categories
+
+Kitcat's category layer has a representable presentation
+(`Cat.Codep`), following the *codependent* side of Petrakis's
+dependent-arrow program ("Categories with dependent arrows", where the
+codependent variation is named as open future work) in the wild,
+untruncated setting.
+
+### One axiom, everything derived
+
+The record has four fields:
+
+```
+hom : ob → ob → Type h
+idn : (x : ob) → hom x x
+emb : ∀ {x y} → hom x y → loose x y
+compose-contr : ∀ f g → is-contr (fiber emb (emb f · g))
+```
+
+`loose x y = (γ : ctx x y) → fam (γ .fst)` is a genuine `Π` over the
+canonical context, so its head stays visible and `loose-ext = funext`
+computes. The codependent application `_·_` and its composition law
+`·-comp` are derived (Petrakis's dependent-arrow composition,
+(dep₂)); `compose-contr` is the single categorical axiom.
+
+### Composition extracted from representability
+
+This inverts the usual layering. Petrakis builds dependent arrows over
+a primitive category; here composition is *extracted* from
+representability instead. `fiber emb` plays the co-Σ role, and `_⨾_`
+is the co-section read off `compose-contr f g .center .fst`. A single
+`is-contr` short-circuits the tower of Σ-object composites: rather than
+positing associative composition and then proving coherence, one posits
+that the composite fiber is contractible and reads composition,
+associativity, and all higher coherence out of it.
+
+### Representable ⇒ coherent
+
+Because `compose-contr` gives a contractible fiber, the whole pentagon
+tower is free: `assoc` is `ap fst` of a path in the triple-composite
+fiber, and the Mac Lane pentagon (and the `Kₙ` associahedra above it)
+projects from `is-contr → is-n-type` on the quadruple fiber via the
+`Core.Coherence.Base` engine (`coh-project`). No coherence is ever a
+field. The pentagon consumes only `compose-contr` and `emb-comp` — it
+is purely associativity and touches no unit law.
+
+### The load-bearing mechanism: definitional re-anchoring
+
+Representability is only free because the action is transport-free. A
+context splits as `ctx = Σ pass acted`; `fam` reads only the passenger,
+and `acted φ z := fam (at z φ)` is `fam` re-anchored to a new domain.
+Re-anchoring `at` swaps in the identity binder and preserves the
+acted-object, so `at z (at y φ) = at z φ` holds **definitionally**.
+That is exactly what lets `act φ g α = emb g (at _ φ , α)` — acting is
+`emb` at the identity context, `act = emb @ idn` — type-check with no
+transport. The definitional idempotency is what converts
+"representability needs coherence fields" into "representability is
+free": `act-comp` becomes `emb-comp` at the identity context, and the
+inner-associator pentagon face collapses to `ap-comp`.
+
+### The identity anchor, and scope
+
+`idn` is the **representable anchor** — the slot the action reads at —
+posited, not characterized. No unit law and no identity uniqueness is
+asserted or used. The two instances make this concrete: `Type-codep`
+fills `idn` with an identity morphism (`C.idn`), `Monoidal-codep` fills
+it with the tensor unit *object* `I`; the shared role is "anchor", not
+"two-sided unit". This is the noy-side structure through the pentagon.
+The full four-axiom wiring — the unit equivalence (mirroring
+`Cat.Type`'s `unit`), `unitl`/`unitr` and absorption, `emb-image-contr`,
+`unit-is-prop` (Kraus), and interchange/`yon-eval` — is a next
+milestone, to be designed and spiked, not bolted on.
+
 ## References
 
 - **STYLEGUIDE.md** — Formatting and naming conventions
@@ -385,6 +458,8 @@ rung.
 - **Riehl–Shulman** (arXiv:1705.07442) — Synthetic ∞-category theory
 - **Capriotti–Kraus** (arXiv:1707.03693) — Univalent higher categories
 - **Petrakis** (arXiv:2205.06651) — Univalent typoids
+- **Petrakis** (arXiv:2303.14754) — Categories with dependent arrows;
+  the codependent variation is named as open future work
 - **Sterling** (jonmsterling.com/005B) — Virtual bicategory theory
 - **Kelly** (J. Algebra 1964) — Mac Lane coherence, triangle not forced by pentagon
 - **Joyal–Street** (Adv. Math. 1993) — Braided monoidal categories, hexagons
