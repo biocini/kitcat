@@ -41,7 +41,7 @@ module Derived {o h} {ob : Type o}
   (R : codep-category {o} {h} ob) where
   open codep-category R
 
-  E₃ : ∀ {x y z w} (f : hom x y) (g : hom y z) (h : hom z w) → loose x w
+  E₃ : ∀ {x y z w} (f : hom x y) (g : hom y z) (h : hom z w) → composite x w
   E₃ f g h = emb f · g · h
 
   E₃-contr : ∀ {x y z w} (f : hom x y) (g : hom y z) (h : hom z w)
@@ -74,7 +74,7 @@ module Pentagon {o h} {ob : Type o}
 
   E₄ : ∀ {x y z w v}
        (f : hom x y) (g : hom y z) (h : hom z w) (k : hom w v)
-     → loose x v
+     → composite x v
   E₄ f g h k = emb f · g · h · k
 
   E₄-contr
@@ -281,7 +281,7 @@ module Pentagon35 {o h} {ob : Type o}
   open Pentagon R
   open PentagonFibers f g h k
 
-  Φ : loose y v → loose x v
+  Φ : composite y v → composite x v
   Φ L γ = emb f (γ .fst , L (at y (γ .fst) , γ .snd))
 
   Λ : fiber emb (E₃ g h k) → fiber emb (E₄ f g h k)

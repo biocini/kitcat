@@ -2,15 +2,15 @@ Lane Biocini
 July 2026
 
 Representable codependent categories. A category is given by `hom`,
-identities `idn`, a representable embedding `emb` into `loose`
+identities `idn`, a representable embedding `emb` into `composite`
 morphisms, and one axiom: composition fibers of `emb` are contractible.
 
-The carrier structure (`binder`, `idn-b`, `fam-b`) is canonical,
+The carrier structure (`binder`, `unit`, `fam`) is canonical,
 derived from `hom` and `idn`. The lax substitution `sub` and the
 codependent application `_·_` are derived: acting by `g` is `emb g`
 evaluated at the re-anchored identity context (`act = emb @ idn`).
 Re-anchoring is idempotent definitionally, so `_·_` is transport-free
-and `loose = Π` keeps a visible head.
+and `composite = Π` keeps a visible head.
 
 `idn` here is the representable anchor — the slot the action reads at,
 posited not characterized. No unit laws or identity uniqueness are
@@ -25,14 +25,26 @@ module Cat.Codep.Base where
 open import Core.Type
 open import Core.Base
 open import Core.Data.Sigma
+open import Core.Transport.J using (J)
+open import Core.Equiv.Base using (iso→equiv; _≃_)
 ```
 
 ## The record
 
 The four fields are `hom`, `idn`, `emb`, `compose-contr`. Everything
-else — the passenger/acted split, `at`, `acted`, `ctx`, `loose`,
+else — the passenger/acted split, `at`, `acted`, `ctx`, `composite`,
 `act`, `sub`, `_·_`, `_⨾_`, `emb-comp`, `act-comp`, `sub-comp`,
 `·-comp` — is derived.
+
+An element of `composite x y` is a *formal composite*: for any context
+associating `x` and `y`, a `fam` witness. `compose-contr` is stated
+through `is-representable`, exposing the axiom schema of the whole
+theory: every representability axiom has the shape "a designated formal
+composite is contractibly representable". The `hom` arrows are the
+*tight* composites; that "names are tight" is a theorem
+(`hom≃representable`, unconditional; `is-representable-prop` in
+`Cat.Codep.Unit` upgrades its reading to a subtype inclusion), not a
+definition — see docs/LEXICON.md for the tight/composite vocabulary.
 
 ```agda
 record codep-category {o h} (ob : Type o)
@@ -42,34 +54,26 @@ record codep-category {o h} (ob : Type o)
     hom : ob → ob → Type h
     idn : (x : ob) → hom x x
 
-  -- The carrier structure is canonical, derived from hom + idn:
-  -- a binder is a hom into the domain, the identity binder is `idn`,
-  -- and `fam` of an object v with binder (w , a) is `hom w v`.
+  -- The carrier is canonical, derived from hom + idn: a binder is a
+  -- hom into the domain; `unit` is the identity binder.
   binder : ob → Type (o ⊔ h)
   binder x = Σ w ∶ ob , hom w x
 
-  idn-b : (y : ob) → binder y
-  idn-b y = y , idn y
-
-  fam-b : ∀ {x} (v : ob) → binder x → Type h
-  fam-b v (w , a) = hom w v
+  unit : (y : ob) → binder y
+  unit y = y , idn y
 
   -- A passenger carries an acted-object `v` and a `binder` (the inert
-  -- left data). `fam` reads both; `acted φ z` is `fam` re-anchored.
+  -- left data); `fam v (w , a) = hom w v`, `acted` is `fam` re-anchored.
   pass : ob → Type (o ⊔ h)
   pass x = ob × binder x
 
-  obj : ∀ {x} → pass x → ob
-  obj φ = φ .fst
-
   fam : ∀ {x} → pass x → Type h
-  fam φ = fam-b (obj φ) (φ .snd)
+  fam (v , w , a) = hom w v
 
-  -- Re-anchor a passenger to a new domain `y`, keeping its acted-object
-  -- and swapping in the identity binder. Idempotent definitionally
-  -- (`obj` is preserved), which is what makes `act` transport-free.
+  -- Re-anchor to a new domain `y`: keep the acted-object (the first
+  -- component), swap in the identity binder. Definitionally idempotent.
   at : ∀ {x} → (y : ob) → pass x → pass y
-  at y φ = obj φ , idn-b y
+  at y φ = φ .fst , unit y
 
   acted : ∀ {x} → pass x → ob → Type h
   acted φ z = fam (at z φ)
@@ -77,14 +81,19 @@ record codep-category {o h} (ob : Type o)
   ctx : ob → ob → Type (o ⊔ h)
   ctx x y = Σ φ ∶ pass x , acted φ y
 
-  loose : ob → ob → Type (o ⊔ h)
-  loose x y = (γ : ctx x y) → fam (γ .fst)
+  composite : ob → ob → Type (o ⊔ h)
+  composite x y = (γ : ctx x y) → fam (γ .fst)
 
-  loose-ext : ∀ {x y} {F G : loose x y} → (∀ γ → F γ ≡ G γ) → F ≡ G
-  loose-ext h = funext h
+  composite-ext : ∀ {x y} {F G : composite x y} → (∀ γ → F γ ≡ G γ) → F ≡ G
+  composite-ext h = funext h
 
   field
-    emb : ∀ {x y} → hom x y → loose x y
+    emb : ∀ {x y} → hom x y → composite x y
+
+  -- The tightness predicate: a composite arrow is representable when an
+  -- `emb`-image.
+  is-representable : ∀ {x y} → composite x y → Type (o ⊔ h)
+  is-representable F = fiber emb F
 
   -- The lax action is derived: acting by `g` is `emb g` at the
   -- re-anchored (identity) context. This is the emb–act link the
@@ -96,14 +105,14 @@ record codep-category {o h} (ob : Type o)
   sub : ∀ {x y z} → hom y z → ctx x z → ctx x y
   sub g (φ , α) = φ , act φ g α
 
-  _·_ : ∀ {x y z} → loose x y → hom y z → loose x z
+  _·_ : ∀ {x y z} → composite x y → hom y z → composite x z
   (F · g) γ = F (sub g γ)
   infixl 30 _·_
 
   field
     compose-contr
       : ∀ {x y z} (f : hom x y) (g : hom y z)
-      → is-contr (fiber emb (emb f · g))
+      → is-contr (is-representable (emb f · g))
 
   _⨾_ : ∀ {x y z} → hom x y → hom y z → hom x z
   f ⨾ g = compose-contr f g .center .fst
@@ -125,9 +134,27 @@ record codep-category {o h} (ob : Type o)
            → sub {x} (g ⨾ h) ≡ sub g ∘ sub h
   sub-comp g h = funext λ γ → ap (γ .fst ,_) (act-comp (γ .fst) g h (γ .snd))
 
-  ·-comp : ∀ {x y z w} (F : loose x y) (g : hom y z) (h : hom z w)
+  ·-comp : ∀ {x y z w} (F : composite x y) (g : hom y z) (h : hom z w)
          → F · (g ⨾ h) ≡ F · g · h
   ·-comp F g h = funext λ γ → ap F (happly (sub-comp g h) γ)
+
+  -- Names are tight: `hom` ≃ the total space of the `emb`-fibers,
+  -- unconditionally (the subtype reading needs `is-representable-prop`).
+  hom≃representable
+    : ∀ {x y} → hom x y ≃ (Σ F ∶ composite x y , is-representable F)
+  hom≃representable {x} {y} = iso→equiv fwd bwd hom-ret rep-sec
+    where
+      fwd : hom x y → Σ F ∶ composite x y , is-representable F
+      fwd f = emb f , (f , refl)
+
+      bwd : (Σ F ∶ composite x y , is-representable F) → hom x y
+      bwd (F , a , p) = a
+
+      hom-ret : ∀ f → bwd (fwd f) ≡ f
+      hom-ret f = refl
+
+      rep-sec : ∀ s → fwd (bwd s) ≡ s
+      rep-sec (F , a , p) = J (λ F' p' → fwd a ≡ (F' , a , p')) refl p
 ```
 
 ## Re-anchor idempotency

@@ -38,7 +38,7 @@ All code compiles with:
 No postulates or unsafe features without explicit authorization.
 Self-contained: no external library dependencies.
 
-## Synthetic Virtual Category Theory
+## Synthetic Wild Category Theory
 
 The `Cat.*` namespace develops a synthetic theory of wild
 (untruncated) ∞-categories in standard cubical Agda. The theory is
@@ -64,9 +64,9 @@ structure is derived from `emb` plus four axioms:
 - **`interchange`** — noy and yon views of composition agree
 - **`yon-eval`** — evaluating at the identity recovers the morphism
 
-### The h-level shift: from paths to virtual categories
+### The h-level shift: from paths to representable categories
 
-The relationship between path types and virtual categories is an
+The relationship between path types and representable categories is an
 h-level shift in the representation of composition.
 
 **Path types (h-level 0 representation).** A path `p : x ≡ y` IS
@@ -76,14 +76,14 @@ contractible (`Singl-contr`), giving h-level 0. The ternary map
 binary composition operator on paths arises from a unique path. This
 is the free theorem / parametricity for the identity type.
 
-**Virtual categories (h-level 1 representation).** Each morphism `f`
-uniquely determines a composition operator `emb f` —
+**Representable categories (h-level 1 representation).** Each
+morphism `f` uniquely determines a composition operator `emb f` —
 `emb-image-contr` gives h-level 0 in the fiber. But the space of all
 operators of the right type is larger: non-representable operators
 exist. So `emb` is an embedding (propositional fibers, h-level 1
 globally), not an equivalence.
 
-This is the structural content of virtual category theory: morphisms
+This is the structural content of the representable theory: morphisms
 faithfully *represent* composition behavior without *being* it.
 `yon-eval` witnesses the section: evaluating the representation at
 the identity recovers the morphism. `emb-section` /
@@ -123,7 +123,7 @@ approach), never as direct hom-level path constructions.
 
 ### Fibered constructions decompose along the h-level boundary
 
-When building structure over a virtual category — displayed
+When building structure over a representable category — displayed
 categories, slices, covariant families, Yoneda — the structural
 obligations decompose along the h-level boundary:
 
@@ -134,8 +134,8 @@ obligations decompose along the h-level boundary:
 
 - **h-level 1 (morphism-level):** Obligations about composition
   fibers. These arise as first components. Handled by
-  `compose-contr` / `emb-image-contr`. Contractible by the virtual
-  category axioms.
+  `compose-contr` / `emb-image-contr`. Contractible by the
+  representation axioms.
 
 Factor contractibility proofs along this boundary:
 Σ-reassociate the fiber to separate h-level 0 and h-level 1 parts,
@@ -162,7 +162,7 @@ From the four axioms, the following are derived (not axiomatized):
 ### Relationship to simplicial HoTT
 
 Riehl–Shulman's simplicial HoTT uses extension types to define
-∞-categories, making horn maps equivalences. Virtual categories
+∞-categories, making horn maps equivalences. Representable categories
 weaken this: `emb` is an embedding, not an equivalence. The gap is
 the non-representable operators — composition behaviors with no
 corresponding morphism.
@@ -170,7 +170,7 @@ corresponding morphism.
 | Framework | Composition | Representation | Horn maps |
 |-----------|-------------|----------------|-----------|
 | Path types | h-level 0 | h-level 0 (equiv) | — |
-| Virtual categories | h-level 0 | h-level 1 (embedding) | — |
+| Representable categories | h-level 0 | h-level 1 (embedding) | — |
 | Simplicial HoTT | h-level 0 | h-level 0 (equiv via ext) | equiv |
 
 The gap closes in groupoids, where inverses make `emb` surjective
@@ -237,7 +237,7 @@ In the path groupoid, both bundles are contractible (Singl-contr),
 so `emb` is an equivalence — every bimodule map is representable.
 In general, `emb` is an embedding: morphisms faithfully represent
 their bimodule actions, but non-representable operators exist. This
-gap is the virtual structure.
+gap is the representable structure.
 
 ### Identity uniqueness and 2-torsion
 
@@ -357,10 +357,10 @@ from balanced to unbalanced:
 
 | Level | Coherence | Defect | Obstruction |
 |-------|-----------|--------|-------------|
-| E₁ | `absorb-coh` (triangle) | `ω(I,x,I,r) − ω(I,I,I,I)` | π₀ (component separation) |
-| E₂ | hexagon | `−ζ` (odd) | π₁, any nontrivial loop |
-| E₂ | `β² = id` (symmetric) | `2ζ` (even) | π₁, 2-torsion |
-| E₃ | syllepsis | η | π₁ˢ = ℤ/2 (Hopf) |
+| 1 | `absorb-coh` (triangle) | `ω(I,x,I,r) − ω(I,I,I,I)` | π₀ (component separation) |
+| 2 | hexagon | `−ζ` (odd) | π₁, any nontrivial loop |
+| 2 | `β² = id` (symmetric) | `2ζ` (even) | π₁, 2-torsion |
+| 3 | syllepsis | η | π₁ˢ = ℤ/2 (Hopf) |
 
 The `absorb-coh` defect is a balanced difference — it vanishes on
 connected carriers, which is why it is a π₀ phenomenon. The braid
@@ -374,8 +374,8 @@ Eckmann–Hilton / syllepsis setting, which works in `Ω²` with two
 concatenations and *derives* the braid as a path, the `monoidal`
 record has one tensor and no such input — so the braid is
 irreducible data — but its coherence residue lands on the same
-E₁→E₂→E₃ ladder, with the stable Hopf class η at the syllepsis
-rung.
+triangle → hexagon → syllepsis ladder, with the stable Hopf class η
+at the syllepsis rung.
 
 ## Representable Codependent Categories
 
@@ -392,13 +392,14 @@ The record has four fields:
 ```
 hom : ob → ob → Type h
 idn : (x : ob) → hom x x
-emb : ∀ {x y} → hom x y → loose x y
-compose-contr : ∀ f g → is-contr (fiber emb (emb f · g))
+emb : ∀ {x y} → hom x y → composite x y
+compose-contr : ∀ f g → is-contr (is-representable (emb f · g))
 ```
 
-`loose x y = (γ : ctx x y) → fam (γ .fst)` is a genuine `Π` over the
-canonical context, so its head stays visible and `loose-ext = funext`
-computes. The codependent application `_·_` and its composition law
+`composite x y = (γ : ctx x y) → fam (γ .fst)` is a genuine `Π` over
+the canonical context, so its head stays visible and
+`composite-ext = funext` computes. Its elements are formal composites;
+`is-representable F = fiber emb F` asks which are generated by a name. The codependent application `_·_` and its composition law
 `·-comp` are derived (Petrakis's dependent-arrow composition,
 (dep₂)); `compose-contr` is the single categorical axiom.
 
@@ -444,7 +445,7 @@ posited, not characterized. No unit law and no identity uniqueness is
 asserted or used. The two instances make this concrete: `Type-codep`
 fills `idn` with an identity morphism (`C.idn`), `Monoidal-codep` fills
 it with the tensor unit *object* `I`; the shared role is "anchor", not
-"two-sided unit". This is the noy-side structure through the pentagon.
+"two-sided unit". This is the pre-side structure through the pentagon.
 
 ### The identity fragment: two layers over the anchor
 
@@ -452,13 +453,13 @@ The scope note above is resolved by two extension records
 (`Cat.Codep.Coupling`, `Cat.Codep.Unit`) that characterize the anchor
 without touching the base.
 
-The **coupling** layer adds the two representable actions — `noy`
-(acting on the acted slot) and `yon` (acting on the passenger binder)
+The **coupling** layer adds the two representable actions — `pre`
+(acting on the acted slot) and `post` (acting on the passenger binder)
 — together with the two axioms relating them: `interchange` (the
-actions commute; this is the L3.5 profunctorial link) and `yon-eval`
+actions commute; this is the L3.5 profunctorial link) and `post-eval`
 (the passenger action at the identity is the identity). From the
 coupling *alone* the identity idempotency `idem : idn ⨾ idn ≡ idn`
-derives, via `yon-composite` + `comp-eq`. This is the **linchpin**:
+derives, via `post-comp` + `comp-eq`. This is the **linchpin**:
 idempotency precedes absorption, and the two are not circular. The
 guarantee is structural — `CouplingDerived`, the module that proves
 `idem`, has no access to `absorb-l` (which lives downstream in the
@@ -470,11 +471,12 @@ The **unit** layer adds invertibility of the identity's two actions
 (`absorb-l`/`absorb-r`) cancels the identity, the codependent identity
 law `·-idn` (`F · idn ≡ F`) follows, the unit laws `unitl`/`unitr`
 project from the contractible image fiber `emb-image-contr`, and
-identity uniqueness `unit-is-prop` follows by the Kraus chain: `yon e`
-squares to itself and is idempotent, so it absorbs, forcing `e ≡ idn`.
+identity uniqueness `unit-is-prop` follows by the Kraus chain:
+`post e` squares to itself and is idempotent, so it absorbs, forcing
+`e ≡ idn`.
 
-The uniqueness hypothesis is the **binary** yon-idempotency
-`yon e e ≡ e`, obtained via `yon-eval`. This gives `e² = e` (not
+The uniqueness hypothesis is the **binary** post-idempotency
+`post e e ≡ e`, obtained via `post-eval`. This gives `e² = e` (not
 `e² = 1`), which forces `e = idn` in the representable setting —
 excluding the involution ambiguity (`e² = 1`) that a ternary
 idempotency would admit. Involutions are excluded; the identity is
@@ -492,6 +494,7 @@ statement (two fibers giving the same edge).
 ## References
 
 - **STYLEGUIDE.md** — Formatting and naming conventions
+- **docs/LEXICON.md** — Vocabulary: what the `Cat.*` concepts are called
 - **Rijke, Introduction to HoTT** — Primary HoTT reference
 - **1lab** (https://1lab.dev) — Idiomatic cubical Agda patterns
 - **Riehl–Shulman** (arXiv:1705.07442) — Synthetic ∞-category theory
@@ -502,4 +505,5 @@ statement (two fibers giving the same edge).
 - **Sterling** (jonmsterling.com/005B) — Virtual bicategory theory
 - **Kelly** (J. Algebra 1964) — Mac Lane coherence, triangle not forced by pentagon
 - **Joyal–Street** (Adv. Math. 1993) — Braided monoidal categories, hexagons
-- **Sojakova** (LICS 2022) — The syllepsis in HoTT (Eckmann–Hilton, η at E₃)
+- **Sojakova** (LICS 2022) — The syllepsis in HoTT (Eckmann–Hilton; η
+  at the operadic E₃ level — unrelated to the code fiber `E₃`)

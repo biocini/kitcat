@@ -29,9 +29,9 @@ open import Cat.Codep
 ## Instance 1 — Cat.Type
 
 Passenger `(v , (w , a))`: acted-object `v`, then the inert binder
-`(w , a)`, which is `v`-independent; `idn-b` at object `y` is
+`(w , a)`, which is `v`-independent; `unit` at object `y` is
 `(y , C.idn)`. Because `act`/`act-comp` are derived, `act φ g α`
-computes to `C.noy g v α` on the nose, and `yon`/`noy` reduce to
+computes to `C.noy g v α` on the nose, and `post`/`pre` reduce to
 `C.yon`/`C.noy` — so the coupling and unit fields fill directly from
 `C.interchange`, `C.yon-eval`, and `C.unit`. `sub` acts on the single
 `b : hom y v` slot.
@@ -40,19 +40,19 @@ computes to `C.noy g v α` on the nose, and `yon`/`noy` reduce to
 module TypeInstance {o h} (C : category o h) where
   private module C = Virtual C
 
-  LooseT : C.ob → C.ob → Type (o ⊔ h)
-  LooseT x y =
+  CompositeT : C.ob → C.ob → Type (o ⊔ h)
+  CompositeT x y =
     (γ : Σ φ ∶ (Σ v ∶ C.ob , (Σ w ∶ C.ob , C.hom w x)) , C.hom y (φ .fst))
     → C.hom (γ .fst .snd .fst) (γ .fst .fst)
 
   uncurryT : ∀ {x y}
     → (∀ w → C.hom w x → ∀ v → C.hom y v → C.hom w v)
-    → LooseT x y
+    → CompositeT x y
   uncurryT G γ =
     G (γ .fst .snd .fst) (γ .fst .snd .snd) (γ .fst .fst) (γ .snd)
 
   curryT : ∀ {x y}
-    → LooseT x y
+    → CompositeT x y
     → (∀ w → C.hom w x → ∀ v → C.hom y v → C.hom w v)
   curryT F w a v b = F ((v , (w , a)) , b)
 
@@ -69,7 +69,7 @@ module TypeInstance {o h} (C : category o h) where
   Type-coupling : codep-coupling Type-codep
   Type-coupling .codep-coupling.interchange f g {w} a {v} b =
     C.interchange f g w a v b
-  Type-coupling .codep-coupling.yon-eval f = C.yon-eval f
+  Type-coupling .codep-coupling.post-eval f = C.yon-eval f
 
   Type-unit : codep-unit Type-codep Type-coupling
   Type-unit .codep-unit.unit-l-equiv = C.unit-eqvl
@@ -119,7 +119,7 @@ idn f` directly — two fibers giving the same edge, so not `refl`-equal.
 
 `ob = ⊤`; the acted-object `v` is a dummy, the binder carries the
 tensor factor `l`, and `idn` is the unit object `I` — so `act l g r`
-computes to `noy g r = tensor-emb g I r`. With the canonical binder,
+computes to `pre g r = tensor-emb g I r`. With the canonical binder,
 `binder ⊤ = Σ w ∶ ⊤ , C.ob` is `⊤`-wrapped, the projections dig one
 level deeper, and `⊤`-eta carries the round-trip. The coupling and unit
 fields fill from `tensor-interchange`, `tensor-yon-eval`, and
@@ -130,13 +130,13 @@ module MonoidalInstance {o hh} {C : category o hh} (M : monoidal C) where
   private module C = Virtual C
   open monoidal M
 
-  LooseM : ⊤ → ⊤ → Type o
-  LooseM x y = (γ : Σ φ ∶ (⊤ × (Σ v ∶ ⊤ , C.ob)) , C.ob) → C.ob
+  CompositeM : ⊤ → ⊤ → Type o
+  CompositeM x y = (γ : Σ φ ∶ (⊤ × (Σ v ∶ ⊤ , C.ob)) , C.ob) → C.ob
 
-  uncurryM : (C.ob → C.ob → C.ob) → LooseM tt tt
+  uncurryM : (C.ob → C.ob → C.ob) → CompositeM tt tt
   uncurryM G γ = G (γ .fst .snd .snd) (γ .snd)
 
-  curryM : LooseM tt tt → (C.ob → C.ob → C.ob)
+  curryM : CompositeM tt tt → (C.ob → C.ob → C.ob)
   curryM F l r = F ((tt , (tt , l)) , r)
 
   Monoidal-codep : codep-category {0ℓ} {o} ⊤
@@ -152,7 +152,7 @@ module MonoidalInstance {o hh} {C : category o hh} (M : monoidal C) where
   Monoidal-coupling : codep-coupling Monoidal-codep
   Monoidal-coupling .codep-coupling.interchange f g a b =
     tensor-interchange f g a b
-  Monoidal-coupling .codep-coupling.yon-eval f = tensor-yon-eval f
+  Monoidal-coupling .codep-coupling.post-eval f = tensor-yon-eval f
 
   Monoidal-unit : codep-unit Monoidal-codep Monoidal-coupling
   Monoidal-unit .codep-unit.unit-l-equiv = tensor-unit-eqvl
