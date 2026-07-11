@@ -35,7 +35,7 @@ open import Core.Transport.Base using (is-prop→PathP)
 open import Core.Transport.J using (subst)
 open import Core.Transport.Properties using (is-contr-is-prop)
 open import Core.Base
-open import Core.Kan using (_∙_)
+open import Core.Kan using (_∙_; is-contr→is-prop)
 open import Core.Type
 ```
 
@@ -92,10 +92,15 @@ module _ {o h} {ob : Type o} (S : hcategory-structure {o} {h} ob) where
 
 `op-comp-path` transports the reversed composite `emb g · f` onto the
 transpose of the op composite `embᵒ f ·ᵒ g` by one `interchange`.
-`compose-contr` then transfers the base's contractible fiber across
-this path and along the `swap·`/`swap·'` retract. `interchange` is
-the base at reversed arguments under `sym`; `post-eval`, `unit-eqvl`,
-and `unit-eqvr` are base fields verbatim (the last two swapped).
+`compose-contr` is Route-B: its fiber center is *definitionally* the
+base extraction `A._⨾_ g f` (transported to a `Sᵒ.emb`-fiber by
+`swap·` across `op-comp-path`), and contractibility is discharged by
+`is-contr→is-prop` against the transported base fiber (the
+`swap·`/`swap·'` retract of `A.compose-contr g f` across
+`op-comp-path`). The definitional center makes `Aᵒ._⨾_ f g` reduce to
+`A._⨾_ g f`, so `op-comp-eq` is `refl`. `interchange` is the base at
+reversed arguments under `sym`; `post-eval`, `unit-eqvl`, and
+`unit-eqvr` are base fields verbatim (the last two swapped).
 
 ```agda
 module _ {o h} {ob : Type o} {S : hcategory-structure {o} {h} ob}
@@ -108,14 +113,18 @@ module _ {o h} {ob : Type o} {S : hcategory-structure {o} {h} ob}
   op-comp-path
     : ∀ {x y z} (f : S.hom y x) (g : S.hom z y)
     → S.emb g S.· f ≡ swap·' S (Sᵒ.emb f Sᵒ.· g)
-  op-comp-path f g = S.composite-ext λ γ →
+  op-comp-path f g = funext λ γ →
     A.interchange g f (γ .fst .snd) (γ .snd .snd)
 
   op-axioms : hcategory-axioms (op-structure S)
-  op-axioms .hcategory-axioms.compose-contr f g =
-    retract→is-hlevel Z to fro (λ _ → refl)
-      (subst (λ T → is-contr (fiber S.emb T))
-        (op-comp-path f g) (A.compose-contr g f))
+  op-axioms .hcategory-axioms.compose-contr f g .center =
+    A._⨾_ g f , ap (swap· S) (A.emb-comp g f ∙ op-comp-path f g)
+  op-axioms .hcategory-axioms.compose-contr f g .paths =
+    is-contr→is-prop
+      (retract→is-hlevel Z to fro (λ _ → refl)
+        (subst (λ T → is-contr (fiber S.emb T))
+          (op-comp-path f g) (A.compose-contr g f)))
+      (op-axioms .hcategory-axioms.compose-contr f g .center)
     where
       to : fiber S.emb (swap·' S (Sᵒ.emb f Sᵒ.· g))
          → fiber Sᵒ.emb (Sᵒ.emb f Sᵒ.· g)
@@ -133,13 +142,13 @@ module _ {o h} {ob : Type o} {S : hcategory-structure {o} {h} ob}
   private
     module Aᵒ = hcategory-axioms op-axioms
 
+  -- Route-B regression witness: the op extraction is the base
+  -- extraction swapped, now `refl` since the fiber center is
+  -- definitional.
   op-comp-eq
     : ∀ {x y z} (f : S.hom y x) (g : S.hom z y)
     → Aᵒ._⨾_ f g ≡ A._⨾_ g f
-  op-comp-eq f g = ap fst (Aᵒ.compose-contr f g .paths (A._⨾_ g f , W))
-    where
-      W : Sᵒ.emb (A._⨾_ g f) ≡ Sᵒ.emb f Sᵒ.· g
-      W = ap (swap· S) (A.emb-comp g f ∙ op-comp-path f g)
+  op-comp-eq f g = refl
 ```
 
 ## The bundle and its involution

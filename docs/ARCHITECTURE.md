@@ -124,11 +124,14 @@ embedding `emb` into `composite` morphisms + five axioms
 structure and the Mac Lane pentagon are derived generically.
 
 ```
-Cat.Codep ─── aggregator (Base + Coherence + Op)
+Cat.Codep ─── aggregator (Base + Coherence + Coherent + Op + Triangle)
     ├── Cat.Codep.Base ────── structure/axioms(5)/bundle records;
     │                         all derived laws consolidated (coupling + unit)
     ├── Cat.Codep.Coherence ─ assoc-tower + pentagon-fibers + pentagon
-    ├── Cat.Codep.Op ──────── op-structure/op-axioms/op + op-invol
+    ├── Cat.Codep.Coherent ── 3-cell overlay + θ-core + gauges + op-coherent
+    ├── Cat.Codep.Op ──────── op-structure/op-axioms(Route-B)/op + op-invol
+    ├── Cat.Codep.Triangle ── Mac Lane weak + full triangle (face₂₃ via
+    │                         gauge-r); op-dual mirror via op-coherent
     └── Cat.Codep.Instances ─ walking-arrow + type/monoidal triples
 ```
 
@@ -168,6 +171,28 @@ face is left direct (`face₃₅`'s lift uses the emb-at-center link,
 `pre`/`post` being `emb` read at the center). It is the regression
 baseline for the planned transfer-principle reformulation.
 
+**Cat.Codep.Coherent** overlays three wild-categorical coherence
+cells on the bundle — `absorb-lcoh`, `absorb-rcoh`, `couple-D₀` — in a
+record `hcategory-2-coherent (C : hcategory o h)` *over* the bundle,
+not in `hcategory-axioms`: the five-field category and its strict
+`op-invol` stay the self-dual core. The cells are the identity-flanked
+fragments of the base associator (Kelly's unit coherences), independent
+of the five axioms since `interchange` is only supplied pointwise. From
+them the `θ-core` is derived (not posited), as are the identity-argument
+gauges `gauge-r`/`gauge-l`/`gauge-lr` (`absorb-r/absorb-l (idn x) ≡
+post-eval (idn x)` and their difference) — the homotopy-naturality of
+the absorptions along `post-eval`, whiskered against the θ-core
+reconciliations; `gauge-r` is what closes the full Mac Lane `face₂₃`.
+`assemble` rebuilds the overlay from a bundle plus the three cells, and
+`prop-homs` discharges them one-line each when homs are
+propositions. `op-coherent` dualizes
+the overlay *covariantly*: two θ-bridges (`bridge-l`/`bridge-r`, each
+`ap _ θ`) relay the op record's absorptions onto the base's, and
+`couple-D₀ᵒ` conjugates by `sym`. There is deliberately no
+`op-coherent-invol` — strict op-involution of the cells is independent
+of the fields (S²/π₃ countermodel), so the five-field category is
+strictly self-dual while the overlay dualizes only up to the bridges.
+
 **Cat.Codep.Op** builds the opposite hcategory as the polarity
 mirror of the post-biased presentation: `op-structure` reverses
 `hom`, keeps `idn`, and precomposes `emb` with `swap`, which swaps
@@ -176,12 +201,42 @@ axiom is derivable from the base five fields — post-bias is chirality,
 not asymmetry. The eval axiom is self-mirror (`op-axioms .post-eval`
 is the base's verbatim, since `pre f (idn y)` and `post f (idn x)`
 are the same doubly-centered term); `interchange` reverses under
-`sym`, the unit equivalences trade places, and only `compose-contr`
-transports the base fiber across `op-comp-path` (one `interchange`)
-along the `swap·`/`swap·'` fiber retraction. `op` bundles the mirror,
-and `op-invol : op (op C) ≡ C` is definitional on `hom`/`idn`/`emb`
-and `is-contr`-propositional on the composition fibers. The base gains
-the derived `pre-eval` recording the self-mirror coincidence.
+`sym`, and the unit equivalences trade places. `compose-contr` is
+Route-B: its fibre center is *definitionally* the base extraction
+`A._⨾_ g f` (transported by `swap·` across `op-comp-path`, one
+`interchange`), with contractibility discharged by `is-contr→is-prop`
+against the `swap·`/`swap·'` retract of the base fibre — so `Aᵒ._⨾_ f g`
+reduces to `A._⨾_ g f` and `op-comp-eq` is `refl`. `op` bundles the
+mirror, and `op-invol : op (op C) ≡ C` is definitional on
+`hom`/`idn`/`emb` and `is-contr`-propositional on the composition
+fibers (value-agnostic, so unaffected by the Route-B center). The base
+gains the derived `pre-eval` recording the self-mirror coincidence.
+
+**Cat.Codep.Triangle** carries the Mac Lane triangle over the bundle.
+The three vertices sit in `compose-contr f g`, right-nested binary
+witnesses through the `·-idn` expansion; each face reads a fibre edge
+against a named law through `contr-face` and a canonical lift. The
+*weak* triangle `ap (_⨾ g) (unitr f) ≡ assoc f (idn y) g ∙ α₂₃` is
+complete — `face₁₃` (the free unitr right-whisker) and `face₁₂`
+(associativity reindex) close against the base axioms alone, reusing
+`assoc-tower`. The *full* triangle — identifying `α₂₃` with the
+left-whiskered `unitl g` — is now **complete** in
+`triangle-full-tower` (gated on the overlay `A2`). The reconciling cell
+`absorb-r (idn y) ≡ post-eval (idn y)` — once thought independent — is
+**derivable** as `gauge-r` (`Cat.Codep.Coherent`), so `face₂₃` costs no
+fourth cell beyond the three overlay cells. `EU` reads the `unitl`
+fibre-witness square back as a path; `happly` distributes
+definitionally,
+so the paid face collapses pointwise onto pt₂'s `·-idn` route through
+`bridge`/`INNER` (the bridge is `gauge-r`).
+`Test.TriFace23Probe-20260711` is retained as the historical isolation
+of that bridge. The earlier "independent fourth cell" claim was a
+misattribution: the `Cat.Codep.Coherent` S²/π₃ independence result is
+about op-**involution** of the cell tower (one dimension up), not this
+π₁-level gauge. The op-dual (mirror) triangle needs no separate proof —
+`mirror-triangle` is the free instantiation of `triangle-full-tower` at
+`(op C, op-coherent A2)`, the full triangle being uniform in the
+coherent hcategory and `op-coherent` transporting the overlay.
 
 **Cat.Codep.Instances** opens with `walking-arrow` — the interval
 category **2** as a direct triple, the simplest example and the
@@ -215,10 +270,12 @@ the generic `assoc`, `pentagon`, and unit fragment specialize.
 | Cat.Monoidal.Hexagon | 2 | partial | hexagon-emb field + ⊗-hexagon (H1); H2 open |
 | Cat.Monoidal.Indiscrete | 2 | complete | Builder: object data + ⊤-homs → monoidal C |
 | Cat.Monoidal.Twist | 2 | complete | absorb-coh independence core (twist-reduces-to-omega) |
-| Cat.Codep | 3 | complete | Aggregator: Base + Coherence + Op |
+| Cat.Codep | 3 | complete | Aggregator: Base + Coherence + Coherent + Op + Triangle |
 | Cat.Codep.Base | 3 | complete | trilayer records: structure / axioms (5 fields + all derived laws) / bundle; flat carrier; provenance lemmas standalone |
 | Cat.Codep.Coherence | 3 | complete | collapsed tower: assoc-tower + pentagon-fibers + 5 faces (reindex-face for face₂₃/₄₅) + named pentagon; unit-free (compose-contr/emb-comp/·-comp) |
-| Cat.Codep.Op | 3 | complete | opposite hcategory: op-structure/op-axioms/op + op-invol; parity theorem (mirror axioms derivable), eval self-mirror definitional |
+| Cat.Codep.Coherent | 3 | complete | 3-cell overlay (absorb-lcoh/absorb-rcoh/couple-D₀) over the bundle + derived θ-core + derived gauge-r/gauge-l/gauge-lr (identity-argument gauges, homotopy-naturality of absorb along post-eval); assemble, prop-homs, covariant op-coherent (no strict invol) |
+| Cat.Codep.Op | 3 | complete | opposite hcategory: op-structure/op-axioms(Route-B center)/op + op-invol; parity theorem, eval self-mirror, op-comp-eq refl |
+| Cat.Codep.Triangle | 3 | complete | weak Mac Lane triangle over the bundle (face₁₃ free unitr + face₁₂ assoc) + full triangle in triangle-full-tower (gated on overlay A2): face₂₃ closes via gauge-r (EU square-readback + bridge/INNER, happly distributes definitionally); op-dual mirror = free instantiation at (op C, op-coherent A2) |
 | Cat.Codep.Instances | 3 | complete | walking-arrow + type/monoidal triples (5-axiom fills); generic theorems specialize |
 
 ## Deferred modules
