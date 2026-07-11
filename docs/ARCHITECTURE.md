@@ -124,45 +124,48 @@ embedding `emb` into `composite` morphisms + five axioms
 structure and the Mac Lane pentagon are derived generically.
 
 ```
-Cat.Codep ─── aggregator (Base + Coherence + Coupling + Unit)
-    ├── Cat.Codep.Base ────── structure/axioms(5)/bundle records
+Cat.Codep ─── aggregator (Base + Coherence)
+    ├── Cat.Codep.Base ────── structure/axioms(5)/bundle records;
+    │                         all derived laws consolidated (coupling + unit)
     ├── Cat.Codep.Coherence ─ assoc-tower + pentagon-fibers + pentagon
-    ├── Cat.Codep.Coupling ── idem-from-coupling lemma + coupling-laws
-    ├── Cat.Codep.Unit ────── unit-laws: absorb, unitl/r,
-    │                         emb-image-contr, unit-is-prop
     └── Cat.Codep.Instances ─ walking-arrow + type/monoidal triples
 ```
 
-**Cat.Codep.Base** holds the three records: `codep-structure`
-(operations `hom`/`idn`/`emb`, the two actions `pre`/`post`, + all
-axiom-free derived notions), `codep-axioms` (the five axioms +
-extraction, over a structure value), and the `codep-category` bundle
-(fields `ob`, `structure`, `axioms`, re-exporting both). The axioms
-record is complete, so the bundle IS the category. Splitting the axioms
-off the operations makes naive multi-object instances termination-safe.
-`idn` is the representable anchor, characterized as a unit by the two
-unit axioms. Composition `_⨾_` is extracted from representability.
+**Cat.Codep.Base** holds the three records: `hcategory-structure`
+(operations `hom`/`idn`/`emb`, the flat carrier `cofam`/`fam`/`ctr`/
+`ctx = cofam × fam`/`res`, the two actions `pre`/`post`, + all
+axiom-free derived notions), `hcategory-axioms` (the five axioms +
+extraction + *every* derived law, over a structure value), and the
+`hcategory` bundle (fields `ob`, `structure`, `axioms`,
+re-exporting both). The axioms record is complete, so the bundle IS the
+category. Splitting the axioms off the operations makes naive
+multi-object instances termination-safe. `idn` is the representable
+anchor, characterized as a unit by the two unit axioms. Composition
+`_⨾_` is extracted from representability.
+
+The former `Cat.Codep.Coupling` and `Cat.Codep.Unit` modules are
+absorbed into `hcategory-axioms`: the coupling idempotency block
+(`post-comp`, `comp-eq`, `idem`, `pre-comp`) and the whole unit
+fragment (`absorb-l`/`absorb-r`, `·-idn`, `unitl`/`unitr`,
+`emb-image-contr`, `emb-post`, `unit-is-prop`, `is-representable-prop`)
+are now record-internal. What stays standalone above the record are the
+three provenance lemmas `post-comp-from-coupling`/`comp-eq-from-coupling`/
+`idem-from-coupling`, whose explicit hypothesis lists machine-check that
+idempotency never touches the unit axioms.
 
 **Cat.Codep.Coherence** derives `assoc` and the full pentagon purely
-from `compose-contr`/`emb-comp` — no unit law is consumed. The
-submodules gate on the bundle and follow the `Cat.Coherence` vocabulary
-(`assoc-tower`, `pentagon-tower`/`pentagon-fibers`, `face₃₅-proof`,
-`pentagon`). The inner-associator face uses the emb–act link
-(`act = emb @ idn`).
-
-**Cat.Codep.Coupling** states `idem-from-coupling`, the lemma that
-derives `idem : idn ⨾ idn ≡ idn` from `compose-contr`/`interchange`/
-`post-eval` alone — its explicit hypothesis list machine-checks that
-idempotency never touches `unit-eqvl`/`unit-eqvr` or `absorb`
-(idempotency precedes absorption; not circular). The bundle-gated
-`coupling-laws (C)` module derives `post-comp`/`comp-eq`/`pre-comp` and
-instantiates the lemma for `idem`.
-
-**Cat.Codep.Unit** — the bundle-gated `unit-laws (C)` module derives
-the unit fragment from the two unit axioms: `absorb-l`/`absorb-r`, the
-identity law `·-idn`, `unitl`/`unitr`, `emb-image-contr`, and
-`unit-is-prop` (Kraus). This closes the pre-side wiring, now literally:
-`Cat.Type.category ≅ codep-category`.
+from `compose-contr`/`emb-comp`/`·-comp` — no unit law, no
+`interchange`. This is the collapsed tower: `assoc-tower` projects
+`assoc` from the contractible triple fiber, and `pentagon-tower`/
+`pentagon-fibers` carries the quadruple composite, the five faces, and
+the named `pentagon` (the former `face₃₅-proof` and standalone
+`pentagon` submodules are folded into `pentagon-fibers`). Each face
+reads a fiber edge against a canonical lift of `assoc-σ` through
+`contr-face`; `face₂₃`/`face₄₅` share the `reindex-face` helper, and
+`face₁₂`/`face₃₅`/`face₁₄` share the lift-generic `whisker-face` — no
+face is left direct (`face₃₅`'s lift uses the emb-at-center link,
+`pre`/`post` being `emb` read at the center). It is the regression
+baseline for the planned transfer-principle reformulation.
 
 **Cat.Codep.Instances** opens with `walking-arrow` — the interval
 category **2** as a direct triple, the simplest example and the
@@ -196,11 +199,9 @@ the generic `assoc`, `pentagon`, and unit fragment specialize.
 | Cat.Monoidal.Hexagon | 2 | partial | hexagon-emb field + ⊗-hexagon (H1); H2 open |
 | Cat.Monoidal.Indiscrete | 2 | complete | Builder: object data + ⊤-homs → monoidal C |
 | Cat.Monoidal.Twist | 2 | complete | absorb-coh independence core (twist-reduces-to-omega) |
-| Cat.Codep | 3 | complete | Aggregator: Base + Coherence + Coupling + Unit |
-| Cat.Codep.Base | 3 | complete | trilayer records: structure / axioms (5 fields) / bundle; carrier & action derived |
-| Cat.Codep.Coherence | 3 | complete | assoc-tower + pentagon-fibers + 5 faces + named pentagon (from compose-contr) |
-| Cat.Codep.Coupling | 3 | complete | idem-from-coupling lemma (absorption-free by hypothesis) + bundle-gated coupling-laws |
-| Cat.Codep.Unit | 3 | complete | unit-laws: absorb, ·-idn, unitl/r, emb-image-contr, unit-is-prop |
+| Cat.Codep | 3 | complete | Aggregator: Base + Coherence |
+| Cat.Codep.Base | 3 | complete | trilayer records: structure / axioms (5 fields + all derived laws) / bundle; flat carrier; provenance lemmas standalone |
+| Cat.Codep.Coherence | 3 | complete | collapsed tower: assoc-tower + pentagon-fibers + 5 faces (reindex-face for face₂₃/₄₅) + named pentagon; unit-free (compose-contr/emb-comp/·-comp) |
 | Cat.Codep.Instances | 3 | complete | walking-arrow + type/monoidal triples (5-axiom fills); generic theorems specialize |
 
 ## Deferred modules

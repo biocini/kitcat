@@ -1,23 +1,35 @@
 Lane Biocini
 July 2026
 
-Associativity and the Mac Lane pentagon for representable codependent
-categories. The tower gates on the bundle `(C : codep-category o h)`;
-everything is purely associativity — it consumes only `compose-contr`
-and `emb-comp`, never a unit law. The submodules follow the
-`Cat.Coherence` vocabulary: `pentagon-fibers`, `face₃₅-proof` (mirroring
-`face₂₃-proof`), and the final `pentagon`, with `assoc-tower` and
-`pentagon-tower` the E₃/E₄ derivations.
+Associativity and the Mac Lane pentagon for representable hcategories.
+The tower gates on the bundle `(C : hcategory o h)` and is purely
+associativity: it consumes only `compose-contr`, `emb-comp`, and
+`·-comp` — no unit axiom, no `interchange`. `assoc-tower` derives
+`assoc` from the contractible triple-composite fiber; `pentagon-tower`
+carries the quadruple composite, the five faces, and the named
+`pentagon`.
 
-`assoc` is the projection of a path in the contractible triple-composite
-fiber. The five pentagon faces (`face₁₂`, `face₂₃`, `face₁₄`, `face₄₅`,
-`face₃₅`) each identify a fiber edge with a named associator via
-`contr-face`; `hom-identity` is the fiber-level pentagon from
-`coh-project`; `pentagon` assembles them into the named identity.
+This is the collapsed form of the tower. Every canonical fiber point
+is identified in a `subst`-transported contractible fiber (`E₃-contr`,
+`E₄-contr` built from `compose-contr` by transporting along pointwise
+`emb-comp`/`·-comp` expansions); each face reads a fiber edge against a
+canonical lift of `assoc-σ` — a right whisker `Λk`, a left whisker
+`Λf`/`Φ`, or a reindex `R` — through `contr-face`. Two helpers factor
+the shared skeleton: `reindex-face` (which builds its own reindex lift
+and both `Path.assoc` bridges) carries `face₂₃`/`face₄₅`, and
+`whisker-face` (generic over the lift, taking the two bridges from the
+caller) carries `face₁₂`/`face₃₅`/`face₁₄`. No face is left direct.
 
-The inner-associator face `face₃₅` is where representability pays off:
-`act = emb @ idn` makes the lift `Φ` commute with everything
-definitionally, so the coherence collapses to `ap-comp`.
+The bridge structure — the `Path.assoc` reassociations, the `ap-comp`
+distributions, and `face₁₄`'s `homotopy-natural` square — is validated
+as irreducible at this record. Binary right-nested fiber witnesses are
+the optimum: `pcom`-native endpoints were tested and cost more (they
+force a conservation `+1` on every whisker face), so the binary form
+stays (bridge-conservation, spike-verified).
+
+The whole tower is the regression baseline for the planned deeper
+reformulation — the transfer-principle collapse that would remove the
+face plumbing outright is still under investigation.
 
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
@@ -40,17 +52,29 @@ open import Cat.Codep.Base
 
 ## Triple composite, assoc-σ, assoc
 
+`pt-l`/`pt-r` are the two canonical fibers of the triple composite,
+their witnesses right-nested binary `∙`-chains. `E₃-contr` transports
+`compose-contr` along the pointwise `emb-comp` expansion; `assoc` is
+the projection of the fiber path.
+
 ```agda
-module assoc-tower {o h} (C : codep-category o h) where
-  open codep-category C
+module assoc-tower {o h} (C : hcategory o h) where
+  open hcategory C
 
   E₃ : ∀ {x y z w} (f : hom x y) (g : hom y z) (h : hom z w) → composite x w
   E₃ f g h = emb f · g · h
 
+  pt-l : ∀ {x y z w} (f : hom x y) (g : hom y z) (h : hom z w)
+       → fiber emb (E₃ f g h)
+  pt-l f g h = (f ⨾ g) ⨾ h , emb-comp (f ⨾ g) h ∙ ap (_· h) (emb-comp f g)
+
+  pt-r : ∀ {x y z w} (f : hom x y) (g : hom y z) (h : hom z w)
+       → fiber emb (E₃ f g h)
+  pt-r f g h = f ⨾ (g ⨾ h) , emb-comp f (g ⨾ h) ∙ ·-comp (emb f) g h
+
   E₃-contr : ∀ {x y z w} (f : hom x y) (g : hom y z) (h : hom z w)
            → is-contr (fiber emb (E₃ f g h))
-  E₃-contr f g h .center =
-    (f ⨾ g) ⨾ h , emb-comp (f ⨾ g) h ∙ ap (_· h) (emb-comp f g)
+  E₃-contr f g h .center = pt-l f g h
   E₃-contr f g h .paths =
     is-contr→is-prop
       (subst (λ T → is-contr (fiber emb T))
@@ -58,9 +82,8 @@ module assoc-tower {o h} (C : codep-category o h) where
         (compose-contr (f ⨾ g) h)) _
 
   assoc-σ : ∀ {x y z w} (f : hom x y) (g : hom y z) (h : hom z w)
-          → E₃-contr f g h .center
-          ≡ (f ⨾ (g ⨾ h) , emb-comp f (g ⨾ h) ∙ ·-comp (emb f) g h)
-  assoc-σ f g h = is-contr→is-prop (E₃-contr f g h) _ _
+          → pt-l f g h ≡ pt-r f g h
+  assoc-σ f g h = is-contr→is-prop (E₃-contr f g h) (pt-l f g h) (pt-r f g h)
 
   assoc : ∀ {x y z w} (f : hom x y) (g : hom y z) (h : hom z w)
         → (f ⨾ g) ⨾ h ≡ f ⨾ (g ⨾ h)
@@ -69,269 +92,213 @@ module assoc-tower {o h} (C : codep-category o h) where
 
 ## The quadruple composite and the five faces
 
+`pentagon-fibers` fixes `f g h k` and carries the quadruple composite
+`E₄`, its `subst`-manufactured contractibility `E₄c`, the five
+canonical vertices `pt₁..pt₅` (right-nested binary witnesses), and the
+faces. Each face reads a fiber edge `αᵢⱼ` against a named associator
+through `contr-face` and a canonical lift.
+
+The lifts: `Λk` right-whiskers by `k`, `Φ`/`Λf` left-whisker by `f`
+(the `emb`-at-center link makes `Φ` commute with everything
+definitionally), and `R₁₄` reindexes by the `emb-comp f g` expansion.
+`reindex-face` handles the two pure-reindex faces (`face₂₃`/`face₄₅`),
+building the reindex lift and both `Path.assoc` bridges internally.
+`whisker-face` factors the `contr-face` + `Λ`-core skeleton but leaves
+the two bridges to the caller (their segment types are face-specific);
+it carries `face₁₂` and `face₃₅`, and — being generic over the lift —
+also `face₁₄`, whose `homotopy-natural` `v`-bridge merely rides in as
+that caller-supplied bridge (it resists `reindex-face`'s fixed
+`Path.assoc` tail, not `whisker-face`).
+
 ```agda
-module pentagon-tower {o h} (C : codep-category o h) where
-  open codep-category C
+module pentagon-tower {o h} (C : hcategory o h) where
+  open hcategory C
   open assoc-tower C
-
-  E₄ : ∀ {x y z w v}
-       (f : hom x y) (g : hom y z) (h : hom z w) (k : hom w v)
-     → composite x v
-  E₄ f g h k = emb f · g · h · k
-
-  E₄-contr
-    : ∀ {x y z w v}
-      (f : hom x y) (g : hom y z) (h : hom z w) (k : hom w v)
-    → is-contr (fiber emb (E₄ f g h k))
-  E₄-contr f g h k .center .fst = ((f ⨾ g) ⨾ h) ⨾ k
-  E₄-contr f g h k .center .snd =
-      emb-comp ((f ⨾ g) ⨾ h) k
-    ∙ ap (_· k) (emb-comp (f ⨾ g) h)
-    ∙ ap (λ o → o · h · k) (emb-comp f g)
-  E₄-contr f g h k .paths =
-    is-contr→is-prop
-      (subst (λ T → is-contr (fiber emb T)) path₄
-        (compose-contr ((f ⨾ g) ⨾ h) k)) _
-    where
-      path₄ : emb ((f ⨾ g) ⨾ h) · k ≡ E₄ f g h k
-      path₄ = ap (_· k) (emb-comp (f ⨾ g) h)
-            ∙ ap (λ o → o · h · k) (emb-comp f g)
 
   module pentagon-fibers {x y z w v}
     (f : hom x y) (g : hom y z) (h : hom z w) (k : hom w v)
     where
-    E₄c = E₄-contr f g h k
 
-    pt₁ : fiber emb (E₄ f g h k)
-    pt₁ = E₄c .center
+    E₄ : composite x v
+    E₄ = emb f · g · h · k
 
-    pt₂ : fiber emb (E₄ f g h k)
+    E₄c : is-contr (fiber emb E₄)
+    E₄c .center .fst = ((f ⨾ g) ⨾ h) ⨾ k
+    E₄c .center .snd =
+        emb-comp ((f ⨾ g) ⨾ h) k
+      ∙ ap (_· k) (emb-comp (f ⨾ g) h)
+      ∙ ap (_· k) (ap (_· h) (emb-comp f g))
+    E₄c .paths =
+      is-contr→is-prop
+        (subst (λ T → is-contr (fiber emb T)) path₄
+          (compose-contr ((f ⨾ g) ⨾ h) k)) _
+      where
+        path₄ : emb ((f ⨾ g) ⨾ h) · k ≡ E₄
+        path₄ = ap (_· k) (emb-comp (f ⨾ g) h)
+              ∙ ap (_· k) (ap (_· h) (emb-comp f g))
+
+    pt₁ : fiber emb E₄
+    pt₁ = ((f ⨾ g) ⨾ h) ⨾ k
+        , emb-comp ((f ⨾ g) ⨾ h) k
+        ∙ ap (_· k) (emb-comp (f ⨾ g) h)
+        ∙ ap (_· k) (ap (_· h) (emb-comp f g))
+
+    pt₂ : fiber emb E₄
     pt₂ = (f ⨾ (g ⨾ h)) ⨾ k
         , emb-comp (f ⨾ (g ⨾ h)) k
         ∙ ap (_· k) (emb-comp f (g ⨾ h))
         ∙ ap (_· k) (·-comp (emb f) g h)
 
-    pt₃ : fiber emb (E₄ f g h k)
+    pt₃ : fiber emb E₄
     pt₃ = f ⨾ ((g ⨾ h) ⨾ k)
         , emb-comp f ((g ⨾ h) ⨾ k)
         ∙ ·-comp (emb f) (g ⨾ h) k
         ∙ ap (_· k) (·-comp (emb f) g h)
 
-    pt₄ : fiber emb (E₄ f g h k)
+    pt₄ : fiber emb E₄
     pt₄ = (f ⨾ g) ⨾ (h ⨾ k)
         , emb-comp (f ⨾ g) (h ⨾ k)
         ∙ ap (_· (h ⨾ k)) (emb-comp f g)
         ∙ ·-comp (emb f · g) h k
 
-    σ₁₄ : pt₁ ≡ pt₄
-    σ₁₄ = is-contr→is-prop E₄c pt₁ pt₄
-
-    σ₂₃ : pt₂ ≡ pt₃
-    σ₂₃ = is-contr→is-prop E₄c pt₂ pt₃
-
-    α₁₄ : ((f ⨾ g) ⨾ h) ⨾ k ≡ (f ⨾ g) ⨾ (h ⨾ k)
-    α₁₄ = ap fst σ₁₄
-
-    α₂₃ : (f ⨾ (g ⨾ h)) ⨾ k ≡ f ⨾ ((g ⨾ h) ⨾ k)
-    α₂₃ = ap fst σ₂₃
-
-    -- face₂₃: both vertices nest under emb f — function-level bridges,
-    -- plain Path.assoc, no coherence.
-    γ₂₃-pt : ∀ i → fiber emb (E₄ f g h k)
-    γ₂₃-pt i = assoc f (g ⨾ h) k i
-             , assoc-σ f (g ⨾ h) k i .snd ∙ ap (_· k) (·-comp (emb f) g h)
-
-    w₂ : pt₂ ≡ γ₂₃-pt i0
-    w₂ i = _ , Path.assoc
-        (emb-comp (f ⨾ (g ⨾ h)) k)
-        (ap (_· k) (emb-comp f (g ⨾ h)))
-        (ap (_· k) (·-comp (emb f) g h)) i
-
-    w₃ : γ₂₃-pt i1 ≡ pt₃
-    w₃ i = _ , sym (Path.assoc
-        (emb-comp f ((g ⨾ h) ⨾ k))
-        (·-comp (emb f) (g ⨾ h) k)
-        (ap (_· k) (·-comp (emb f) g h))) i
-
-    face₂₃ : α₂₃ ≡ assoc f (g ⨾ h) k
-    face₂₃ =
-      contr-face E₄c σ₂₃ (ap snd w₂) (λ i → γ₂₃-pt i) (ap snd w₃)
-
-    -- face₁₄: composite-base ·-comp (emb f · g) + the free naturality
-    -- square of ·-comp along emb-comp f g.
-    γ₁₄-pt : ∀ i → fiber emb (E₄ f g h k)
-    γ₁₄-pt i = assoc (f ⨾ g) h k i
-             , assoc-σ (f ⨾ g) h k i .snd
-             ∙ ap (λ o → o · h · k) (emb-comp f g)
-
-    w₁ : pt₁ ≡ γ₁₄-pt i0
-    w₁ i = _ , Path.assoc
-        (emb-comp ((f ⨾ g) ⨾ h) k)
-        (ap (_· k) (emb-comp (f ⨾ g) h))
-        (ap (λ o → o · h · k) (emb-comp f g)) i
-
-    w₁₄-nat
-      : ·-comp (emb (f ⨾ g)) h k
-          ∙ ap (λ o → o · h · k) (emb-comp f g)
-      ≡ ap (_· (h ⨾ k)) (emb-comp f g)
-          ∙ ·-comp (emb f · g) h k
-    w₁₄-nat = sym (homotopy-natural (λ F → ·-comp F h k) (emb-comp f g))
-
-    w₁₄ : γ₁₄-pt i1 ≡ pt₄
-    w₁₄ i = _
-      , (sym (Path.assoc A₁₄ N₁₄ C₁₄) ∙ ap (A₁₄ ∙_) w₁₄-nat) i
-      where
-        A₁₄ = emb-comp (f ⨾ g) (h ⨾ k)
-        N₁₄ = ·-comp (emb (f ⨾ g)) h k
-        C₁₄ = ap (λ o → o · h · k) (emb-comp f g)
-
-    face₁₄ : α₁₄ ≡ assoc (f ⨾ g) h k
-    face₁₄ =
-      contr-face E₄c σ₁₄ (ap snd w₁) (λ i → γ₁₄-pt i) (ap snd w₁₄)
-
-    -- face₄₅: composite base + Path.assoc bridge.
-    pt₅ : fiber emb (E₄ f g h k)
+    pt₅ : fiber emb E₄
     pt₅ = f ⨾ (g ⨾ (h ⨾ k))
         , emb-comp f (g ⨾ (h ⨾ k))
         ∙ ·-comp (emb f) g (h ⨾ k)
         ∙ ·-comp (emb f · g) h k
 
-    σ₄₅ : pt₄ ≡ pt₅
-    σ₄₅ = is-contr→is-prop E₄c pt₄ pt₅
-
-    α₄₅ : (f ⨾ g) ⨾ (h ⨾ k) ≡ f ⨾ (g ⨾ (h ⨾ k))
-    α₄₅ = ap fst σ₄₅
-
-    γ₄₅-pt : ∀ i → fiber emb (E₄ f g h k)
-    γ₄₅-pt i = assoc f g (h ⨾ k) i
-             , assoc-σ f g (h ⨾ k) i .snd ∙ ·-comp (emb f · g) h k
-
-    w₄ : pt₄ ≡ γ₄₅-pt i0
-    w₄ i = _ , Path.assoc
-        (emb-comp (f ⨾ g) (h ⨾ k))
-        (ap (_· (h ⨾ k)) (emb-comp f g))
-        (·-comp (emb f · g) h k) i
-
-    w₅ : γ₄₅-pt i1 ≡ pt₅
-    w₅ i = _ , sym (Path.assoc
-        (emb-comp f (g ⨾ (h ⨾ k)))
-        (·-comp (emb f) g (h ⨾ k))
-        (·-comp (emb f · g) h k)) i
-
-    face₄₅ : α₄₅ ≡ assoc f g (h ⨾ k)
-    face₄₅ =
-      contr-face E₄c σ₄₅ (ap snd w₄) (λ i → γ₄₅-pt i) (ap snd w₅)
-
-    -- face₁₂: associator on the left; ap-comp distributes ap (_· k).
-    σ₁₂ : pt₁ ≡ pt₂
     σ₁₂ = is-contr→is-prop E₄c pt₁ pt₂
-
-    α₁₂ : ((f ⨾ g) ⨾ h) ⨾ k ≡ (f ⨾ (g ⨾ h)) ⨾ k
-    α₁₂ = ap fst σ₁₂
-
-    γ₁₂-pt : ∀ i → fiber emb (E₄ f g h k)
-    γ₁₂-pt i = assoc f g h i ⨾ k
-             , emb-comp (assoc f g h i) k
-             ∙ ap (_· k) (assoc-σ f g h i .snd)
-
-    w₁₂ˡ : pt₁ ≡ γ₁₂-pt i0
-    w₁₂ˡ i = _ , sym (ap (emb-comp ((f ⨾ g) ⨾ h) k ∙_)
-        (ap-comp (_· k)
-          (emb-comp (f ⨾ g) h)
-          (ap (_· h) (emb-comp f g)))) i
-
-    w₁₂ʳ : γ₁₂-pt i1 ≡ pt₂
-    w₁₂ʳ i = _ , ap (emb-comp (f ⨾ (g ⨾ h)) k ∙_)
-        (ap-comp (_· k) (emb-comp f (g ⨾ h)) (·-comp (emb f) g h)) i
-
-    face₁₂ : α₁₂ ≡ ap (_⨾ k) (assoc f g h)
-    face₁₂ =
-      contr-face E₄c σ₁₂ (ap snd w₁₂ˡ) (λ i → γ₁₂-pt i) (ap snd w₁₂ʳ)
-
-    -- The fiber-level pentagon from E₄-contractibility (needs no face).
-    σ₃₅ : pt₃ ≡ pt₅
+    σ₂₃ = is-contr→is-prop E₄c pt₂ pt₃
+    σ₁₄ = is-contr→is-prop E₄c pt₁ pt₄
+    σ₄₅ = is-contr→is-prop E₄c pt₄ pt₅
     σ₃₅ = is-contr→is-prop E₄c pt₃ pt₅
 
-    α₃₅ : f ⨾ ((g ⨾ h) ⨾ k) ≡ f ⨾ (g ⨾ (h ⨾ k))
+    α₁₂ = ap fst σ₁₂
+    α₂₃ = ap fst σ₂₃
+    α₁₄ = ap fst σ₁₄
+    α₄₅ = ap fst σ₄₅
     α₃₅ = ap fst σ₃₅
 
+    -- Canonical lifts. fst ∘ L = reindex ∘ fst holds definitionally, so
+    -- ap fst (ap L assoc-σ) is the intended associator.
+    Λk : fiber emb (E₃ f g h) → fiber emb E₄
+    Λk (m , p) = m ⨾ k , emb-comp m k ∙ ap (_· k) p
+
+    Φ : composite y v → composite x v
+    Φ L γ = emb f (γ .fst , (γ .snd .fst , L (ctr y , γ .snd)))
+
+    Λf : fiber emb (E₃ g h k) → fiber emb E₄
+    Λf (m , p) = f ⨾ m , emb-comp f m ∙ ap Φ p
+
+    R₁₄ : fiber emb (E₃ (f ⨾ g) h k) → fiber emb E₄
+    R₁₄ (m , p) = m , p ∙ ap (_· k) (ap (_· h) (emb-comp f g))
+
+    -- reindex-face: the pure-reindex faces (both bridges Path.assoc).
+    -- Given the sub-triple f' g' h' and the tail C : E₃ f' g' h' ≡ E₄,
+    -- the reindex lift R (m , p) = (m , p ∙ C) and the two bridges (a
+    -- Path.assoc reassociation each) are supplied internally.
+    reindex-face
+      : ∀ {y' z'} (f' : hom x y') (g' : hom y' z') (h' : hom z' v)
+        (C : E₃ f' g' h' ≡ E₄)
+        (σ : (((f' ⨾ g') ⨾ h')
+                 , emb-comp (f' ⨾ g') h' ∙ ap (_· h') (emb-comp f' g') ∙ C)
+           ≡ ((f' ⨾ (g' ⨾ h'))
+                 , emb-comp f' (g' ⨾ h') ∙ ·-comp (emb f') g' h' ∙ C))
+      → ap fst σ ≡ assoc f' g' h'
+    reindex-face f' g' h' C σ =
+      contr-face E₄c σ
+        (Path.assoc (emb-comp (f' ⨾ g') h') (ap (_· h') (emb-comp f' g')) C)
+        (λ i → R (assoc-σ f' g' h' i))
+        (sym (Path.assoc (emb-comp f' (g' ⨾ h')) (·-comp (emb f') g' h') C))
+      where
+        R : fiber emb (E₃ f' g' h') → fiber emb E₄
+        R (m , p) = m , p ∙ C
+
+    -- whisker-face: factors the contr-face + Λ-core skeleton shared by
+    -- the single-lift faces. The caller supplies the lift Λ over the
+    -- sub-triple p q r and the two face-specific bridges w and v (their
+    -- segment types depend on the face, so they stay caller-side). The
+    -- endpoint witnesses α/β are inferred from σ.
+    whisker-face
+      : ∀ {x₀ y₀ z₀ w₀}
+        (p : hom x₀ y₀) (q : hom y₀ z₀) (r : hom z₀ w₀)
+        (Λ : fiber emb (E₃ p q r) → fiber emb E₄)
+        {α : emb (Λ (pt-l p q r) .fst) ≡ E₄}
+        {β : emb (Λ (pt-r p q r) .fst) ≡ E₄}
+        (σ : (Λ (pt-l p q r) .fst , α) ≡ (Λ (pt-r p q r) .fst , β))
+        (w : α ≡ Λ (pt-l p q r) .snd)
+        (v : Λ (pt-r p q r) .snd ≡ β)
+      → ap fst σ ≡ ap fst (λ i → Λ (assoc-σ p q r i))
+    whisker-face p q r Λ σ w v =
+      contr-face E₄c σ w (λ i → Λ (assoc-σ p q r i)) v
+
+    -- face₁₂: right whisker. Bridges are single ap-comp distributions.
+    face₁₂ : α₁₂ ≡ ap (_⨾ k) (assoc f g h)
+    face₁₂ = whisker-face f g h Λk σ₁₂ w₁₂ v₁₂
+      where
+        w₁₂ : pt₁ .snd ≡ (Λk (pt-l f g h)) .snd
+        w₁₂ = sym (ap (emb-comp ((f ⨾ g) ⨾ h) k ∙_)
+          (ap-comp (_· k) (emb-comp (f ⨾ g) h) (ap (_· h) (emb-comp f g))))
+        v₁₂ : (Λk (pt-r f g h)) .snd ≡ pt₂ .snd
+        v₁₂ = ap (emb-comp (f ⨾ (g ⨾ h)) k ∙_)
+          (ap-comp (_· k) (emb-comp f (g ⨾ h)) (·-comp (emb f) g h))
+
+    -- face₃₅: left whisker via Φ. Bridges are single ap-comp Φ.
+    face₃₅ : α₃₅ ≡ ap (f ⨾_) (assoc g h k)
+    face₃₅ = whisker-face g h k Λf σ₃₅ w₃₅ v₃₅
+      where
+        w₃₅ : pt₃ .snd ≡ (Λf (pt-l g h k)) .snd
+        w₃₅ = ap (emb-comp f ((g ⨾ h) ⨾ k) ∙_)
+          (sym (ap-comp Φ (emb-comp (g ⨾ h) k) (ap (_· k) (emb-comp g h))))
+        v₃₅ : (Λf (pt-r g h k)) .snd ≡ pt₅ .snd
+        v₃₅ = ap (emb-comp f (g ⨾ (h ⨾ k)) ∙_)
+          (ap-comp Φ (emb-comp g (h ⨾ k)) (·-comp (emb g) h k))
+
+    -- face₂₃/face₄₅: pure reindex through reindex-face — one-liners.
+    face₂₃ : α₂₃ ≡ assoc f (g ⨾ h) k
+    face₂₃ = reindex-face f (g ⨾ h) k (ap (_· k) (·-comp (emb f) g h)) σ₂₃
+
+    face₄₅ : α₄₅ ≡ assoc f g (h ⨾ k)
+    face₄₅ = reindex-face f g (h ⨾ k) (·-comp (emb f · g) h k) σ₄₅
+
+    -- face₁₄: a reindex, but its v-bridge carries the naturality square
+    -- of ·-comp along emb-comp f g, so it cannot use reindex-face's fixed
+    -- Path.assoc tail. It routes through whisker-face instead — that
+    -- helper is generic over the lift, so R₁₄ and the naturality tail
+    -- pass through as the lift and the v-bridge.
+    face₁₄ : α₁₄ ≡ assoc (f ⨾ g) h k
+    face₁₄ = whisker-face (f ⨾ g) h k R₁₄ σ₁₄ w₁₄ v₁₄
+      where
+        w₁₄ : pt₁ .snd ≡ (R₁₄ (pt-l (f ⨾ g) h k)) .snd
+        w₁₄ = Path.assoc (emb-comp ((f ⨾ g) ⨾ h) k)
+          (ap (_· k) (emb-comp (f ⨾ g) h))
+          (ap (_· k) (ap (_· h) (emb-comp f g)))
+        v₁₄ : (R₁₄ (pt-r (f ⨾ g) h k)) .snd ≡ pt₄ .snd
+        v₁₄ = sym (Path.assoc A₁₄ N₁₄ C₁₄) ∙ ap (A₁₄ ∙_) nat₁₄
+          where
+            A₁₄ = emb-comp (f ⨾ g) (h ⨾ k)
+            N₁₄ = ·-comp (emb (f ⨾ g)) h k
+            C₁₄ = ap (_· k) (ap (_· h) (emb-comp f g))
+            nat₁₄ = sym (homotopy-natural (λ F → ·-comp F h k) (emb-comp f g))
+
+    -- The fiber-level pentagon and its projection.
     hom-identity : α₁₄ ∙ α₄₅ ≡ pcom (sym α₁₂) α₂₃ α₃₅
     hom-identity =
       coh-project E₄c fst (σ₁₄ ∙ σ₄₅) (pcom (sym σ₁₂) σ₂₃ σ₃₅)
         (ap-comp fst σ₁₄ σ₄₅)
         (pcom.ap (λ _ → fst) (sym σ₁₂) σ₂₃ σ₃₅)
-```
 
-## The inner-associator face
-
-`act = emb @ idn` makes the lift `Φ` satisfy, definitionally,
-`Φ (emb Z) = emb f · Z`, `Φ (E₃ g h k) = E₄`,
-`ap Φ (emb-comp Z W) = ·-comp (emb f) Z W`, and
-`Φ ∘ (_· k) = (_· k) ∘ Φ`. So the inner associator lifts as `Λ = ap Φ`
-on the E₃ fiber, and the two bridges collapse to a single `ap-comp Φ`
-each — no pentagon coherence remains.
-
-```agda
-module face₃₅-proof {o h} (C : codep-category o h)
-  {x y z w v}
-  (f : codep-category.hom C x y) (g : codep-category.hom C y z)
-  (h : codep-category.hom C z w) (k : codep-category.hom C w v)
-  where
-  open codep-category C
-  open assoc-tower C
-  open pentagon-tower C
-  open pentagon-fibers f g h k
-
-  Φ : composite y v → composite x v
-  Φ L γ = emb f (γ .fst , L (at y (γ .fst) , γ .snd))
-
-  Λ : fiber emb (E₃ g h k) → fiber emb (E₄ f g h k)
-  Λ pr = f ⨾ pr .fst , emb-comp f (pr .fst) ∙ ap Φ (pr .snd)
-
-  γ₃₅ : ∀ i → fiber emb (E₄ f g h k)
-  γ₃₅ i = Λ (assoc-σ g h k i)
-
-  v₃ : pt₃ ≡ γ₃₅ i0
-  v₃ i = _ , ap (emb-comp f ((g ⨾ h) ⨾ k) ∙_)
-      (sym (ap-comp Φ (emb-comp (g ⨾ h) k) (ap (_· k) (emb-comp g h)))) i
-
-  v₅ : γ₃₅ i1 ≡ pt₅
-  v₅ i = _ , ap (emb-comp f (g ⨾ (h ⨾ k)) ∙_)
-      (ap-comp Φ (emb-comp g (h ⨾ k)) (·-comp (emb g) h k)) i
-
-  face₃₅ : α₃₅ ≡ ap (f ⨾_) (assoc g h k)
-  face₃₅ =
-    contr-face E₄c σ₃₅ (ap snd v₃) (λ i → γ₃₅ i) (ap snd v₅)
-```
-
-## The full pentagon
-
-All five faces + the fiber pentagon assemble into the named Mac Lane
-pentagon identity, matching `Cat.Coherence.pentagon`.
-
-```agda
-module pentagon {o h} (C : codep-category o h)
-  {x y z w v}
-  (f : codep-category.hom C x y) (g : codep-category.hom C y z)
-  (h : codep-category.hom C z w) (k : codep-category.hom C w v)
-  where
-  open codep-category C
-  open assoc-tower C
-  open pentagon-tower C
-  open pentagon-fibers f g h k
-  open face₃₅-proof C f g h k using (face₃₅)
-
-  pentagon
-    : assoc (f ⨾ g) h k ∙ assoc f g (h ⨾ k)
-    ≡ ap (_⨾ k) (assoc f g h)
-      ∙ assoc f (g ⨾ h) k
-      ∙ ap (f ⨾_) (assoc g h k)
-  pentagon =
-    pcom (ap (_∙ α₄₅) face₁₄ ∙ ap (assoc (f ⨾ g) h k ∙_) face₄₅)
-      hom-identity
-      (λ i → pcom (sym (face₁₂ i)) (face₂₃ i) (face₃₅ i))
-    ∙ pcom→∙
-        (ap (_⨾ k) (assoc f g h))
-        (assoc f (g ⨾ h) k)
-        (ap (f ⨾_) (assoc g h k))
+    pentagon
+      : assoc (f ⨾ g) h k ∙ assoc f g (h ⨾ k)
+      ≡ ap (_⨾ k) (assoc f g h)
+        ∙ assoc f (g ⨾ h) k
+        ∙ ap (f ⨾_) (assoc g h k)
+    pentagon =
+      pcom (ap (_∙ α₄₅) face₁₄ ∙ ap (assoc (f ⨾ g) h k ∙_) face₄₅)
+        hom-identity
+        (λ i → pcom (sym (face₁₂ i)) (face₂₃ i) (face₃₅ i))
+      ∙ pcom→∙
+          (ap (_⨾ k) (assoc f g h))
+          (assoc f (g ⨾ h) k)
+          (ap (f ⨾_) (assoc g h k))
 ```

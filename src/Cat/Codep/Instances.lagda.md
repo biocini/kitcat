@@ -10,12 +10,18 @@ the `Cat.*` layer as a structure + axioms + bundle triple, together
 with their five-axiom fills and the specialization checks that the
 generic `assoc`, `pentagon`, and unit fragment instantiate at each.
 
+With the derived laws consolidated into `hcategory-axioms`, the unit
+specialization checks read the bundle's record projections directly —
+`absorb-l`, `unitl`, `unit-is-prop` off `hcategory C` — rather
+than through a separate `unit-laws` module.
+
 `type-instance` reads off `Cat.Type.category` — the anchor is the
 identity morphism `C.idn`, and the merged axioms' coupling/unit fills
 are name-identical to `Cat.Type`'s own (`unit-eqvl = C.unit-eqvl`).
 `monoidal-instance` reads off `Cat.Monoidal.monoidal` over the
-one-object `⊤` — the anchor is the tensor unit object `I`, and with the
-canonical binder the passenger is `⊤`-wrapped one level deeper.
+one-object `⊤` — the anchor is the tensor unit object `I`. Its
+curry/uncurry glue carries some `⊤`-noise, an acceptable
+instance-internal cost.
 
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
@@ -38,19 +44,18 @@ open import Cat.Monoidal
 open import Cat.Codep
 ```
 
-The walking arrow **2**: a direct, naive `codep-structure` +
-`codep-axioms` + `codep-category` triple. It is thin (every hom a
+The walking arrow **2**: a direct, naive `hcategory-structure` +
+`hcategory-axioms` + `hcategory` triple. It is thin (every hom a
 proposition), so `composite` is a Π into propositions and the five
 axioms are prop-level: `compose-contr` from the contractible image
 fibre, `interchange`/`post-eval` immediate, the two unit equivalences
 from `Core.Equiv.Properties.prop→endo-is-equiv` (a thin endomap of a
 proposition is an equivalence). It is a non-groupoid (`hom o1 o0 = ⊥`);
-and its `emb` is
-an equivalence — the last cell of the `emb`-equivalence × groupoid-ness
-independence square. A multi-object instance whose `idn` cases on the
-object was exactly the shape that tripped the termination checker before
-the split; that it now goes through directly is what this instance
-certifies.
+and its `emb` is an equivalence — the last cell of the
+`emb`-equivalence × groupoid-ness independence square. A multi-object
+instance whose `idn` cases on the object was exactly the shape that
+tripped the termination checker before the split; that it now goes
+through directly is what this instance certifies.
 
 ```agda
 module walking-arrow where
@@ -84,20 +89,20 @@ module walking-arrow where
   hom-prop o1 o0 = λ e _ → ex-falso e
   hom-prop o1 o1 = λ _ _ → refl
 
-  walk-structure : codep-structure Ob
-  walk-structure .codep-structure.hom = homW
-  walk-structure .codep-structure.idn o0 = tt
-  walk-structure .codep-structure.idn o1 = tt
-  walk-structure .codep-structure.emb f ((_ , (_ , a)) , b) = comp3 a f b
+  walk-structure : hcategory-structure Ob
+  walk-structure .hcategory-structure.hom = homW
+  walk-structure .hcategory-structure.idn o0 = tt
+  walk-structure .hcategory-structure.idn o1 = tt
+  walk-structure .hcategory-structure.emb f ((_ , a) , (_ , b)) = comp3 a f b
 
-  open codep-structure walk-structure
+  open hcategory-structure walk-structure
 
   -- `composite` is a Π into propositions, hence a proposition.
   comp-prop : ∀ {x y} → is-prop (composite x y)
   comp-prop F G = funext (λ γ → hom-prop _ _ (F γ) (G γ))
 
-  walk-axioms : codep-axioms walk-structure
-  walk-axioms .codep-axioms.compose-contr {x} {_} {z} f g =
+  walk-axioms : hcategory-axioms walk-structure
+  walk-axioms .hcategory-axioms.compose-contr {x} {_} {z} f g =
     prop-inhabited→is-contr fib-prop pt
     where
       emb-inj : ∀ {h h'} → emb h ≡ emb h' → h ≡ h'
@@ -110,17 +115,17 @@ module walking-arrow where
 
       pt : fiber emb _
       pt = transW f g , comp-prop _ _
-  walk-axioms .codep-axioms.interchange f g a b = hom-prop _ _ _ _
-  walk-axioms .codep-axioms.post-eval f = hom-prop _ _ _ _
-  walk-axioms .codep-axioms.unit-eqvl {x} {v} =
+  walk-axioms .hcategory-axioms.interchange f g a b = hom-prop _ _ _ _
+  walk-axioms .hcategory-axioms.post-eval f = hom-prop _ _ _ _
+  walk-axioms .hcategory-axioms.unit-eqvl {x} {v} =
     prop→endo-is-equiv (hom-prop x v) (pre (idn x) {v})
-  walk-axioms .codep-axioms.unit-eqvr {x} {w} =
+  walk-axioms .hcategory-axioms.unit-eqvr {x} {w} =
     prop→endo-is-equiv (hom-prop w x) (post (idn x) {w})
 
-  walk-cat : codep-category 0ℓ 0ℓ
-  walk-cat .codep-category.ob = Ob
-  walk-cat .codep-category.structure = walk-structure
-  walk-cat .codep-category.axioms = walk-axioms
+  walk-cat : hcategory 0ℓ 0ℓ
+  walk-cat .hcategory.ob = Ob
+  walk-cat .hcategory.structure = walk-structure
+  walk-cat .hcategory.axioms = walk-axioms
 
   -- Thin `emb` is an equivalence: evaluation at the canonical context
   -- inverts it, `composite` being a Π into propositions.
@@ -129,7 +134,7 @@ module walking-arrow where
     prop-inhabited→is-contr fib-prop (F γ⋆ , comp-prop _ _)
     where
       γ⋆ : ctx x y
-      γ⋆ = (y , (x , idn x)) , idn y
+      γ⋆ = (x , idn x) , (y , idn y)
 
       emb-inj : ∀ {h h'} → emb h ≡ emb h' → h ≡ h'
       emb-inj {h} {h'} _ = hom-prop x y h h'
@@ -149,41 +154,41 @@ module type-instance {o h} (C : category o h) where
 
   CompositeT : C.ob → C.ob → Type (o ⊔ h)
   CompositeT x y =
-    (γ : Σ φ ∶ (Σ v ∶ C.ob , (Σ w ∶ C.ob , C.hom w x)) , C.hom y (φ .fst))
-    → C.hom (γ .fst .snd .fst) (γ .fst .fst)
+    (γ : (Σ w ∶ C.ob , C.hom w x) × (Σ v ∶ C.ob , C.hom y v))
+    → C.hom (γ .fst .fst) (γ .snd .fst)
 
   uncurryT : ∀ {x y}
     → (∀ w → C.hom w x → ∀ v → C.hom y v → C.hom w v)
     → CompositeT x y
   uncurryT G γ =
-    G (γ .fst .snd .fst) (γ .fst .snd .snd) (γ .fst .fst) (γ .snd)
+    G (γ .fst .fst) (γ .fst .snd) (γ .snd .fst) (γ .snd .snd)
 
   curryT : ∀ {x y}
     → CompositeT x y
     → (∀ w → C.hom w x → ∀ v → C.hom y v → C.hom w v)
-  curryT F w a v b = F ((v , (w , a)) , b)
+  curryT F w a v b = F ((w , a) , (v , b))
 
-  Type-structure : codep-structure {o} {h} C.ob
-  Type-structure .codep-structure.hom = C.hom
-  Type-structure .codep-structure.idn x = C.idn
-  Type-structure .codep-structure.emb f = uncurryT (C.emb f)
+  Type-structure : hcategory-structure {o} {h} C.ob
+  Type-structure .hcategory-structure.hom = C.hom
+  Type-structure .hcategory-structure.idn x = C.idn
+  Type-structure .hcategory-structure.emb f = uncurryT (C.emb f)
 
-  Type-axioms : codep-axioms Type-structure
-  Type-axioms .codep-axioms.compose-contr f g .center =
+  Type-axioms : hcategory-axioms Type-structure
+  Type-axioms .hcategory-axioms.compose-contr f g .center =
     (f C.⨾ g) , ap uncurryT (C.compose-contr f g .center .snd)
-  Type-axioms .codep-axioms.compose-contr f g .paths (s , q) i =
+  Type-axioms .hcategory-axioms.compose-contr f g .paths (s , q) i =
     let p = C.compose-contr f g .paths (s , ap curryT q) i
     in p .fst , ap uncurryT (p .snd)
-  Type-axioms .codep-axioms.interchange f g {w} a {v} b =
+  Type-axioms .hcategory-axioms.interchange f g {w} a {v} b =
     C.interchange f g w a v b
-  Type-axioms .codep-axioms.post-eval f = C.yon-eval f
-  Type-axioms .codep-axioms.unit-eqvl = C.unit-eqvl
-  Type-axioms .codep-axioms.unit-eqvr = C.unit-eqvr
+  Type-axioms .hcategory-axioms.post-eval f = C.yon-eval f
+  Type-axioms .hcategory-axioms.unit-eqvl = C.unit-eqvl
+  Type-axioms .hcategory-axioms.unit-eqvr = C.unit-eqvr
 
-  Type-cat : codep-category o h
-  Type-cat .codep-category.ob = C.ob
-  Type-cat .codep-category.structure = Type-structure
-  Type-cat .codep-category.axioms = Type-axioms
+  Type-cat : hcategory o h
+  Type-cat .hcategory.ob = C.ob
+  Type-cat .hcategory.structure = Type-structure
+  Type-cat .hcategory.axioms = Type-axioms
 
   -- The generic assoc reduces to the concrete assoc.
   _ : ∀ {x y z w} (f : C.hom x y) (g : C.hom y z) (h : C.hom z w)
@@ -199,21 +204,22 @@ module type-instance {o h} (C : category o h) where
     _ = face₂₃
     _ = face₁₄
     _ = face₄₅
-    _ = face₃₅-proof.face₃₅ Type-cat f g h k
+    _ = face₃₅
     _ = hom-identity
-    _ = pentagon.pentagon Type-cat f g h k
+    _ = pentagon
 
-  private module UT = unit-laws Type-cat
-  _ : ∀ {x v} (b : C.hom x v) → UT.absorb-l b ≡ C.absorb-l b
+  -- The consolidated record's unit fragment reduces to the concrete one.
+  private module TC = hcategory Type-cat
+  _ : ∀ {x v} (b : C.hom x v) → TC.absorb-l b ≡ C.absorb-l b
   _ = λ b → refl
 
   _ : ∀ {x y} (f : C.hom x y) → C.idn C.⨾ f ≡ f
-  _ = UT.unitl
+  _ = TC.unitl
 
   _ : ∀ {x} (e : C.hom x x)
     → (∀ {w} → is-equiv (λ (a : C.hom w x) → C.emb e w a x e))
     → C.yon e x e ≡ e → e ≡ C.idn
-  _ = UT.unit-is-prop
+  _ = TC.unit-is-prop
 ```
 
 `monoidal-instance`: the reference instance over `Cat.Monoidal.monoidal`
@@ -225,35 +231,35 @@ module monoidal-instance {o hh} {C : category o hh} (M : monoidal C) where
   open monoidal M
 
   CompositeM : ⊤ → ⊤ → Type o
-  CompositeM x y = (γ : Σ φ ∶ (⊤ × (Σ v ∶ ⊤ , C.ob)) , C.ob) → C.ob
+  CompositeM x y = (γ : (Σ w ∶ ⊤ , C.ob) × (Σ v ∶ ⊤ , C.ob)) → C.ob
 
   uncurryM : (C.ob → C.ob → C.ob) → CompositeM tt tt
-  uncurryM G γ = G (γ .fst .snd .snd) (γ .snd)
+  uncurryM G γ = G (γ .fst .snd) (γ .snd .snd)
 
   curryM : CompositeM tt tt → (C.ob → C.ob → C.ob)
-  curryM F l r = F ((tt , (tt , l)) , r)
+  curryM F l r = F ((tt , l) , (tt , r))
 
-  Monoidal-structure : codep-structure {0ℓ} {o} ⊤
-  Monoidal-structure .codep-structure.hom _ _ = C.ob
-  Monoidal-structure .codep-structure.idn _ = I
-  Monoidal-structure .codep-structure.emb x = uncurryM (tensor-emb x)
+  Monoidal-structure : hcategory-structure {0ℓ} {o} ⊤
+  Monoidal-structure .hcategory-structure.hom _ _ = C.ob
+  Monoidal-structure .hcategory-structure.idn _ = I
+  Monoidal-structure .hcategory-structure.emb x = uncurryM (tensor-emb x)
 
-  Monoidal-axioms : codep-axioms Monoidal-structure
-  Monoidal-axioms .codep-axioms.compose-contr x y .center =
+  Monoidal-axioms : hcategory-axioms Monoidal-structure
+  Monoidal-axioms .hcategory-axioms.compose-contr x y .center =
     (x ⊗ y) , ap uncurryM (tensor-emb-composite x y)
-  Monoidal-axioms .codep-axioms.compose-contr x y .paths (s , q) i =
+  Monoidal-axioms .hcategory-axioms.compose-contr x y .paths (s , q) i =
     let p = tensor-compose-contr x y .paths (s , ap curryM q) i
     in p .fst , ap uncurryM (p .snd)
-  Monoidal-axioms .codep-axioms.interchange f g a b =
+  Monoidal-axioms .hcategory-axioms.interchange f g a b =
     tensor-interchange f g a b
-  Monoidal-axioms .codep-axioms.post-eval f = tensor-yon-eval f
-  Monoidal-axioms .codep-axioms.unit-eqvl = tensor-unit-eqvl
-  Monoidal-axioms .codep-axioms.unit-eqvr = tensor-unit-eqvr
+  Monoidal-axioms .hcategory-axioms.post-eval f = tensor-yon-eval f
+  Monoidal-axioms .hcategory-axioms.unit-eqvl = tensor-unit-eqvl
+  Monoidal-axioms .hcategory-axioms.unit-eqvr = tensor-unit-eqvr
 
-  Monoidal-cat : codep-category 0ℓ o
-  Monoidal-cat .codep-category.ob = ⊤
-  Monoidal-cat .codep-category.structure = Monoidal-structure
-  Monoidal-cat .codep-category.axioms = Monoidal-axioms
+  Monoidal-cat : hcategory 0ℓ o
+  Monoidal-cat .hcategory.ob = ⊤
+  Monoidal-cat .hcategory.structure = Monoidal-structure
+  Monoidal-cat .hcategory.axioms = Monoidal-axioms
 
   -- The generic assoc reduces to the concrete ⊗-assoc.
   _ : (x y z : C.ob) → (x ⊗ y) ⊗ z ≡ x ⊗ (y ⊗ z)
@@ -261,25 +267,26 @@ module monoidal-instance {o hh} {C : category o hh} (M : monoidal C) where
 
   -- The pentagon machinery specializes to the concrete monoidal category.
   module _ (x y z w : C.ob) where
-    open pentagon-tower.pentagon-fibers Monoidal-cat {tt} {tt} {tt} {tt} {tt} x y z w
+    open pentagon-tower.pentagon-fibers
+      Monoidal-cat {tt} {tt} {tt} {tt} {tt} x y z w
     _ = face₁₂
     _ = face₂₃
     _ = face₁₄
     _ = face₄₅
-    _ = face₃₅-proof.face₃₅ Monoidal-cat {tt} {tt} {tt} {tt} {tt} x y z w
+    _ = face₃₅
     _ = hom-identity
-    _ = pentagon.pentagon Monoidal-cat {tt} {tt} {tt} {tt} {tt} x y z w
+    _ = pentagon
 
-  private module UM = unit-laws Monoidal-cat
-  _ : (b : C.ob) → UM.absorb-l b ≡ absorb-l b
+  private module MC = hcategory Monoidal-cat
+  _ : (b : C.ob) → MC.absorb-l b ≡ absorb-l b
   _ = λ b → refl
 
   _ : (x : C.ob) → I ⊗ x ≡ x
-  _ = UM.unitl
+  _ = MC.unitl
 
   _ : (e : C.ob)
       (re : ∀ {_ : ⊤} → is-equiv (λ (l : C.ob) → tensor-emb e l e))
       (idpt : yon e e ≡ e)
     → e ≡ I
-  _ = UM.unit-is-prop
+  _ = MC.unit-is-prop
 ```
