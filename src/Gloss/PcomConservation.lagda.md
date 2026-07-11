@@ -1,4 +1,4 @@
-Gloss: machine-checked evidence for T20 in docs/theorems.md.
+Gloss: machine-checked evidence for T20 in docs/gloss.md.
 Self-contained modulo Core.*; Cat.* definitions frozen at 9133396.
 
 Spike: reindex/whisker face bridges via native `pcom` operations.

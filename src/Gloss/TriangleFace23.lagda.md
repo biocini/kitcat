@@ -1,4 +1,4 @@
-Gloss: machine-checked evidence for T7 (history) in docs/theorems.md.
+Gloss: machine-checked evidence for T7 (history) in docs/gloss.md.
 Self-contained modulo Core.*; Cat.* definitions frozen at 9133396.
 
 UPDATE (2026-07-11): the "independent 2-cell" framing below was

@@ -1,4 +1,4 @@
-# Theorems
+# Gloss — the theorem ledger
 
 A ledger of results proven in and about this development. Each
 entry: statement, where it is proven, status, date. Statuses:
@@ -229,3 +229,10 @@ established); upgrade 📐 → ✅ when mechanized; record refutations
 and misattributions honestly (see T7's history — walls cited
 against the wrong theorem cost time). `docs/design.md` carries the
 philosophy; this file carries the facts.
+
+Every 🧪 marker must name its `Gloss.*` certificate, and every
+Gloss module must be named by an entry here — the ledger and the
+Gloss namespace are maintained as one unit. Promotion criteria and
+the freeze ritual live in CLAUDE.md ("Test → Gloss promotion"):
+ledger-linked, not mechanized elsewhere, arc closed; frozen at a
+named commit; append-mostly.

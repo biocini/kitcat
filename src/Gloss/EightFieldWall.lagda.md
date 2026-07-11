@@ -1,4 +1,4 @@
-Gloss: machine-checked evidence for T11 in docs/theorems.md.
+Gloss: machine-checked evidence for T11 in docs/gloss.md.
 Self-contained modulo Core.*; Cat.* definitions frozen at 9133396.
 
 Spike: the ruled 8-field `hcategory-axioms₈` — the five base fields

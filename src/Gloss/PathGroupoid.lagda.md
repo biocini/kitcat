@@ -1,4 +1,4 @@
-Gloss: machine-checked evidence for T18, T13(i) in docs/theorems.md.
+Gloss: machine-checked evidence for T18, T13(i) in docs/gloss.md.
 Self-contained modulo Core.*; Cat.* definitions frozen at 9133396.
 
 Bounded SPIKE — path-groupoid instance of `hcategory` over an
