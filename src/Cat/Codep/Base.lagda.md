@@ -316,6 +316,11 @@ record hcategory-axioms {o h} {ob : Type o}
   idem : ∀ {x} → idn x ⨾ idn x ≡ idn x
   idem = idem-from-coupling S compose-contr interchange post-eval
 
+  -- The eval axiom is self-mirror: pre f (idn y) and post f (idn x)
+  -- both read emb f at the doubly-centered context.
+  pre-eval : ∀ {x y} (f : hom x y) → pre f (idn y) ≡ f
+  pre-eval f = post-eval f
+
   -- Unit fragment: the two unit equivalences cancel the identity's
   -- actions, and the identity absorbs on the left of `emb`.
   absorb-l : ∀ {x v} (b : hom x v) → pre (idn x) b ≡ b
@@ -440,6 +445,10 @@ module _ {o h} {ob : Type o} (S : hcategory-structure {o} {h} ob) where
 
   composite-is-Π : ∀ {x y} (F : composite x y) (γ : ctx x y) → res γ
   composite-is-Π F γ = F γ
+
+  pre-eval-is-post-eval
+    : ∀ {x y} (f : hom x y) → pre f (idn y) ≡ post f (idn x)
+  pre-eval-is-post-eval f = refl
 
 module _ {o h} {ob : Type o} {S : hcategory-structure {o} {h} ob}
   (A : hcategory-axioms S) where

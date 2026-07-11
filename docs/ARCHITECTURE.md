@@ -124,10 +124,11 @@ embedding `emb` into `composite` morphisms + five axioms
 structure and the Mac Lane pentagon are derived generically.
 
 ```
-Cat.Codep ─── aggregator (Base + Coherence)
+Cat.Codep ─── aggregator (Base + Coherence + Op)
     ├── Cat.Codep.Base ────── structure/axioms(5)/bundle records;
     │                         all derived laws consolidated (coupling + unit)
     ├── Cat.Codep.Coherence ─ assoc-tower + pentagon-fibers + pentagon
+    ├── Cat.Codep.Op ──────── op-structure/op-axioms/op + op-invol
     └── Cat.Codep.Instances ─ walking-arrow + type/monoidal triples
 ```
 
@@ -167,6 +168,21 @@ face is left direct (`face₃₅`'s lift uses the emb-at-center link,
 `pre`/`post` being `emb` read at the center). It is the regression
 baseline for the planned transfer-principle reformulation.
 
+**Cat.Codep.Op** builds the opposite hcategory as the polarity
+mirror of the post-biased presentation: `op-structure` reverses
+`hom`, keeps `idn`, and precomposes `emb` with `swap`, which swaps
+`pre ↔ post` definitionally. The parity theorem is that every mirror
+axiom is derivable from the base five fields — post-bias is chirality,
+not asymmetry. The eval axiom is self-mirror (`op-axioms .post-eval`
+is the base's verbatim, since `pre f (idn y)` and `post f (idn x)`
+are the same doubly-centered term); `interchange` reverses under
+`sym`, the unit equivalences trade places, and only `compose-contr`
+transports the base fiber across `op-comp-path` (one `interchange`)
+along the `swap·`/`swap·'` fiber retraction. `op` bundles the mirror,
+and `op-invol : op (op C) ≡ C` is definitional on `hom`/`idn`/`emb`
+and `is-contr`-propositional on the composition fibers. The base gains
+the derived `pre-eval` recording the self-mirror coincidence.
+
 **Cat.Codep.Instances** opens with `walking-arrow` — the interval
 category **2** as a direct triple, the simplest example and the
 regression guard for the termination class the split defeats (its five
@@ -199,9 +215,10 @@ the generic `assoc`, `pentagon`, and unit fragment specialize.
 | Cat.Monoidal.Hexagon | 2 | partial | hexagon-emb field + ⊗-hexagon (H1); H2 open |
 | Cat.Monoidal.Indiscrete | 2 | complete | Builder: object data + ⊤-homs → monoidal C |
 | Cat.Monoidal.Twist | 2 | complete | absorb-coh independence core (twist-reduces-to-omega) |
-| Cat.Codep | 3 | complete | Aggregator: Base + Coherence |
+| Cat.Codep | 3 | complete | Aggregator: Base + Coherence + Op |
 | Cat.Codep.Base | 3 | complete | trilayer records: structure / axioms (5 fields + all derived laws) / bundle; flat carrier; provenance lemmas standalone |
 | Cat.Codep.Coherence | 3 | complete | collapsed tower: assoc-tower + pentagon-fibers + 5 faces (reindex-face for face₂₃/₄₅) + named pentagon; unit-free (compose-contr/emb-comp/·-comp) |
+| Cat.Codep.Op | 3 | complete | opposite hcategory: op-structure/op-axioms/op + op-invol; parity theorem (mirror axioms derivable), eval self-mirror definitional |
 | Cat.Codep.Instances | 3 | complete | walking-arrow + type/monoidal triples (5-axiom fills); generic theorems specialize |
 
 ## Deferred modules
