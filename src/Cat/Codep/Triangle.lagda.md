@@ -39,7 +39,7 @@ scope — it needs no fourth cell. The mechanism:
     θ-core reconciliations. So `face₂₃` costs only the three overlay
     cells, no independent fourth.
 
-`Test.TriFace23Probe-20260711` first isolated the bridge as a total
+`Gloss.TriangleFace23` first isolated the bridge as a total
 function of that single cell; `gauge-r` then discharged the cell.
 `EU` reads the `unitl` fiber-witness square back as a path, and the
 paid face collapses pointwise (`happly` distributes definitionally)

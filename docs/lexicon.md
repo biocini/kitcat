@@ -1,6 +1,6 @@
 # Kitcat Theoretical Lexicon (Cat.*)
 
-The canonical vocabulary of the `Cat.*` namespace. STYLEGUIDE.md
+The canonical vocabulary of the `Cat.*` namespace. styleguide.md
 governs formatting and casing; this document governs what the
 theory's concepts are *called*. Scope: `Cat.*` only — `Core.*` and
 everything outside is settled and serves as the style baseline
@@ -120,8 +120,8 @@ workshop. Renames marked *at refactor* apply when `Cat.Type` /
 | `emb-composite-pt` | (dies — Codep's `act-comp` subsumes) | — | at refactor |
 | `nat-trans` (Cat.Yoneda) | `fam-nat` | `Cat.Yoneda` | at refactor |
 | `⟨_,_,_⟩` (classified comp) | distinct notation (TBD with coder) | `Cat.Virtual` | at refactor |
-| prose "Eₙ" tower rungs | level names (triangle / hexagon / syllepsis) | DESIGN.md | now |
-| prose "virtual" (general theory) | representable codependent / RCC | DESIGN.md | now |
+| prose "Eₙ" tower rungs | level names (triangle / hexagon / syllepsis) | design.md | now |
+| prose "virtual" (general theory) | representable codependent / RCC | design.md | now |
 | — (new) | `is-representable` + restated `compose-contr`; `is-representable-prop` (unit fragment), `hom≃representable` (Base — unconditional) | `Cat.Codep.Base` / `.Unit` | now |
 | `loose` / `loose-ext` | `composite` / `composite-ext` | `Cat.Codep.*` | now |
 | `pre-composite` / `post-composite` | `pre-comp` / `post-comp` (suffix conformance) | `Cat.Codep.*` | now |
@@ -144,4 +144,4 @@ suffixes without adding them here.
 | `-is-prop` | propositionality of a structure | `unit-is-prop` |
 | `-d` | displayed version | `hom-d`, `emb-d` |
 | `/X` | slice construction | `hom/X` |
-| `unitl`/`unitr`, `absorb-l`/`absorb-r` | left/right law pairs (noun-adjective per STYLEGUIDE) | — |
+| `unitl`/`unitr`, `absorb-l`/`absorb-r` | left/right law pairs (noun-adjective per styleguide.md) | — |

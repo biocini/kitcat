@@ -513,8 +513,8 @@ same edge).
 
 ## References
 
-- **STYLEGUIDE.md** — Formatting and naming conventions
-- **docs/LEXICON.md** — Vocabulary: what the `Cat.*` concepts are called
+- **styleguide.md** — Formatting and naming conventions
+- **docs/lexicon.md** — Vocabulary: what the `Cat.*` concepts are called
 - **Rijke, Introduction to HoTT** — Primary HoTT reference
 - **1lab** (https://1lab.dev) — Idiomatic cubical Agda patterns
 - **Riehl–Shulman** (arXiv:1705.07442) — Synthetic ∞-category theory

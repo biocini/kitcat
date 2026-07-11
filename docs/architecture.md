@@ -229,7 +229,7 @@ fibre-witness square back as a path; `happly` distributes
 definitionally,
 so the paid face collapses pointwise onto pt₂'s `·-idn` route through
 `bridge`/`INNER` (the bridge is `gauge-r`).
-`Test.TriFace23Probe-20260711` is retained as the historical isolation
+`Gloss.TriangleFace23` is retained as the historical isolation
 of that bridge. The earlier "independent fourth cell" claim was a
 misattribution: the `Cat.Codep.Coherent` S²/π₃ independence result is
 about op-**involution** of the cell tower (one dimension up), not this

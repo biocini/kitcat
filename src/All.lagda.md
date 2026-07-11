@@ -68,6 +68,12 @@ import Lib.Ternary.Respect.Propositional
 import Lib.Ternary.Structures
 import Lib.Ternary.Structures.Syntax
 
+import Gloss.EightFieldWall
+import Gloss.PathGroupoid
+import Gloss.PcomConservation
+import Gloss.PropPinning
+import Gloss.TriangleFace23
+
 import Test.Scratch
 
 -- import Cat.Rezk  -- WIP: decode-gen holes at L203/204
@@ -82,7 +88,7 @@ import Test.Scratch
 -- import Cat.Displayed  -- WIP: open holes in compose-contr contraction
 -- import Cat.Units  -- WIP: proof error at line 382
 -- import Cat.Product  -- WIP: mid-edit, MetaCannotDependOn at L237
--- import HData.Rack  -- WIP: pre-existing unsolved metas at L31-34, unrelated to ternary port
+-- import HData.Rack  -- WIP: pre-existing unsolved metas at L31-34
 import Cat.Monoidal.Indiscrete
 import Cat.Monoidal.Twist
 import Cat.Monoidal.Braid

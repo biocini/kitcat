@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# docs-drift — validate docs/ARCHITECTURE.md status table against
+# docs-drift — validate docs/architecture.md status table against
 # the actual Cat.* modules on disk
 
-arch="docs/ARCHITECTURE.md"
+arch="docs/architecture.md"
 [ -f "$arch" ] || { echo "Error: $arch not found" >&2; exit 1; }
 
 drift=0
@@ -46,7 +46,7 @@ done < <(fd -e lagda.md . src/Cat/ | sort)
 # --- Check: every disk module is in the table ---
 for mod in "${!disk_modules[@]}"; do
     if [ -z "${doc_seen[$mod]:-}" ]; then
-        warn "$mod exists on disk but is not in ARCHITECTURE.md"
+        warn "$mod exists on disk but is not in architecture.md"
     fi
 done
 
@@ -65,7 +65,7 @@ for mod in "${!doc_status[@]}"; do
     fi
 
     if [ ! -f "$file" ]; then
-        warn "$mod listed in ARCHITECTURE.md but $file not found"
+        warn "$mod listed in architecture.md but $file not found"
         continue
     fi
 
@@ -112,7 +112,7 @@ for mod in "${!doc_status[@]}"; do
 done
 
 if [ "$drift" -eq 0 ]; then
-    echo "docs/ARCHITECTURE.md is up to date."
+    echo "docs/architecture.md is up to date."
 else
     exit 1
 fi

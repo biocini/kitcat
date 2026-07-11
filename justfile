@@ -102,7 +102,7 @@ html-serve:
 html-deploy:
     bin/html-deploy
 
-# Check ARCHITECTURE.md for drift against actual module status
+# Check architecture.md for drift against actual module status
 docs-check:
     bin/docs-drift
 
