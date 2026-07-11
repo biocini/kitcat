@@ -142,9 +142,6 @@ record hcategory-structure {o h} (ob : Type o) : Type (o ⊔ h ₊) where
   composite : ob → ob → Type (o ⊔ h)
   composite x y = (γ : ctx x y) → res γ
 
-  composite-ext : ∀ {x y} {F G : composite x y} → (∀ γ → F γ ≡ G γ) → F ≡ G
-  composite-ext h = funext h
-
   field
     emb : ∀ {x y} → hom x y → composite x y
 
@@ -153,8 +150,11 @@ record hcategory-structure {o h} (ob : Type o) : Type (o ⊔ h ₊) where
   is-representable : ∀ {x y} → composite x y → Type (o ⊔ h)
   is-representable F = fiber emb F
 
-  -- `pre g` acts on the family slot, `post f` on the cofamily; both
-  -- are `emb` read at the center.
+  -- `pre g b` reads `emb g` with `b` in the family slot — the
+  -- composite idn ; g ; b, `g` in the pre position: the action of
+  -- `g` precomposing on `b`. `post f a` reads `emb f` with `a` in
+  -- the cofamily slot — a ; f ; idn, `f` in the post position: the
+  -- action of `f` postcomposing on `a`.
   pre : ∀ {y z} (g : hom y z) {v} → hom z v → hom y v
   pre {y} g {v} b = emb g (ctr y , (v , b))
 
@@ -340,11 +340,11 @@ record hcategory-axioms {o h} {ob : Type o}
           idem (post-comp (idn x) (idn x) a))
 
   ·-idn : ∀ {x y} (F : composite x y) → F · idn y ≡ F
-  ·-idn F = composite-ext λ γ →
+  ·-idn F = funext λ γ →
     ap (λ β → F (γ .fst , β)) (ap (γ .snd .fst ,_) (absorb-l (γ .snd .snd)))
 
   emb-idn-absorb : ∀ {x y} (f : hom x y) → emb (idn x) · f ≡ emb f
-  emb-idn-absorb f = composite-ext λ γ →
+  emb-idn-absorb f = funext λ γ →
     interchange (idn _) f (γ .fst .snd) (γ .snd .snd)
     ∙ ap (λ a' → emb f ((γ .fst .fst , a') , γ .snd))
         (absorb-r (γ .fst .snd))
