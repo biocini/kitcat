@@ -68,14 +68,14 @@ run_flags() {
     echo "── flags ──"
     while IFS= read -r f; do
         # Extract the OPTIONS pragma
-        opts="$(rg 'OPTIONS' "$f" -o --no-filename 2>/dev/null | head -1)"
+        opts="$(rg 'OPTIONS' "$f" -o --no-filename 2>/dev/null | head -1 || true)"
         if [ -z "$opts" ]; then
             echo "  ${f}: no OPTIONS pragma found"
             issues=$((issues + 1))
             continue
         fi
 
-        pragma="$(rg '\{-# OPTIONS .* #-\}' "$f" -o --no-filename 2>/dev/null | head -1)"
+        pragma="$(rg '\{-# OPTIONS .* #-\}' "$f" -o --no-filename 2>/dev/null | head -1 || true)"
         if [ -z "$pragma" ]; then
             echo "  ${f}: OPTIONS found but pragma malformed"
             issues=$((issues + 1))

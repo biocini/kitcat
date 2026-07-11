@@ -13,7 +13,7 @@ some data for T, say its some A, then your cast would be to `Cast S (A
 the auxiliary data sufficient to reach the target.
 
 ```agda
-{-# OPTIONS --safe --cubical-compatible #-}
+{-# OPTIONS --safe --cubical-compatible --no-guardedness #-}
 
 module Core.Trait.Cast where
 

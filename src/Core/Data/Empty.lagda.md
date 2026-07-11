@@ -2,7 +2,7 @@ The empty type and absurdity elimination.
 
 ```agda
 
-{-# OPTIONS --safe --cubical-compatible #-}
+{-# OPTIONS --safe --cubical-compatible --no-guardedness #-}
 
 module Core.Data.Empty where
 

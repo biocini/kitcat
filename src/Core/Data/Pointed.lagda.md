@@ -2,7 +2,7 @@ Pointed types: types equipped with a distinguished basepoint.
 
 ```agda
 
-{-# OPTIONS --safe --cubical-compatible #-}
+{-# OPTIONS --safe --cubical-compatible --no-guardedness #-}
 
 module Core.Data.Pointed where
 
