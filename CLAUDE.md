@@ -28,6 +28,9 @@ record the delegation as degraded.
 | `reviewer` | Mechanical style/correctness/hard-rule/ledger gate before any commit |
 | `researcher` | External literature evidence: arXiv/nLab/1lab sweeps, file-based notes |
 | `verifier` | Citation checks: URLs resolve, sources state their claims, ledger bijection |
+| `ingest` | Acquire and vendor a source (arXiv LaTeX / PDF), hash the canonical artifact, prepare a PROVISIONAL `resources/` entry |
+| `writer` | Turn research, ledger entries, and certificates into structured exposition (adds no citations — the verifier does) |
+| `suite-maintainer` | Author or repair skills and agent definitions; the authoring lint; the three-surface symlinks and bind-once contract |
 
 Agent registries are per-harness and availability varies; a
 workflow that names an absent agent runs lead-owned and records the

@@ -235,3 +235,10 @@ Gloss namespace are maintained as one unit. Promotion criteria and
 the freeze ritual live in CLAUDE.md ("Test → Gloss promotion"):
 ledger-linked, not mechanized elsewhere, arc closed; frozen at a
 named commit; append-mostly.
+
+Every 📐 source-identification entry names its backing
+`resources/<slug>/` entry and is marked ⚠️/CONJECTURED until that
+entry exists — the external mirror of the 🧪↔`Gloss.*` bijection.
+(T16 → `resources/mellies-dialogue-chiralities`; T15's Kelly
+identification stays ⚠️/CONJECTURED until a
+`resources/kelly-mac-lane-coherence` entry is vendored.)

@@ -11,11 +11,14 @@ topLevelCli: true
 
 Mechanize in Cubical Agda: $ARGUMENTS
 
-Read `.agents/skills/kitcat/HARNESS.md` first; it maps every
-capability named below to the tools in your harness.
+Read `.agents/CLAUDE.md` (the cross-agent contract) and
+`.agents/skills/kitcat/HARNESS.md` first: the contract states the
+shared conventions (the epistemic lexicon, degraded delegation),
+and HARNESS.md maps every capability named below to the tools in
+your harness.
 
-Derive a short slug from the target (lowercase, hyphens, no filler
-words, at most 5 words). Every file this run writes uses that slug.
+Derive a run slug from the target per the contract; every file this
+run writes uses that slug.
 
 This is an execution request, not a request to explain the workflow.
 Begin with the plan artifact, not with prose about the protocol. The
@@ -43,14 +46,11 @@ its module named, not re-mechanized.
    capabilities, or from the covering `resources/` entry when one
    exists — the definitions, theorem statements, hypotheses, and
    proof strategy, into `notes/research/<slug>-extraction.md`.
-   Every extracted claim is CONJECTURED, written
-   `CONJECTURED, SOURCE-CHECKED against <ref>`: the cited document
-   was opened and states the claim. References surfaced by automated
-   search are `[unvetted]` and support no load-bearing claim until a
-   human or a `resources/` entry confirms them; record each
-   promotion (who, or which entry) in the sidecar. Mark every
-   planned question `done`, `blocked`, or `superseded` — never
-   silently skip one.
+   Label every extracted claim per the contract lexicon —
+   CONJECTURED for everything harvested, `[unvetted]` for
+   automated-search references until promoted. Mark every planned
+   question `done`, `blocked`, or `superseded` — never silently
+   skip one.
 
 2. **Detail** — Build the per-claim ledger in
    `notes/research/<slug>-ledger.md`. For each mechanization target:
@@ -79,7 +79,13 @@ its module named, not re-mechanized.
    - **Plan-only** — deliver the ledger and plan; write no Agda.
    - **Spike** — exploratory Agda in
      `src/Test/<Name>-<timestamp>.lagda.md`; spikes need not
-     typecheck cleanly and are never imported by All.
+     typecheck cleanly and are never imported by All. The spike
+     pins the open fork by typechecking that fork against the real
+     foundation — never a mock; the surrounding exploration need
+     not typecheck cleanly, but the fork's typecheck is the
+     verdict, prose is not. Dispatch it with an oracle-shaped
+     contract: a verdict in {DERIVED, STUCK, PARTIAL}, which route
+     closed, and the exact goal-verbatim residue if stuck.
    - **Full module** — a real library module: `just new <Mod>`,
      `just sync --fix`, zero-warnings typecheck, lint, reviewer
      pass.
@@ -98,7 +104,17 @@ its module named, not re-mechanized.
    tried, and what is missing in the plan ledger, and return to the
    user for direction. Preserve every failed proof attempt's text
    in the plan ledger, then revert — never stack fixes on a
-   broken approach. In full-module mode, after the success criteria
+   broken approach. On a genuine two-strikes wall, keep the
+   timestamped `src/Test/` spike (do not delete it) with
+   `-- STUCK:` comments — the verbatim goal type at the hole plus
+   what was tried — record the salvage (the reusable machinery and
+   what the wall points at) under a "do not re-derive; build on"
+   heading, revert the real modules, and invent no auxiliary
+   axioms. In full-module mode, each definitional reduction the
+   proof leans on is re-asserted beside it as a present-tense
+   `killcheck-<name> = refl`, so a reduction that stops firing
+   fails `just check`; a dead route is banked as a WALL
+   transcribing its refl-probe goal. After the success criteria
    pass, run `just lint` and `just check <Mod>` on every touched
    module, and dispatch the
    `reviewer` agent (lead-owned degraded when absent).
@@ -133,20 +149,11 @@ its module named, not re-mechanized.
    or ⚠️ (partially conjectured), upgraded only by machine-checking,
    never entered unilaterally: in every mode, ledger entries are
    proposals in the report and sidecar, applied at commit time on
-   the user's word, with statuses honest to what was checked. Write the sidecar to
-   `notes/research/<slug>.provenance.md` recording: date and who
-   requested the run; sources consulted vs accepted vs rejected
-   (with reasons), each accepted source with its vetting status
-   (`[unvetted]` / SOURCE-CHECKED / `resources/` entry); the
-   intermediate files with their producers (which agent, or
-   lead-owned degraded); blocked capabilities and degraded
-   delegations, each with what was done instead; the chosen
-   execution mode; verification status — PASS (clean final pass),
-   PASS WITH NOTES (MAJOR findings remain in Open Questions), or
-   BLOCKED (a required check could not run; name it); and candidate
-   `resources/` entries worth permanent vetting, proposed, never
-   created. Verify on disk that the report and sidecar exist before
-   stopping; never stop at an intermediate draft.
+   the user's word, with statuses honest to what was checked. Write
+   the sidecar per the contract, adding the mechanize-specific
+   field: the chosen execution mode. Verify on disk that the report
+   and sidecar exist before stopping; never stop at an intermediate
+   draft.
 
 ## Scope
 
@@ -158,15 +165,14 @@ proposals recorded in artifacts, never executed as a side effect.
 
 ## Honesty rules (binding)
 
+Epistemic labels, `[unvetted]` handling, and novelty language
+follow the contract lexicon. Mechanize-specific rules:
+
 - A target is called mechanized only when its pre-registered check
-  passed in this repository; VERIFIED names the module or Gloss
-  certificate. Everything harvested from literature is CONJECTURED.
-- No reference supports a claim unless the cited document was opened
-  and says what it is cited for; `[unvetted]` references support no
-  load-bearing claim.
-- Novelty language is "we are not aware of prior work", accompanied
-  by the searches actually performed — never "new" or "first".
-- Blocked capabilities and failed checks are reported as BLOCKED in
-  the provenance sidecar with the manual command a human could run;
-  a missing check is never smoothed over, and a capability is never
+  passed in this repository; VERIFIED then names the module or
+  Gloss certificate, and a target that merely "should typecheck"
+  stays CONJECTURED.
+- Blocked capabilities and failed checks are reported BLOCKED in
+  the sidecar with the manual command a human could run; a missing
+  check is never smoothed over, and a capability is never
   simulated.

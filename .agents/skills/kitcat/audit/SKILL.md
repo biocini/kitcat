@@ -11,12 +11,12 @@ topLevelCli: true
 
 Run a paper-versus-formalization audit for: $ARGUMENTS
 
-Read `.agents/skills/kitcat/HARNESS.md` first; it maps every
-capability named below to the tools in your harness.
+Read `.agents/CLAUDE.md` and `.agents/skills/kitcat/HARNESS.md`
+first: the contract binds the cross-agent conventions this skill
+defers to; HARNESS maps every capability named below to the tools
+in your harness.
 
-Derive a short slug from the audit target (lowercase, hyphens, no
-filler words, at most 5 words). Every file this run writes uses that
-slug.
+Derive a run slug from the audit target per the contract.
 
 This is an execution request, not a request to explain the workflow.
 Begin with the plan artifact, not with prose about the protocol.
@@ -103,16 +103,8 @@ substantially harder than the paper's presentation suggests.
      hides it.
 4. **Cite** — Add inline citations and check every source with the
    url-fetch capability: the URL resolves, and the document states
-   what it is cited for — record that as SOURCE-CHECKED. Epistemic
-   labels are strict: VERIFIED applies only to claims machine-checked
-   in this repository (name the module or Gloss certificate); every
-   mathematical claim harvested from the paper or an external
-   formalization is CONJECTURED, typically written
-   `CONJECTURED, SOURCE-CHECKED against <ref>`. References surfaced
-   by automated search are `[unvetted]` and never support a
-   load-bearing claim; a reference sheds `[unvetted]` only when a
-   human confirms the opened document or a `resources/` entry covers
-   it — record each promotion (who, or which entry) in the sidecar.
+   what it is cited for. Label every claim per the contract lexicon
+   (`docs/provenance.md` binding).
 5. **Verify** — Run an adversarial pass over the draft: table rows
    whose status is stronger than their evidence (a MATCHES without a
    named module, a MISMATCH whose delta is vague), unsupported
@@ -127,20 +119,10 @@ substantially harder than the paper's presentation suggests.
 6. **Deliver** — Save the audit to `notes/research/<slug>-audit.md`,
    ending with a Sources section listing the paper (URL or DOI) and
    the formalization (module paths for this repository, repository
-   URL and version for an external one). Save its provenance sidecar
-   to `notes/research/<slug>-audit.provenance.md` recording: date
-   and who requested the audit; sources consulted vs accepted vs
-   rejected (with reasons), each accepted source with its vetting
-   status (`[unvetted]` / SOURCE-CHECKED / `resources/` entry); the
-   intermediate research files used, each with its producer (which
-   agent, or lead-owned degraded); blocked capabilities and degraded
-   delegations, each with what was done instead; and verification
-   status — PASS (clean final pass), PASS WITH NOTES (MAJOR findings
-   remain in Open Questions), or BLOCKED (a required check could not
-   run; name it). Sources worth permanent vetting are proposed in
-   the sidecar as candidate `resources/` entries, not created
-   unilaterally. Verify on disk that both files exist before
-   stopping; never stop at an intermediate draft.
+   URL and version for an external one). Write its provenance
+   sidecar `notes/research/<slug>-audit.provenance.md` per the
+   contract. Verify on disk that both files exist before stopping;
+   never stop at an intermediate draft.
 
 ## Honesty rules (binding)
 

@@ -11,12 +11,12 @@ topLevelCli: true
 
 Compare sources for: $ARGUMENTS
 
-Read `.agents/skills/kitcat/HARNESS.md` first; it maps every
-capability named below to the tools in your harness.
+Read `.agents/CLAUDE.md` and `.agents/skills/kitcat/HARNESS.md`
+first: the contract binds the cross-agent conventions this skill
+defers to; HARNESS maps every capability named below to the tools
+in your harness.
 
-Derive a short slug from the comparison topic (lowercase, hyphens,
-no filler words, at most 5 words). Every file this run writes uses
-that slug.
+Derive a run slug from the comparison topic per the contract.
 
 This is an execution request, not a request to explain the workflow.
 Begin with the plan artifact, not with prose about the protocol.
@@ -84,16 +84,10 @@ the only place VERIFIED evidence can appear.
    proposals only.
 4. **Cite** — Add inline citations and check every source with the
    url-fetch capability: the URL resolves, and the document states
-   what it is cited for — record that as SOURCE-CHECKED. Epistemic
-   labels are strict: VERIFIED applies only to claims
-   machine-checked in this repository; every mathematical claim
-   harvested from literature is CONJECTURED, typically written
-   `CONJECTURED, SOURCE-CHECKED against <ref>`. References surfaced
-   by automated search are `[unvetted]` and never support a
-   load-bearing claim or a matrix row's evidence-type label; a
-   reference sheds `[unvetted]` only when a human confirms the
-   opened document or a `resources/` entry covers it — record each
-   promotion (who, or which entry) in the sidecar.
+   what it is cited for. Label every claim per the contract lexicon
+   (`docs/provenance.md` binding); an `[unvetted]` reference
+   supports no matrix row's evidence-type label until it is
+   confirmed.
 5. **Verify** — Run an adversarial pass over the cited draft: rows
    whose evidence-type label is stronger than the opened source
    supports, disagreements flattened into false consensus,
@@ -110,21 +104,10 @@ the only place VERIFIED evidence can appear.
 6. **Deliver** — Save exactly one comparison to
    `notes/research/<slug>-comparison.md`, ending with a Sources
    section giving a direct URL or DOI for every source used, and
-   its provenance sidecar to
-   `notes/research/<slug>-comparison.provenance.md` recording: date
-   and who requested the comparison; sources consulted vs accepted
-   vs rejected (with reasons), each accepted source with its
-   vetting status (`[unvetted]` / SOURCE-CHECKED / `resources/`
-   entry); the intermediate research files used, each with its
-   producer (which agent, or lead-owned degraded); blocked
-   capabilities and degraded delegations, each with what was done
-   instead; verification status — PASS (clean final pass), PASS
-   WITH NOTES (MAJOR findings remain in Open Questions), or BLOCKED
-   (a required check could not run; name it). Sources worth
-   permanent vetting are proposed in the sidecar as candidate
-   `resources/` entries, not created unilaterally. Verify on disk
-   that both files exist before stopping; never stop at an
-   intermediate draft.
+   write its provenance sidecar
+   `notes/research/<slug>-comparison.provenance.md` per the
+   contract. Verify on disk that both files exist before stopping;
+   never stop at an intermediate draft.
 
 ## Honesty rules (binding)
 

@@ -11,12 +11,13 @@ topLevelCli: true
 
 Create or refresh a literature watch for: $ARGUMENTS
 
-Read `.agents/skills/kitcat/HARNESS.md` first; it maps every
-capability named below to the tools in your harness.
+Read `.agents/CLAUDE.md` and `.agents/skills/kitcat/HARNESS.md`
+first: the contract binds the cross-agent conventions this skill
+defers to; HARNESS maps every capability named below to the tools
+in your harness.
 
-Derive a short slug from the watch topic (lowercase, hyphens, no
-filler words, at most 5 words). Every file this run writes uses that
-slug. The run artifact for this skill is the watch file
+Derive a run slug from the watch topic per the contract. The run
+artifact for this skill is the watch file
 `notes/watches/<slug>.md`; blocked capabilities and degraded
 delegations are recorded there.
 
@@ -64,21 +65,11 @@ generic topic noise.
    one.
 3. **Baseline artifact** — Save exactly one baseline to
    `notes/watches/<slug>-baseline.md`: the swept state of each
-   source, dated; anything worth the user's attention now, with
-   strict epistemic labels — mathematical claims harvested from
-   literature are CONJECTURED, typically written `CONJECTURED,
-   SOURCE-CHECKED against <ref>`; references surfaced by automated
-   search are `[unvetted]` and support no load-bearing claim; a
-   Provenance section recording date and who requested the watch,
-   sources consulted vs accepted vs rejected (with reasons) and each
-   accepted source's vetting status, any intermediate files used —
-   each with its producer (which agent, or lead-owned degraded) —
-   blocked capabilities and degraded delegations with what was done
-   instead, and the verification status; and a closing Sources
-   section with a direct
-   URL for every source used. Sources worth permanent vetting are
-   proposed in the Provenance section as candidate `resources/`
-   entries, never created.
+   source, dated; anything worth the user's attention now, labeled
+   per the contract lexicon (`docs/provenance.md` binding); a
+   Provenance section recording what the contract's sidecar spec
+   requires; and a closing Sources section with a direct URL for
+   every source used.
 4. **Verify** — Run an adversarial pass over the baseline: sources
    cited but never actually opened, claims or status labels stronger
    than their evidence, sources named in the plan but missing from

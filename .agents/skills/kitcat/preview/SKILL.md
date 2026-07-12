@@ -8,8 +8,10 @@ section: Utilities
 
 Preview or export a written artifact locally.
 
-Read `.agents/skills/kitcat/HARNESS.md` first; it maps every
-capability named below to the tools in your harness.
+Read `.agents/CLAUDE.md` and `.agents/skills/kitcat/HARNESS.md`
+first: the contract binds the cross-agent conventions this skill
+defers to; HARNESS maps every capability named below to the tools
+in your harness.
 
 Everything this skill does is local. It publishes and deploys
 nothing, and a harness-rendered page is never shared

@@ -12,12 +12,14 @@ topLevelCli: true
 Write the end-of-session log for: $ARGUMENTS (optional focus or
 slug hint; may be empty).
 
-Read `.agents/skills/kitcat/HARNESS.md` first; it maps every
-capability named below to the tools in your harness.
+Read `.agents/CLAUDE.md` (the cross-agent contract) and
+`.agents/skills/kitcat/HARNESS.md` first; the former carries the
+cross-agent conventions this workflow defers to, the latter maps
+every capability named below to the tools in your harness.
 
-Derive a short slug from the session's main thread (lowercase,
-hyphens, no filler words, at most 5 words); when $ARGUMENTS supplies
-one, use it. This run writes exactly two things: the log
+Derive a run slug from the session's main thread per the contract;
+when $ARGUMENTS supplies one, use it. This run writes exactly two
+things: the log
 `notes/session-logs/<YYYY-MM-DD>-<slug>.md`, and one dated entry
 appended at the TOP of `CHANGELOG.md` (newest first). The division
 of labor: the changelog records what happened — what landed, what
@@ -78,12 +80,9 @@ order:
    previous log entry's next-step preview and `docs/roadmap.md`'s
    targets.
 2. **Strongest findings and decisions** — each load-bearing claim
-   labeled: VERIFIED only for claims machine-checked in this
-   repository (name the module or Gloss certificate); claims taken
-   from literature are CONJECTURED, typically written `CONJECTURED,
-   SOURCE-CHECKED against <ref>`; SOURCE-CHECKED only when the cited
-   document was opened and states the claim. External claims that
-   matter carry direct stable URLs or DOIs.
+   labeled per the contract's epistemic lexicon (VERIFIED names the
+   module or Gloss certificate). External claims that matter carry
+   direct stable URLs or DOIs.
 3. **Modules touched** — created, edited, renamed, or deleted, with
    typecheck status where known.
 4. **Spikes** — each `src/Test/` spike created this session, with
@@ -123,6 +122,22 @@ sections surviving from earlier drafts that the final evidence no
 longer supports. Grade findings FATAL / MAJOR / MINOR. Fix FATAL
 findings before delivery and run one more pass after the fixes;
 move MAJOR findings into Open Questions; accept MINOR.
+
+Before writing the log, confirm every load-bearing result proven
+this session is in its canonical home: a `docs/gloss.md` entry
+held in exact bijection with a frozen `Gloss.*` certificate (per
+`src/Gloss/CLAUDE.md`), or the committed module. A result living
+only in a `src/Test/` spike, a plan ledger, or the chat is
+enshrined NOW, and the log records only the pointer — the T-number
+and the module — never the proof. If you re-derived something this
+session that an earlier session already worked out, that is the
+signal to persist it before logging.
+
+Run one memory-hygiene check: flag any ruling or decision that
+exists only in harness-private memory — not yet in a repo home
+(`docs/gloss.md`, a session log, `docs/roadmap.md`) — so it is
+promoted into its canonical home rather than left to rot in the
+private layer.
 
 Save the log to `notes/session-logs/<YYYY-MM-DD>-<slug>.md`. Then
 append the changelog entry at the TOP of `CHANGELOG.md` (creating

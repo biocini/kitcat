@@ -11,11 +11,12 @@ topLevelCli: true
 
 Run deep research for: $ARGUMENTS
 
-Read `.agents/skills/kitcat/HARNESS.md` first; it maps every
-capability named below to the tools in your harness.
+Read `.agents/CLAUDE.md` and `.agents/skills/kitcat/HARNESS.md`
+first: the contract binds the cross-agent conventions this skill
+defers to; HARNESS maps every capability named below to the tools
+in your harness.
 
-Derive a short slug from the topic (lowercase, hyphens, no filler
-words, at most 5 words). Every file this run writes uses that slug.
+Derive a run slug from the topic per the contract.
 
 This is an execution request, not a request to explain the workflow.
 Begin with the plan artifact, not with prose about the protocol.
@@ -113,16 +114,8 @@ machinery; run that skill separately when a source demands it.
 5. **Cite** — Rewrite the draft to `notes/research/<slug>-cited.md`
    with inline citations and a Sources section, and check every
    source with the url-fetch capability: the URL resolves, and the
-   document states what it is cited for — record that as
-   SOURCE-CHECKED. Epistemic labels are strict: VERIFIED applies
-   only to claims machine-checked in this repository (name the
-   module or Gloss certificate); every mathematical claim harvested
-   from literature is CONJECTURED, typically written `CONJECTURED,
-   SOURCE-CHECKED against <ref>`. References surfaced by automated
-   search are `[unvetted]` and never support a load-bearing claim;
-   a reference sheds `[unvetted]` only when a human confirms the
-   opened document or a `resources/` entry covers it — record each
-   promotion (who, or which entry) in the sidecar.
+   document states what it is cited for. Label every claim per the
+   contract lexicon (`docs/provenance.md` binding).
 6. **Verify** — Run an adversarial pass over the cited draft:
    unsupported claims, logical gaps, single-source critical claims,
    overstated confidence, status labels stronger than their
@@ -144,22 +137,11 @@ machinery; run that skill separately when a source demands it.
    and verified again.
 7. **Deliver** — Copy the final candidate (`-revised.md` if it
    exists, else `-cited.md`) to `notes/research/<slug>.md` and
-   write its provenance sidecar to
-   `notes/research/<slug>.provenance.md` recording: date and who
-   requested the run; sources consulted vs accepted vs rejected
-   (with reasons), each accepted source with its vetting status
-   (`[unvetted]` / SOURCE-CHECKED / `resources/` entry); the
-   intermediate research files used, each with its producer (which
-   agent, or lead-owned degraded); blocked capabilities and
-   degraded delegations, each with what was done instead;
-   verification status — PASS (clean final pass), PASS WITH NOTES
-   (MAJOR findings remain in Open Questions), or BLOCKED (a
-   required check could not run; name it). Sources worth permanent
-   vetting are proposed in the sidecar as candidate `resources/`
-   entries, not created unilaterally. Verify on disk that all
-   required artifacts exist before stopping; never stop at an
-   intermediate draft. The final response is brief: the final file,
-   the sidecar, and any blocked checks.
+   write its provenance sidecar
+   `notes/research/<slug>.provenance.md` per the contract. Verify
+   on disk that all required artifacts exist before stopping; never
+   stop at an intermediate draft. The final response is brief: the
+   final file, the sidecar, and any blocked checks.
 
 ## Honesty rules (binding)
 

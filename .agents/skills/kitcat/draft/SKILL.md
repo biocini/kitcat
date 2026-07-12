@@ -11,11 +11,12 @@ topLevelCli: true
 
 Write a paper-style exposition for: $ARGUMENTS
 
-Read `.agents/skills/kitcat/HARNESS.md` first; it maps every
-capability named below to the tools in your harness.
+Read `.agents/CLAUDE.md` and `.agents/skills/kitcat/HARNESS.md`
+first: the contract binds the cross-agent conventions this skill
+defers to; HARNESS maps every capability named below to the tools
+in your harness.
 
-Derive a short slug from the topic (lowercase, hyphens, no filler
-words, at most 5 words). Every file this run writes uses that slug.
+Derive a run slug from the topic per the contract.
 
 This is an execution request, not a request to explain the workflow.
 Begin with the plan artifact, not with prose about the protocol.
@@ -92,20 +93,11 @@ capability when needed — rather than padding with invention.
    it>` — never as connective prose that implies the result holds.
    Diagrams and comparison tables appear only when source-supported
    and decision-changing; every one carries its provenance.
-3. **Cite** — Attach inline citations per the hard rules. Epistemic
-   labels are strict: VERIFIED applies only to claims
-   machine-checked in this repository (name the module or Gloss
-   certificate); every mathematical claim harvested from literature
-   is CONJECTURED, typically written `CONJECTURED, SOURCE-CHECKED
-   against <ref>`. Check every external source with the url-fetch
-   capability: the URL resolves, and the document states what it is
-   cited for — record that as SOURCE-CHECKED. References surfaced by
-   automated search are `[unvetted]` and never support a
-   load-bearing claim; a reference sheds `[unvetted]` only when a
-   human confirms the opened document or a `resources/` entry covers
-   it — record each promotion (who, or which entry) in the sidecar.
-   Novelty language is "we are not aware of prior work" plus the
-   searches performed — never "new" or "first".
+3. **Cite** — Attach inline citations per the hard rules. Check
+   every external source with the url-fetch capability: the URL
+   resolves, and the document states what it is cited for. Label
+   every claim per the contract lexicon (`docs/provenance.md`
+   binding), novelty language included.
 4. **Verify** — Run an adversarial pass over the cited draft:
    statements stronger than their ledger status, claims without a
    module / certificate / source, proofs presented as complete that
@@ -122,21 +114,11 @@ capability when needed — rather than padding with invention.
    sounds stronger than its support: downgrade or remove it now
    rather than deliver it.
 5. **Deliver** — Save exactly one final draft to
-   `notes/research/<slug>-paper.md` and its provenance sidecar to
-   `notes/research/<slug>-paper.provenance.md` recording: date and
-   who requested the draft; sources consulted vs accepted vs
-   rejected (with reasons), each accepted source with its vetting
-   status (`[unvetted]` / SOURCE-CHECKED / `resources/` entry); the
-   input files used — notes, gloss entries, certificates — each with
-   its producer (which agent, or lead-owned degraded); the gaps left
-   in the draft; blocked capabilities and degraded delegations, each
-   with what was done instead; and verification status — PASS (clean
-   final pass), PASS WITH NOTES (MAJOR findings remain in
-   Limitations and Open Questions), or BLOCKED (a required check
-   could not run; name it). Sources worth permanent vetting are
-   proposed in the sidecar as candidate `resources/` entries, not
-   created unilaterally. Verify on disk that both files exist before
-   stopping; never stop at an intermediate draft.
+   `notes/research/<slug>-paper.md` and write its provenance sidecar
+   `notes/research/<slug>-paper.provenance.md` per the contract,
+   additionally recording the gaps left in the draft. Verify on disk
+   that both files exist before stopping; never stop at an
+   intermediate draft.
 
 ## Scope guard
 

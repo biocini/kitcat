@@ -11,11 +11,12 @@ topLevelCli: true
 
 Explain in plain English: $ARGUMENTS
 
-Read `.agents/skills/kitcat/HARNESS.md` first; it maps every
-capability named below to the tools in your harness.
+Read `.agents/CLAUDE.md` and `.agents/skills/kitcat/HARNESS.md`
+first: the contract binds the cross-agent conventions this skill
+defers to; HARNESS maps every capability named below to the tools
+in your harness.
 
-Derive a short slug from the target (lowercase, hyphens, no filler
-words, at most 5 words). Every file this run writes uses that slug.
+Derive a run slug from the target per the contract.
 
 This is an execution request, not a request to explain the workflow.
 Resolve the target and begin; do not narrate the protocol.
@@ -144,12 +145,9 @@ Guidelines, all binding:
   stops working.
 - Separate what the source actually shows from interpretation and
   speculation, and label which is which.
-- Epistemic labels are strict. VERIFIED applies only to claims
-  machine-checked in this repository — name the module or the
-  `Gloss.*` certificate. A claim taken from a paper is CONJECTURED,
-  written `CONJECTURED, SOURCE-CHECKED against <ref>` when the
-  cited document was opened and states it. Your own reading between
-  the lines is labeled as interpretation.
+- Label every claim per the contract lexicon (`docs/provenance.md`
+  binding). Your own reading between the lines is labeled as
+  interpretation, not the source's claim.
 - **What To Be Skeptical Of** covers, at minimum: hypotheses the
   result quietly leans on, steps the source does not mechanize or
   prove, and any gap between the paper's formulation and this

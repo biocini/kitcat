@@ -11,11 +11,12 @@ topLevelCli: true
 
 Run a formulation survey for: $ARGUMENTS
 
-Read `.agents/skills/kitcat/HARNESS.md` first; it maps every
-capability named below to the tools in your harness.
+Read `.agents/CLAUDE.md` and `.agents/skills/kitcat/HARNESS.md`
+first: the contract binds the cross-agent conventions this skill
+defers to; HARNESS maps every capability named below to the tools
+in your harness.
 
-Derive a short slug from the target (lowercase, hyphens, no filler
-words, at most 5 words). Every file this run writes uses that slug.
+Derive a run slug from the target per the contract.
 
 This is an execution request, not a request to explain the workflow.
 Begin with the plan artifact, not with prose about the protocol.
@@ -125,20 +126,10 @@ well-sourced it is.
    delivery and run one more pass after the fixes; note MAJOR
    findings in Open Questions; accept MINOR.
 8. **Deliver** — Save the final brief to `notes/research/<slug>.md`
-   and its provenance sidecar to
-   `notes/research/<slug>.provenance.md` recording: date and who
-   requested the survey; sources consulted vs accepted vs rejected
-   (with reasons), each accepted source with its vetting status
-   (`[unvetted]` / SOURCE-CHECKED / `resources/` entry);
-   intermediate research files with their producers (which agent,
-   or lead-owned degraded); blocked capabilities and degraded
-   delegations, each with what was done instead; and verification
-   status — PASS (clean final pass), PASS WITH NOTES (MAJOR
-   findings remain in Open Questions), or BLOCKED (a required check
-   could not run; name it). Sources worth permanent vetting are
-   proposed in the sidecar as candidate `resources/` entries, not
-   created unilaterally. Verify on disk that both files exist
-   before stopping; never stop at an intermediate draft.
+   and write its provenance sidecar
+   `notes/research/<slug>.provenance.md` per the contract. Verify
+   on disk that both files exist before stopping; never stop at an
+   intermediate draft.
 
 ## Required final shape
 

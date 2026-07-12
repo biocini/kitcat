@@ -99,6 +99,13 @@ issues=0
 [ -s "$WIP" ]      && { printf '%s\n' "WIP (commented out):"; printf '  # %s\n' $(cat "$WIP"); }
 [ "$issues" -eq 0 ] && [ ! -s "$WIP" ] && echo "All.lagda.md is in sync."
 
+# Report mode gates on drift: a drifted All is a failure a reviewer or
+# CI catches, the drift analog of lint's nonzero exit. --fix / --regenerate
+# resolve drift and so do not gate.
+if ! $fix && ! $regen && [ "$issues" -ne 0 ]; then
+  exit 1
+fi
+
 # ── regenerate: full clean rebuild, grouped by top-level namespace ───
 if $regen; then
   # Preserve the prose header (everything up to and including the opening

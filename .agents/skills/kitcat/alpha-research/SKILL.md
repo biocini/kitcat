@@ -10,10 +10,13 @@ section: Utilities
 
 Search, fetch, or question papers for: $ARGUMENTS
 
-Read `.agents/skills/kitcat/HARNESS.md` first; it maps every
-capability named below to the tools in your harness. The
-paper-search capability resolves through tiers — a dedicated paper
-tool set, a paper CLI via shell, or web-search plus url-fetch — and
+Read `.agents/CLAUDE.md` (the cross-agent contract) and
+`.agents/skills/kitcat/HARNESS.md` first: the contract states the
+shared conventions (the epistemic lexicon, degraded delegation),
+and HARNESS.md maps every capability named below to the tools in
+your harness. The paper-search capability resolves through tiers —
+a dedicated paper tool set, a paper CLI via shell, or web-search
+plus url-fetch — and
 every tier reaches all of arXiv. Paper questions go to paper-search,
 current topics to web-search and url-fetch, mixed questions to both
 with the two evidence streams kept distinct. This skill runs inside
@@ -32,13 +35,11 @@ url-fetch, scope queries to the primary venues: arXiv (math.CT,
 cs.LO, math.LO, math.AT), nLab, 1lab, TypeTopology, author pages,
 proof-assistant library documentation.
 
-Every reference surfaced by automated search is `[unvetted]`,
-supporting no load-bearing claim until a human confirms the opened
-document or a `resources/` entry covers it; each promotion (who
-confirmed, or which entry) is recorded in the requesting workflow's
-provenance sidecar. A tier that fails on authentication or a
-missing tool is reported BLOCKED with the manual command a human
-could run; never simulate a search or claim its result.
+Automated-search references are `[unvetted]` per the contract
+lexicon until a human confirms the opened document or a
+`resources/` entry covers it. A tier that fails on authentication
+or a missing tool is reported BLOCKED with the manual command a
+human could run; never simulate a search or claim its result.
 
 ## Fetching and questioning
 
@@ -55,19 +56,27 @@ copy: it lives with the requesting run's intermediates in
 
 Q&A runs against the vendored local copy — never a remembered
 abstract or a search snippet; fetch the full text when checking
-exact statements. Paper claims are `CONJECTURED, SOURCE-CHECKED
-against <ref>`; VERIFIED only for machine-checked claims naming the
-module or Gloss certificate. An accompanying formalization
-repository (Agda, Coq, Lean) is read with url-fetch as reference
-only — SOURCE-CHECKED at best, VERIFIED only when re-checked here.
+exact statements. Label paper claims per the contract lexicon
+(CONJECTURED, SOURCE-CHECKED against the cited location). An
+accompanying formalization repository (Agda, Coq, Lean) is read
+with url-fetch as reference only — SOURCE-CHECKED at best, VERIFIED
+only when re-checked here.
 
 ## Feeding resources/ and scope
 
-`resources/README.md` is the format authority. Acquisition prepares
-the raw material an entry needs — citation record, sha256 and
-filename, what the document was checked to say — and proposes the
-candidate entry in the requesting workflow's provenance sidecar;
-only the human vetting step creates entries, with the working copy
-in `notes/research/` available for adoption. This skill writes only
-working copies and evidence notes under `notes/research/`: no
-`resources/` writes, no `docs/` or `src/` edits.
+`resources/README.md` is the format authority. The moment a source
+is vendored, house the canonical source markup when available — an
+arXiv LaTeX e-print, math intact — preferred over the PDF; beside a
+PDF, keep a `.pdftext` (pdftotext) extraction as the fallback.
+Prepare a line-anchored location→content map whose depth tracks the
+source's load — a full map for a mechanization target, a short
+outline for background — so a SOURCE-CHECKED citation lands at
+`<file>:LINE`. Format specifics defer to `resources/README.md`.
+Acquisition prepares the raw material an entry needs — citation
+record, sha256 and filename, what the document was checked to say —
+and proposes the candidate entry in the requesting workflow's
+provenance sidecar; only the human vetting step creates entries,
+with the working copy in `notes/research/` available for adoption.
+This skill writes only working copies and evidence notes under
+`notes/research/`: no `resources/` writes, no `docs/` or `src/`
+edits.

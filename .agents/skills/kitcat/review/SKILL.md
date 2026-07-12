@@ -11,12 +11,12 @@ topLevelCli: true
 
 Run an adversarial internal critique of: $ARGUMENTS
 
-Read `.agents/skills/kitcat/HARNESS.md` first; it maps every
-capability named below to the tools in your harness.
+Read `.agents/CLAUDE.md` and `.agents/skills/kitcat/HARNESS.md`
+first: the contract binds the cross-agent conventions this skill
+defers to; HARNESS maps every capability named below to the tools
+in your harness.
 
-Derive a short slug from the artifact name (lowercase, hyphens, no
-filler words, at most 5 words). Every file this run writes uses that
-slug.
+Derive a run slug from the artifact name per the contract.
 
 This is an execution request, not a request to explain the workflow.
 Begin with the plan artifact, not with prose about the protocol.
@@ -104,24 +104,20 @@ apply and why any do not:
    prior-art sweep. The
    researcher writes its evidence to
    `notes/research/<slug>-research-*.md`, never inline; the
-   theoretician and analyzer deliver in-reply memos — record
-   their load-bearing content in the evidence file with
-   attribution before drafting. When a named agent is absent in your harness, do that
-   work lead-owned and record the delegation as degraded. Never
-   claim a delegation happened without dispatching it.
+   analyzer delivers an in-reply memo — record its
+   load-bearing content in the evidence file with attribution
+   before drafting. When a named agent is absent in your harness,
+   do that work lead-owned and record the delegation as degraded.
+   Never claim a delegation happened without dispatching it.
 5. **Critique** — Write the review yourself; the final synthesis is
    never delegated. Grade every finding **FATAL** (a central claim
    fails, a proof is wrong, a definition does not define) /
    **MAJOR** (a real weakness that a revision must address) /
    **MINOR** (cosmetic, notational, presentational). Each finding
    carries an inline annotation quoting the exact passage it
-   targets. Epistemic labels are strict: VERIFIED only for claims
-   machine-checked in this repository, naming the module or Gloss
-   certificate; literature claims are `CONJECTURED, SOURCE-CHECKED
-   against <ref>`; automated-search references are `[unvetted]`
-   (binding definitions in the honesty rules below). Where a
-   mechanization step would settle a finding, propose it — a
-   candidate
+   targets. Label every finding per the contract lexicon
+   (`docs/provenance.md` binding). Where a mechanization step would
+   settle a finding, propose it — a candidate
    `src/Test/<Name>-<timestamp>.lagda.md` spike, a `docs/gloss.md`
    entry, a `resources/` candidate — recorded in the review, never
    executed by this run.
@@ -142,17 +138,8 @@ apply and why any do not:
    label); Verification (every check run, with result or BLOCKED);
    Revision Plan (concrete, ordered fixes plus the proposed spikes
    and ledger entries); Open Questions; Sources. Write the
-   provenance sidecar to
-   `notes/research/<slug>-review.provenance.md` recording: date and
-   who requested the review; sources consulted vs accepted vs
-   rejected (with reasons), each accepted source with its vetting
-   status (`[unvetted]` / SOURCE-CHECKED / `resources/` entry); the
-   intermediate files used, each with its producer (which agent, or
-   lead-owned degraded); blocked capabilities and degraded
-   delegations, each with what was done instead; verification
-   status — PASS (clean final pass), PASS WITH NOTES (MAJOR
-   findings remain in Open Questions), or BLOCKED (a required check
-   could not run; name it). Verify on disk that both files exist
+   provenance sidecar `notes/research/<slug>-review.provenance.md`
+   per the contract. Verify on disk that both files exist
    before stopping. When the artifact could not be parsed or
    critical evidence is unreachable, the review still exists: mark
    the affected sections `Verification: BLOCKED` with the manual

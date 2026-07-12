@@ -11,12 +11,12 @@ topLevelCli: true
 
 Run a bounded proof-optimization loop for: $ARGUMENTS
 
-Read `.agents/skills/kitcat/HARNESS.md` first; it maps every
-capability named below to the tools in your harness.
+Read `.agents/CLAUDE.md` and `.agents/skills/kitcat/HARNESS.md`
+first: the contract binds the cross-agent conventions this skill
+defers to; HARNESS maps every capability named below to the tools
+in your harness.
 
-Derive a short slug from the target and goal (lowercase, hyphens,
-no filler words, at most 5 words). Every file this run writes uses
-that slug.
+Derive a run slug from the target and goal per the contract.
 
 This is an execution request, not a request to explain the
 workflow. Begin with the gather step, not with prose about the
@@ -124,18 +124,11 @@ change on a target module must typecheck with zero warnings (exit
    command); untested hypotheses remain CONJECTURED. Results worth
    the theorem ledger or a `resources/` entry are proposals in the
    summary and sidecar, never executed as a side effect. Write the
-   sidecar `notes/research/<slug>.provenance.md` recording: date
-   and who requested the run; the measurement command and
-   environment (branch, mode); iterations attempted vs kept vs
-   reverted, with reasons; sources consulted vs accepted vs
-   rejected with vetting status ("none" when the run consulted no
-   literature); intermediate files (plan, spike, session log) with
-   producers (agent, or lead-owned degraded); blocked capabilities
-   and degraded delegations with what was done instead; and
-   verification status — PASS, PASS WITH NOTES (MAJOR findings
-   remain in Open Questions), or BLOCKED (name the check that
-   could not run). Verify on disk that both files exist before
-   stopping; never stop at an intermediate draft.
+   sidecar `notes/research/<slug>.provenance.md` per the contract,
+   additionally recording the measurement command and environment
+   (branch, mode) and iterations attempted vs kept vs reverted with
+   reasons. Verify on disk that both files exist before stopping;
+   never stop at an intermediate draft.
 
 ## Honesty rules (binding)
 

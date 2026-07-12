@@ -57,7 +57,8 @@ Before dispatching, read the visible tool's schema and conform to
 it; never copy a call shape from a document, including this one.
 
 Named agents (the kitcat roster: `analyzer`, `coder`, `reviewer`,
-`researcher`, `verifier`): Claude Code loads them via the
+`researcher`, `verifier`, `ingest`, `writer`, `suite-maintainer`):
+Claude Code loads them via the
 `.claude/agents/` symlinks; pi loads them via the `.pi/agents/`
 symlinks — both bridges are load-bearing. When a skill delegates
 to a named agent that is absent in your harness, do the work
