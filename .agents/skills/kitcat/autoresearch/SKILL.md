@@ -68,7 +68,7 @@ change on a target module must typecheck with zero warnings (exit
    confirmation via the user-question capability before running
    anything. For non-routine proof strategy — h-levels, coherence,
    transport chains, equivalences — dispatch the
-   `hott-theoretician` agent for a strategy memo first; when that
+   `analyzer` agent for a strategy memo first; when that
    agent is absent, reason lead-owned and record the delegation as
    degraded. Memo claims are CONJECTURED until machine-checked.
 3. **Baseline** — Before any change, run the measurement command
@@ -79,7 +79,7 @@ change on a target module must typecheck with zero warnings (exit
 4. **Loop** — Each iteration, up to the budget:
    - State one hypothesis and make exactly one change — in the
      spike file, or in the target module in full-module mode.
-     Iteration edits may be dispatched to the `cubical-agda-coder`
+     Iteration edits may be dispatched to the `coder`
      agent with a self-contained brief; when absent, edit
      lead-owned and record the delegation as degraded.
    - Measure with the recorded command. Never substitute a
@@ -110,7 +110,7 @@ change on a target module must typecheck with zero warnings (exit
    kept without a zero-warning typecheck, metric gains from
    weakened checks, claims stronger than their evidence, and
    sections surviving from earlier drafts that the final evidence
-   no longer supports. Dispatch the `cubical-agda-reviewer` agent
+   no longer supports. Dispatch the `reviewer` agent
    for kept target-module changes when present; otherwise
    self-review. Grade findings FATAL / MAJOR / MINOR; fix FATAL
    before delivery and run one more pass after the fixes; note

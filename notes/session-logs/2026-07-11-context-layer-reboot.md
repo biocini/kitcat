@@ -60,11 +60,11 @@ The arc, with course corrections pinned:
    and current practice is not normative); treating my memory layer
    as the bank (memory is pointers into canonical context, never
    the store).
-5. **The lb alignment** — Lane pointed at `~/src/ocaml/lb` as the
-   working exemplar; imported: `notes/session-logs/` naming, the
-   `CHANGELOG.md` lab notebook with `/log` writing both, and the
-   session-log header discipline (scope paragraph, honest status
-   line, meta-process notes).
+5. **The reference alignment** — Lane pointed at an external
+   reference implementation of the workflow discipline; imported:
+   `notes/session-logs/` naming, the `CHANGELOG.md` lab notebook
+   with `/log` writing both, and the session-log header discipline
+   (scope paragraph, honest status line, meta-process notes).
 6. **Closing mechanics** — Pi slash adapters as prompt-template
    symlinks in `.pi/prompts/` and `.feynman/prompts/` (adapter
    chain probe green); the feynman original deleted per standing

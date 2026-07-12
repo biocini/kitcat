@@ -1,0 +1,92 @@
+# .agents/methodology.md — the working discipline
+
+The practiced discipline of this library, stated positively as the
+way work is done here. The specific enforcements live where they
+act — the root `CLAUDE.md`, the agent definitions in `.agents/`, the
+skills under `.agents/skills/kitcat/` — and this file is the shared
+account they draw on. Each principle carries a worked exemplar from
+the repository's own record.
+
+## P1 — Pin at decision time, with the reason
+
+Every ruling and every abandoned approach is recorded the moment it
+is made, with its reason, in the run's plan ledger — not
+reconstructed later. A failed proof attempt is preserved before it
+is reverted (the "preserve the attempt, then revert" discipline),
+so the next session inherits the decision rather than re-litigating
+it. Exemplar: the θ-core / op-invol arc kept its spike and its wall
+with the obstruction transcribed, and the next session mined that
+wall into a naturality across the polarity swap.
+
+## P2 — Prose about a formal object is untrusted until it is run
+
+A mathematical claim graduates only when a spike typechecks it
+against the real foundation — never a toy model; the typecheck is
+the pin, prose is not. A spike is dispatched with an oracle-shaped
+contract: a verdict in {DERIVED, STUCK, PARTIAL}, the route closed,
+and the exact goal-verbatim residue at any wall. A definitional
+reduction a proof leans on is re-asserted beside it as a
+present-tense `killcheck-<name> = refl`, so a reduction that stops
+firing fails the next `just check`. A claim about an unobservable
+surface (harness internals, an external build) ships with its probe
+or ships as CONJECTURED. Exemplar: the PcomConservation (T20) arc —
+the conservation-law fork was pinned by `Test/CodepPcomFaces`
+typechecking against the real `Cat.Codep.Coherence` before the
+record edit, and promotion was withheld until it returned.
+
+## P3 — Enshrine same-session, into one canonical home
+
+A result proven in a session is graduated that same session into
+its canonical home: a dated `docs/gloss.md` ledger entry with its
+honest status marker, and — when the evidence's only durable home
+is the artifact — a frozen `Gloss.*` certificate in the same move,
+held in exact bijection with the ledger entry. The session log
+carries state and next steps only; it points at the canonical home,
+never duplicating it. A run artifact's durable content is promoted
+to its home and the artifact retired; nothing load-bearing lives
+only in a scratch file, a plan ledger, or the harness-private
+memory. Exemplar: T11 (TEL-independence) became the `docs/gloss.md`
+T11 entry and `Gloss.EightFieldWall` in one move.
+
+## P4 — Literature unfolded to serve the construction, at speed
+
+When a proof turns on a source, the vendored copy is opened during
+the derivation and the entry is built to serve that read at speed:
+the canonical source markup (LaTeX preferred over PDF over
+transcribed text), a line-anchored location→content map whose depth
+tracks the source's load, so a citation resolves at `<file>:LINE`.
+When a load-bearing claim rests on an unvendored source, the default
+is to ingest it (`resources/README.md` is the format authority).
+Exemplar: Kelly 1964 opened mid-derivation to steer the absorb-cell
+design.
+
+## P5 — Quality by worked exemplar and mechanical gating
+
+A bar is set by a worked example to imitate, not by an adjective,
+and enforced by a check that is *run*, not trusted: the reviewer
+independently executes `just check` (exit 42 is failure, zero
+warnings) and `just lint` on every touched module rather than
+accepting the author's word, and a convention the tree can gate is
+gated (the authoring lint over the skills tree, the `just sync`
+drift gate). Exemplar: the Cat.Monoidal milestone review re-ran the
+checks rather than trusting the coder's "exits 0, zero warnings".
+
+## The Agda pipeline (the symmetric bracket)
+
+The library's most-run flow: `analyzer` prepares (structural
+analysis + proof strategy) → `coder` implements → `analyzer` reviews
+for accuracy + `reviewer` runs the mechanical gate. The `analyzer`
+is consulted before any non-trivial proof (h-levels, coherence,
+transport, fibers, univalence); routine proofs bypass it. Research
+deliverables pass four gates in order, none skippable on confidence:
+plan → firsthand reading → verify-before-deliver → ingest a
+firsthand-needed source.
+
+## Provenance of this account
+
+These practices were distilled by studying a mature reference
+implementation of the same workflow discipline and translating each
+proven convention onto this library's own demonstrated work
+(like-with-like), then verified against the repository's record. The
+account stands on this library's own exemplars; the external study
+that shaped the method is recorded outside the repository.

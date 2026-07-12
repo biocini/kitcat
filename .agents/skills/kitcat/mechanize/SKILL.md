@@ -58,11 +58,11 @@ its module named, not re-mechanized.
    on the other targets; the prerequisite lemmas, each marked
    VERIFIED (already machine-checked here — name the module or Gloss
    certificate) or CONJECTURED (to be proven); the intended proof
-   method; and its module placement. Dispatch the `cubical-analyzer`
+   method; and its module placement. Dispatch the `analyzer`
    agent for placement, dependency, and duplication analysis when
    present; `just stats` and the file-search capability over
    import lines give live inventories.
-   Consult the `hott-theoretician` agent for proof strategy whenever
+   Consult the `analyzer` agent for proof strategy whenever
    a target involves h-levels or truncation, equivalence
    constructions, coherence or naturality, transport or substitution
    chains, fiber arguments, or univalence — routine proofs need no
@@ -87,7 +87,7 @@ its module named, not re-mechanized.
    and wait; never default to an execution mode.
 
 4. **Execute** — per the chosen mode. Implementation is delegated to
-   the `cubical-agda-coder` agent with a self-contained brief built
+   the `coder` agent with a self-contained brief built
    from the ledger (hypotheses, prerequisite lemmas with modules,
    annotated sketch, target file); when that agent is absent, work
    lead-owned and record the delegation as degraded. Constraints in
@@ -101,7 +101,7 @@ its module named, not re-mechanized.
    broken approach. In full-module mode, after the success criteria
    pass, run `just lint` and `just check <Mod>` on every touched
    module, and dispatch the
-   `cubical-agda-reviewer` agent (lead-owned degraded when absent).
+   `reviewer` agent (lead-owned degraded when absent).
    Append to the plan ledger `notes/plans/<slug>.md` after
    meaningful progress, after failed attempts, and before stopping:
    active objective, what changed, what was checked, next step. The

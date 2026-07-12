@@ -3,6 +3,11 @@ set -euo pipefail
 
 # mmv — move/rename Agda modules with automatic refactoring
 
+# rg exits 1 when nothing matches — an empty set here, not an error.
+# Any other nonzero status is a real failure and must propagate
+# (stderr is untouched either way).
+rg_allow_empty() { rg "$@" || [ $? -eq 1 ]; }
+
 usage() {
     echo "Usage: mmv OLD_MODULE NEW_MODULE [--dry-run]"
     echo ""
@@ -54,11 +59,16 @@ fi
 old_re="$(echo "$old_module" | sed 's/\./\\./g')"
 boundary_re="(^|[^A-Za-z0-9'.-])${old_re}(\$|[^A-Za-z0-9'-])"
 
-# Find files that reference the old module name
+# Find files that reference the old module name. The sweep runs in a
+# command substitution, not a process substitution, so a real rg
+# failure aborts here instead of silently yielding an empty sweep.
+sweep="$(rg_allow_empty -l -e "$boundary_re" "${git_root}/src/" --glob '*.lagda.md' --glob '*.agda')"
 affected_files=()
-while IFS= read -r f; do
-    affected_files+=("$f")
-done < <(rg -l -e "$boundary_re" "${git_root}/src/" --glob '*.lagda.md' --glob '*.agda' 2>/dev/null || true)
+if [ -n "$sweep" ]; then
+    while IFS= read -r f; do
+        affected_files+=("$f")
+    done <<< "$sweep"
+fi
 
 updated=${#affected_files[@]}
 
@@ -101,7 +111,13 @@ for f in "${all_files[@]}"; do
     [ "$f" = "$old_file" ] && target="$new_file"
     [ -f "$target" ] || continue
 
-    if rg -q -e "$boundary_re" "$target" 2>/dev/null; then
+    match=0
+    rg -q -e "$boundary_re" "$target" || match=$?
+    if [ "$match" -ge 2 ]; then
+        echo "Error: rg failed on $target (exit $match)" >&2
+        exit "$match"
+    fi
+    if [ "$match" -eq 0 ]; then
         OLD="$old_module" NEW="$new_module" \
             perl -i -pe 's/(?<![A-Za-z0-9\x27.-])\Q$ENV{OLD}\E(?![A-Za-z0-9\x27-])/$ENV{NEW}/g' "$target"
         count=$((count + 1))
@@ -110,3 +126,11 @@ done
 
 echo "Moved: $old_path → $new_path"
 echo "Updated $count file(s)"
+
+# A moved module references itself in its `module … where` header, so
+# a zero-update move means the sweep or the replacement failed — the
+# file move has already happened; inspect before retrying.
+if [ "$count" -eq 0 ]; then
+    echo "Error: no references were updated, not even the moved module's own header" >&2
+    exit 1
+fi

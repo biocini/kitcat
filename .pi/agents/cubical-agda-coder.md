@@ -1,1 +1,0 @@
-../../.agents/cubical-agda-coder.md

@@ -77,7 +77,7 @@ the only place VERIFIED evidence can appear.
    the sources genuinely diverge on is a finding, not a footnote.
    Include diagrams or supplementary tables only when
    source-supported and decision-changing; prefer a plain table
-   when no diagram capability is available. Where useful, propose
+   when a diagram cannot be rendered. Where useful, propose
    concrete next steps for this repository: which variant to
    mechanize and why, spike candidates, results to pursue toward
    `docs/gloss.md` entries, `resources/` entries worth vetting —

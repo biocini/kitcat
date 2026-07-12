@@ -99,9 +99,9 @@ apply and why any do not:
    entry here.
 4. **Delegate where it pays** — For artifacts large enough to
    benefit, use the subagent-dispatch capability with
-   self-contained briefs: `hott-theoretician` for proof-strategy
-   soundness, `cubical-analyzer` for overlap with existing
-   modules, `researcher` for the prior-art sweep. The
+   self-contained briefs: `analyzer` for proof-strategy soundness
+   and overlap with existing modules, `researcher` for the
+   prior-art sweep. The
    researcher writes its evidence to
    `notes/research/<slug>-research-*.md`, never inline; the
    theoretician and analyzer deliver in-reply memos — record

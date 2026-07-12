@@ -2,8 +2,17 @@
 
 Read this file once per session before executing any skill in this
 tree. Skill bodies name **capabilities**, never harness tools; this
-file maps each capability to the literal tool in the harness you are
-running in. Identify your harness by the tools visible to you.
+file maps each capability to the literal tool in the harness you
+are running in. The consuming harnesses are exactly two: **Claude
+Code** and **pi**. The feynman harness does not consume this
+repository; its CLI serves paper acquisition only
+(`feynman alpha ...` via shell), and the `.feynman/` symlinks are
+inert convenience, not a supported surface.
+
+Mechanics below were audited against the live builds: Claude Code
+(this machine) and pi 0.80.2 with @gotgenes/pi-subagents 18.0.1
+(audited 2026-07-11). When either build changes, re-audit this
+file; claims about unaudited versions are CONJECTURED.
 
 Ground rules:
 
@@ -27,58 +36,79 @@ Ground rules:
 
 ## Capability map
 
-| Capability | Claude Code | Pi (feynman) | Pi (upstream) |
-| --- | --- | --- | --- |
-| web-search | `WebSearch` | `web_search` | `web_search` (also `perplexity_search`) |
-| url-fetch | `WebFetch` | `fetch_content` | `web_fetch`, `batch_web_fetch` (also `read_web_page`, `curl_md`) |
-| paper-search | web-search + url-fetch against arxiv.org, ncatlab.org, 1lab.dev; or `feynman alpha ...` via shell when installed (`command -v feynman`) | `alpha_search`, `alpha_get_paper`, `alpha_ask_paper` when visible; else `feynman alpha ...` via shell | `feynman alpha ...` via shell when installed; else web-search + url-fetch |
-| subagent-dispatch | `Agent` (one agent per call; parallelize with several calls in one message) | `subagent` | `subagent`, `get_subagent_result`, `steer_subagent` |
-| user-question | `AskUserQuestion` | `ask_user_question` when visible; else ask in plain chat and wait | `ask_user_question` when visible; else ask in plain chat and wait |
-| file-read/write/edit | `Read` / `Write` / `Edit` | `read` / `write` / `edit` | `read` / `write` / `edit` |
-| shell | `Bash` | `bash` | `bash` |
-| file-search | `Grep` / `Glob`; `rg` / `fd` via shell | `grep` / `find` when visible; `rg` / `fd` via shell | `ffgrep` / `fffind`; `rg` / `fd` via shell |
-| background-process | `Bash` with `run_in_background` | `process` when visible | `process` |
-| scheduling | a scheduling tool when visible | `schedule_prompt` when visible | a scheduling tool when visible |
-| session-recovery | `rg` over `~/.claude/projects/<munged-cwd, e.g. -Users-lane-kitcat>/*.jsonl` | `/search` when visible; else `rg` over `~/.feynman/sessions/` | `session_search`, `session_list`, `session_read` |
-| doc-preview | `just html` for library docs; `Artifact` when visible; `pandoc` via shell | `/preview` family when visible; else `pandoc` via shell | `preview_export`; else `pandoc` via shell |
-| persistence | repo files (`notes/plans/`, `notes/research/`) | repo files; `memory_remember` additionally when visible | repo files |
+| Capability | Claude Code | pi |
+| --- | --- | --- |
+| web-search | `WebSearch` | `web_search` (also `perplexity_search`) |
+| url-fetch | `WebFetch` | `web_fetch`, `batch_web_fetch` (also `read_web_page`, `curl_md`) |
+| paper-search | web-search + url-fetch against arxiv.org, ncatlab.org, 1lab.dev; direct arXiv fetch by id via shell — `curl https://arxiv.org/e-print/<id>` (canonical LaTeX-source tarball) + `/abs/<id>` (metadata) | same as Claude Code |
+| subagent-dispatch | `Agent` (one agent per call; parallelize with several calls in one message) | `subagent`, `get_subagent_result`, `steer_subagent` |
+| user-question | `AskUserQuestion` | plain chat: ask and wait for the next user message (no question tool is installed) |
+| file-read/write/edit | `Read` / `Write` / `Edit` | `read` / `write` / `edit` |
+| shell | `Bash` | `bash` |
+| file-search | `Grep` / `Glob`; `rg` / `fd` via shell | `ffgrep` / `fffind`; `rg` / `fd` via shell (core `grep`/`find` exist but are not in the default active tool set) |
+| background-process | `Bash` with `run_in_background` | `process` |
+| scheduling | a scheduling tool when visible | a scheduling tool when visible |
+| session-recovery | `rg` over `~/.claude/projects/<munged-cwd, e.g. -Users-lane-kitcat>/*.jsonl` | `session_search`, `session_list`, `session_read` |
+| doc-preview | `just html` for library docs; `Artifact` when visible; `pandoc` via shell | `preview_export`; else `pandoc` via shell |
+| persistence | repo files (`notes/plans/`, `notes/research/`) | repo files |
 
 Subagent dispatch schemas differ across harnesses and versions.
 Before dispatching, read the visible tool's schema and conform to
 it; never copy a call shape from a document, including this one.
 
-Named agents (the kitcat roster: `cubical-agda-coder`,
-`cubical-agda-reviewer`, `cubical-analyzer`, `hott-theoretician`,
-`researcher`, `verifier`) are registered
-per-harness, and availability varies by harness. When a skill
-delegates to a named agent that is absent in your harness, do the
-work lead-owned and record the delegation as degraded in the run
+Named agents (the kitcat roster: `analyzer`, `coder`, `reviewer`,
+`researcher`, `verifier`): Claude Code loads them via the
+`.claude/agents/` symlinks; pi loads them via the `.pi/agents/`
+symlinks — both bridges are load-bearing. When a skill delegates
+to a named agent that is absent in your harness, do the work
+lead-owned and record the delegation as degraded in the run
 artifact (or the location the skill names).
 
-Pi discovers this tree and the agent registry only after project
-trust is granted: run once with `--approve` (or accept the
-interactive trust prompt) in the repository.
+Trust: pi loads this tree's skills and the `.pi/prompts/` adapters
+only for trusted project directories (persistent store
+`~/.pi/agent/trust.json` — this repository is granted — or
+`--approve` per run); agent definitions load regardless of trust.
+Two invocation routes exist under pi: the `/name` prompt adapters
+substitute `$ARGUMENTS`; the auto-registered `/skill:<name>` form
+appends arguments after the body without substitution — the
+adapters are the canonical route.
 
 ## Authoring rules for this tree
 
 - Skill bodies use capability nouns from the table above. This file
   is the only place harness tool names appear.
+- Skill bodies NAME cross-agent conventions and defer to
+  `.agents/CLAUDE.md`; that file is the only place the slug rule,
+  the epistemic lexicon, the provenance-sidecar contents, and
+  degraded-delegation handling are stated — the convention analog
+  of the tool rule above. Open every `SKILL.md` with "Read
+  `.agents/CLAUDE.md` and HARNESS.md first", then reference each
+  convention by name ("derive a run slug per the contract", "label
+  per the contract lexicon"). A slug/lexicon/sidecar spec appearing
+  verbatim in a `SKILL.md` body is an authoring defect a human
+  confirms; a skill states inline only the genuinely skill-specific
+  (deep-research's required artifact paths, mechanize's per-claim
+  ledger, audit's per-axis dimensions).
 - `description:` frontmatter is mandatory — a skill without it does
-  not load under Pi.
+  not load under pi.
 - The only argument placeholder is `$ARGUMENTS`. No other dollar
   token may appear anywhere in a skill body, including inside code
-  examples: Pi substitutes positional tokens across the entire body.
+  examples: pi substitutes positional tokens across the entire
+  body. (Mechanically only `$N`, `$@`, `$ARGUMENTS`, `${N:-…}`,
+  and `${@:N…}` rewrite; the blanket rule is kept as margin.)
 - Frontmatter carries both harness sets: `argument-hint` (Claude
-  Code autocomplete) and `args` / `section` / `topLevelCli` (feynman
-  CLI); each set is inert in the other harness.
+  Code autocomplete) and `args` / `section` / `topLevelCli` (pi
+  prompt adapters); each set is inert in the other harness.
 - Skill names are kebab-case and equal to their directory name.
-- Claude Code discovers this tree through per-skill symlinks; when
-  adding a skill, also add its symlink:
+- Each skill is exposed on three surfaces, all symlinks to the one
+  canonical file; when adding a skill, add all three:
   `ln -s ../../.agents/skills/kitcat/<name> .claude/skills/<name>`
-- Pi's typed slash form comes from prompt-adapter symlinks; add
-  both alongside:
+  (Claude Code discovery and auto-trigger),
+  `ln -s ../../.agents/skills/kitcat/<name>/SKILL.md .claude/commands/<name>.md`
+  (Claude Code typed command — coexists with the skill; verified by
+  the spike-echo probe 2026-07-11),
   `ln -s ../../.agents/skills/kitcat/<name>/SKILL.md .pi/prompts/<name>.md`
-  and the same into `.feynman/prompts/<name>.md`.
+  (pi typed command).
 - The `spike-echo` skill is the discovery diagnostic: invoke it with
   arguments after any harness or tree change and expect
   `SPIKE-ECHO OK ARGS=[<the arguments>]`.

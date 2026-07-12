@@ -76,7 +76,7 @@ substantially harder than the paper's presentation suggests.
    Formalization side: when auditing this repository, read the
    modules with the file-read and file-search capabilities and
    consult `docs/gloss.md` and `resources/` before searching
-   outward; dispatch the `cubical-analyzer` agent for dependency and
+   outward; dispatch the `analyzer` agent for dependency and
    module-structure questions. When the sweep is wide enough to
    benefit from delegated triage, dispatch the `researcher`
    agent with a self-contained brief; its evidence notes go to

@@ -6,13 +6,27 @@ __pycache__/
 *.bak
 /Stash/
 .pi/tasks
+.pi/hindsight
 
 # src/Test/: WIP scratchpads only, local-only; the upgrade path is Gloss
 /src/Test/
 
-# resources/: vendored source documents are local-only; hashes are tracked
+# notes/plans and notes/research are local working memory (run ledgers,
+# research intermediates); the durable session bridge that IS tracked is
+# notes/session-logs/ + CHANGELOG.md.
+/notes/plans/
+/notes/research/
+
+# resources/: vendored source documents and derived forms are local-only;
+# only the entry README (citation, hash, line-anchored map) is tracked.
 resources/**/*.pdf
 resources/**/*.ps
 resources/**/*.djvu
 resources/**/*.gz
 resources/**/*.tar
+resources/**/*.pdftext
+resources/**/*.tex
+resources/**/*.sty
+resources/**/*.cls
+resources/**/*.bib
+resources/**/*.bbl

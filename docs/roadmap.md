@@ -1,11 +1,16 @@
-# Roadmap — standing targets
+# Roadmap — ongoing projects
 
-High-level targets, ordered by dependency. Session history,
-activity provenance, and next-step previews live in the session
-logs (`notes/session-logs/`, one entry per session, written by `/log` at
-close); this file carries only the standing targets and their
-gates. Update it when a target lands, is added, or is re-gated —
-not per session.
+High-level overview of the ongoing projects this repository is
+engaged in, in the rough order in which we wish to proceed —
+subject to Lane's direction, which overrides the ordering at any
+time. Any agent, from any workflow, reads this file for what the
+repository is working toward; it is a standing document, never a
+session artifact. Session history, activity provenance, and
+next-step previews live in the session logs
+(`notes/session-logs/`, one entry per session, written by `/log`
+at close); this file carries only the projects and their gates.
+Update it when a project lands, is added, or is re-gated — not
+per session.
 
 1. **Faithful-stratum substrate spike (A1–A3)** — the main
    mathematical line: substrate records, Π-integral composite,

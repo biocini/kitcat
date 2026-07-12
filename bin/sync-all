@@ -15,6 +15,11 @@
 # Test/* is unmanaged: never added automatically, existing entries kept.
 set -euo pipefail
 
+# rg exits 1 when nothing matches — an empty set for the extractions
+# below, not an error. Any other nonzero status is a real failure and
+# must propagate (stderr is untouched either way).
+rg_allow_empty() { rg "$@" || [ $? -eq 1 ]; }
+
 ALL="src/All.lagda.md"
 fix=false
 regen=false
@@ -44,9 +49,9 @@ fd -e lagda.md . src/ \
 # Matches `open import M ... public` regardless of leading indentation.
 # Test modules are excluded: their re-exports do not help All reach
 # anything, since Test is not part of the managed set.
-rg --no-filename \
+rg_allow_empty --no-filename \
   --glob '!src/All.lagda.md' --glob '!src/Stash/**' --glob '!src/Test/**' \
-  '^[[:space:]]*open import ([A-Z][A-Za-z0-9._]*) .*public' src/ \
+  "^[[:space:]]*open import ([A-Z][A-Za-z0-9._'-]*) .*public" src/ \
   -or '$1' | sort -u > "$REEXPORTED"
 
 # ── roots: managed modules that nothing re-exports ───────────────────
@@ -54,16 +59,16 @@ comm -23 "$ALL_MODS" "$REEXPORTED" > "$ROOTS"
 
 # ── current state of All.lagda.md ────────────────────────────────────
 # Active imports: lines like `import Foo.Bar` (All uses bare `import`).
-rg '^import ([A-Z][A-Za-z0-9.]*)' "$ALL" -or '$1' --no-filename \
+rg_allow_empty "^import ([A-Z][A-Za-z0-9._'-]*)" "$ALL" -or '$1' --no-filename \
   | sort -u > "$ACTIVE"
 # WIP: commented-out imports, preserved verbatim across --fix/--regenerate.
-rg '^-- import ([A-Z][A-Za-z0-9.]*)' "$ALL" -or '$1' --no-filename \
+rg_allow_empty "^-- import ([A-Z][A-Za-z0-9._'-]*)" "$ALL" -or '$1' --no-filename \
   | sort -u > "$WIP"
 
 # Roots the user has chosen to keep as Test entries are unmanaged:
 # subtract current Test/* imports from "missing" so we never re-add them.
 TEST_ENTRIES="$(mktemp)"; trap 'rm -f "$ALL_MODS" "$REEXPORTED" "$ROOTS" "$ACTIVE" "$WIP" "$TEST_ENTRIES"' EXIT
-rg '^import (Test\.[A-Za-z0-9.]*)' "$ALL" -or '$1' --no-filename \
+rg_allow_empty "^import (Test\.[A-Za-z0-9._'-]*)" "$ALL" -or '$1' --no-filename \
   | sort -u > "$TEST_ENTRIES"
 
 missing_comm() { comm -23 "$ROOTS" "$ACTIVE" | comm -23 - "$WIP"; }
@@ -99,12 +104,12 @@ if $regen; then
   # Preserve the prose header (everything up to and including the opening
   # ```agda fence) and the module/OPTIONS lines; replace the import body.
   # Collect manual Test/* entries to preserve.
-  header_top=$(rg -n '^```agda\s*$' "$ALL" | head -1 | cut -d: -f1)
+  header_top=$(rg_allow_empty -n -m1 '^```agda\s*$' "$ALL" | cut -d: -f1)
   if [ -z "$header_top" ]; then
     echo "sync-all: no \`agda code fence found in $ALL" >&2; exit 1
   fi
   # Keep through the module line.
-  mod_line=$(rg -n '^module All where' "$ALL" | head -1 | cut -d: -f1)
+  mod_line=$(rg_allow_empty -n -m1 '^module All where' "$ALL" | cut -d: -f1)
   keep_upto=${mod_line:-$header_top}
   {
     sed -n "1,${keep_upto}p" "$ALL"
@@ -116,7 +121,7 @@ if $regen; then
       | awk -F'\t' 'NR>1 && $1!=prev{print ""} {print "import "$2; prev=$1}'
     [ -s "$WIP" ] && {
       echo ""
-      rg '^-- import ' "$ALL" --no-filename || true
+      rg_allow_empty '^-- import ' "$ALL" --no-filename
     }
     echo '```'
   } > "${ALL}.tmp" && mv "${ALL}.tmp" "$ALL"

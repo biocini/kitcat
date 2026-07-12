@@ -101,21 +101,56 @@ the tools.
 ## Policy context
 
 External policies these standards are calibrated against, as of
-2026-07-11 (the landscape is moving; entries are date-stamped):
+2026-07-11 (the landscape is moving; entries are date-stamped and
+each names the document that states it; all opened 2026-07-11):
 
-- arXiv: LLMs are not authors; significant tool use is reported;
-  since May 2026, evidence of unchecked LLM content (hallucinated
-  references) draws a one-year submission ban.
-- mathlib contributing guide (mid-2026): mandatory AI disclosure on
-  PRs, `LLM-generated` labels, contributor comprehension required,
-  own-words rule for community prose.
-- Leiden Declaration on AI and Mathematics (June 2026, IMU-endorsed):
-  tool disclosure sections; human responsibility for correctness;
-  proactive crediting of sources behind AI-synthesized results;
+- arXiv: LLMs are not authors; significant tool use is reported
+  (2023-01-31,
+  <https://blog.arxiv.org/2023/01/31/arxiv-announces-new-policy-on-chatgpt-and-similar-tools/>).
+  In May 2026 arXiv's Computer Science section announced — via its
+  section chair, with no arXiv-hosted policy page to date — a
+  one-year submission ban on incontrovertible evidence of
+  unchecked LLM content, hallucinated references the canonical
+  trigger; coverage:
+  <https://library.smu.edu.sg/topics-insights/arxiv-tightens-policy-hallucinated-references-what-researchers-should-know-about>
+  (2026-06-10),
+  <https://www.insidehighered.com/news/faculty/books-publishing/2026/05/22/ban-authors-who-submit-ai-content-welcome-unenforceable>
+  (2026-05-22).
+- mathlib contributing guide (the source's own stamp: mid-2026;
+  <https://leanprover-community.github.io/contribute/index.html>):
+  mandatory AI disclosure on PRs, `LLM-generated` labels,
+  contributor comprehension required, own-words rule for community
+  prose.
+- Leiden Declaration on AI and Mathematics (2026-06-02,
+  IMU-endorsed; <https://leidendeclaration.ai/>): tool disclosure
+  sections; human responsibility for correctness; proactive
+  crediting of sources behind AI-synthesized results;
   peer-reviewed venues over press releases.
-- ACM (June 2026) no longer mandates AI disclosure and instead
-  stresses author responsibility; IEEE and Springer Nature require
-  disclosure of AI-generated content and bar AI authorship.
+- ACM authorship policy (updated 2026-05-14,
+  <https://www.acm.org/publications/policies/new-acm-policy-on-authorship>):
+  disclosure of AI writing assistance is no longer required; AI
+  used in the conduct of the research must still be described in
+  detail in the methods section; all named authors are accountable
+  for problematic content regardless of its source.
+- IEEE requires disclosure of AI-generated content in the
+  acknowledgments
+  (<https://journals.ieeeauthorcenter.ieee.org/become-an-ieee-journal-author/publishing-ethics/guidelines-and-policies/submission-and-peer-review-policies/>);
+  its AI-authorship bar is stated at society level (IEEE RAS,
+  <https://www.ieee-ras.org/publications/guidelines-for-generative-ai-usage/>)
+  and deferred IEEE-wide to the PSPB Operations Manual (pp. 5–6,
+  not yet opened here). Springer Nature bars LLM authorship and
+  requires Methods-section documentation
+  (<https://www.nature.com/nature-portfolio/editorial-policies/ai>).
+- Agda community: no adopted AI-policy text as of 2026-07-11
+  (agda/agda CONTRIBUTING.md and HACKING.md, agda-stdlib
+  HACKING.md opened; GitHub code search over both repos) — and
+  the absence is a deliberate, recent decision: a blanket-ban
+  proposal (<https://github.com/agda/agda/pull/8456>) closed
+  unmerged 2026-04-15, and
+  <https://github.com/agda/agda/pull/8507> merged 2026-07-10 with
+  its AI-policy section removed after the 2026-05-27 developer
+  meeting (the merged CONTRIBUTING.md contains no AI language;
+  the PR body still describes the removed ban).
 
 This repository holds itself to the strictest of these
 simultaneously.

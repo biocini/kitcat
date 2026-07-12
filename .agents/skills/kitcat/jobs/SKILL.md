@@ -63,8 +63,8 @@ for BLOCKED capabilities.
 
 4. **Report** — Summarize in chat, grouped in this order: running
    background work; scheduled follow-ups; durable state (spikes,
-   failure records, open plans, watches, log recency, the latest
-   next-step preview); failures needing attention (background tasks that exited
+   open plans with any failures they preserve, watches, log
+   recency, the latest next-step preview); failures needing attention (background tasks that exited
    nonzero, warning exits — exit 42 is failure in this repository —
    stalled plans); and the next concrete
    command for anyone wanting logs or detail (`just wip`,

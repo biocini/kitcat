@@ -80,7 +80,7 @@ well-sourced it is.
    is VERIFIED — name the module or Gloss certificate; one asserted
    only in literature, or not directly located, stays CONJECTURED —
    never imply a lemma exists here without locating it. Dispatch
-   the `cubical-analyzer` agent for the gap and placement analysis
+   the `analyzer` agent for the gap and placement analysis
    when present; otherwise do it lead-owned and record the
    delegation as degraded.
 5. **Mechanization grounding** — Find existing mechanizations of
@@ -93,7 +93,7 @@ well-sourced it is.
    obstructions: coherence towers, h-level walls, universe issues,
    erasure compatibility under `--erased-cubical`, and wild-hom
    compatibility (any step that truncates homs is disqualifying).
-   Consult the `hott-theoretician` agent for non-trivial
+   Consult the `analyzer` agent for non-trivial
    obstruction assessment when present — its claims stay
    CONJECTURED until machine-checked; when absent, assess the
    obstructions lead-owned and record the delegation as degraded.

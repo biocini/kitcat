@@ -1,1 +1,0 @@
-../../.agents/hott-theoretician.md

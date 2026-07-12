@@ -9,9 +9,9 @@ harness (Claude Code, Pi) loads it.
 **Never implement Agda code directly when the roster is present.
 Delegate:**
 
-- Implementation/coding → `cubical-agda-coder`
-- Analysis/dependencies → `cubical-analyzer`
-- Review/quality → `cubical-agda-reviewer`
+- Implementation/coding → `coder`
+- Analysis, proof strategy, placement, accuracy review → `analyzer`
+- Mechanical review/quality gate → `reviewer`
 
 Your role is orchestration: gather minimal context, delegate with
 complete self-contained briefs, synthesize results. The roster is
@@ -23,10 +23,9 @@ record the delegation as degraded.
 
 | Agent | Use when |
 | --- | --- |
-| `cubical-analyzer` | Dependencies, imports, gaps, module placement, duplication, planning a feature |
-| `cubical-agda-coder` | Any request to produce or fix Agda code |
-| `cubical-agda-reviewer` | Style/correctness/quality check before any commit |
-| `hott-theoretician` | Proof strategy, formulations, what lemmas are needed |
+| `analyzer` | Dependencies, imports, gaps, placement, duplication, planning; proof strategy, formulations, required lemmas; accuracy review of an implementation |
+| `coder` | Any request to produce or fix Agda code |
+| `reviewer` | Mechanical style/correctness/hard-rule/ledger gate before any commit |
 | `researcher` | External literature evidence: arXiv/nLab/1lab sweeps, file-based notes |
 | `verifier` | Citation checks: URLs resolve, sources state their claims, ledger bijection |
 
@@ -34,16 +33,17 @@ Agent registries are per-harness and availability varies; a
 workflow that names an absent agent runs lead-owned and records the
 delegation as degraded.
 
-Consult `hott-theoretician` BEFORE the coder starts any proof
+Consult the `analyzer` BEFORE the coder starts any proof
 involving: h-levels or truncation, equivalence constructions,
 coherence or naturality, transport/substitution chains, fiber
 arguments, univalence. Don't consult for routine proofs (ap, sym,
 simple paths, direct pattern matching).
 
-**Workflow** — new features: Analyzer → (theoretician if
-non-trivial) → Coder → Reviewer. Bug fixes: (theoretician if
-strategy unclear) → Coder → Reviewer. Refactoring: Analyzer →
-Coder → Reviewer.
+**Workflow** (the symmetric bracket) — new features: `analyzer`
+(analysis + strategy) → `coder` → `analyzer` (accuracy review) +
+`reviewer` (mechanical gate). Bug fixes: `analyzer` if strategy is
+unclear → `coder` → `reviewer`. Refactoring: `analyzer` → `coder`
+→ `reviewer`.
 
 ## Agent Discipline
 
@@ -56,18 +56,36 @@ Coder → Reviewer.
   that you'll touch. State what you found. Then act.
 - After a failed proof attempt: preserve the attempt in the run's
   plan ledger, then revert. Do not stack fixes on a broken
-  approach.
+  approach. On a genuine two-strikes wall, KEEP the timestamped
+  `src/Test/` spike (do not delete it) with `-- STUCK:` comments
+  transcribing the verbatim goal type at the stuck hole and what
+  was tried; revert the real modules; invent no auxiliary axioms;
+  and register the kept spike plus its salvage — the reusable
+  machinery it produced and what the wall points at — in the run
+  ledger under a "do not re-derive; build on" heading, so the next
+  session builds on the recorded wall rather than re-litigating it
+  (the θ-core/op-invol arc kept `Test/CodepOpTheta-20260710-223915`,
+  whose walls were mined next session into a naturality across the
+  polarity swap).
 - If a directive is ambiguous — multiple readings leading to
   different actions — seek clarification first. A short approval
   is not a blank check.
 - Memo/consultation claims are conjectures until machine-checked:
   mark every load-bearing claim VERIFIED or CONJECTURED, and gate
-  implementation on a spike for the conjectured ones.
+  implementation on a spike for the conjectured ones. A spike is
+  dispatched with an oracle-shaped report contract — a required
+  verdict in {DERIVED, STUCK, PARTIAL}, which route closed, and the
+  exact goal-verbatim residue at any stuck hole; the typecheck
+  against the real foundation (never a toy model) is the pin, prose
+  is never the pin. A spike is warranted only by an actually-open
+  fork (a candidate cell, an unpinned coherence, an is-X-derivable
+  question), never a routine ap/sym proof — a redundant spike is the
+  ornamental redundancy faithfulness forbids.
 - Commit only when Lane says to commit.
 
 ## Proof Sketches
 
-When `hott-theoretician` produces sketches for the coder, include
+When the `analyzer` produces proof sketches for the coder, include
 explicit type annotations at each step — ambiguous intermediate
 types make the coder guess wrong and burn debugging cycles:
 
@@ -122,6 +140,8 @@ static tables.
 ## Context Layer
 
 The agent-facing context is exactly: this file, src/Gloss/CLAUDE.md,
+`.agents/CLAUDE.md` (the cross-agent contract), `.agents/methodology.md`
+(the working discipline), the agent roster (`.agents/*.md`),
 README.md, CHANGELOG.md, docs/gloss.md (the theorem ledger),
 docs/provenance.md, docs/roadmap.md, the workflow suite
 (`.agents/skills/kitcat/`), `resources/`, and `notes/`. Nothing
@@ -193,20 +213,24 @@ watch, eli5, log, jobs, preview, session-search, alpha-research.
 
 ## Research Artifacts
 
-- `notes/plans/<slug>.md` — run plans: externalized working memory,
-  readable by any harness.
+- `notes/plans/<slug>.md` — run plans: local working memory
+  (gitignored), readable by any harness on this machine.
 - `notes/research/` — research intermediates, finals, and their
-  `.provenance.md` sidecars.
+  `.provenance.md` sidecars: local working memory (gitignored).
 - `notes/session-logs/<YYYY-MM-DD>-<slug>.md` — append-only session
-  logs: where things stand, open questions, next-step preview.
+  logs: where things stand, open questions, next-step preview. This
+  and `CHANGELOG.md` are the tracked session bridge; the
+  working-memory notes are distilled into them at session close.
 - `CHANGELOG.md` — the lab notebook: what happened, newest first,
   with honest verification markers. `/log` writes both at session
   close.
 - `notes/watches/` — literature-watch state.
 - `resources/<slug>/` — vetted sources (documents vendored locally
   and gitignored; hashes and vetting records tracked).
-- `docs/roadmap.md` — standing targets and their gates; updated
-  when a target lands or is re-gated, not per session. The latest
+- `docs/roadmap.md` — the high-level overview of the repository's
+  ongoing projects and their gates, in the rough order of intended
+  progression, subject to Lane's direction; updated when a project
+  lands or is re-gated, not per session. The latest
   `notes/session-logs/` entry is the session bridge.
 
 ## Honesty and Provenance
@@ -293,6 +317,24 @@ is correct or what the next line does.
   consuming modules — if another module could plausibly need it,
   it belongs in the matching `Core.*` module; create it there
   first, then import.
+
+## Mechanization Discipline
+
+Every definitional reduction a proof leans on is pinned beside it
+as a named, present-tense `killcheck-<name> = refl` witness (the
+reduction stated as its own type), so a reduction that stops firing
+fails the next `just check` — exemplar `src/Cat/Codep/Coherent.lagda.md`
+(`killcheck-apPost`/`killcheck-apPre = refl`, which record the
+reductions θ-core relies on). A route that should close but provably
+does not is banked as a WALL transcribing the verbatim refl-probe
+goal at the stuck hole (`Gloss.EightFieldWall`), never dropped
+silently. When a settled spike graduates to a `Gloss.*` certificate
+it is frozen self-contained modulo `Core`, each needed `Cat.*`
+definition inlined `Frozen from <Module> @ <commit>`, re-typechecked
+against CURRENT `Core` before landing (never copy-forward on faith —
+a stale certificate rots silently), and landed in the same change as
+its `docs/gloss.md` 🧪 entry so the ledger↔certificate bijection
+holds. Details: `src/Gloss/CLAUDE.md`.
 
 ## Representability-First Style (Cat.*)
 

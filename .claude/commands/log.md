@@ -1,0 +1,1 @@
+../../.agents/skills/kitcat/log/SKILL.md

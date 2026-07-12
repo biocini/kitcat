@@ -39,7 +39,7 @@ stats:
     set -euo pipefail
     total=$(fd -e lagda.md . src/ | grep -v Stash | grep -v '^src/Test/' | wc -l | tr -d ' ')
     namespaces=$(fd -e lagda.md --min-depth 2 . src/ | grep -v Stash | sed 's|^src/||;s|/.*||' | sort -u | tr '\n' ' ')
-    wip=$(rg -c '^\-\- import' src/All.lagda.md 2>/dev/null || echo 0)
+    wip=$(rg -c '^-- import' src/All.lagda.md || { [ $? -eq 1 ] && echo 0; })
     echo "Modules:    $total"
     echo "WIP:        $wip"
     echo "Namespaces: $namespaces"

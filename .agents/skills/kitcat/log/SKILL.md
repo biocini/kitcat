@@ -91,7 +91,11 @@ order:
 5. **Theorem ledger** — `docs/gloss.md` entries added or upgraded,
    with their status markers.
 6. **Failures preserved** — attempts preserved in plan ledgers,
-   each with one line on why the approach failed.
+   each with why the approach failed AND its salvage: the reusable
+   machinery the attempt produced and what the wall points at, so a
+   future session builds on it rather than re-deriving (the θ-core
+   arc's "do not re-derive; build on" heading is the model). A
+   preserved failure that names no salvage is under-recorded.
 7. **Proposals** — candidate `resources/` entries, spikes worth
    running, ledger entries to pursue. Proposals are recorded here,
    never executed as a side effect of logging.

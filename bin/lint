@@ -4,6 +4,13 @@ set -euo pipefail
 # lint — unified lint runner for kitcat
 # Usage: lint [--check width|flags]
 
+# rg exits 1 when nothing matches — an empty set here, not an error.
+# Any other nonzero status is a real failure and must propagate
+# (stderr is untouched either way).
+rg_allow_empty() { rg "$@" || [ $? -eq 1 ]; }
+
+cd "$(git rev-parse --show-toplevel)"
+
 PROSE_WIDTH=72
 CODE_WIDTH=85
 checks=()
@@ -19,6 +26,15 @@ while [ $# -gt 0 ]; do
 done
 
 [ ${#checks[@]} -eq 0 ] && checks=(width flags)
+
+# The lintable set, resolved once: an enumeration failure aborts here
+# and an empty set is an error — the gate must never pass by having
+# checked nothing.
+files="$(fd -e lagda.md . src/ | sort)"
+if [ -z "$files" ]; then
+    echo "lint: no .lagda.md files found under src/" >&2
+    exit 1
+fi
 
 issues=0
 
@@ -60,7 +76,7 @@ run_width() {
     echo "── width ──"
     while IFS= read -r f; do
         check_width "$f"
-    done < <(fd -e lagda.md . src/ | grep -v Stash/ | sort)
+    done <<< "$files"
 }
 
 # ── flags check ──────────────────────────────────────────────
@@ -68,14 +84,14 @@ run_flags() {
     echo "── flags ──"
     while IFS= read -r f; do
         # Extract the OPTIONS pragma
-        opts="$(rg 'OPTIONS' "$f" -o --no-filename 2>/dev/null | head -1 || true)"
+        opts="$(rg_allow_empty -m1 -o --no-filename 'OPTIONS' "$f")"
         if [ -z "$opts" ]; then
             echo "  ${f}: no OPTIONS pragma found"
             issues=$((issues + 1))
             continue
         fi
 
-        pragma="$(rg '\{-# OPTIONS .* #-\}' "$f" -o --no-filename 2>/dev/null | head -1 || true)"
+        pragma="$(rg_allow_empty -m1 -o --no-filename '\{-# OPTIONS .* #-\}' "$f")"
         if [ -z "$pragma" ]; then
             echo "  ${f}: OPTIONS found but pragma malformed"
             issues=$((issues + 1))
@@ -99,7 +115,7 @@ run_flags() {
             echo "  ${f}: missing --no-guardedness"
             issues=$((issues + 1))
         fi
-    done < <(fd -e lagda.md . src/ | grep -v Stash/ | sort)
+    done <<< "$files"
 }
 
 # Run requested checks
