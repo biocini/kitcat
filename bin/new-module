@@ -11,8 +11,12 @@ usage() {
     echo "  --flags FLAGS Override default OPTIONS flags"
     echo ""
     echo "Default flags: --safe --erased-cubical --no-guardedness"
-    exit 1
+    exit "${1:-1}"
 }
+
+case "${1:-}" in
+    -h|--help) usage 0 ;;
+esac
 
 [ $# -lt 1 ] && usage
 
@@ -26,7 +30,7 @@ while [ $# -gt 0 ]; do
     case "$1" in
         --aggregator) aggregator=true; shift ;;
         --flags) shift; flags="$1"; shift ;;
-        -h|--help) usage ;;
+        -h|--help) usage 0 ;;
         *) echo "Unknown option: $1"; usage ;;
     esac
 done
@@ -58,7 +62,6 @@ if $aggregator; then
 
     cat > "$file" << EOF
 \`\`\`agda
-
 {-# OPTIONS ${flags} #-}
 
 module ${module_path} where
@@ -68,7 +71,6 @@ EOF
 else
     cat > "$file" << EOF
 \`\`\`agda
-
 {-# OPTIONS ${flags} #-}
 
 module ${module_path} where

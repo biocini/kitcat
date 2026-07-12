@@ -9,7 +9,8 @@ usage() {
     echo "Move an Agda module and update all references."
     echo "Module names are dot-separated (e.g. Core.Base)."
     echo ""
-    echo "  --dry-run  Show what would be done without making changes"
+    echo "  --dry-run  Show each would-be change (file:line: old → new)"
+    echo "             without modifying anything"
     exit 1
 }
 
@@ -18,7 +19,13 @@ usage() {
 old_module="$1"
 new_module="$2"
 dry_run=false
-[ "${3:-}" = "--dry-run" ] && dry_run=true
+if [ $# -ge 3 ]; then
+    if [ $# -gt 3 ] || [ "$3" != "--dry-run" ]; then
+        echo "Error: unrecognized argument(s): ${*:3}" >&2
+        usage
+    fi
+    dry_run=true
+fi
 
 git_root="$(git rev-parse --show-toplevel)"
 
@@ -38,11 +45,20 @@ if [ -f "$new_file" ]; then
     exit 1
 fi
 
+# Match the old name only when the next character is not an Agda
+# name character (letter, digit, ', -), so renaming Core.Trait.Alt
+# never touches Core.Trait.Alternative. A following `.` still
+# matches: qualified references (Core.Trait.Alt.law) get renamed.
+# Left boundary: a preceding name character or `.` excludes the
+# match, so renaming Trait.Alt never touches Core.Trait.Alt.
+old_re="$(echo "$old_module" | sed 's/\./\\./g')"
+boundary_re="(^|[^A-Za-z0-9'.-])${old_re}(\$|[^A-Za-z0-9'-])"
+
 # Find files that reference the old module name
 affected_files=()
 while IFS= read -r f; do
     affected_files+=("$f")
-done < <(rg -l --fixed-strings "$old_module" "${git_root}/src/" --glob '*.lagda.md' --glob '*.agda' 2>/dev/null || true)
+done < <(rg -l -e "$boundary_re" "${git_root}/src/" --glob '*.lagda.md' --glob '*.agda' 2>/dev/null || true)
 
 updated=${#affected_files[@]}
 
@@ -50,7 +66,12 @@ if $dry_run; then
     echo "Would move: $old_path → $new_path"
     echo "Would update $updated file(s):"
     for f in "${affected_files[@]}"; do
-        echo "  ${f#"${git_root}/"}"
+        OLD="$old_module" NEW="$new_module" REL="${f#"${git_root}/"}" perl -ne '
+            if (/(?<![A-Za-z0-9\x27.-])\Q$ENV{OLD}\E(?![A-Za-z0-9\x27-])/) {
+                my $orig = $_; chomp $orig;
+                (my $new = $orig) =~ s/(?<![A-Za-z0-9\x27.-])\Q$ENV{OLD}\E(?![A-Za-z0-9\x27-])/$ENV{NEW}/g;
+                print "  $ENV{REL}:$.: $orig → $new\n";
+            }' "$f"
     done
     exit 0
 fi
@@ -80,9 +101,9 @@ for f in "${all_files[@]}"; do
     [ "$f" = "$old_file" ] && target="$new_file"
     [ -f "$target" ] || continue
 
-    if rg -q --fixed-strings "$old_module" "$target" 2>/dev/null; then
-        old_sed="$(echo "$old_module" | sed 's/\./\\./g')"
-        perl -i -pe "s|${old_sed}|${new_module}|g" "$target"
+    if rg -q -e "$boundary_re" "$target" 2>/dev/null; then
+        OLD="$old_module" NEW="$new_module" \
+            perl -i -pe 's/(?<![A-Za-z0-9\x27.-])\Q$ENV{OLD}\E(?![A-Za-z0-9\x27-])/$ENV{NEW}/g' "$target"
         count=$((count + 1))
     fi
 done

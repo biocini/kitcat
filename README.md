@@ -6,11 +6,34 @@ An experiment with univalent programming and open source mathematics in cubical 
 
 ## Contents
 
-Kitcat will be host to investigations at the intersection of higher catgegory
-theory, homotopy type theory, rewriting theory, combinatorics, and proof
-theory. The library is intended to be a testbed for new ideas in these areas,
-as well as a reference for formalized mathematics and an ergonomic environment
-for functional programming.
+Kitcat is a research library at the intersection of higher category
+theory, homotopy type theory, and programming language foundations,
+written in Cubical Agda. It is a testbed for new ideas in these
+areas, a reference for formalized mathematics, and an ergonomic
+environment for functional programming, with machine-checked proof
+as its standard of evidence.
+
+## Research provenance
+
+This repository is developed with substantial AI assistance under
+the direction and review of its human owner, and aims to be an
+exemplar of transparent, ethical AI-assisted mathematics research:
+machine-checking is the trust boundary for mathematical claims,
+references are human-vetted before anything rests on them, and AI
+contributions are disclosed. [`docs/provenance.md`](docs/provenance.md)
+is the binding standard.
+
+## Building
+
+Requires Agda with cubical support (no external libraries — Agda
+builtins only). With [just](https://github.com/casey/just) and
+direnv:
+
+```sh
+direnv allow      # puts bin/ on PATH
+just check-all    # typecheck the whole library
+just --list       # everything else
+```
 
 ## Foundations
 
@@ -33,16 +56,15 @@ Kitcat incorporates and adapts code from the following projects:
   or influenced by 1lab's formalizations
 - [**TypeTopology**](https://github.com/martinescardo/TypeTopology) (Martín
   Escardó et al., GPL-3.0) — `Core.Function.Partial` adapts the lifting monad
-  from `Lifting.Construction`/`Lifting.Monad`; `Core.Set.Omega` follows
-  `UF.SubtypeClassifier`; `Core.Retract` follows `UF.Retracts`;
-  `Core.Discrete` follows `UF.DiscreteAndSeparated`; and
+  from `Lifting.Construction`/`Lifting.Monad`; `Core.Retract` follows
+  `UF.Retracts`; `Core.Discrete` follows `UF.DiscreteAndSeparated`; and
   `Core.Function.Embedding` adapts `UF.LeftCancellable`
 - [**agda-prelude**](https://github.com/UlfNorell/agda-prelude) (Ulf Norell,
   MIT) — `Core.Function.Base` and `Core.Trait.Ord` are adapted from
   `Prelude.Function` and the prelude's ordering conventions
 - [**TOTBWF's Segal conditions gist**](https://gist.github.com/TOTBWF/018347c1ef1da6cd9e7a43f2e4295513) —
-  `Lib.SSet.Base`, `Lib.SSet.Segal`, and `Lib.CSet.Base` adapt the simplicial
-  set and Segal condition definitions
+  simplicial-set and Segal-condition definitions were adapted for an
+  earlier development, currently parked in `Stash/`
 
 The primary HoTT reference used throughout is Rijke's _Introduction to Homotopy Type Theory_.
 

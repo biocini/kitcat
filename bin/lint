@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # lint — unified lint runner for kitcat
-# Usage: lint [--check width|flags|imports]
+# Usage: lint [--check width|flags]
 
 PROSE_WIDTH=72
 CODE_WIDTH=85
@@ -11,14 +11,14 @@ while [ $# -gt 0 ]; do
     case "$1" in
         --check) shift; checks+=("$1"); shift ;;
         -h|--help)
-            echo "Usage: lint [--check width] [--check flags] [--check imports]"
+            echo "Usage: lint [--check width] [--check flags]"
             echo "No args = run all checks."
             exit 0 ;;
         *) checks+=("$1"); shift ;;
     esac
 done
 
-[ ${#checks[@]} -eq 0 ] && checks=(width flags imports)
+[ ${#checks[@]} -eq 0 ] && checks=(width flags)
 
 issues=0
 
@@ -102,46 +102,11 @@ run_flags() {
     done < <(fd -e lagda.md . src/ | grep -v Stash/ | sort)
 }
 
-# ── imports check ────────────────────────────────────────────
-run_imports() {
-    echo "── imports ──"
-    while IFS= read -r f; do
-        # For each "import Foo.Bar" or "open import Foo.Bar", check if
-        # Foo.Bar is an aggregator directory AND the file only uses
-        # definitions from a single submodule.
-        while IFS= read -r imp; do
-            imp_dir="src/$(echo "$imp" | tr '.' '/')"
-            if [ -d "$imp_dir" ]; then
-                # This import is an aggregator — check how many submodules
-                # actually provide symbols used by this file. Heuristic:
-                # count how many submodule names appear in the file.
-                sub_count=0
-                sub_match=""
-                while IFS= read -r sub; do
-                    sub_mod="$(echo "$sub" | sed 's|^src/||;s|\.lagda\.md$||' | tr '/' '.')"
-                    sub_base="$(basename "$sub" .lagda.md)"
-                    # Quick heuristic: does the file reference this submodule specifically?
-                    if rg -q "\\b${sub_base}\\b" "$f" 2>/dev/null; then
-                        sub_count=$((sub_count + 1))
-                        sub_match="$sub_mod"
-                    fi
-                done < <(fd -e lagda.md --max-depth 1 . "$imp_dir" 2>/dev/null | sort)
-
-                if [ "$sub_count" -eq 1 ] && [ -n "$sub_match" ]; then
-                    echo "  ${f}: import ${imp} could narrow to ${sub_match}"
-                    issues=$((issues + 1))
-                fi
-            fi
-        done < <(rg '^\s*(open )?import ([A-Z][A-Za-z0-9.]*)\b' "$f" -or '$2' --no-filename 2>/dev/null | sort -u)
-    done < <(fd -e lagda.md . src/ | grep -v Stash/ | sort)
-}
-
 # Run requested checks
 for check in "${checks[@]}"; do
     case "$check" in
         width) run_width ;;
         flags) run_flags ;;
-        imports) run_imports ;;
         *) echo "Unknown check: $check" >&2; exit 1 ;;
     esac
 done

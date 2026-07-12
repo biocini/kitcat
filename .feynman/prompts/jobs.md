@@ -1,0 +1,1 @@
+../../.agents/skills/kitcat/jobs/SKILL.md

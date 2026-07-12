@@ -227,8 +227,7 @@ ternary-first governs born-ternary compositions.
 Add an entry when a result is proven (or a countermodel
 established); upgrade 📐 → ✅ when mechanized; record refutations
 and misattributions honestly (see T7's history — walls cited
-against the wrong theorem cost time). `docs/design.md` carries the
-philosophy; this file carries the facts.
+against the wrong theorem cost time). This file carries the facts.
 
 Every 🧪 marker must name its `Gloss.*` certificate, and every
 Gloss module must be named by an entry here — the ledger and the

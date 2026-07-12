@@ -1,10 +1,18 @@
 *.agdai
 MAlonzo/**
 _build/
-benchmarks/
-deps.svg
-Log/
 __pycache__/
 .DS_Store
 *.bak
-keys/
+/Stash/
+.pi/tasks
+
+# src/Test/: WIP scratchpads only, local-only; the upgrade path is Gloss
+/src/Test/
+
+# resources/: vendored source documents are local-only; hashes are tracked
+resources/**/*.pdf
+resources/**/*.ps
+resources/**/*.djvu
+resources/**/*.gz
+resources/**/*.tar

@@ -1,0 +1,1 @@
+../../.agents/skills/kitcat/alpha-research/SKILL.md
