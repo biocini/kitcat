@@ -167,7 +167,8 @@ self-dual). Kelly's derivation is a cancellation argument
 foreclosed by untruncated homs. Regularity does not pin them:
 faithfulness is a property of `emb` (twist-invariant, h-level 1);
 the cells are twist-variant (h-level 2).
-📐 (2026-07-11, bimodule memo).
+📐⚠️ (2026-07-11, bimodule memo); the Kelly source-identification is
+CONJECTURED until `resources/kelly-mac-lane-coherence` is vendored.
 
 **T16 — The Melliès convergence.** kitcat's `op`/`op-invol` is the
 involution `†` of Melliès' "involutive 2-category" reading of Cat;
@@ -178,7 +179,8 @@ the coherence level it is forced (T12 forbids the strict filler).
 The tautological chirality `(C, op C)` is fully definitional
 BECAUSE of Route-B (`op-comp-eq = refl` ⇒ `star-comp = refl`).
 📐 design-level identification against the paper
-(2026-07-11, chirality memo; record not yet built).
+(2026-07-11, chirality memo); backed by
+`resources/mellies-dialogue-chiralities` (PROVISIONAL).
 
 **T17 — Binary-ancestor calibration.** The one-sided ancestor
 (`repr : hom ↪ endo-operators`) is the `fam := unit` filling of the

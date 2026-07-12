@@ -58,3 +58,54 @@ definitions, and the docs-drift porcelain (recipe removed).
 No Agda changed; `just check-all` not run (last green `593f44a`);
 everything staged, commit pending Lane's go-ahead. Session log:
 [`notes/session-logs/2026-07-11-context-layer-reboot.md`](notes/session-logs/2026-07-11-context-layer-reboot.md).
+
+---
+
+## 2026-07-11 — Cat.Codep: the coherence tower, closed by theorem
+
+*Retroactively reconstructed 2026-07-12 (the mathematics work of the
+day; the reboot above is the same day's later infrastructure
+session).* The coherence overlay landed: `Cat.Codep.Coherent`
+(θ-core derived, the gauge cluster collapsing to no fourth cell —
+T6/T7/T19) and the Mac Lane `Triangle` (weak/full/mirror — T8), with
+the parity theorem's Route-B upgrade on `Op` (T9). The theorem
+ledger `docs/gloss.md` (T1–T20) and five frozen `Gloss.*`
+certificates (EightFieldWall, PathGroupoid, PcomConservation,
+PropPinning, TriangleFace23 — all `@ 9133396`) were committed
+together in exact ledger↔certificate bijection. TEL-independence
+(T11, S² countermodel + EightFieldWall), the op-involution regress
+(T12), and the prop-pinning trichotomy (T13) established; the
+interchange / Kelly / Melliès / binary-ancestor identifications
+(T14–T17) recorded 📐. `verified` (`check-all` exit 0). This
+session's commits `cfccb0b`, `9133396`, `2327309`, `593f44a`.
+Session log:
+[`notes/session-logs/2026-07-11-codep-coherence-tower.md`](notes/session-logs/2026-07-11-codep-coherence-tower.md).
+
+## 2026-07-10 — Cat.Codep: hcategory reshape + the opposite category
+
+*Retroactively reconstructed 2026-07-12.* The representable core was
+reshaped to the flat-carrier `hcategory` record (collapsed tower),
+and the opposite category `Cat.Codep.Op` landed with the parity
+theorem — pre/post definitionally swapped, every mirror axiom
+derivable (T9), giving strict self-duality of the category core
+(T10); the eval axiom is self-mirror, so bias is chirality (T3). The
+`Gloss.PcomConservation` (T20) and `PathGroupoid` (T18) spikes were
+produced here (certificates frozen the next day, `2327309`).
+`verified` (per-commit machine-checked). Commits `40e6743`,
+`ed94308`, `97e3157`. Session log:
+[`notes/session-logs/2026-07-10-hcategory-reshape-opposite-category.md`](notes/session-logs/2026-07-10-hcategory-reshape-opposite-category.md).
+
+## 2026-07-09 — Cat.Codep: the representable trilayer
+
+*Retroactively reconstructed 2026-07-12 (the overnight session; git-
+local dates place it on the 9th).* The `Cat.Type`-style category was
+rebuilt as `Cat.Codep`: a category presented through a representable
+embedding `emb : hom ↪ composite`, the 4-field
+representability-canonical carrier, and the `structure` / `axioms` /
+`category` trilayer split (defeating a walking-arrow termination
+class). Ancestors of ledger T1 (`Cat.Codep.Base`) and T4
+(`Cat.Codep.Coherence`); the conservativity battery's path-groupoid
+witness is the T18 ancestor. `verified` (five commits
+machine-checked). Commits `dc52571`, `2376d5b`, `bd75cd1`,
+`b5756c1`, `9bddaf8`. Session log:
+[`notes/session-logs/2026-07-09-codep-representable-trilayer.md`](notes/session-logs/2026-07-09-codep-representable-trilayer.md).
