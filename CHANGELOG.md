@@ -16,6 +16,35 @@ concise, and honest about verification status (`verified` /
 
 ---
 
+## 2026-07-12 — the context-layer hardening arc
+
+The feynman-derived context layer was audited against a studied
+reference implementation of the same workflow discipline (like-with-
+like, benched on this repo's own mathematics work) and hardened into
+the library's own. Landed: `.agents/methodology.md` (the five working
+principles stated as kitcat's own, with kitcat exemplars); the
+bind-once cross-agent contract `.agents/CLAUDE.md` with the 18 skills
+slimmed to defer to it; the roster restructured (`analyzer` = merged
+theoretician + structural analyst; `coder`/`reviewer` renamed; new
+`ingest`/`writer`/`suite-maintainer`); every working protocol
+(spike/killcheck-refl/STUCK-wall/graduation) encoded from root
+CLAUDE.md through the agents; a repo-owned `flake.nix` pinning the
+latest stable Agda + ingestion tools; `just sync` gating on drift and
+a new `just lint authoring` gate; the `/prove` pipeline command;
+`resources/` given a canonical-source-format + `.pdftext` cache
+convention; and the Rijke foundational entry (arXiv 2212.11082) as
+the first live ingestion. The layer was corrected to full public
+independence (no external-repo references; the methodology stands on
+kitcat's own exemplars). notes/plans + notes/research became local
+working memory. `verified`: authoring lint, spike-echo, symlink
+integrity, tree independence, flake syntax. `unverified`: `just
+check-all` under the flake (no Agda changed; last green `593f44a`).
+`blocked`: five `resources/` entries + Rijke are PROVISIONAL pending
+ratification. Superseded: the reboot's harness-mechanics claims
+(re-audited against live builds) and the ad-hoc convention set.
+Commits `f70cf94`, `6103b7f`, `202dfe7`, `9e4dfaf`. Session log:
+[`notes/session-logs/2026-07-12-context-layer-hardening.md`](notes/session-logs/2026-07-12-context-layer-hardening.md).
+
 ## 2026-07-11 — the context-layer reboot (feynman port)
 
 The repository's context management layer was rebooted: the
