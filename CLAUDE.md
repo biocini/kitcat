@@ -211,8 +211,9 @@ the tree through per-skill symlinks in `.claude/skills/`; Pi
 discovers it natively (project trust required). Skills invoke as
 `/name` and auto-trigger by description; `spike-echo` is the
 discovery diagnostic. The suite: deep-research, lit, compare,
-audit, mechanize, formulation-survey, review, draft, autoresearch,
-watch, eli5, log, jobs, preview, session-search, alpha-research.
+audit, mechanize, formulation-survey, critique, draft, autoresearch,
+watch, eli5, log, jobs, preview, session-search, alpha-research,
+prove.
 
 ## Research Artifacts
 
