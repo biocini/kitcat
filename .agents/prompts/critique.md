@@ -67,7 +67,7 @@ apply and why any do not:
 
 ## Workflow
 
-1. **Plan** — Write `notes/plans/<slug>.md`: the artifact identity
+1. **Plan** — Write `notes/plans/<YYYY-MM-DD>-<slug>.md`: the artifact identity
    and source type, the criteria checklist, the verification checks
    needed (which claims get cross-checked against which sources or
    modules, which linked materials to inspect), a task ledger, and
@@ -94,7 +94,7 @@ apply and why any do not:
    claim. Mark every planned check `done`, `blocked`, or
    `superseded` — never silently skip one.
 3. **Collect evidence** — Write
-   `notes/research/<slug>-evidence.md` before drafting the review:
+   `notes/research/<YYYY-MM-DD>-<slug>-evidence.md` before drafting the review:
    exact quoted passages with their locations, the definitions and
    hypotheses as stated, each claim with the status the artifact
    asserts for it, prior-art candidates found, and every inspected
@@ -106,7 +106,7 @@ apply and why any do not:
    and overlap with existing modules, `researcher` for the
    prior-art sweep. The
    researcher writes its evidence to
-   `notes/research/<slug>-research-*.md`, never inline; the
+   `notes/research/<YYYY-MM-DD>-<slug>-research-*.md`, never inline; the
    analyzer delivers an in-reply memo — record its
    load-bearing content in the evidence file with attribution
    before drafting. When a named agent is absent in your harness,
@@ -132,13 +132,13 @@ apply and why any do not:
    recorded search, and sections surviving from earlier drafts that
    the final evidence no longer supports.
 7. **Deliver** — Save the review to
-   `notes/research/<slug>-review.md` with these sections: Summary
+   `notes/research/<YYYY-MM-DD>-<slug>-review.md` with these sections: Summary
    Assessment; Strengths; Findings (FATAL, MAJOR, MINOR
    subsections, each finding with its quoted passage and epistemic
    label); Verification (every check run, with result or BLOCKED);
    Revision Plan (concrete, ordered fixes plus the proposed spikes
    and ledger entries); Open Questions; Sources. Write the
-   provenance sidecar `notes/research/<slug>-review.provenance.md`
+   provenance sidecar `notes/research/<YYYY-MM-DD>-<slug>-review.provenance.md`
    per the contract. Verify on disk that both files exist
    before stopping. When the artifact could not be parsed or
    critical evidence is unreachable, the review still exists: mark

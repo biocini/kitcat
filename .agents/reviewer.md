@@ -84,8 +84,12 @@ binding):
   2327309 landed the ledger and all five certificates together;
   PcomConservation rotted when it sat off a moving foundation.
 - Prose is never worded stronger than the status it cites.
-- Code adapted from an external source carries a credit comment
-  naming the source and location.
+- Credit comments, checked for completeness and form: every
+  citation obligation carried by the dispatching memo or brief is
+  realized as a credit comment at the definition implementing it,
+  in a house form per docs/provenance.md "Code citations". The
+  fidelity of what a credit says is the `verifier`'s code-citation
+  review, which precedes this gate — do not duplicate it here.
 
 Style:
 

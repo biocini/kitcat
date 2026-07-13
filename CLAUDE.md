@@ -32,6 +32,7 @@ record the delegation as degraded.
 | `ingest` | Acquire and vendor a source (arXiv LaTeX / PDF), hash the canonical artifact, prepare a PROVISIONAL `resources/` entry |
 | `writer` | Turn research, ledger entries, and certificates into structured exposition (adds no citations — the lead cites, the verifier audits) |
 | `suite-maintainer` | Author or repair skills and agent definitions; the authoring lint; the shim/prompt masters, harness symlinks, and bind-once contract |
+| `process-reviewer` | Session-close process review (the `/log` stage): friction points mapped to workflow revision/addition proposals or named system weaknesses, tagged ratify-now / next-session for Lane's discretion |
 
 Agent registries are per-harness and availability varies; a
 workflow that names an absent agent runs lead-owned and records the
@@ -136,7 +137,7 @@ operations).
 | `Trait.*` | Typeclass-like interfaces and instances        |
 | `Meta.*`  | Metaprogramming, reflection, tactics           |
 | `Gloss.*` | Frozen evidence certificates for docs/gloss.md (in All; see src/Gloss/CLAUDE.md) |
-| `Test.*`  | WIP scratchpads, timestamped (gitignored; upgrade path: `Gloss.*`) |
+| `Test.*`  | Tracked scratch + regression witnesses (gate-exempt; upgrade path: `Gloss.*`) |
 
 Use `just stats` for live inventories rather than maintaining
 static tables.
@@ -225,17 +226,32 @@ a side effect); `just lint flags` and `just lint authoring` are
 always strict (zero tolerance).
 
 **Test/ scratchpad**: agents may create timestamped scratch files
-`src/Test/<Name>-<timestamp>.lagda.md` for experiments; the
-directory is gitignored, its files need not typecheck cleanly, and
-no committed artifact may reference one *as a dependency or
-evidence citation* — a committed module never imports a Test/ file,
-and no committed doc cites one as the proof of a claim (such a
-citation is a Test→Gloss promotion trigger: promote the evidence to
-`Gloss.*` or drop the citation, per src/Gloss/CLAUDE.md). Recording
-a kept spike's existence and fate in a session log or plan ledger is
-the sanctioned exception — that is the "preserve the attempt"
-process history, not an evidence citation. Promotion of settled
-evidence to `Gloss.*` follows src/Gloss/CLAUDE.md.
+`src/Test/<Name>-<YYYYMMDD-HHMMSS>.lagda.md` for experiments —
+`<Name>` PascalCase and topic-prefixed by arc (`CodepFaithful`,
+`TriFace23Probe`), the timestamp fixed at creation; the pair reads
+cleanly as the module name (`Test.CodepFaithful-20260713-140913`).
+The timestamp IS the tier marker: timestamped = scratch,
+untimestamped = durable. The directory is tracked but gate-exempt:
+its files need not typecheck cleanly, `just lint` skips them by
+name, and `just stats` excludes them — `Gloss.*` is the polished
+tier. Untimestamped Test/ files (`src/Test/<Name>.lagda.md`,
+PascalCase, named for what they guard) are the durable exception:
+regression witnesses (killchecks, probative tests), wired into
+`src/All.lagda.md` by a manual `import Test.<Name>` so they run
+with every `just check-all` (`sync` preserves manual Test entries
+and never adds its own). Legacy files predating this convention
+are triaged at the untracked-file cleanup, not renamed ad hoc. No
+library module (`Core.*`, `Data.*`, `Cat.*`, …) or committed doc
+may reference a Test/ file *as a dependency or evidence citation*
+— All's manual regression imports are the one sanctioned import,
+and no committed doc cites a Test/ file as the proof of a claim
+(such a citation is a Test→Gloss promotion trigger: promote the
+evidence to `Gloss.*` or drop the citation, per
+src/Gloss/CLAUDE.md). Recording a kept spike's existence and fate
+in a session log or plan ledger is the sanctioned process-history
+exception — "preserve the attempt", not an evidence citation.
+Promotion of settled evidence to `Gloss.*` follows
+src/Gloss/CLAUDE.md.
 
 ## Workflow Suite
 
@@ -257,7 +273,7 @@ log, jobs, preview, session-search, alpha-research, prove.
 
 ## Research Artifacts
 
-- `notes/plans/<slug>.md` — run plans: local working memory
+- `notes/plans/<YYYY-MM-DD>-<slug>.md` — run plans: local working memory
   (gitignored), readable by any harness on this machine.
 - `notes/research/` — research intermediates, finals, and their
   `.provenance.md` sidecars: local working memory (gitignored).
@@ -287,7 +303,10 @@ support nothing load-bearing. Novelty language is "we are not aware
 of prior work" plus the search performed. Commits with substantial
 AI-produced content carry the trailer
 `Assisted-by: Claude (<model>)`. Code adapted from external sources
-carries a credit comment:
+carries a credit comment (docs/provenance.md "Code citations" owns
+the spec: the obligation travels through memo/brief handoffs —
+never laundered — and adding or changing credits triggers the
+verifier's citation review before commit):
 
 ```agda
 -- Credit: 1lab, Equiv.Fibrewise
@@ -311,7 +330,9 @@ These documents track the development at different cadences:
 `src/All.lagda.md` is the whole-library typecheck target.
 Conventions (enforced by `sync`): aggregator imports only;
 `import` not `open import`; WIP modules commented out with a
-reason (`just wip`).
+reason (`just wip`). Manual `Test.*` imports are the sanctioned
+regression tripwires (see the Test/ rules): `sync` preserves them
+and never adds its own.
 
 ## Hard Rules
 
@@ -349,6 +370,20 @@ Straightforward and direct. No "Key insight:", "Note:",
 Comments state constraints the code can't show, never why a change
 is correct or what the next line does.
 
+## Public Module Style
+
+- Public-facing modules are crafted API-first: a clean, ergonomic
+  export surface, modeled on how `Core.*` is written — `Core.*` is
+  the exemplar for naming, ordering, and what earns a public name.
+- Literate prose in a module is sound documentation of its
+  adjacent code block — what it states, why it exists, the
+  constraints the code can't show — never process narration,
+  session history, or exploratory commentary.
+- No testing or probing artifacts in public modules: killchecks
+  and probative tests live exclusively in `Test/` (wired into
+  `All` when they must run with the build; see the Test/ rules)
+  and are promoted to `Gloss.*` if and when appropriate.
+
 ## Import and Placement Discipline
 
 - Import the narrowest submodule that provides what you use — not
@@ -364,10 +399,13 @@ is correct or what the next line does.
 
 ## Mechanization Discipline
 
-Every definitional reduction a proof leans on is pinned beside it
-as a named, present-tense `killcheck-<name> = refl` witness (the
-reduction stated as its own type), so a reduction that stops firing
-fails the next `just check` — exemplar `src/Cat/Codep/Coherent.lagda.md`
+Every definitional reduction a proof leans on is pinned as a
+named, present-tense `killcheck-<name> = refl` witness (the
+reduction stated as its own type) in an untimestamped Test/
+regression file imported by `All`, so a reduction that stops
+firing fails the next `just check-all` — killchecks and probative
+tests never live in the public modules themselves. Exemplar
+`src/Test/CodepCoherentKillchecks.lagda.md`
 (`killcheck-apPost`/`killcheck-apPre = refl`, which record the
 reductions θ-core relies on). A route that should close but provably
 does not is banked as a WALL transcribing the verbatim refl-probe
@@ -410,7 +448,8 @@ Its method, which new Cat.* work follows:
 - Pre-refactor modules (`Cat.Type`, `Cat.Base`, `Cat.Virtual`,
   `Cat.Coherence`) use the older composite-witness style; follow
   their local idiom when editing them, but do not export it into
-  new work.
+  new work. They are slated for rebase-or-retire at THE REFACTOR
+  (docs/roadmap.md target 3, which owns the plan and its gates).
 
 ## Ternary-First Composition (Core.*)
 

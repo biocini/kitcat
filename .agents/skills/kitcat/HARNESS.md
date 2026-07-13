@@ -26,7 +26,7 @@ Ground rules:
   state the manual command a human could run instead, and continue
   in degraded mode. Never simulate a capability or claim its result.
 - The run artifact is the executing skill's plan file
-  (`notes/plans/<slug>.md`) unless the skill names another recording
+  (`notes/plans/<YYYY-MM-DD>-<slug>.md`) unless the skill names another recording
   location; a skill with no plan file records in its chat report or
   working file. Skills that produce a provenance sidecar surface
   the run artifact's BLOCKED notes and degraded delegations there
@@ -58,7 +58,8 @@ Before dispatching, read the visible tool's schema and conform to
 it; never copy a call shape from a document, including this one.
 
 Named agents (the kitcat roster: `analyzer`, `coder`, `reviewer`,
-`researcher`, `verifier`, `ingest`, `writer`, `suite-maintainer`):
+`researcher`, `verifier`, `ingest`, `writer`, `suite-maintainer`,
+`process-reviewer`):
 Claude Code loads them via the
 `.claude/agents/` symlinks; pi loads them via the `.pi/agents/`
 symlinks — both bridges are load-bearing. When a skill delegates

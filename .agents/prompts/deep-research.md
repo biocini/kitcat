@@ -26,12 +26,12 @@ Begin with the plan artifact, not with prose about the protocol.
 After the plan is approved, every run must leave these files on
 disk, even in degraded or blocked mode:
 
-- `notes/plans/<slug>.md` — the plan (also the run artifact; the
+- `notes/plans/<YYYY-MM-DD>-<slug>.md` — the plan (also the run artifact; the
   plan file itself is the persistence of the plan)
-- `notes/research/<slug>-draft.md`
-- `notes/research/<slug>-cited.md`
-- `notes/research/<slug>.md` — the final brief
-- `notes/research/<slug>.provenance.md`
+- `notes/research/<YYYY-MM-DD>-<slug>-draft.md`
+- `notes/research/<YYYY-MM-DD>-<slug>-cited.md`
+- `notes/research/<YYYY-MM-DD>-<slug>.md` — the final brief
+- `notes/research/<YYYY-MM-DD>-<slug>.provenance.md`
 
 If a capability fails after plan approval, continue in degraded
 mode and still write a blocked or partial final brief and its
@@ -68,7 +68,7 @@ machinery; run that skill separately when a source demands it.
 
 ## Workflow
 
-1. **Plan** — Write `notes/plans/<slug>.md`: key questions,
+1. **Plan** — Write `notes/plans/<YYYY-MM-DD>-<slug>.md`: key questions,
    evidence needed, the scale decision, a task ledger, a
    verification log, and a decision log. Record the scale decision
    (see step 2 for the criteria) before assigning owners. Then
@@ -96,11 +96,11 @@ machinery; run that skill separately when a source demands it.
    distinct query angles (definition/history, precise statement or
    construction, current status and formalizations) before
    drafting; record the exact search terms and notes in
-   `notes/research/<slug>-research-direct.md`. Dispatch mode: write
+   `notes/research/<YYYY-MM-DD>-<slug>-research-direct.md`. Dispatch mode: write
    a self-contained brief per researcher
-   (`notes/plans/<slug>-T1.md`, `-T2.md`, …), keep each dispatch
+   (`notes/plans/<YYYY-MM-DD>-<slug>-T1.md`, `-T2.md`, …), keep each dispatch
    payload small and pointed at its brief file, and collect
-   evidence notes in `notes/research/<slug>-research-*.md`, never
+   evidence notes in `notes/research/<YYYY-MM-DD>-<slug>-research-*.md`, never
    inline. Brief the researchers in capability terms, not tool
    names; a researcher whose fetch fails continues from metadata
    and abstracts and marks the source blocked. After gathering,
@@ -109,14 +109,14 @@ machinery; run that skill separately when a source demands it.
    silently skip one. If gathering failed, record exactly what
    failed and proceed with a blocked or partial draft.
 4. **Draft** — Write the brief yourself; synthesis is never
-   delegated. Save `notes/research/<slug>-draft.md` with an
+   delegated. Save `notes/research/<YYYY-MM-DD>-<slug>-draft.md` with an
    executive summary, findings organized by question, consensus vs
    disagreements, evidence-backed caveats, and open questions. No
    invented sources, results, figures, or tables. Before citing,
    sweep the draft: every critical claim maps to a source URL,
    research note, or `resources/` entry; remove or downgrade
    unsupported claims; mark inferences as inferences.
-5. **Cite** — Rewrite the draft to `notes/research/<slug>-cited.md`
+5. **Cite** — Rewrite the draft to `notes/research/<YYYY-MM-DD>-<slug>-cited.md`
    with inline citations and a Sources section, and check every
    source with the url-fetch capability: the URL resolves, and the
    document states what it is cited for. Label every claim per the
@@ -128,7 +128,7 @@ machinery; run that skill separately when a source demands it.
    the contract.
 6. **Verify** — Run the verify protocol per the contract over the
    cited draft; the findings report lands at
-   `notes/research/<slug>-verification.md`, the contract's path.
+   `notes/research/<YYYY-MM-DD>-<slug>-verification.md`, the contract's path.
    The adversarial sweep for this workflow: unsupported claims,
    logical gaps, single-source critical claims, overstated
    confidence, status labels stronger than their evidence, novelty
@@ -136,16 +136,16 @@ machinery; run that skill separately when a source demands it.
    earlier drafts that the final evidence no longer supports.
    Apply 1–3 simple corrections as small localized edits;
    for section rewrites or more than 3 substantive fixes, write a
-   corrected full file to `notes/research/<slug>-revised.md`
+   corrected full file to `notes/research/<YYYY-MM-DD>-<slug>-revised.md`
    instead. Prove every applied fix on disk with the file-search or
    shell capability — the old wording gone, the replacement
    present — before recording it as fixed; a failed edit is
    recorded as a failure, retried smaller or as a full rewrite,
    and verified again.
 7. **Deliver** — Copy the final candidate (`-revised.md` if it
-   exists, else `-cited.md`) to `notes/research/<slug>.md` and
+   exists, else `-cited.md`) to `notes/research/<YYYY-MM-DD>-<slug>.md` and
    write its provenance sidecar
-   `notes/research/<slug>.provenance.md` per the contract. Verify
+   `notes/research/<YYYY-MM-DD>-<slug>.provenance.md` per the contract. Verify
    on disk that all required artifacts exist before stopping; never
    stop at an intermediate draft. The final response is brief: the
    final file, the sidecar, and any blocked checks.

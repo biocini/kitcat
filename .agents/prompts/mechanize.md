@@ -39,12 +39,12 @@ its module named, not re-mechanized.
 
 ## Workflow
 
-1. **Extract** — Write `notes/plans/<slug>.md`: the target claims,
+1. **Extract** — Write `notes/plans/<YYYY-MM-DD>-<slug>.md`: the target claims,
    key questions, a task ledger, a verification log, and a
    placeholder for the success criteria that step 2 will fix. Then
    pull from the source the definitions, theorem statements,
    hypotheses, and proof strategy, into
-   `notes/research/<slug>-extraction.md`. Extraction is lead-owned,
+   `notes/research/<YYYY-MM-DD>-<slug>-extraction.md`. Extraction is lead-owned,
    never delegated. Check `resources/` before fetching: a vendored
    source is read from its entry — the committed map and content
    digests, plus the vendored copy; only an unvendored source is
@@ -56,7 +56,7 @@ its module named, not re-mechanized.
    skip one.
 
 2. **Detail** — Build the per-claim ledger in
-   `notes/research/<slug>-ledger.md`. For each mechanization target:
+   `notes/research/<YYYY-MM-DD>-<slug>-ledger.md`. For each mechanization target:
    its exact hypotheses as the source states them; its dependencies
    on the other targets; the prerequisite lemmas, each marked
    VERIFIED (already machine-checked here — name the module or Gloss
@@ -129,7 +129,7 @@ its module named, not re-mechanized.
    the `reviewer`'s mechanical gate. In spike mode, dispatch the
    `reviewer` alone. Either stage runs lead-owned, recorded as
    degraded, when its agent is absent.
-   Append to the plan ledger `notes/plans/<slug>.md` after
+   Append to the plan ledger `notes/plans/<YYYY-MM-DD>-<slug>.md` after
    meaningful progress, after failed attempts, and before stopping:
    active objective, what changed, what was checked, next step. The
    ledger is append-only and the resumability mechanism — on
@@ -146,7 +146,7 @@ its module named, not re-mechanized.
    language without a recorded search, and sections surviving from
    earlier drafts that the final evidence no longer supports.
 
-6. **Report** — Save the final report to `notes/research/<slug>.md`:
+6. **Report** — Save the final report to `notes/research/<YYYY-MM-DD>-<slug>.md`:
    each target's outcome against its pre-registered success
    criterion (VERIFIED with module named, or CONJECTURED with what
    remains), the spike or module paths produced, failures logged,

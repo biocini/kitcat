@@ -94,6 +94,32 @@ briefs, prose:
    checks, never mathematical claims. The record
    of how a result was produced is part of the result.
 
+## Code citations
+
+Code adapted from or following an external source carries a credit
+comment at the definition that realizes it, in one of the house
+forms:
+
+```agda
+-- Credit: 1lab, Equiv.Fibrewise
+-- Following Rijke, Theorem 11.2.4
+-- From Capriotti–Kraus (arXiv:1707.03693), Section 3.2
+```
+
+The obligation travels with the construction: a construction that
+reaches the implementer through an intermediary — an analyzer memo,
+a dispatch brief, a `resources/` digest — is still adapted from its
+source, and the intermediary's citation anchors must be realized as
+credit comments in the code. A handoff never launders provenance.
+
+A credit comment is a citation and meets the same standard as any
+other (practice 1): the cited location states the construction,
+resolved through the audited `resources/` entry when one covers
+the source. A change that adds or alters credit comments receives
+a citation review — the `verifier`'s code-citation mode — before
+commit, ordered per the contract's verify protocol (fidelity
+review before the mechanical gate).
+
 ## AI contribution statement
 
 Proof engineering, literature research, drafting, and tooling in

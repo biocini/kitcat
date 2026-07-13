@@ -47,7 +47,7 @@ the only place VERIFIED evidence can appear.
 
 ## Workflow
 
-1. **Plan** — Write `notes/plans/<slug>.md`: the sources to
+1. **Plan** — Write `notes/plans/<YYYY-MM-DD>-<slug>.md`: the sources to
    compare, the comparison dimensions, the expected output
    structure, a task ledger, and a verification log. Summarize the
    plan briefly to the user and continue immediately; ask for
@@ -58,7 +58,7 @@ the only place VERIFIED evidence can appear.
 2. **Gather** — When the comparison set is broad enough to benefit
    from delegated triage, dispatch the `researcher` agent
    with a self-contained brief; its evidence notes go to
-   `notes/research/<slug>-research-*.md`, never inline. When that
+   `notes/research/<YYYY-MM-DD>-<slug>-research-*.md`, never inline. When that
    agent is absent in your harness, gather lead-owned and record
    the delegation as degraded. For a narrow, named set of sources,
    fetch them directly with the paper-search, web-search, and
@@ -106,10 +106,10 @@ the only place VERIFIED evidence can appear.
    their evidence, and sections surviving from earlier drafts that
    the final evidence no longer supports.
 6. **Deliver** — Save exactly one comparison to
-   `notes/research/<slug>.md` — the contract's final-artifact
+   `notes/research/<YYYY-MM-DD>-<slug>.md` — the contract's final-artifact
    path — ending with a Sources section giving a direct URL or DOI
    for every source used, and write its provenance sidecar
-   `notes/research/<slug>.provenance.md` per the contract. When the
+   `notes/research/<YYYY-MM-DD>-<slug>.provenance.md` per the contract. When the
    matrix motivates mechanizing a variant, name
    `/formulation-survey` as the follow-up in the artifact's next
    steps: the feasibility ranking is that skill's machinery, and

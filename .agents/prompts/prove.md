@@ -21,7 +21,7 @@ mechanical gate.** Every dispatch is a self-contained brief; when a
 named agent is absent in the harness, run that stage lead-owned and
 record the delegation as degraded.
 
-Derive a run slug per the contract and open `notes/plans/<slug>.md`
+Derive a run slug per the contract and open `notes/plans/<YYYY-MM-DD>-<slug>.md`
 as the run ledger: failed proof attempts are preserved there before
 reverting, wall salvage is registered under a "do not re-derive;
 build on" heading, and degraded delegations are recorded there.
@@ -72,6 +72,11 @@ two passes, per `.agents/CLAUDE.md`'s Delegation section:
   strategy specified, by the route specified, resting on the lemmas
   it claims; are the h-level and coherence obligations discharged,
   not assumed; did the definitional reductions actually fire.
+- Between the two, the conditional **citation review**: when the
+  implementation added or changed credit comments — the coder's
+  completion report flags this — dispatch the `verifier` per the
+  contract's code-citation review clause; a change with no new or
+  altered credits dispatches no review.
 - The `reviewer` runs the **mechanical gate**: re-runs `just check`
   (exit 42 is failure, zero warnings) and `just lint` on every
   touched module rather than trusting the coder's word, plus

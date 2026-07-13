@@ -35,12 +35,12 @@ context is a starting point, not something to rediscover.
 
 ## Workflow
 
-1. **Plan** — Write `notes/plans/<slug>.md`: key questions, source
+1. **Plan** — Write `notes/plans/<YYYY-MM-DD>-<slug>.md`: key questions, source
    types to search, time period, expected sections, a task ledger,
    and a verification log. When the input names an author, lab, or
    research program, run the review as a publication-corpus review:
    resolve the identity first, collect the reachable publication
-   list into `notes/research/<slug>-publications.md` (titles, years,
+   list into `notes/research/<YYYY-MM-DD>-<slug>-publications.md` (titles, years,
    venues, URLs/DOIs, and gaps), then map the research trajectory
    across that corpus. Summarize the plan briefly to the user and
    continue immediately; ask for confirmation only if the user
@@ -51,7 +51,7 @@ context is a starting point, not something to rediscover.
 2. **Gather** — For a sweep wide enough to benefit from delegated
    triage, dispatch the `researcher` agent with a
    self-contained brief; its evidence notes go to
-   `notes/research/<slug>-research-*.md`, never inline. When that
+   `notes/research/<YYYY-MM-DD>-<slug>-research-*.md`, never inline. When that
    agent is absent in your harness, gather lead-owned and record the
    delegation as degraded. For narrow topics, search directly with
    the paper-search, web-search, and url-fetch capabilities, using
@@ -91,9 +91,9 @@ context is a starting point, not something to rediscover.
    evidence, novelty language without a recorded search, and
    sections surviving from earlier drafts that the final evidence no
    longer supports.
-6. **Deliver** — Save the final review to `notes/research/<slug>.md`
+6. **Deliver** — Save the final review to `notes/research/<YYYY-MM-DD>-<slug>.md`
    and write its provenance sidecar
-   `notes/research/<slug>.provenance.md` per the contract,
+   `notes/research/<YYYY-MM-DD>-<slug>.provenance.md` per the contract,
    additionally recording — for corpus reviews — the publication
    log path and unresolved corpus gaps. Verify on disk that both
    files exist before stopping; never stop at an intermediate draft.

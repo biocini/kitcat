@@ -52,7 +52,7 @@ well-sourced it is.
 
 ## Workflow
 
-1. **Plan** — Write `notes/plans/<slug>.md`: the target stated
+1. **Plan** — Write `notes/plans/<YYYY-MM-DD>-<slug>.md`: the target stated
    precisely, why it is wanted, candidate source types, the
    feasibility constraints above, expected candidates, a task
    ledger, and a verification log. Summarize the plan briefly to
@@ -64,7 +64,7 @@ well-sourced it is.
 2. **Gather** — For a sweep wide enough to benefit from delegated
    triage, dispatch the `researcher` agent with a
    self-contained brief; its evidence notes go to
-   `notes/research/<slug>-research-*.md`, never inline. When that
+   `notes/research/<YYYY-MM-DD>-<slug>-research-*.md`, never inline. When that
    agent is absent in your harness, gather lead-owned and record
    the delegation as degraded. For narrow targets, search directly
    with the paper-search, web-search, and url-fetch capabilities —
@@ -106,8 +106,8 @@ well-sourced it is.
    CONJECTURED until machine-checked; when absent, assess the
    obstructions lead-owned and record the delegation as degraded.
 6. **Synthesize** — Write the working draft to
-   `notes/research/<slug>-draft.md`, then promote a concise ranked
-   brief to `notes/research/<slug>.md`; synthesis is never
+   `notes/research/<YYYY-MM-DD>-<slug>-draft.md`, then promote a concise ranked
+   brief to `notes/research/<YYYY-MM-DD>-<slug>.md`; synthesis is never
    delegated. Rank by mechanization feasibility in this library,
    not by source prestige or generality. Grade each candidate READY
    (all prerequisites VERIFIED here), SPIKE-GATED (CONJECTURED
@@ -132,9 +132,9 @@ well-sourced it is.
    claimed present without a named module, novelty language without
    a recorded search, and sections surviving from earlier drafts
    that the final evidence no longer supports.
-8. **Deliver** — Save the final brief to `notes/research/<slug>.md`
+8. **Deliver** — Save the final brief to `notes/research/<YYYY-MM-DD>-<slug>.md`
    and write its provenance sidecar
-   `notes/research/<slug>.provenance.md` per the contract. Verify
+   `notes/research/<YYYY-MM-DD>-<slug>.provenance.md` per the contract. Verify
    on disk that both files exist before stopping; never stop at an
    intermediate draft.
 

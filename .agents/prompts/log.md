@@ -1,6 +1,6 @@
 ---
 name: log
-description: Write a durable end-of-session log for work in this Cubical Agda library — completed work, strongest findings and decisions, modules touched, spikes and their fates, theorem-ledger changes, preserved failures, open questions, and next steps. Use when asked to log the session, save session notes, write up what was done, record progress, or close out a working session. Produces an append-only log in notes/session-logs/ plus a dated entry at the top of CHANGELOG.md.
+description: Write a durable end-of-session log for work in this Cubical Agda library — completed work, strongest findings and decisions, modules touched, spikes and their fates, theorem-ledger changes, preserved failures, a process review with workflow-revision proposals, open questions, and next steps. Use when asked to log the session, save session notes, write up what was done, record progress, or close out a working session. Produces an append-only log in notes/session-logs/ plus a dated entry at the top of CHANGELOG.md.
 argument-hint: [focus-or-slug]
 args: [focus-or-slug]
 section: Project & Session
@@ -18,10 +18,12 @@ cross-agent conventions this workflow defers to, the latter maps
 every capability named below to the tools in your harness.
 
 Derive a run slug from the session's main thread per the contract;
-when $ARGUMENTS supplies one, use it. This run writes exactly two
-things: the log
+when $ARGUMENTS supplies one, use it. This run's durable output is
+exactly two things: the log
 `notes/session-logs/<YYYY-MM-DD>-<slug>.md`, and one dated entry
-appended at the TOP of `CHANGELOG.md` (newest first). The division
+appended at the TOP of `CHANGELOG.md` (newest first); the
+process-review stage below adds one working-memory report beside
+them. The division
 of labor: the changelog records what happened — what landed, what
 was verified, what failed, what it superseded; the latest session
 log records where things stand — state, open questions, and the
@@ -103,23 +105,49 @@ order:
    that produced superficial verdicts and what fixed them, briefs
    that misfired, disciplines that paid off. Omit the section when
    the session genuinely produced none.
-9. **Open questions and risks** — including MAJOR verification
-   findings (below) and anything two consecutive failures forced to
-   a full stop.
-10. **Next steps** — concrete, ordered, resumable by a fresh
+9. **Process review** — the session's friction points from the
+   process-review stage below, each with its file/moment evidence
+   and its mapping: a workflow revision/addition proposal (named
+   surface, named change) or a named weakness in an existing
+   system, every proposal tagged **ratify-now** (with the exact
+   task) or **next-session** (with the open question). Recorded for
+   Lane's discretion, never applied by this run.
+10. **Open questions and risks** — including MAJOR verification
+    findings (below) and anything two consecutive failures forced
+    to a full stop.
+11. **Next steps** — concrete, ordered, resumable by a fresh
     session.
-11. **Artifacts** — paths to the run artifacts collected above, plus
+12. **Artifacts** — paths to the run artifacts collected above, plus
     blocked capabilities and degraded delegations from this session,
     each with what was done instead.
+
+## Process review
+
+With the log drafted, save the draft at its target path so the
+reviewer reads it from disk, then dispatch the `process-reviewer`
+with a self-contained brief per the contract: the session's dated
+plan ledgers under `notes/plans/` (with any shakedown or friction
+notes they carry), the drafted log body, and the session's
+CHANGELOG delta, naming the report path
+`notes/research/<YYYY-MM-DD>-<slug>-process-review.md`. When the
+agent is absent in your harness, run the review lead-owned under
+its same contract and record the delegation as degraded per the
+contract. Fold the report into the log's Process review section —
+friction points, mappings, and tags intact. The proposals are
+surfaced to Lane's discretion at close: each awaits ratification as
+an immediate task or as next-session work; the log run applies none
+of them.
 
 ## Verify and deliver
 
 Before saving, run the verify protocol per the contract over the
-draft (a log run dispatches no agents; its direct-mode self-review
-applies). The adversarial sweep for this workflow: claims
+draft (the draft is self-reviewed in direct mode; the
+process-review dispatch is this run's only delegation and adds no
+verifier pass). The adversarial sweep for this workflow: claims
 labeled stronger than their evidence, spike fates asserted without
 checking the file, ledger statuses that disagree with
-`docs/gloss.md`, novelty language without a recorded search, and
+`docs/gloss.md`, novelty language without a recorded search,
+process-review proposals worded as if already ratified, and
 sections surviving from earlier drafts that the final evidence no
 longer supports.
 
@@ -148,5 +176,9 @@ blocked / inferred), what failed, and what it superseded, linking
 the session log and any documents the session enshrined. No
 sidecar: the log is itself the provenance artifact, which is why
 blocked capabilities, degraded delegations, and verification status
-live in its body. End by verifying on disk that both files exist
-before stopping; never stop at an unsaved draft.
+live in its body. The close report surfaces the Process review
+proposals to Lane's discretion explicitly — each with its
+ratify-now or next-session tag, each awaiting Lane's ruling as an
+immediate task or as next-session work; none is applied by this
+run. End by verifying on disk that both files exist before
+stopping; never stop at an unsaved draft.

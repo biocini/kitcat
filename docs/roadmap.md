@@ -18,11 +18,22 @@ per session.
    design (memory: memo A in the ontology log).
 2. **Bimodule record spike (B1–B3)** — the record, regular
    filling, emb-parity (B4 struck — refuted).
-3. **THE REFACTOR** — `Cat.Type`/`Cat.Monoidal` re-expressed over
-   `hcategory`; downstream of targets 1–2. Gates behind it: the
-   Chir dialogue tier, the braid/ribbon layer, the monoidal side
-   of the chirality convergence theorem, and the post-refactor
-   standardization arc — opened only on Lane's word.
+3. **THE REFACTOR** — the conditional promotion of `Cat.Codep`:
+   if the hcategory line keeps earning it (the substrate spikes
+   and the coherence program keep landing), `hcategory` becomes
+   the library's canonical category record and the `Cat.*` tree
+   is re-founded over it. End state: the pre-refactor records
+   (`Cat.Type`, `Cat.Base`, `Cat.Virtual`, `Cat.Coherence`) are
+   rebased onto `hcategory` or retired; the downstream tree
+   (`Cat.Monoidal` and its submodules, `Groupoid`, `Iso`,
+   `Product`, `Slice`, `Yoneda`, `Displayed`, `Rezk`,
+   `Covariant`, `Dep`) is re-expressed over the new foundation,
+   with per-module dispositions (rebase / keep / retire) decided
+   when the refactor opens, not before. Downstream of targets
+   1–2. Gates behind it: the Chir dialogue tier, the braid/ribbon
+   layer, the monoidal side of the chirality convergence theorem,
+   and the post-refactor standardization arc — opened only on
+   Lane's word.
 4. **Chir.*** — single-carrier polarity-as-representability;
    parked pending Lane's five rulings; Spikes A/B/C specced with
    kill criteria (memory: chirality record).

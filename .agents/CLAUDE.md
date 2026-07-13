@@ -75,7 +75,7 @@ authoring mechanics (frontmatter, the shim template, the
 
 ## Output locations
 
-- `notes/plans/<slug>.md` — run plans and ledgers: **local working
+- `notes/plans/<YYYY-MM-DD>-<slug>.md` — run plans and ledgers: **local working
   memory** (gitignored, not tracked), updated as the run evolves,
   never a static outline. Failed attempts are preserved here.
 - `notes/research/` — research intermediates and finals: **local
@@ -93,7 +93,10 @@ authoring mechanics (frontmatter, the shim template, the
   written by the log workflow. Not updated for trivial one-shot
   tasks.
 - `src/Test/<Name>-<timestamp>.lagda.md` — Agda scratchpads
-  (gitignored; nothing committed may reference them).
+  (tracked scratch, gate-exempt; untimestamped Test/ files are
+  durable regression witnesses wired into All — root CLAUDE.md
+  owns the Test/ rules; library modules and docs never cite a
+  Test/ file as dependency or evidence).
 
 Intermediate artifacts are written to disk by subagents and read
 by the lead; they are not returned inline.
@@ -104,10 +107,10 @@ Every workflow that produces artifacts derives a short slug from
 its topic: lowercase, hyphens, no filler words, at most 5 words.
 All files in one run use that slug:
 
-- Plan: `notes/plans/<slug>.md`
-- Evidence: `notes/research/<slug>-research-<angle>.md`
-- Final: `notes/research/<slug>.md`
-- Sidecar: `notes/research/<slug>.provenance.md`
+- Plan: `notes/plans/<YYYY-MM-DD>-<slug>.md`
+- Evidence: `notes/research/<YYYY-MM-DD>-<slug>-research-<angle>.md`
+- Final: `notes/research/<YYYY-MM-DD>-<slug>.md`
+- Sidecar: `notes/research/<YYYY-MM-DD>-<slug>.provenance.md`
 - Watch state: `notes/watches/<slug>.md`
 
 Never use generic names (`research.md`, `draft.md`, `notes.md`);
@@ -173,7 +176,7 @@ created as a silent side effect (see Ingestion below).
   defer): critical claims get at least one adversarial verification
   pass after synthesis. Dispatch the `verifier` with the artifact,
   its evidence files, and the report path
-  `notes/research/<slug>-verification.md`; when the verifier is
+  `notes/research/<YYYY-MM-DD>-<slug>-verification.md`; when the verifier is
   absent, self-review under the same contract and record the
   delegation as degraded. Findings are graded FATAL / MAJOR /
   MINOR: fix FATAL before delivery and run one confirming pass
@@ -182,6 +185,14 @@ created as a silent side effect (see Ingestion below).
   dispatched no agents and answered an explainer-scale question
   self-reviews — never spawn a verifier for work smaller than the
   dispatch.
+- **The code-citation review** (the code analog of the verify
+  protocol; docs/provenance.md "Code citations" owns the spec):
+  when a change adds or alters credit comments in Agda code, the
+  lead dispatches the `verifier` in its code-citation mode over
+  the diff BEFORE the `reviewer`'s mechanical gate — verify before
+  review, exactly as the ordering rule below states for research
+  artifacts. A change that touches no credit comment dispatches no
+  citation review.
 - Two consecutive failures on the same goal is a full stop: state
   what is known, what is not, what was tried; wait for direction.
 - Delegation is an ordered sequence, not a set: when a run cites,
@@ -332,8 +343,9 @@ local working memory. The full deliberation is in the session logs
   proof-strategist + structural analyst) prepares → `coder`
   implements → `analyzer` reviews accuracy + `reviewer` runs the
   mechanical gate; plus `researcher`, `verifier`, `ingest`, `writer`,
-  `suite-maintainer`. Roles are `.agents/<name>.md`, symlinked to
-  `.claude/agents/` and `.pi/agents/`.
+  `suite-maintainer`, `process-reviewer`. Roles are
+  `.agents/<name>.md`, symlinked to `.claude/agents/` and
+  `.pi/agents/`.
 - **Rijke is the foundational reference.** arXiv 2212.11082
   (`resources/rijke-hott/`) — the univalent-mathematics idiom every
   role draws on.

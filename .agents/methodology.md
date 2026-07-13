@@ -25,9 +25,10 @@ against the real foundation — never a toy model; the typecheck is
 the pin, prose is not. A spike is dispatched with an oracle-shaped
 contract: a verdict in {DERIVED, STUCK, PARTIAL}, the route closed,
 and the exact goal-verbatim residue at any wall. A definitional
-reduction a proof leans on is re-asserted beside it as a
-present-tense `killcheck-<name> = refl`, so a reduction that stops
-firing fails the next `just check`. A claim about an unobservable
+reduction a proof leans on is re-asserted as a present-tense
+`killcheck-<name> = refl` in the Test/ regression tier wired into
+`All`, so a reduction that stops firing fails the next
+`just check-all`. A claim about an unobservable
 surface (harness internals, an external build) ships with its probe
 or ships as CONJECTURED. Exemplar: the PcomConservation (T20) arc —
 the conservation-law fork was pinned by `Test/CodepPcomFaces`
@@ -76,11 +77,12 @@ warnings) and `just lint changed` (the non-regression width gate)
 on every touched module rather than accepting the author's word, and a convention the tree can gate is
 gated (the authoring lint over the skills tree, the `just sync`
 drift gate). Exemplar: the killcheck witnesses in
-`src/Cat/Codep/Coherent.lagda.md` (`killcheck-apPost` /
-`killcheck-apPre = refl`, lines 259–265) — a definitional reduction
-a proof leans on, pinned as a present-tense `refl` so a reduction
-that silently stops firing fails the next `just check`. The gate
-lives in the tree and runs every build; it is not a trusted claim.
+`src/Test/CodepCoherentKillchecks.lagda.md` (`killcheck-apPost` /
+`killcheck-apPre = refl`) — a definitional reduction a proof leans
+on, pinned as a present-tense `refl` in the Test/ regression tier
+imported by `All`, so a reduction that silently stops firing fails
+the next `just check-all`. The gate lives in the tree and runs
+every build; it is not a trusted claim.
 
 ## The Agda pipeline (the symmetric bracket)
 

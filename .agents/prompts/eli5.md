@@ -71,17 +71,17 @@ failure mid-window is not.
   slashes) means the README: fetch the raw file at
   `raw.githubusercontent.com/owner/repo/main/README.md`, then
   `/master/README.md`; the repository HTML page is not the document.
-- Remote URL: download to `notes/research/<slug>-raw.txt` with the
-  shell capability (`curl -sL -o notes/research/<slug>-raw.txt
+- Remote URL: download to `notes/research/<YYYY-MM-DD>-<slug>-raw.txt` with the
+  shell capability (`curl -sL -o notes/research/<YYYY-MM-DD>-<slug>-raw.txt
   <url>`). url-fetch is fine for small pages (an abstract, an
   index), never for the document body — its return value enters
   context directly, which the on-disk discipline exists to prevent.
 - Local file or PDF: copy, or extract text with `pdftotext` via the
-  shell capability, into `notes/research/<slug>-raw.txt`.
+  shell capability, into `notes/research/<YYYY-MM-DD>-<slug>-raw.txt`.
 - Under 50 bytes after fetching, or over 1 KB with fewer than 100
   readable text characters: stop and report — a bad fetch, or
   binary, unextracted content; do not proceed to tier selection.
-- `notes/research/<slug>-summary.md` already exists: ask with the
+- `notes/research/<YYYY-MM-DD>-<slug>-summary.md` already exists: ask with the
   user-question capability whether to overwrite or pick a new slug;
   do not proceed until answered.
 
@@ -104,7 +104,7 @@ Log: `[eli5] tier=<direct|windowed> chars=<count>`.
 ## Windowed reading (checkpointed)
 
 The document stays on disk. Before window 1, open
-`notes/research/<slug>-summary.md` with the resolved configuration
+`notes/research/<YYYY-MM-DD>-<slug>-summary.md` with the resolved configuration
 as its first line (`[eli5] config window=<w> overlap=<o> tier=<t>`):
 window offsets are a pure function of these values, and the
 recorded line is what realigns a resumed run. Extract windows by
@@ -114,7 +114,7 @@ character offset via the shell capability:
 # file-read tools address lines, not characters; char-boundary
 # windowing needs the shell. Overlapping starts keep a claim
 # that spans a boundary intact in at least one window.
-with open("notes/research/<slug>-raw.txt", encoding="utf-8") as f:
+with open("notes/research/<YYYY-MM-DD>-<slug>-raw.txt", encoding="utf-8") as f:
     f.seek(n * (window_size - overlap))
     window = f.read(window_size)
 ```
@@ -125,14 +125,14 @@ For each window, in order:
    proof moves, each with enough context to stand alone. Mark a
    claim cut off at a window boundary `BOUNDARY PARTIAL`; drop the
    marker when a later window carries the complete version.
-2. Append the extract to `notes/research/<slug>-summary.md` as an
+2. Append the extract to `notes/research/<YYYY-MM-DD>-<slug>-summary.md` as an
    entry opening with a `## Window <N>` heading, **before** reading
    the next window. This is the checkpoint: an interrupted session
    loses at most one window.
 3. Log: `[eli5] window <N>/<total> done`.
 
 On restart, read the configuration line at the top of
-`notes/research/<slug>-summary.md` and honor it over current flags
+`notes/research/<YYYY-MM-DD>-<slug>-summary.md` and honor it over current flags
 and environment, then count the `## Window <N>` headings already
 there and resume from the next window — never re-read from the
 top. When every window is done,
@@ -183,8 +183,8 @@ explanation.
 The explanation goes to chat — it is the deliverable, not a file. A
 direct-read run of a repo-internal target writes nothing; a
 direct-read run of an external or local document leaves only
-`notes/research/<slug>-raw.txt` behind. A windowed run also leaves
-`notes/research/<slug>-summary.md` as working notes, closing with:
+`notes/research/<YYYY-MM-DD>-<slug>-raw.txt` behind. A windowed run also leaves
+`notes/research/<YYYY-MM-DD>-<slug>-summary.md` as working notes, closing with:
 the source and its vetting status (`resources/` entry,
 SOURCE-CHECKED, or `[unvetted]`), the resolved configuration, the
 verification status (PASS / PASS WITH NOTES / BLOCKED) and the run
@@ -192,8 +192,8 @@ date, and any blocked capability with the manual command a human
 could run instead. Verify on disk that the file exists before
 stopping a windowed run.
 
-This skill writes only `notes/research/<slug>-raw.txt` and
-`notes/research/<slug>-summary.md` — nothing else, anywhere. A
+This skill writes only `notes/research/<YYYY-MM-DD>-<slug>-raw.txt` and
+`notes/research/<YYYY-MM-DD>-<slug>-summary.md` — nothing else, anywhere. A
 paper worth permanent vetting, a gloss entry worth pursuing, or a
 mechanization spike the explanation suggests is a proposal, stated
 in chat or in the working notes — never executed as a side effect.
@@ -207,7 +207,7 @@ in chat or in the working notes — never executed as a side effect.
 - A capability with no visible tool is reported BLOCKED with the
   manual command a human could run; never simulate a capability or
   claim its result. Windowed runs record BLOCKED entries in
-  `notes/research/<slug>-summary.md`; direct-read runs report them
+  `notes/research/<YYYY-MM-DD>-<slug>-summary.md`; direct-read runs report them
   in chat.
 - Plain English never earns extra confidence: an explanation
   simplifies the language, never the epistemic status.

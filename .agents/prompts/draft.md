@@ -43,7 +43,7 @@ Begin with the plan artifact, not with prose about the protocol.
 This workflow synthesizes what already exists; it is not a research
 run. Draw from, in priority order: `notes/research/` finals on the
 topic — a deep-research or lit run's final lands at
-`notes/research/<slug>.md` per the contract's slug scheme; consume
+`notes/research/<YYYY-MM-DD>-<slug>.md` per the contract's slug scheme; consume
 those pinned paths — then
 `docs/gloss.md` entries and their `src/Gloss/` certificates,
 `resources/` vetted source entries (cite these by entry when they
@@ -57,7 +57,7 @@ capability when needed — rather than padding with invention.
 
 ## Workflow
 
-1. **Plan** — Write `notes/plans/<slug>.md`: proposed title, the
+1. **Plan** — Write `notes/plans/<YYYY-MM-DD>-<slug>.md`: proposed title, the
    section outline, the key claims the paper will make, the source
    material each claim draws from, a task ledger, and a verification
    log keying every load-bearing claim to its `docs/gloss.md` entry,
@@ -75,7 +75,7 @@ capability when needed — rather than padding with invention.
    `notes/research/` inputs, the `docs/gloss.md` entries and their
    `Gloss.*` certificates, the `resources/` entries) and the output
    path — the writer's exposition lands at
-   `notes/research/<slug>-paper-draft.md`, this chain's draft
+   `notes/research/<YYYY-MM-DD>-<slug>-paper-draft.md`, this chain's draft
    stage — and carries the hard rules above — every statement tagged
    with its ledger status, nothing invented. The writer produces the
    structured exposition prose and adds no citations and no Agda.
@@ -110,7 +110,7 @@ capability when needed — rather than padding with invention.
    Diagrams and comparison tables appear only when source-supported
    and decision-changing; every one carries its provenance.
 3. **Cite** — Attach inline citations per the hard rules to the
-   writer's draft at `notes/research/<slug>-paper-draft.md`. Check
+   writer's draft at `notes/research/<YYYY-MM-DD>-<slug>-paper-draft.md`. Check
    every external source with the url-fetch capability: the URL
    resolves, and the document states what it is cited for. Label
    every claim per the contract lexicon (`docs/provenance.md`
@@ -130,16 +130,16 @@ capability when needed — rather than padding with invention.
    claim that sounds stronger than its support: downgrade or remove
    it now rather than deliver it.
 5. **Deliver** — Save exactly one final draft to
-   `notes/research/<slug>-paper.md` and write its provenance sidecar
-   `notes/research/<slug>-paper.provenance.md` per the contract,
+   `notes/research/<YYYY-MM-DD>-<slug>-paper.md` and write its provenance sidecar
+   `notes/research/<YYYY-MM-DD>-<slug>-paper.provenance.md` per the contract,
    additionally recording the gaps left in the draft. Verify on disk
    that both files exist before stopping; never stop at an
    intermediate draft.
 
 ## Scope guard
 
-A draft run writes only `notes/plans/<slug>.md` and
-`notes/research/<slug>-paper*.md` — no `docs/` edits, no `src/`
+A draft run writes only `notes/plans/<YYYY-MM-DD>-<slug>.md` and
+`notes/research/<YYYY-MM-DD>-<slug>-paper*.md` — no `docs/` edits, no `src/`
 edits, no spikes, no ledger changes. Mechanization work the draft
 reveals as needed (spikes to run, gloss entries to add) is proposed
 in the draft's open questions and the sidecar, never executed as a

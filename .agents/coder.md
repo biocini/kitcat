@@ -36,16 +36,20 @@ your harness.
 - `just lint changed` clean before handing off (the non-regression
   width gate; the in-flight tree carries a known width baseline).
 - When a proof relies on a definitional reduction firing (a
-  whisker/reindex step reducing, an emb-image projecting),
-  re-assert each such reduction beside the proof as a present-tense
-  named `killcheck-<name> = refl` — exemplar `Coherent.lagda.md`'s
-  `killcheck-apPost`/`killcheck-apPre = refl`; a reduction that
-  stops firing then fails `just check`.
+  whisker/reindex step reducing, an emb-image projecting), pin
+  each such reduction as a present-tense named
+  `killcheck-<name> = refl` in an untimestamped Test/ regression
+  file imported by All, never in the public module — exemplar
+  `src/Test/CodepCoherentKillchecks.lagda.md`; a reduction that
+  stops firing then fails `just check-all`.
 - New modules: `just new <Mod>` for boilerplate, then
   `just sync --fix`. Never hand-edit `src/All.lagda.md`.
 - Experiments and probes are timestamped spikes at
-  `src/Test/<Name>-<timestamp>.lagda.md`: not in All, need not
-  typecheck cleanly.
+  `src/Test/<Name>-<YYYYMMDD-HHMMSS>.lagda.md` — the scratch tier
+  (root CLAUDE.md owns the Test/ rules): tracked but gate-exempt,
+  need not typecheck cleanly, never wired into All. The
+  untimestamped durable tier is reserved for regression witnesses
+  like the killchecks above.
 
 ## Failure protocol
 
@@ -124,7 +128,13 @@ your harness.
 
 ## Provenance
 
-Code adapted from an external source carries a credit comment
-naming the source and location, per docs/provenance.md. In your
-report, a claim is VERIFIED only when the typechecker accepted it
-in this run — name the module; everything else is CONJECTURED.
+Credit comments follow docs/provenance.md "Code citations". Every
+credit line carried by the brief or its memo MUST be realized as a
+credit comment at the definition implementing it — an unrealized
+brief-supplied citation is an incomplete deliverable. When you
+draw on a source the brief does not carry (a 1lab pattern, a Rijke
+construction), add the credit yourself and flag the NEW citation
+in your completion report; the flag feeds the conditional citation
+review. In your report, a claim is VERIFIED only when the
+typechecker accepted it in this run — name the module; everything
+else is CONJECTURED.

@@ -35,7 +35,7 @@ change on a target module must typecheck with zero warnings (exit
 
 ## Workflow
 
-1. **Gather** — If `notes/plans/<slug>.md` already exists, ask the
+1. **Gather** — If `notes/plans/<YYYY-MM-DD>-<slug>.md` already exists, ask the
    user (user-question capability) whether to resume or start
    fresh; on resume, read the plan ledger tail before touching
    anything. The argument `off`
@@ -60,7 +60,7 @@ change on a target module must typecheck with zero warnings (exit
      requires explicit user authorization and a choice of current
      branch or a new one — no branches or commits beyond what the
      user approves here).
-2. **Plan and confirm** — Write `notes/plans/<slug>.md`: the
+2. **Plan and confirm** — Write `notes/plans/<YYYY-MM-DD>-<slug>.md`: the
    target, mode, measurement command, metric unit and direction,
    iteration budget, stopping value if any, candidate hypotheses to
    try, and an empty iteration ledger. Present the plan compactly
@@ -116,7 +116,7 @@ change on a target module must typecheck with zero warnings (exit
    target-module changes when present; map its verdicts into the
    protocol's grades — Blocking → FATAL, Suggestion → MAJOR,
    Nitpick → MINOR.
-6. **Deliver** — Save the summary to `notes/research/<slug>.md`:
+6. **Deliver** — Save the summary to `notes/research/<YYYY-MM-DD>-<slug>.md`:
    baseline vs final metric values, the iteration ledger (or a
    pointer to the plan file plus the kept/reverted counts), the
    kept-change list with file locations, abandoned hypotheses with
@@ -125,7 +125,7 @@ change on a target module must typecheck with zero warnings (exit
    command); untested hypotheses remain CONJECTURED. Results worth
    the theorem ledger or a `resources/` entry are proposals in the
    summary and sidecar, never executed as a side effect. Write the
-   sidecar `notes/research/<slug>.provenance.md` per the contract,
+   sidecar `notes/research/<YYYY-MM-DD>-<slug>.provenance.md` per the contract,
    additionally recording the measurement command and environment
    (branch, mode) and iterations attempted vs kept vs reverted with
    reasons. Verify on disk that both files exist before stopping;

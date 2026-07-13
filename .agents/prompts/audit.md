@@ -61,7 +61,7 @@ substantially harder than the paper's presentation suggests.
 
 ## Workflow
 
-1. **Plan** — Write `notes/plans/<slug>.md`: which paper (URL or
+1. **Plan** — Write `notes/plans/<YYYY-MM-DD>-<slug>.md`: which paper (URL or
    DOI), which formalization (repository modules, or an external
    library and version), the claims to check, a task ledger, and a
    verification log. Summarize the plan briefly to the user and
@@ -83,7 +83,7 @@ substantially harder than the paper's presentation suggests.
    module-structure questions. When the sweep is wide enough to
    benefit from delegated triage, dispatch the `researcher`
    agent with a self-contained brief; its evidence notes go to
-   `notes/research/<slug>-research-*.md`, never inline. When a named
+   `notes/research/<YYYY-MM-DD>-<slug>-research-*.md`, never inline. When a named
    agent is absent in your harness, do the work lead-owned and
    record the delegation as degraded. Mark every planned claim
    `done`, `blocked`, or `superseded` — never silently skip one.
@@ -116,11 +116,11 @@ substantially harder than the paper's presentation suggests.
    novelty language without a recorded search, and sections
    surviving from earlier drafts that the final evidence no longer
    supports.
-6. **Deliver** — Save the audit to `notes/research/<slug>-audit.md`,
+6. **Deliver** — Save the audit to `notes/research/<YYYY-MM-DD>-<slug>-audit.md`,
    ending with a Sources section listing the paper (URL or DOI) and
    the formalization (module paths for this repository, repository
    URL and version for an external one). Write its provenance
-   sidecar `notes/research/<slug>-audit.provenance.md` per the
+   sidecar `notes/research/<YYYY-MM-DD>-<slug>-audit.provenance.md` per the
    contract. Verify on disk that both files exist before stopping;
    never stop at an intermediate draft.
 

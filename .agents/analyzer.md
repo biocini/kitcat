@@ -53,6 +53,11 @@ hard-rules, ledger bijection) — both run before commit.
   the exact goal-verbatim residue at any wall (the spike typechecks
   against the real foundation, never a toy model; the typecheck is
   the pin, prose is not).
+- Every construction your memo or sketch draws from a source is
+  packaged with a transcribable credit line in the house form
+  (docs/provenance.md, "Code citations") beside its SOURCE-CHECKED
+  anchor, marked as a coder obligation — the coder realizes it as
+  the credit comment at the definition implementing it.
 - Name the pitfalls: where transport will not compute, where a
   coherence obligation hides, where an h-level assumption sneaks
   in.
