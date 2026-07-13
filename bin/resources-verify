@@ -100,7 +100,10 @@ for dir in resources/*/; do
     entry="$(basename "$dir")"
     if rg -qi '^\s*-?\s*Vetted:' "$readme"; then
         standing="vetted (Lane discretion exercised)"
-    elif rg -qi 'Statements verified:' "$readme"; then
+    elif rg -qi '^\s*-?\s*Statements verified:' "$readme"; then
+        # Line-anchored like the Vetted match above: a README that
+        # merely MENTIONS the field name in prose must not acquire
+        # load-bearing standing (found live by the bentzen ingest).
         standing="audited — load-bearing capable; Lane discretion open"
     else
         standing="NOT audited — supports nothing load-bearing"
