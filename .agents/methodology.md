@@ -75,8 +75,12 @@ independently executes `just check` (exit 42 is failure, zero
 warnings) and `just lint changed` (the non-regression width gate)
 on every touched module rather than accepting the author's word, and a convention the tree can gate is
 gated (the authoring lint over the skills tree, the `just sync`
-drift gate). Exemplar: the Cat.Monoidal milestone review re-ran the
-checks rather than trusting the coder's "exits 0, zero warnings".
+drift gate). Exemplar: the killcheck witnesses in
+`src/Cat/Codep/Coherent.lagda.md` (`killcheck-apPost` /
+`killcheck-apPre = refl`, lines 259–265) — a definitional reduction
+a proof leans on, pinned as a present-tense `refl` so a reduction
+that silently stops firing fails the next `just check`. The gate
+lives in the tree and runs every build; it is not a trusted claim.
 
 ## The Agda pipeline (the symmetric bracket)
 

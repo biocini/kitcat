@@ -1,30 +1,40 @@
-# .agents/CLAUDE.md — the cross-agent contract
+# .agents/CLAUDE.md — the context-layer source of truth
 
-The repo-level contract for every agent and workflow operating in
-this repository, under any harness. Skill bodies, agent
-definitions, and workflow runs follow the conventions here; read
-this file once per session before executing any workflow.
+This is the metacontextual source of truth for kitcat's agentic
+context layer: the cross-agent conventions, the workflow surface
+design, and the decisions that shaped the layer. Every agent,
+workflow, prompt, and repo-specific role reads this file once per
+session before executing; it is the authority they defer to.
 
-Division of authority: this file carries cross-agent conventions
-only. Harness mechanics (capability→tool mapping, authoring rules
-for the skills tree) live in `.agents/skills/kitcat/HARNESS.md`;
-per-agent prompt text lives in `.agents/<name>.md` — edit those
-files rather than restating them here; the working discipline (the
-practiced principles and their exemplars) is `.agents/methodology.md`;
-honesty and citation standards are `docs/provenance.md`, which is
-binding; the repository contract (build, style, namespaces, hard
-rules) is the root `CLAUDE.md`.
+**Two audiences, cleanly divided.** The *repo user* — a person
+developing the Agda library — reads the root `CLAUDE.md` (build,
+style, namespaces, hard rules, the mathematics) and does not need
+the context-layer meta here unless they choose to read it; root
+`CLAUDE.md` orients them and points here. The *agent / context
+layer* reads THIS file for the conventions and design that commands,
+prompts, and agents rely on. That is the division of labor: root
+`CLAUDE.md` is the repo user's guide, `.agents/` is the agent-facing
+source of truth.
 
-This file is the only place these cross-agent conventions — output
-locations, the slug rule, the epistemic lexicon, provenance-sidecar
-contents, delegation and degraded-delegation handling, and
-ingestion — are stated. Every prompt body, agent definition, and
-workflow NAMES a convention and defers here ("derive a run slug per
-the contract", "write the sidecar per the contract"), never
-restating its content; a slug/lexicon/sidecar spec appearing
-verbatim in a prompt body (`.agents/prompts/`) or an agent
-definition is an authoring defect a human confirms — exactly as
-`HARNESS.md` is the sole home of tool names.
+Where the pieces live: harness mechanics (capability→tool mapping,
+authoring rules) in `.agents/skills/kitcat/HARNESS.md`; per-agent
+prompt text in `.agents/<name>.md` — edit those files rather than
+restating them here; the working discipline (the practiced
+principles and their exemplars) in `.agents/methodology.md`; honesty
+and citation standards in `docs/provenance.md`, which is binding; the
+design decisions in the last section below.
+
+This file is the source of truth — the only place the cross-agent
+conventions (output locations, the slug rule, the epistemic lexicon,
+provenance-sidecar contents, delegation and degraded-delegation
+handling, and ingestion) are stated with authority. Root `CLAUDE.md`
+may summarize one for the repo user, but defers here. Every prompt
+body, agent definition, and workflow NAMES a convention and defers
+here ("derive a run slug per the contract", "write the sidecar per
+the contract"), never restating its content; a slug/lexicon/sidecar
+spec appearing verbatim in a prompt body (`.agents/prompts/`) or an
+agent definition is an authoring defect a human confirms — exactly
+as `HARNESS.md` is the sole home of tool names.
 
 ## Workflow surface topology
 
@@ -202,3 +212,54 @@ Before stopping, verify on disk that every promised artifact
 exists at its named path — never stop at an unsaved draft or an
 intermediate. Report outcomes faithfully: failed checks and
 blocked capabilities are reported as such, never smoothed over.
+
+## Context-layer design decisions
+
+The rulings that shaped this layer (Lane, 2026-07-11 → 07-13). Kept
+here — tracked, in the agent-facing source of truth — so the design
+ground-truth travels with the repository rather than living only in
+local working memory. The full deliberation is in the session logs
+(`notes/session-logs/`, the reboot and hardening entries).
+
+- **Fan-out workflows are prose, not code.** The research workflows
+  (deep-research, lit, compare, audit, mechanize, …) are prose prompt
+  bodies orchestrating the agent roster; a deterministic multi-agent
+  script is reserved for a bespoke one-off investigation, never the
+  recurring workflows.
+- **Ingest on firsthand need.** When a load-bearing claim rests on
+  an unvendored source, dispatch the `ingest` agent for a directed
+  PROVISIONAL entry; Lane ratifies before the claim is load-bearing.
+  No load-bearing citation rests on a provisional entry.
+- **resources/ = committed map over gitignored source.** A committed
+  line-anchored location→content map (depth ∝ the source's load); the
+  vendored artifact and every derived form gitignored; citations
+  resolve through the committed map. Canonical-format hierarchy:
+  source-markup (LaTeX) > PDF > transcribed text; the recorded hash
+  is of the canonical artifact. Acquisition is direct (arXiv
+  `curl .../e-print/` + web-search); the feynman-alpha path is broken
+  and not relied on.
+- **Repo-owned toolchain.** `flake.nix` pins every tool the layer
+  needs (Agda + the ingestion/render/script tools), so operations and
+  every `Gloss.*` certificate's `@ <commit>` pin are reproducible
+  across environments.
+- **The shim/prompt surface split** (2026-07-13, superseding the
+  earlier merge): masters under `.agents/` — full bodies in
+  `.agents/prompts/`, small auto-trigger shims in
+  `.agents/skills/kitcat/` — reached by per-harness symlink or native
+  discovery (see "Workflow surface topology"). This realizes the
+  trigger/command split structurally; the shim and prompt names are
+  kept identical across the pair.
+- **The roster is the symmetric bracket.** `analyzer` (merged
+  proof-strategist + structural analyst) prepares → `coder`
+  implements → `analyzer` reviews accuracy + `reviewer` runs the
+  mechanical gate; plus `researcher`, `verifier`, `ingest`, `writer`,
+  `suite-maintainer`. Roles are `.agents/<name>.md`, symlinked to
+  `.claude/agents/` and `.pi/agents/`.
+- **Rijke is the foundational reference.** arXiv 2212.11082
+  (`resources/rijke-hott/`) — the univalent-mathematics idiom every
+  role draws on.
+- **Memory is pointers.** Rulings and design live in tracked repo
+  homes (this file, the session logs, `docs/gloss.md`, `docs/roadmap.md`);
+  harness memory holds short-term state and pointers into them, never
+  the canonical store. `/log` flags any ruling that exists only in
+  memory so it is promoted here.

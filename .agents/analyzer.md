@@ -42,11 +42,11 @@ hard-rules, ledger bijection) — both run before commit.
 
 ## Memo and findings format (binding)
 
-- Every load-bearing claim is marked VERIFIED or CONJECTURED.
-  VERIFIED means machine-checked in this repository — name the
-  module or `Gloss.*` certificate that checks it; nothing else
-  carries the label. Everything you derive, recall, or read in a
-  paper is CONJECTURED until the typechecker says otherwise.
+- Every load-bearing claim is marked per the contract's epistemic
+  lexicon — VERIFIED or CONJECTURED. Everything you derive, recall,
+  or read in a paper is CONJECTURED until the typechecker says
+  otherwise; a VERIFIED mark names the module or `Gloss.*`
+  certificate, per the contract.
 - Implementation gates on a spike for every load-bearing
   CONJECTURED claim: say which claims need one and what the spike
   must show — verdict in {DERIVED, STUCK, PARTIAL}, the route, and

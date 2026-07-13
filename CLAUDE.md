@@ -142,11 +142,19 @@ static tables.
 
 ## Context Layer
 
+This root file is the repo user's guide — build, style, namespaces,
+hard rules, the mathematics. **The agent-facing source of truth for
+the context layer is `.agents/CLAUDE.md`**: the cross-agent
+conventions, the workflow surface design, and the design decisions
+live there, and every agent, workflow, and prompt defers to it. A
+repo user does not need the context-layer meta unless they choose to
+read `.agents/CLAUDE.md`; this section only enumerates the layer.
+
 The agent-facing context is exactly: this file, src/Gloss/CLAUDE.md,
-`.agents/CLAUDE.md` (the cross-agent contract), `.agents/methodology.md`
-(the working discipline), the agent roster (`.agents/*.md`),
-README.md, CHANGELOG.md, docs/gloss.md (the theorem ledger),
-docs/provenance.md, docs/roadmap.md, the workflow suite
+`.agents/CLAUDE.md` (the context-layer source of truth),
+`.agents/methodology.md` (the working discipline), the agent roster
+(`.agents/*.md`), README.md, CHANGELOG.md, docs/gloss.md (the theorem
+ledger), docs/provenance.md, docs/roadmap.md, the workflow suite
 (`.agents/prompts/` bodies + `.agents/skills/kitcat/` shims),
 `resources/`, and `notes/`. Nothing else in the repository is
 loaded, cited, or consulted as an authority. Style law: match the
@@ -217,7 +225,14 @@ always strict (zero tolerance).
 **Test/ scratchpad**: agents may create timestamped scratch files
 `src/Test/<Name>-<timestamp>.lagda.md` for experiments; the
 directory is gitignored, its files need not typecheck cleanly, and
-nothing committed may reference them. Promotion of settled
+no committed artifact may reference one *as a dependency or
+evidence citation* — a committed module never imports a Test/ file,
+and no committed doc cites one as the proof of a claim (such a
+citation is a Test→Gloss promotion trigger: promote the evidence to
+`Gloss.*` or drop the citation, per src/Gloss/CLAUDE.md). Recording
+a kept spike's existence and fate in a session log or plan ledger is
+the sanctioned exception — that is the "preserve the attempt"
+process history, not an evidence citation. Promotion of settled
 evidence to `Gloss.*` follows src/Gloss/CLAUDE.md.
 
 ## Workflow Suite
