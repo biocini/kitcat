@@ -16,6 +16,56 @@ concise, and honest about verification status (`verified` /
 
 ---
 
+## 2026-07-13 (second session) — pipeline reliability and the audited shelf
+
+Object: the resources/ pipeline and the research suite, taken from
+"designed" to "certified and reliability-hardened". No Agda changed.
+
+**Landed.** The content-digest layer (statement-level digests in the
+source's own terms; Rijke digested at full Part II depth by a
+22-lecture fan-out) and custody mechanics (`just resources-verify`:
+hashes, entry standing, consumed-by; fetch URLs and `.pdftext`
+provenance recorded per entry; the chiralities extraction normalized
+onto the flake-pinned poppler). The directory's doctrine encoded:
+reference shelf + citation store, **information flows from resources
+out, never the reverse**. Then an 8-reviewer certification — four
+against the original feynman suite at `~/feynman-skills`, four
+internal — certified the port **faithful** (13/13 prompt pairs, 4/4
+architecture axes, zero DEFECT) and the subagent system **correctly
+implemented**, and its findings were applied: the contract's new
+**Layer scope** section (the source's fight-for-its-life discipline
+the port had dropped, with retroactive records for `/prove` and
+`/hott`), the verify protocol promoted into the contract with 15
+prompts deduplicated to name-and-defer, the drifted `[unvetted]`
+restatement (the review's one FATAL) deleted everywhere with a lint
+canary against recurrence, skill handoffs wired, and mechanize's
+audit legs closed.
+
+**The ruling that reframed the layer (Lane):** the pipeline must be
+reliable whether or not Lane reviews it. The load-bearing gate for
+ingested knowledge is now the **human-free statement audit**
+(identity hash-verified + digests adversarially verified against the
+source, fresh-quote evidence required, records hash-bound);
+ratification/veto is Lane's self-initiated discretion, never a
+pipeline queue; and mathematical claims stay CONJECTURED until
+machine-checked, whoever approved what. First exercise: all six
+entries audited (rijke 152/155 CONFIRMED, shelf-wide 175/183), eight
+corrections applied — including two dropped "locally small"
+hypotheses on the mechanization target and our own memo's `†`
+notation contaminating a source entry — confirming re-pass clean,
+source errata recorded. `docs/gloss.md` T16 re-attributed to the
+source's `(−)op` and upgraded 📐⚠️ → 📐 under the new audit-keyed
+rule.
+
+`verified`: authoring lint (with canary), resources-verify (7 hashes,
+0 FATAL; all six entries audited — load-bearing capable),
+unidirectional sweep, sync, shellcheck. `superseded`: the
+PROVISIONAL blocking rule ("no load-bearing citation on a
+PROVISIONAL entry") and the ratification queue — replaced by
+audit-as-gate with discretion open. Commits `af73f50`, `e1d9f62`.
+Session log:
+[`notes/session-logs/2026-07-13-reliability-audited-shelf.md`](notes/session-logs/2026-07-13-reliability-audited-shelf.md).
+
 ## 2026-07-13 — the fresh review and the shim/prompt surface split
 
 Object: the hardened context layer, reviewed fresh and then
