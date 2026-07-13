@@ -16,6 +16,64 @@ concise, and honest about verification status (`verified` /
 
 ---
 
+## 2026-07-13 (third session) — the /prove shakedown: faithful-stratum spike + the rulings cascade
+
+Object: the first real end-to-end `/prove` run (roadmap target 1,
+the faithful-stratum substrate spike) and a cascade of workflow
+rulings applied same-session. First Agda since the coherence arc.
+
+**Landed.** The spike
+`src/Test/CodepFaithful-20260713-140913.lagda.md` (verified: green,
+zero warnings; independently re-checked by the accuracy review and
+the mechanical gate): **A1 DERIVED** — the tautological filling
+recovers `hcategory` definitionally at every operation
+(function-valued res-inv; `killcheck-dot = refl`), machine-checking
+the Π-integral licence; **A2 the healthy wall** —
+extraction-agreement ⟺ interchange-2 pinned both ways, the
+derivation from the stratum alone STUCK at the pointwise-itc2
+bridge (both routes transcribed; closing would have contradicted
+T13), and at the filling itc2 IS the base interchange — the 3-cell
+overlay is intrinsic; **A3 DERIVED at +0** — the pentagon engine
+transplants unmodified over abstract res-inv. Two memo-A
+refinements pinned: function-valued res-inv (the transport-refl
+trap) and the new Layer C axiom `extract-agree` (refl at the
+filling; abstract strata count 3). Ledger promotion HELD for Lane.
+Also landed, per Lane's rulings: Test/ tracked with two-tier
+semantics and the killchecks relocated to
+`src/Test/CodepCoherentKillchecks.lagda.md` (All-wired tripwire;
+verified by check-all); THE REFACTOR's end state explicit in the
+roadmap; Public Module Style; dated plan/research artifacts with a
+self-updating path-pattern lint canary (verified: bite-tested both
+directions); the `/log` process-review stage + `process-reviewer`
+agent (first run delivered 10 findings; the ratify-now set ratified
+and applied same-session); the code-citation pipeline
+(docs/provenance.md "Code citations" owns the spec; verifier gains
+the code-citation-review mode; `/prove` stage 3 gains the
+conditional review); `docs/styleguide.md` distilled from a Core.*
+norms survey; and `resources/bentzen-naive-cubical/` ingested at
+the rijke bar and audited 57/57 CONFIRMED (verified; 0 FATAL/MAJOR
+across audit + confirming re-pass), wired into `/hott` and the
+contract's new Foundational references. Tooling soundness fix:
+`bin/resources-verify`'s audit detection line-anchored (a prose
+mention could forge load-bearing standing — found live, verified
+fixed).
+
+**Failed / preserved.** A2(4) is the expected wall, preserved
+in-spike with both obstructions; salvage: the pointwise-itc2
+bridge is the stratum's one missing coupling datum.
+
+**Superseded.** The killcheck-beside-the-proof placement
+(Mechanization Discipline now points at the Test/ regression
+tier); the undated plan/research artifact names; memo A's
+path-valued res-inv; the "verbatim"-residue wording at six
+surfaces (now defined once at the contract's oracle-contract
+bullet).
+
+Session log:
+[`notes/session-logs/2026-07-13-prove-shakedown-faithful-stratum.md`](notes/session-logs/2026-07-13-prove-shakedown-faithful-stratum.md)
+(carries the pre-registered bimodule-spike design for roadmap
+target 2 and the held-for-Lane rulings list).
+
 ## 2026-07-13 (second session) — pipeline reliability and the audited shelf
 
 Object: the resources/ pipeline and the research suite, taken from
