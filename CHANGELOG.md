@@ -16,6 +16,55 @@ concise, and honest about verification status (`verified` /
 
 ---
 
+## 2026-07-13 — the fresh review and the shim/prompt surface split
+
+Object: the hardened context layer, reviewed fresh and then
+restructured. No Agda changed.
+
+**Landed.** A fresh-eyes adversarial review (an 8-reviewer workflow
+with per-finding adversarial verification against rulings R1–R13)
+produced 58 verified findings; all 5 FATAL, 18 MAJOR, and the
+relevant MINORs were fixed — R7 Rijke propagation, R2 ingest wiring,
+R6 writer dispatch, the writer↔verifier citation contradiction, the
+marker-shedding-on-ratification policy, a `bin/lint` soundness fix,
+and a new `just lint changed` non-regression width gate for the
+in-flight tree. The flake was fixed (`poppler_utils` → `poppler-utils`
+would have broken it at HEAD) and pinned with `flake.lock` (agda
+2.8.0 + curl/git/gnutar/perl). Six `resources/` entries were brought
+to the R11 bar by delegated `ingest` runs (`petrakis-dep-arrows`
+re-ingested as LaTeX-source canonical; a `mellies-dialogue-
+chiralities` duplicate removed; line-anchored maps added).
+
+Then the **workflow surface was re-expressed as the shim/prompt
+split**: full workflow bodies are masters at `.agents/prompts/`, small
+auto-trigger shims at `.agents/skills/kitcat/`, Claude Code reaches
+them via two directory symlinks, pi reads `.agents/` directly, and
+`.pi/prompts` + `.feynman/` were removed. `.agents/CLAUDE.md` was
+established as the context-layer source of truth (the repo-user /
+agent-facing division of labor made explicit) and now carries the
+durable R1–R13 design decisions (R10 externalization).
+
+**Verified.** authoring lint, `just sync`, the flake devshell build
+(agda 2.8.0 + all layer tools), symlink integrity, tree independence
+(reworded free of the external codename, re-checked), and the 18↔18
+shim/prompt pairing — all green. `verified`: those checks.
+`unverified`: `just check-all` under the flake was run once during the
+shakedown (green) but no Agda changed since. `blocked`: the review's
+verify phase hit the monthly spend limit once (Fable 5) and was
+resumed on Opus 4.8 via `resumeFromRunId` with no findings lost.
+
+**Superseded.** The 2026-07-11 R4 ruling that "dissolved the
+shim/prompt indirection" (merged skill = command) is reversed by the
+split above. The old per-skill three-symlink topology (54 symlinks)
+is replaced by two directory symlinks.
+
+Three commits: `1b50416` (the amended 2026-07-12 `/log` close, with
+the external codename scrubbed from history — `dev` is local-only),
+`38dcb3c` (apply-pass + surface redesign), `4c7d34b` (resolved
+deferrals). Session log:
+[`notes/session-logs/2026-07-13-fresh-review-surface-split.md`](notes/session-logs/2026-07-13-fresh-review-surface-split.md).
+Six `resources/` entries remain PROVISIONAL pending ratification.
+
 ## 2026-07-12 — the context-layer hardening arc
 
 The feynman-derived context layer was audited against a studied
