@@ -41,8 +41,10 @@ done
 
 # The lintable set, resolved once: an enumeration failure aborts here
 # and an empty set is an error — the gate must never pass by having
-# checked nothing.
-files="$(fd -e lagda.md . src/ | sort)"
+# checked nothing. src/Test/ is tracked scratch and gate-exempt
+# (Gloss.* is the polished tier); it is excluded by name, not by
+# ignore-file side effect.
+files="$(fd -e lagda.md --exclude Test . src/ | sort)"
 if [ -z "$files" ]; then
     echo "lint: no .lagda.md files found under src/" >&2
     exit 1
@@ -59,7 +61,7 @@ if $changed_mode; then
     changed_files="$(
         { git diff --name-only --diff-filter=d HEAD -- 'src/*.lagda.md' 'src/**/*.lagda.md'
           git ls-files --others --exclude-standard -- 'src/*.lagda.md' 'src/**/*.lagda.md'
-        } | sort -u)"
+        } | sort -u | rg_allow_empty -v '^src/Test/')"
     if [ -z "$changed_files" ]; then
         echo "lint: no changed .lagda.md files under src/ — clean."
         exit 0
@@ -189,7 +191,8 @@ run_flags() {
 # .agents/skills/kitcat); pi reads the masters directly. Checks:
 # shim name≠dir or no description, an unpaired shim or prompt, a
 # harness tool name or a $-token other than $ARGUMENTS in a prompt
-# body, and a broken harness symlink.
+# body, a broken harness symlink, and an artifact path pattern
+# drifting from its bind-once home form.
 run_authoring() {
     echo "── authoring ──"
     # Distinctive tool identifiers only — never English words like Read
@@ -248,6 +251,61 @@ run_authoring() {
         elif [ ! -d "$link" ]; then
             echo "  ${link}: symlink does not resolve to a directory"; issues=$((issues + 1))
         fi
+    done
+
+    # Path-pattern drift canary: artifact path patterns are stated
+    # once at the bind-once home ("Slugs and file naming" in
+    # .agents/CLAUDE.md) and restated across the layer. Each row is
+    # "label<TAB>anchor-regex"; the anchor's capture group extracts
+    # the canonical pattern from the home, so a home edit re-gates
+    # every restatement with no row edit here. An occurrence is the
+    # pattern's directory prefix followed by '<' — a directory-only
+    # reference names the location, not the pattern, and is exempt —
+    # and must begin with the canonical stem (the pattern minus its
+    # .md extension), so suffixed run variants (-T1.md,
+    # .provenance.md) pass by prefix while a stale shape fails. The
+    # prefix is spliced into the occurrence regex verbatim; keep
+    # future rows' patterns free of regex metacharacters. An anchor
+    # that extracts no '<'-bearing .md pattern fails loudly — the
+    # canary never passes vacuously.
+    local home=".agents/CLAUDE.md"
+    local pattern_rows=(
+        $'plan\t^- Plan: `([^`]+)`'
+        $'research\t^- Final: `([^`]+)`'
+    )
+    local layer_files=() pf row label anchor canonical stem occ_re lineno occ
+    shopt -s globstar
+    for pf in .agents/prompts/*.md .agents/skills/kitcat/**/*.md \
+              .agents/*.md CLAUDE.md; do
+        [ -f "$pf" ] || continue
+        layer_files+=("$pf")
+    done
+    shopt -u globstar
+    for row in "${pattern_rows[@]}"; do
+        label="${row%%$'\t'*}"; anchor="${row#*$'\t'}"
+        canonical="$(rg_allow_empty -m1 -N "$anchor" -or '$1' "$home")"
+        case "$canonical" in
+            *'<'*.md) ;;
+            *) canonical="" ;;
+        esac
+        if [ -z "$canonical" ]; then
+            echo "  cannot locate canonical ${label} pattern in ${home}"
+            issues=$((issues + 1))
+            continue
+        fi
+        stem="${canonical%.md}"
+        occ_re="${canonical%%<*}<"'[^`[:space:]]*'
+        for pf in "${layer_files[@]}"; do
+            while IFS=: read -r lineno occ; do
+                [ -n "$lineno" ] || continue
+                case "$occ" in
+                    "$stem"*) ;;
+                    *)
+                        echo "  ${pf}:${lineno}: '${occ}' drifts from canonical '${canonical}'"
+                        issues=$((issues + 1)) ;;
+                esac
+            done <<< "$(rg_allow_empty -o -n --no-filename "$occ_re" "$pf")"
+        done
     done
 }
 

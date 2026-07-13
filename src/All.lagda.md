@@ -74,6 +74,9 @@ import Gloss.PcomConservation
 import Gloss.PropPinning
 import Gloss.TriangleFace23
 
+-- Manual regression tripwire (Test/ rules): sync preserves, never adds.
+import Test.CodepCoherentKillchecks
+
 -- import Cat.Rezk  -- WIP: decode-gen holes at L203/204
 -- import Cat.Slice  -- WIP: open holes at L211/262/280
 -- import Core.Coherence.Paths  -- WIP: open face holes at L149/152/155/183

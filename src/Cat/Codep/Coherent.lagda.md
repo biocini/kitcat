@@ -246,29 +246,6 @@ record hcategory-2-coherent {o h} (C : hcategory o h) : Type (o ⊔ h) where
   gauge-lr {x} = gauge-l {x} ∙ sym (gauge-r {x})
 ```
 
-## Regression witnesses for the @identity ap-legs
-
-The absorb-cell family slots hold an identity, so `emb (idn x)` at the
-doubly-centered context reads back as `post`/`pre`. These `refl`
-witnesses record the reductions θ-core relies on.
-
-```agda
-module _ {o h} (C : hcategory o h) where
-  open hcategory C
-
-  killcheck-apPost
-    : ∀ {x}
-    → ap (λ a' → emb (idn x) ((x , a') , (x , idn x))) (post-eval (idn x))
-    ≡ ap (post (idn x)) (post-eval (idn x))
-  killcheck-apPost = refl
-
-  killcheck-apPre
-    : ∀ {x}
-    → ap (λ b' → emb (idn x) ((x , idn x) , (x , b'))) (post-eval (idn x))
-    ≡ ap (pre (idn x)) (post-eval (idn x))
-  killcheck-apPre = refl
-```
-
 ## Assembling the overlay
 
 `assemble` is the refactor equation: the bundle plus the three cells
