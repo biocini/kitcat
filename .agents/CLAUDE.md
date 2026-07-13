@@ -27,7 +27,8 @@ design decisions in the last section below.
 This file is the source of truth — the only place the cross-agent
 conventions (output locations, the slug rule, the epistemic lexicon,
 provenance-sidecar contents, delegation and degraded-delegation
-handling, and ingestion) are stated with authority. Root `CLAUDE.md`
+handling, ingestion, and the foundational-reference grounding) are
+stated with authority. Root `CLAUDE.md`
 may summarize one for the repo user, but defers here. Every prompt
 body, agent definition, and workflow NAMES a convention and defers
 here ("derive a run slug per the contract", "write the sidecar per
@@ -261,6 +262,37 @@ it. Agents may ask to vendor a source at any time, especially when
 a construction under development draws on it, so the citation and
 the notes needed to use it for formalization are tracked.
 
+## Foundational references
+
+The library's foundational shelf: the entries every role draws on
+as the common knowledge base for definitions and terminology. One
+line per entry — a new foundational entry slots in here and
+nowhere else:
+
+- Rijke, *Introduction to Homotopy Type Theory* (arXiv 2212.11082,
+  `resources/rijke-hott/`) — the univalent-mathematics foundation
+  and idiom.
+- Bentzen, *Naive cubical type theory* (arXiv 1911.05844,
+  `resources/bentzen-naive-cubical/`) — the cubical-idiom companion
+  to the Rijke entry: paths as interval functions, the Kan
+  operations, derived connections, the cubical groupoid laws,
+  dependent paths and heterogeneous composition, and a derivation
+  of path induction. Scope: the paper develops no univalence
+  (background and future-work mentions only) —
+  univalent-foundations lookups stay Rijke-grounded.
+
+Grounding in a shelf entry goes through the entry's committed map,
+never a guessed file: the entry README carries the line-anchored
+section map and the statement-level content digests; a lookup
+resolves there first and reads the vendored source at the anchor
+for anything past the digest's statement. A digest-only answer is
+cited "per the entry digest at <anchor>" — SOURCE-CHECKED attaches
+only once the vendored source is read at the anchor (the lexicon
+above owns the labels) — and a missing vendored file is reported
+BLOCKED with the entry's recorded re-fetch command, never
+fabricated. Surfaces that ground in the shelf (the hott workflow,
+the roster definitions) name this convention and defer here.
+
 ## Delivery
 
 Before stopping, verify on disk that every promised artifact
@@ -346,9 +378,10 @@ local working memory. The full deliberation is in the session logs
   `suite-maintainer`, `process-reviewer`. Roles are
   `.agents/<name>.md`, symlinked to `.claude/agents/` and
   `.pi/agents/`.
-- **Rijke is the foundational reference.** arXiv 2212.11082
-  (`resources/rijke-hott/`) — the univalent-mathematics idiom every
-  role draws on.
+- **Rijke is the foundational reference.** The ruling that seeded
+  the foundational shelf; the operative convention — the entry list
+  and the map-and-digest grounding — is "Foundational references"
+  above.
 - **Memory is pointers.** Rulings and design live in tracked repo
   homes (this file, the session logs, `docs/gloss.md`, `docs/roadmap.md`);
   harness memory holds short-term state and pointers into them, never

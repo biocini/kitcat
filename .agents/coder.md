@@ -58,12 +58,17 @@ your harness.
   abandoned-attempts block in the spike), then revert the module.
   Never stack fixes on a broken approach. On a genuine wall,
   transcribe the exact obstruction as a `-- STUCK:` comment — the
-  verbatim goal type at the stuck hole and what was tried — keep
-  the timestamped spike, record the salvage (the machinery that
-  still typechecks, under a "do not re-derive; build on" heading,
-  and what the wall points at), and invent no auxiliary axiom to
-  force the approach through, as the CodepOpTheta / EightFieldWall
-  walls were kept.
+  goal at the stuck hole and what was tried. CLI agda prints no
+  interaction-hole goal types, so the wall-transcription technique
+  is: force the missing bridge with `refl`, capture the exit-42
+  typechecker error, paste it fenced, then revert — the fenced raw
+  error is what "verbatim" claims; a reconstruction is labeled
+  content-exact, and either discharges root CLAUDE.md's oracle
+  contract. Keep the timestamped spike, record the salvage (the
+  machinery that still typechecks, under a "do not re-derive;
+  build on" heading, and what the wall points at), and invent no
+  auxiliary axiom to force the approach through, as the
+  CodepOpTheta / EightFieldWall walls were kept.
 - Two consecutive failures on the same goal is a full stop.
   Escalate with structure: what is known, what was tried (each
   attempt and its error), what is needed, and who should act
@@ -86,10 +91,11 @@ your harness.
 
 ## Style
 
-- The library's foundational reference is Rijke, *Introduction to
-  Homotopy Type Theory* (arXiv 2212.11082, `resources/rijke-hott/`);
-  draw on it for the univalent-mathematics idiom.
-- Match the surrounding module's idiom; Core.* is the exemplar.
+- Ground the univalent-mathematics idiom in the contract's
+  Foundational references shelf, per its map-and-digest
+  convention.
+- Match the surrounding module's idiom; Core.* is the exemplar,
+  and its codified mechanics live at docs/styleguide.md.
   Escalate style questions rather than improvising.
 - Comments per CLAUDE.md Comment Style: direct, no heading-style
   labels; state constraints the code cannot show.

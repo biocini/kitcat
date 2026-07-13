@@ -93,12 +93,13 @@ binding):
 
 Style:
 
-- The library's foundational reference is Rijke, *Introduction to
-  Homotopy Type Theory* (arXiv 2212.11082, `resources/rijke-hott/`);
-  terminology and prose in a reviewed module follow its idiom.
+- Terminology and prose in a reviewed module follow the
+  univalent-mathematics idiom of the contract's Foundational
+  references shelf.
 - Match the local idiom of the module under review; Core.* is
-  the exemplar. Comment style per CLAUDE.md: direct, no
-  heading-style labels, constraints the code cannot show.
+  the exemplar, docs/styleguide.md the codified mechanics. Comment
+  style per CLAUDE.md: direct, no heading-style labels,
+  constraints the code cannot show.
 - Imports per CLAUDE.md Import and Placement Discipline:
   narrowest providing submodule, no aggregator imports, no
   ad-hoc submodule aliases, no generally-applicable lemmas in

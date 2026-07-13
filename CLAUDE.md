@@ -63,7 +63,8 @@ unclear → `coder` → `reviewer`. Refactoring: `analyzer` → `coder`
   plan ledger, then revert. Do not stack fixes on a broken
   approach. On a genuine two-strikes wall, KEEP the timestamped
   `src/Test/` spike (do not delete it) with `-- STUCK:` comments
-  transcribing the verbatim goal type at the stuck hole and what
+  transcribing the goal type at the stuck hole — verbatim or
+  content-exact, per the spike report contract below — and what
   was tried; revert the real modules; invent no auxiliary axioms;
   and register the kept spike plus its salvage — the reusable
   machinery it produced and what the wall points at — in the run
@@ -80,9 +81,13 @@ unclear → `coder` → `reviewer`. Refactoring: `analyzer` → `coder`
   implementation on a spike for the conjectured ones. A spike is
   dispatched with an oracle-shaped report contract — a required
   verdict in {DERIVED, STUCK, PARTIAL}, which route closed, and the
-  exact goal-verbatim residue at any stuck hole; the typecheck
-  against the real foundation (never a toy model) is the pin, prose
-  is never the pin. A spike is warranted only by an actually-open
+  exact goal residue at any stuck hole. "Verbatim" for a residue
+  means the fenced raw typechecker error from a refl-probe (force
+  the missing bridge with `refl`, capture the exit-42 error,
+  revert); a reconstruction is labeled content-exact, and either
+  discharges the contract. The typecheck against the real
+  foundation (never a toy model) is the pin, prose is never the
+  pin. A spike is warranted only by an actually-open
   fork (a candidate cell, an unpinned coherence, an is-X-derivable
   question), never a routine ap/sym proof — a redundant spike is the
   ornamental redundancy faithfulness forbids.
@@ -156,12 +161,14 @@ The agent-facing context is exactly: this file, src/Gloss/CLAUDE.md,
 `.agents/CLAUDE.md` (the context-layer source of truth),
 `.agents/methodology.md` (the working discipline), the agent roster
 (`.agents/*.md`), README.md, CHANGELOG.md, docs/gloss.md (the theorem
-ledger), docs/provenance.md, docs/roadmap.md, the workflow suite
+ledger), docs/provenance.md, docs/roadmap.md, docs/styleguide.md
+(the Core.* idiom codified), the workflow suite
 (`.agents/prompts/` bodies + `.agents/skills/kitcat/` shims),
 `resources/`, and `notes/`. Nothing else in the repository is
 loaded, cited, or consulted as an authority. Style law: match the
-local idiom of the module you are editing — Core.* is the exemplar
-— and escalate style questions to Lane. Sessions open by reading
+local idiom of the module you are editing — Core.* is the exemplar,
+docs/styleguide.md the codified mechanics — and escalate style
+questions to Lane. Sessions open by reading
 the latest `notes/session-logs/` entry and docs/roadmap.md, and close with
 `/log`.
 
@@ -176,6 +183,12 @@ the latest `notes/session-logs/` entry and docs/roadmap.md, and close with
   (`resources/rijke-hott/`) — the library's mathematical-foundations
   reference (univalent mathematics); the common knowledge base every
   role draws on for definitions and terminology
+- [Bentzen, *Naive cubical type theory*](https://arxiv.org/abs/1911.05844)
+  (`resources/bentzen-naive-cubical/`) — Rijke's cubical-idiom
+  companion: paths as interval functions, the Kan operations,
+  derived connections, the cubical groupoid laws by explicit
+  composition scenarios (develops no univalence — that side is
+  Rijke's)
 - [1lab](https://1lab.dev) — idiomatic cubical Agda patterns
 - [Capriotti–Kraus](https://arxiv.org/abs/1707.03693) — univalent higher categories
 - [Petrakis, *Categories with dependent arrows*](https://arxiv.org/abs/2303.14754)
@@ -346,7 +359,8 @@ and never adds its own.
 - No external library imports.
 - No features incompatible with `--erased-cubical`.
 - Style: match the surrounding module's idiom (Core.* is the
-  exemplar); escalate style questions rather than improvising.
+  exemplar; docs/styleguide.md codifies its mechanics); escalate
+  style questions rather than improvising.
 - **Never truncate homs.** Categories here are wild by design; do
   not pursue or assume hom-set conditions. (The op-involution
   regress theorem, docs/gloss.md T12, is why this is
@@ -374,7 +388,8 @@ is correct or what the next line does.
 
 - Public-facing modules are crafted API-first: a clean, ergonomic
   export surface, modeled on how `Core.*` is written — `Core.*` is
-  the exemplar for naming, ordering, and what earns a public name.
+  the exemplar for naming, ordering, and what earns a public name;
+  docs/styleguide.md codifies the mechanics.
 - Literate prose in a module is sound documentation of its
   adjacent code block — what it states, why it exists, the
   constraints the code can't show — never process narration,

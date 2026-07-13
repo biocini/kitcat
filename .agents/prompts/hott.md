@@ -1,6 +1,6 @@
 ---
 name: hott
-description: Look up or explain a concept, definition, or theorem from the univalent-mathematics foundations, grounded in the library's standard reference — Rijke, Introduction to Homotopy Type Theory (resources/rijke-hott/). Use to find the standard definition of a HoTT notion (the identity type, is-equiv, is-contr, the h-level hierarchy, the fundamental theorem, function extensionality, univalence, the circle, …), locate where Rijke treats a topic, or ground a kitcat construction in the foundational text — always separating what Rijke states from what this repository has machine-checked.
+description: Look up or explain a concept, definition, or theorem from the univalent-mathematics and cubical foundations, grounded in the library's foundational references — Rijke, Introduction to Homotopy Type Theory (resources/rijke-hott/) and its cubical-idiom companion, Bentzen, Naive cubical type theory (resources/bentzen-naive-cubical/). Use to find the standard definition of a HoTT notion (the identity type, is-equiv, is-contr, the h-level hierarchy, the fundamental theorem, function extensionality, univalence, the circle, …), understand cubical reasoning (paths as functions of the interval, transport, hcomp and composition scenarios, connections, the cubical groupoid laws, dependent paths), locate where the references treat a topic, or ground a kitcat construction in the foundational texts — always separating what a source states from what this repository has machine-checked.
 argument-hint: <concept | definition | theorem | question>
 args: <concept | definition | theorem | question>
 section: Research Workflows
@@ -16,47 +16,59 @@ first: the contract binds the cross-agent conventions this skill
 defers to; HARNESS maps every capability named below to the tools
 in your harness.
 
-The reference is the library's foundational source, `resources/rijke-hott/`
-(Rijke, *Introduction to Homotopy Type Theory*, arXiv 2212.11082).
-This is a reference lookup grounded in the vendored text, not an open
-web search; and it is an execution request, not a request to explain
-the workflow — resolve the target and answer.
+The reference is the library's foundational shelf — the contract's
+"Foundational references" section owns the entry list and the
+grounding convention; this lookup grounds in two of its entries:
+`resources/rijke-hott/` (Rijke, *Introduction to Homotopy Type
+Theory*) for the univalent-mathematics vocabulary and theorem
+statements, and its cubical-idiom companion
+`resources/bentzen-naive-cubical/` (Bentzen, *Naive cubical type
+theory*) for the cubical reasoning idiom — interval and path
+primitives, transport and composition scenarios, connections, the
+cubical groupoid laws, dependent paths. Bentzen develops no
+univalence: univalent-foundations lookups stay grounded in Rijke.
+This is a reference lookup grounded in the vendored texts, not an
+open web search; and it is an execution request, not a request to
+explain the workflow — resolve the target and answer.
 
 ## Locate
 
-Navigate the vendored source through the entry's committed map,
-never by guessing a file:
+Ground per the contract's Foundational references convention —
+through the entry's committed map and digests, never a guessed
+file:
 
-1. Read `resources/rijke-hott/README.md` — the section map lists the
-   three parts and every lecture with its subsections and the
-   load-bearing definitions/theorems at `<lecture>.tex:LINE`, and the
-   **Content digests** section carries statement-level digests of
-   those items at the same anchors. Find the target with the
-   file-search capability; the digest orients the lookup and often
-   carries what the answer needs — but the SOURCE-CHECKED label
-   attaches only after the vendored source is read at the anchor
-   (step 2). An answer given from the digest alone is cited as
-   "per the entry digest at <anchor>", never SOURCE-CHECKED.
-2. For anything beyond the digest's statement — hypotheses in full,
+1. Choose the grounding entry by register: univalent-mathematics
+   definitions and theorem statements ground in Rijke; the cubical
+   reasoning idiom grounds in Bentzen. A target spanning both
+   registers (a path-algebra law and its cubical derivation, say)
+   reads both.
+2. Read the entry's README (`resources/<entry>/README.md`): locate
+   the target in the entry's section map and its statement-level
+   digest with the file-search capability. The digest orients the
+   lookup and often carries what the answer needs; the convention
+   governs what a digest-only answer may claim.
+3. For anything beyond the digest's statement — hypotheses in full,
    the surrounding development, a proof's shape — read the vendored
-   source at the anchor (`resources/rijke-hott/<lecture>.tex`) with
-   the file-read capability. The `.tex` is gitignored but present on
-   disk; if it is absent, the entry records the re-fetch command —
-   report the gap as BLOCKED with that command, do not fabricate the
-   statement.
-3. When the target is broader than one anchor (a topic, a
-   comparison), read the relevant subsections across the lecture,
-   and neighbouring lectures the map points to.
+   source at the anchor (`resources/rijke-hott/<lecture>.tex`,
+   `resources/bentzen-naive-cubical/ictt.tex`) with the file-read
+   capability. The `.tex` is gitignored but present on disk; a
+   missing file is reported per the convention, never fabricated.
+4. When the target is broader than one anchor (a topic, a
+   comparison), read the relevant subsections across the lecture or
+   section, and neighbouring ones the map points to.
 
 ## Answer
 
 Deliver in chat, grounded in what the source says:
 
-- **The standard formulation.** State Rijke's definition or theorem
-  as the source gives it, with its hypotheses, citing the location
-  `rijke-hott/<lecture>.tex:LINE` — SOURCE-CHECKED (the opened
-  document states it there). Keep the source's own vocabulary; note
-  where the source offers several equivalent formulations (e.g.
+- **The standard formulation.** State the definition or theorem as
+  the grounding entry gives it, with its hypotheses, citing the
+  location (`rijke-hott/<lecture>.tex:LINE` or
+  `bentzen-naive-cubical/ictt.tex:LINE`) — SOURCE-CHECKED (the
+  opened document states it there) — and naming which entry grounds
+  which register: Rijke for the univalent-mathematics statement,
+  Bentzen for the cubical idiom. Keep the source's own vocabulary;
+  note where a source offers several equivalent formulations (e.g.
   `is-equiv` as bi-invertible vs half-adjoint vs contractible-fibers)
   and which the text takes as primary.
 - **The kitcat cross-reference.** Then say what THIS repository has
@@ -67,23 +79,23 @@ Deliver in chat, grounded in what the source says:
   `--erased-cubical`, no hom-set conditions, the ternary-first
   idiom) — a kitcat construction inherits the standard vocabulary,
   not necessarily the standard proof.
-- **Where to read more.** Point to the lecture and subsection in the
-  map for the fuller development.
+- **Where to read more.** Point to the lecture or section and the
+  subsection in the entry's map for the fuller development.
 
 Keep it proportional: a single-definition lookup is a few sentences
-and one citation; a topic ("how does Rijke build the h-levels")
-walks the relevant subsections in order.
+and one citation; a topic ("how does Rijke build the h-levels",
+"how does Bentzen derive the connections") walks the relevant
+subsections in order.
 
 ## Honesty rules (binding)
 
-- SOURCE-CHECKED means the claimant opened the vendored source at
-  the cited `<lecture>.tex:LINE` this run and it states the claim
-  there; a digest is a derivative and licenses only "per the entry
-  digest at <anchor>". Quote or paraphrase only what is actually in
-  the text read.
+- SOURCE-CHECKED and the digest-only citation form follow the
+  contract's Foundational references convention; either label
+  attaches only to what was actually resolved at its anchor this
+  run. Quote or paraphrase only what is actually in the text read.
 - VERIFIED is reserved for what is machine-checked in THIS repository
-  — a named module or `Gloss.*` certificate. Rijke stating a theorem
-  is never VERIFIED for kitcat; it is the source's claim.
+  — a named module or `Gloss.*` certificate. A shelf entry stating a
+  theorem is never VERIFIED for kitcat; it is the source's claim.
 - The entry's standing governs what a citation on it may bear (the
   contract's Ingestion section: the statement audit is the
   load-bearing gate; Lane's discretion is separate and
@@ -91,9 +103,9 @@ walks the relevant subsections in order.
   entry as authority — and a mathematical claim stays CONJECTURED
   until machine-checked in this repository, whatever the entry's
   standing.
-- A capability with no visible tool, or a missing vendored file, is
-  reported BLOCKED with the manual command a human could run; never
-  simulate the source or invent a statement or a line number.
+- A capability with no visible tool is reported BLOCKED with the
+  manual command a human could run; never simulate the source or
+  invent a statement or a line number.
 
 This skill reads the reference and answers in chat; it writes no
 files and edits nothing. A gap it exposes — a notion kitcat should

@@ -12,9 +12,8 @@ Read `.agents/CLAUDE.md` (the cross-agent contract) and
 `.agents/skills/kitcat/HARNESS.md` first; follow the shared
 conventions (the epistemic lexicon, output locations, degraded
 delegation) by reference. The library's mathematical formalism is
-univalent mathematics; its foundational reference is Rijke,
-*Introduction to Homotopy Type Theory* (`resources/rijke-hott/`) —
-use its idiom.
+univalent mathematics; its idiom is grounded in the contract's
+Foundational references shelf — write in that idiom.
 
 ## Discipline
 

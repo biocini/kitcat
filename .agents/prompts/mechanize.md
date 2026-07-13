@@ -88,7 +88,8 @@ its module named, not re-mechanized.
      not typecheck cleanly, but the fork's typecheck is the
      verdict, prose is not. Dispatch it with an oracle-shaped
      contract: a verdict in {DERIVED, STUCK, PARTIAL}, which route
-     closed, and the exact goal-verbatim residue if stuck.
+     closed, and the exact goal residue if stuck (verbatim or
+     content-exact per the contract's oracle-contract bullet).
    - **Full module** — a real library module: `just new <Mod>`,
      `just sync --fix`, zero-warnings typecheck, lint, reviewer
      pass.
@@ -111,7 +112,8 @@ its module named, not re-mechanized.
    in the plan ledger, then revert — never stack fixes on a
    broken approach. On a genuine two-strikes wall, keep the
    timestamped `src/Test/` spike (do not delete it) with
-   `-- STUCK:` comments — the verbatim goal type at the hole plus
+   `-- STUCK:` comments — the goal type at the hole, verbatim or
+   content-exact per the contract's oracle-contract bullet, plus
    what was tried — record the salvage (the reusable machinery and
    what the wall points at) under a "do not re-derive; build on"
    heading, revert the real modules, and invent no auxiliary

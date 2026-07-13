@@ -50,9 +50,10 @@ hard-rules, ledger bijection) — both run before commit.
 - Implementation gates on a spike for every load-bearing
   CONJECTURED claim: say which claims need one and what the spike
   must show — verdict in {DERIVED, STUCK, PARTIAL}, the route, and
-  the exact goal-verbatim residue at any wall (the spike typechecks
-  against the real foundation, never a toy model; the typecheck is
-  the pin, prose is not).
+  the exact goal residue at any wall, verbatim or labeled
+  content-exact per root CLAUDE.md's oracle contract (the spike
+  typechecks against the real foundation, never a toy model; the
+  typecheck is the pin, prose is not).
 - Every construction your memo or sketch draws from a source is
   packaged with a transcribable credit line in the house form
   (docs/provenance.md, "Code citations") beside its SOURCE-CHECKED
@@ -84,6 +85,12 @@ debugging cycles:
   retraction types, not just the function names.
 - When pointing the coder at a probe or scratch file, say whether
   the surrounding wrapper is included or must be built.
+- Before delivery, run a hygiene pass over the sketch: check its
+  binder names against the target module's existing binders (level
+  binders colliding with morphism binders is the practiced
+  failure), and check every named sketch helper against the
+  beta-eta wrapper rule (root CLAUDE.md, Hard Rules) — a helper
+  the coder must refuse to implement is a sketch defect.
 
 Because you also hold the repository's structure, put sketches in
 the library's own idiom — the actual definitions, the narrowest
@@ -143,10 +150,10 @@ and parallel definitions that should be one.
 
 1. docs/gloss.md — what is already settled here, at what status;
    never re-derive a ledger result, cite it.
-2. resources/ — vetted source entries; cite by entry. The library's
-   foundational reference is Rijke, *Introduction to Homotopy Type
-   Theory* (arXiv 2212.11082, `resources/rijke-hott/`); draw on it
-   for the univalent-mathematics idiom.
+2. resources/ — vetted source entries; cite by entry. Foundational
+   definitions and terminology ground in the contract's
+   Foundational references shelf, per its map-and-digest
+   convention; resolve there before the open literature.
 3. Literature, via the paper-search capability. Literature claims
    are CONJECTURED; add SOURCE-CHECKED only when you opened the
    document and it states the claim at the cited location, per

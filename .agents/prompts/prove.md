@@ -26,6 +26,14 @@ as the run ledger: failed proof attempts are preserved there before
 reverting, wall salvage is registered under a "do not re-derive;
 build on" heading, and degraded delegations are recorded there.
 
+**Spike mode.** When the run's target is itself a spike, the
+coder's deliverable IS the verdict set; the accuracy review still
+runs in full; the mechanical gate scopes to the tier — the
+typecheck at zero warnings is the pin, and timestamped `Test/`
+scratch is lint-exempt by name per root `CLAUDE.md`'s Test rules;
+the close delivers verdicts and promotions HELD for Lane's ruling,
+not a committed-ready module.
+
 ## 1. Prepare — the `analyzer`
 
 Dispatch the `analyzer` with the target. It delivers: the structural
@@ -39,7 +47,14 @@ simple paths) skip the strategy half.
 
 **GO gate.** Summarize the analyzer's plan and the spikes it calls
 for. Do not implement until Lane confirms the approach (or the
-target is a routine fix the analyzer cleared as needing no strategy).
+target is a routine fix the analyzer cleared as needing no
+strategy). A design pre-registered with kill criteria and ratified
+by Lane in a prior session satisfies this gate on arrival; the
+gate then applies to material deviations the analyzer proposes.
+With Lane absent, a deviation proceeds only when it is itself
+spike-pinned with the pre-registered kill criteria intact and is
+reported beside the verdicts; a deviation that changes what the
+checks decide is a full stop.
 
 ## 2. Implement — the `coder`
 
@@ -66,7 +81,7 @@ mechanical gate follow the contract's Delegation ordering: they run
 in sequence, never in the same parallel dispatch — the `analyzer`'s
 accuracy pass (the adversarial pass) runs first and sharpens what
 the `reviewer`'s mechanical gate (the review pass) then judges. The
-two passes, per `.agents/CLAUDE.md`'s Delegation section:
+sequence, in order, per `.agents/CLAUDE.md`'s Delegation section:
 
 - The `analyzer` reviews for **accuracy**: does it prove what the
   strategy specified, by the route specified, resting on the lemmas
@@ -81,7 +96,10 @@ two passes, per `.agents/CLAUDE.md`'s Delegation section:
   (exit 42 is failure, zero warnings) and `just lint` on every
   touched module rather than trusting the coder's word, plus
   hard-rule conformance, the certificate↔ledger bijection, and
-  credit comments. Blocking findings are fixed and re-reviewed.
+  credit comments — the reviewer's brief carries the analyzer's
+  memo, whose credit obligations are the baseline for the
+  completeness half of that check. Blocking findings are fixed and
+  re-reviewed.
 
 ## 4. Close
 

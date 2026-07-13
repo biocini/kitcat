@@ -24,7 +24,9 @@ A mathematical claim graduates only when a spike typechecks it
 against the real foundation — never a toy model; the typecheck is
 the pin, prose is not. A spike is dispatched with an oracle-shaped
 contract: a verdict in {DERIVED, STUCK, PARTIAL}, the route closed,
-and the exact goal-verbatim residue at any wall. A definitional
+and the exact goal residue at any wall — verbatim or labeled
+content-exact per the oracle contract (root `CLAUDE.md`, Agent
+Discipline). A definitional
 reduction a proof leans on is re-asserted as a present-tense
 `killcheck-<name> = refl` in the Test/ regression tier wired into
 `All`, so a reduction that stops firing fails the next
@@ -90,7 +92,14 @@ The library's most-run flow: `analyzer` prepares (structural
 analysis + proof strategy) → `coder` implements → `analyzer` reviews
 for accuracy + `reviewer` runs the mechanical gate. The `analyzer`
 is consulted before any non-trivial proof (h-levels, coherence,
-transport, fibers, univalence); routine proofs bypass it. Research
+transport, fibers, univalence); routine proofs bypass it. Exemplar:
+the first end-to-end /prove run (2026-07-13, the faithful-stratum
+spike; run record `notes/plans/2026-07-13-faithful-stratum-spike.md`)
+— the analyzer's prep caught two memo-prose defects (the
+transport-refl trap, the missing extract-agree axiom) before the
+coder ran, every annotated sketch line then closed first-try at
+four checkpoints, and the accuracy review verified the
+implementation by transplant-diff against the sketch. Research
 deliverables pass four gates in order, none skippable on confidence:
 plan → firsthand reading → verify-before-deliver → ingest a
 firsthand-needed source.

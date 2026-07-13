@@ -127,8 +127,10 @@ With the log drafted, save the draft at its target path so the
 reviewer reads it from disk, then dispatch the `process-reviewer`
 with a self-contained brief per the contract: the session's dated
 plan ledgers under `notes/plans/` (with any shakedown or friction
-notes they carry), the drafted log body, and the session's
-CHANGELOG delta, naming the report path
+notes they carry) and the drafted log body, whose Scope and Status
+stand in for the changelog entry — that entry is written only
+after this stage; include a CHANGELOG delta only when the session
+already touched `CHANGELOG.md`. Name the report path
 `notes/research/<YYYY-MM-DD>-<slug>-process-review.md`. When the
 agent is absent in your harness, run the review lead-owned under
 its same contract and record the delegation as degraded per the

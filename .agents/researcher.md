@@ -56,8 +56,8 @@ outward, check what the repository already holds: `resources/`
 and `docs/gloss.md` (the theorem ledger). Known prior context is
 a starting point, not something to rediscover.
 
-The library's foundational reference is Rijke, *Introduction to
-Homotopy Type Theory* (arXiv 2212.11082, `resources/rijke-hott/`);
+Foundational definitions and terminology ground in the contract's
+Foundational references shelf, per its map-and-digest convention;
 draw on it for the univalent-mathematics idiom.
 
 Quality order: prefer primary papers, official library and
