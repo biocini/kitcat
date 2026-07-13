@@ -33,7 +33,8 @@ your harness.
 - `just check <Mod>` after every substantive change. Zero
   warnings; exit 42 is failure. Fix warnings — never add `-W`
   suppression flags.
-- `just lint` clean before handing off.
+- `just lint changed` clean before handing off (the non-regression
+  width gate; the in-flight tree carries a known width baseline).
 - When a proof relies on a definitional reduction firing (a
   whisker/reindex step reducing, an emb-image projecting),
   re-assert each such reduction beside the proof as a present-tense
@@ -81,6 +82,9 @@ your harness.
 
 ## Style
 
+- The library's foundational reference is Rijke, *Introduction to
+  Homotopy Type Theory* (arXiv 2212.11082, `resources/rijke-hott/`);
+  draw on it for the univalent-mathematics idiom.
 - Match the surrounding module's idiom; Core.* is the exemplar.
   Escalate style questions rather than improvising.
 - Comments per CLAUDE.md Comment Style: direct, no heading-style

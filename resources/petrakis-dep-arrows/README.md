@@ -1,75 +1,233 @@
 # Petrakis — Categories with dependent arrows
 
+The source paper for the **categories-with-dependent-arrows**
+formulation: an abstract categorical account of dependent functions
+taken as primitive (family-arrows and dependent arrows), rather than
+reduced to the Σ-construction. It is the external reference feeding
+the rep-system ↔ Petrakis substrate dictionary; a potential
+mechanization target, so the map below is line-anchored to the
+`.tex` at definition/theorem depth.
+
 ## Citation
 
 Iosif Petrakis. *Categories with dependent arrows*.
 arXiv:2303.14754v1 [math.CT] (secondary: math.LO), 26 March 2023.
-<https://arxiv.org/abs/2303.14754>.
-Author affiliation (per the paper): Department of Computer Science,
-University of Verona.
+<https://arxiv.org/abs/2303.14754>. Author affiliation (per the
+paper): Department of Computer Science, University of Verona
+(iosif.petrakis@univr.it). Only v1 exists on arXiv (submission
+history: `[v1] Sun, 26 Mar 2023 15:18:02 UTC`; no later version as
+of ingestion).
 
 ## Vetting
 
-Opened 2026-07-11 by Claude (Fable 5), at Lane's direction as part
-of the founding `resources/` ingestion. Checked: title page and
-abstract against the arXiv abstract page (title, author, subjects,
-v1 submission date 26 Mar 2023); the section map below against the
-paper's own §1 overview; the definition/theorem inventory extracted
-from the full text (pdftotext). Bit-identity of the vendored file
-with the arXiv v1 PDF (`arxiv.org/pdf/2303.14754v1`) verified by
-sha256 on 2026-07-11. PROVISIONAL: agent-vetted; Lane's
-confirmation of this entry is pending.
+PROVISIONAL. Re-ingested 2026-07-12 by Claude (Opus 4.8) at Lane's
+direction (R11 — the arXiv LaTeX e-print is canonical, superseding
+PDF), via the ingestion protocol: the arXiv LaTeX e-print fetched
+directly (`curl -L https://arxiv.org/e-print/2303.14754`), the
+canonical artifact (the e-print `.tar.gz`) hashed, and the
+extracted `.tex` read for the line-anchored map below. The document
+hash was checked stable across two independent arXiv fetches. The
+metadata (title, author, subjects, v1-only submission date 26 Mar
+2023) was re-checked against `https://arxiv.org/abs/2303.14754`.
+The theorem/definition numbering was reconciled against the
+source's shared section counter (all numbered environments share
+one per-section counter — see the map) and matches the numbers in
+the prior PDF-based entry. This entry becomes vetted only on Lane's
+confirmation; no load-bearing citation rests on a PROVISIONAL entry.
+
+Prior ingestion: opened 2026-07-11 by Claude (Fable 5) from the
+arXiv v1 PDF (title/abstract/subjects checked against the abs page;
+definition/theorem inventory from `pdftotext`). That entry pinned
+the PDF as canonical; R11 reclassifies the e-print `.tar.gz` as
+canonical and the PDF as a secondary derived artifact (retained,
+gitignored).
+
+## Files
+
+Canonical format: **LaTeX source** (an arXiv e-print). All vendored
+and derived forms are gitignored; only this README is tracked.
+
+- `petrakis-dep-arrows.tar.gz` — the canonical artifact (the arXiv
+  e-print source). This is the file the canonical hash below is of.
+  The e-print is a single gzip-compressed LaTeX file (arXiv's form
+  for a one-file source), not a multi-file tar.
+- `Arxiv_Dep_CAT.tex` — the extracted LaTeX source (the source's
+  own internal filename), 3663 lines. **This is the file the reader
+  greps**; regenerate with
+  `gunzip -c petrakis-dep-arrows.tar.gz > Arxiv_Dep_CAT.tex`. Jump
+  with `sed -n 'A,Bp' Arxiv_Dep_CAT.tex`.
+- `cat-dep-arrows.pdf` — the arXiv v1 PDF compile (20 pp.); a
+  secondary derived artifact, superseded as canonical by the
+  e-print. Retained for convenience, gitignored.
 
 ## Document hash
 
-20-page arXiv v1 compile.
+sha256 of the **canonical artifact** (the e-print tarball), stable
+across two independent arXiv fetches:
+
+```
+3cb80488fcee295aed19ff7bed478a8b8b373789f0f7ce7b57ab4f2c557f2317  petrakis-dep-arrows.tar.gz
+```
+
+Fallback if the gzip wrapper ever varies — sha256 of the extracted
+(uncompressed) `.tex`, `gunzip -c petrakis-dep-arrows.tar.gz | shasum -a 256`:
+
+```
+85ce309afdcf4b01509ebdb84158d9f91c101e58c140f343b5fd27392ae698d6
+```
+
+Secondary artifact (the v1 PDF, no longer canonical), sha256:
 
 ```
 2298bc0e6878f09146d2c1b3a015fdee6cdb0ec729b98972ea26cf0dc8557983  cat-dep-arrows.pdf
 ```
 
-## Summaries
+## Section map
+
+Line anchors are into `Arxiv_Dep_CAT.tex`. Numbering note: the
+source declares one shared per-section counter
+(`\newtheorem{theorem}{...}[section]` at `l.169`, with
+`definition`/`proposition`/`example`/… all `[theorem]` at
+`l.170–177`), so every numbered environment in a section runs in a
+single sequence (`2.1, 2.2, …`); numbers below were computed by
+counting environments per section and match the prior entry. Two
+labels are reused in the source — `\label{def: fcat}` on both
+Def 2.1 and Def 2.8, `\label{def: dcat}` on both Def 4.1 and
+Def 4.8 — so `\ref` to them is ambiguous; cite by the line anchors
+here, not by label.
+
+**Front matter:**
+- `l.169–177` — the `\newtheorem` block (the shared-counter setup).
+- `l.958` `\title`; `l.961` `\author`; `l.998–1009`
+  `\begin{abstract}` … `\end{abstract}`; `l.993` `\maketitle`.
+
+**§1 Introduction** (`l.1019`):
+- `l.1060–1067` — the motivating framing: the building blocks of
+  MLTT (**types, functions, type-families, dependent functions**),
+  of BST (**sets, functions, families of sets, dependent
+  functions**), and of CaT (**objects, arrows**) — the paper adds
+  family-arrows and dependent arrows to close the analogy.
+- `l.1070–1177` — the categorical-interpretation-of-dependency
+  survey (Cartmell, Seely, Pitts, Palmgren, …) situating the work.
+
+**§2 Categories with family-arrows** (`l.1178`):
+- `l.1193` **Definition 2.1** (`\label{def: fcat}`) — *fam-category*
+  (𝔣-category): to every object `a` a collection `fHom(a)` of
+  **family-arrows** (λ, μ, …), with `C₂ := ⋃ fHom(a)`; a
+  composition `∘ : fHom(a) × Hom(b,a) → fHom(b)` satisfying
+  `(𝔣₁) λ∘1ₐ = λ` and `(𝔣₂) λ∘(f∘g) = (λ∘f)∘g`. Small / locally
+  small / large family-structure defined at the end.
+- `l.1274, 1292, 1320, 1328, 1338, 1414` — Examples 2.2–2.7
+  (families of sets/types; constant families; family-arrows in the
+  coslice; families on categories; families in a topos, after
+  Pitts; weak family-arrows in the slice).
+- `l.1535` **Definition 2.8** (label reused `def: fcat`) — the
+  **category of family-arrows** `fHom(𝒞)` (= `𝒞₂`): the
+  `fHom : 𝒞ᵒᵖ → Set` presheaf and its Grothendieck category of
+  elements `Σ(𝒞, fHom)`, objects `(a, λ)`, arrows `f : (b,μ)→(a,λ)`
+  with `μ = λ∘f`.
+
+**§3 Categories with family-arrows and Sigma-objects** (`l.1592`):
+- `l.1604` **Definition 3.1** (`\label{def: fscat}`) —
+  *(𝔣, Σ)-category*: Sigma-objects `Σₐλ` with first projection
+  `pr₁^{a,λ} : Σₐλ → a`, and for each `f∈Hom(b,a)` an operation
+  `Σf` with `Σ_λ f : Σ_b(λ∘f) → Σₐλ` making the projection square a
+  **pullback**, plus strictness `(σ₁) Σ_λ1ₐ = 1`, `(σ₂)
+  Σ_λ(f∘g) = (Σ_λf)∘Σ_{λ∘f}g`. Remark following: a
+  `(𝔣, Σ)`-category with terminal object is exactly a type-category
+  of Pitts / category with attributes of Cartmell.
+- `l.1706, 1738, 1763, 1834, 1869` — Examples 3.2–3.6 (trivial
+  Sigma-object; Sigma-set and Sigma-type; Sigma-object of a
+  constant family; weak Sigma-objects in the slice; commutative
+  rings).
+- `l.1938, 2055` — two propositions **commented out** in the source
+  (`% \begin{proposition}`; not numbered, not part of the paper).
+- `l.2135` **Proposition 3.7** (`\label{prp: transp1}`) — in a
+  `(𝔣, Σ)`-category with terminal object 1, over global elements
+  `i, j ∈ a`: `Σ₁λ(i)` is a subobject of `Σₐλ` with
+  `pr₁^{1,λ(i)} = !`, recovering transport arrows witnessing
+  equality of Sigma-objects over 1 for equal global elements.
+
+**§4 Categories with dependent arrows** (`l.2309`):
+- `l.2322` **Definition 4.1** (`\label{def: dcat}`) —
+  *dep-category* (𝔡𝔦-category): to every `a` and `λ∈fHom(a)` a
+  collection `dHom(a, λ)` of **dependent arrows** (Φ, Ψ, …),
+  `C₃ := ⋃ dHom(a,λ)`; for `Φ∈dHom(a,λ)` and `f∈Hom(b,a)` an
+  application `Φ(f)∈dHom(b, λ∘f)` with `(𝔡𝔦₁) Φ(1ₐ)=Φ`,
+  `(𝔡𝔦₂) Φ(f∘g)=[Φ(f)](g)`. The dependent-function analogy
+  (`i∈a, Φ∈dHom(a,λ) ⟹ Φ(i)∈dHom(1, λ(i))`) follows at
+  `l.2360–2378`.
+- `l.2379, 2391, 2424, 2435` — Examples 4.2–4.5 (trivial dependent
+  arrows; dependent arrows in sets and types; **alternative**
+  dependent arrows in BishSet; dependent arrows of constant
+  families).
+- `l.2485` **Theorem 4.6** (`\label{thm: typeisdi}`) — **every
+  (𝔣, Σ)-category is a 𝔡𝔦-category canonically**: take
+  `dHom(a,λ) := Di_a λ := { φ∈Hom(a, Σₐλ) | pr₁^{a,λ}∘φ = 1ₐ }`
+  (the **dependent objects** / global sections).
+- `l.2703` — Example 4.7 (dependent objects of constant families).
+- `l.2731` **Definition 4.8** (label reused `def: dcat`) — the
+  **category of dependent-arrows** `dHom(𝒞)` (= `𝒞₃`): the
+  presheaf `dHom : fHom(𝒞)ᵒᵖ → Set` and its Grothendieck category
+  `Σ(fHom(𝒞), dHom)`, objects `((a,λ), Φ)`.
+
+**§5 Categories with dependent arrows and Sigma-objects** (`l.2752`):
+- `l.2767` **Definition 5.1** (`\label{def: dscat}`) —
+  *(𝔡𝔦, Σ)-category*: an `(𝔣, Σ)`-structure together with a
+  **second-projection-dependent arrow**
+  `pr₂^{a,λ} ∈ dHom(Σₐλ, λ∘pr₁^{a,λ})` satisfying
+  `pr₂^{b, λ∘f} = pr₂^{a,λ}(Σ_λf)` — the Σ-object definition now
+  uses the second projection as a dependent arrow, as in MLTT/BST.
+- `l.2839, 2851` — Examples 5.2–5.3 (trivial projection-arrows;
+  Sigma-objects of constant families).
+- `l.2872` **Theorem 5.4** (`\label{thm: typeisdsi}`) — **every
+  (𝔣, Σ)-category is a (𝔡𝔦, Σ)-category canonically**: the
+  second-projection dependent arrow `pr₂^{a,λ}` is the arrow
+  determined by the canonical pullback.
+- `l.3082` — Example 5.5 (dependent objects of constant families).
+- `l.3219` **Proposition 5.6** (`\label{prp: elsigma}`) — in a
+  `(𝔡𝔦, Σ)`-category with terminal object 1, the elements
+  `z ∈ Σₐλ` and their second-projection global elements
+  `pr₂^{a,λ}(z) ∈ dHom(1, (λ∘pr₁^{a,λ})(z))`, recovering the
+  element-level Σ-projections.
+
+**§6 Concluding comments** (`l.3393`):
+- The `C₁ / C₂ / C₃` three-dimensional picture (arrows /
+  family-arrows / dependent arrows): dependency is expressed
+  through the third dimension `C₃` **alone**, independently of
+  Sigma-objects — contrasted with type-categories, where
+  dependency is complicated and Σ-dependent. Stresses that
+  `𝔡𝔦`-categories admit dependent arrows *not* generated from
+  Sigma-objects (Examples 4.2, 4.4).
+
+**Bibliography** (`l.3528` `\begin{thebibliography}`, 41 items;
+`l.3658` `\end{document}`).
+
+## What the source establishes
 
 Everything below records what the source states; every mathematical
 claim is CONJECTURED until machine-checked.
 
-**Abstract.** An abstract categorical formulation of dependent
-functions, fundamental and independent of the Sigma-construction.
-The paper defines categories with family-arrows (*fam-categories*)
-and fam-categories with Sigma-objects ((fam, Σ)-categories) — a
-(fam, Σ)-category with a terminal object is exactly a type-category
-of Pitts, equivalently a category with attributes of Cartmell — and
-then categories with dependent arrows (*dep-categories*). Every
-(fam, Σ)-category is a dep-category in a canonical way; the notion
-of Sigma-object is affected by the existence of dependent arrows,
-and every (fam, Σ)-category is a (dep, Σ)-category canonically.
-
-**Motivating question** (§1): what is the fundamental categorical
-generalisation of a family of sets and of a dependent function?
-The building blocks become objects, arrows, family-arrows,
-dependent arrows — mirroring MLTT's types, functions,
-type-families, dependent functions and Bishop Set Theory's sets,
-functions, families of sets, dependent functions. Dependency is
-captured as a primitive notion, not through the Sigma-type.
-
-**Section map with key items:**
-
-- §2 Categories with family-arrows: Definition 2.1
-  (fam-category — to every object a corresponds a collection
-  fHom(a) of family-arrows); examples; Definition 2.8.
-- §3 fam-categories with Sigma-objects: Definition 3.1
-  ((fam, Σ)-category); Proposition 3.7 (in a (fam, Σ)-category with
-  terminal object 1, transport arrows witnessing equality of
-  Sigma-objects over 1 are recovered for equal global elements).
-  Relation to Pitts' type-categories (his main example being the
-  classifying category of a dependently typed algebraic theory).
-- §4 Categories with dependent arrows: Definition 4.1
-  (dep-category — to every a and λ ∈ fHom(a) a collection
-  dHom(a, λ) of dependent arrows over λ); Theorem 4.6 (every
-  (fam, Σ)-category is a dep-category in a canonical way);
-  Definition 4.8.
-- §5 dep-categories with Sigma-objects: Definition 5.1
-  ((dep, Σ)-category — the Sigma-object definition now uses the
-  second-projection arrow as a dependent arrow, as in MLTT/BST);
-  Theorem 5.4 (every (fam, Σ)-category is a (dep, Σ)-category
-  canonically); Proposition 5.6.
+An abstract, categorical formulation of dependent functions taken as
+*fundamental* and independent of the Σ-construction. The paper
+introduces a stratified vocabulary mirroring MLTT (types, functions,
+type-families, dependent functions) and Bishop Set Theory (sets,
+functions, families of sets, dependent functions): to a category's
+objects and arrows it adds **family-arrows** (`fHom(a)`, giving a
+*fam-category* / 𝔣-category, Def 2.1) and then **dependent arrows**
+(`dHom(a,λ)`, giving a *dep-category* / 𝔡𝔦-category, Def 4.1), each
+with its own composition/application laws compatible with the arrow
+structure. Layering Sigma-objects on family-arrows yields the
+*(𝔣, Σ)-category* (Def 3.1), which with a terminal object **is
+exactly** a type-category of Pitts / category with attributes of
+Cartmell. The two central results are canonical passages up the
+stratification: **every (𝔣, Σ)-category is a 𝔡𝔦-category** via its
+dependent objects / global sections (Thm 4.6), and **every
+(𝔣, Σ)-category is a (𝔡𝔦, Σ)-category** via the
+second-projection-dependent arrow (Thm 5.4). The thesis (§6) is that
+dependency lives natively in the third dimension `C₃` of dependent
+arrows — including dependent arrows *not* arising from
+Sigma-objects (Examples 4.2, 4.4) — rather than being reconstructed
+from Σ. This is the external formulation the rep-system ↔ Petrakis
+dictionary is measured against; a kitcat result is machine-checked
+only when its module or `Gloss.*` certificate says so.

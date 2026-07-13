@@ -32,7 +32,8 @@ surface (harness internals, an external build) ships with its probe
 or ships as CONJECTURED. Exemplar: the PcomConservation (T20) arc —
 the conservation-law fork was pinned by `Test/CodepPcomFaces`
 typechecking against the real `Cat.Codep.Coherence` before the
-record edit, and promotion was withheld until it returned.
+record edit, and promotion was withheld until it returned — the
+spike then graduated to `Gloss.PcomConservation`, its durable home.
 
 ## P3 — Enshrine same-session, into one canonical home
 
@@ -57,16 +58,22 @@ transcribed text), a line-anchored location→content map whose depth
 tracks the source's load, so a citation resolves at `<file>:LINE`.
 When a load-bearing claim rests on an unvendored source, the default
 is to ingest it (`resources/README.md` is the format authority).
-Exemplar: Kelly 1964 opened mid-derivation to steer the absorb-cell
-design.
+Exemplar: the chirality design was steered by reading Melliès's
+*Dialogue categories and chiralities* against the construction —
+the source now vendored at `resources/mellies-dialogue-chiralities`,
+backing docs/gloss.md T16. (Its counterpart cautionary case is
+Kelly 1964: the absorb-cell design leaned on Kelly's unit-coherence
+theorem, but the paywalled source was never opened, which is exactly
+why T15 stands at CONJECTURED — the gap the ingest-on-need default
+closes.)
 
 ## P5 — Quality by worked exemplar and mechanical gating
 
 A bar is set by a worked example to imitate, not by an adjective,
 and enforced by a check that is *run*, not trusted: the reviewer
 independently executes `just check` (exit 42 is failure, zero
-warnings) and `just lint` on every touched module rather than
-accepting the author's word, and a convention the tree can gate is
+warnings) and `just lint changed` (the non-regression width gate)
+on every touched module rather than accepting the author's word, and a convention the tree can gate is
 gated (the authoring lint over the skills tree, the `just sync`
 drift gate). Exemplar: the Cat.Monoidal milestone review re-ran the
 checks rather than trusting the coder's "exits 0, zero warnings".

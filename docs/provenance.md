@@ -26,8 +26,11 @@ briefs, prose:
 - **`[unvetted]`** — a reference surfaced by automated search that
   no human has confirmed. It supports no load-bearing claim, and it
   sheds the marker only when a human confirms the opened document or
-  a `resources/` entry covers it; each promotion is recorded (who,
-  or which entry) in the run's provenance sidecar.
+  a *vetted* (Lane-ratified) `resources/` entry covers it — a
+  PROVISIONAL entry does not lift the marker (a directed agent
+  ingestion creates the entry; Lane's confirmation vets it). Each
+  promotion is recorded (who, or which vetted entry) in the run's
+  provenance sidecar.
 - The ledger statuses in `docs/gloss.md` (✅ machine-checked
   committed, 🧪 machine-checked evidence in `Gloss.*`, 📐 rigorous
   argument not mechanized, ⚠️ partially conjectured) govern claim

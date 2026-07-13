@@ -178,9 +178,10 @@ presentation is optional (T10 = the strict-chirality warm-up); at
 the coherence level it is forced (T12 forbids the strict filler).
 The tautological chirality `(C, op C)` is fully definitional
 BECAUSE of Route-B (`op-comp-eq = refl` ⇒ `star-comp = refl`).
-📐 design-level identification against the paper
+📐⚠️ design-level identification against the paper
 (2026-07-11, chirality memo); backed by
-`resources/mellies-dialogue-chiralities` (PROVISIONAL).
+`resources/mellies-dialogue-chiralities` (PROVISIONAL) — the ⚠️
+lifts when Lane ratifies that entry.
 
 **T17 — Binary-ancestor calibration.** The one-sided ancestor
 (`repr : hom ↪ endo-operators`) is the `fam := unit` filling of the
@@ -240,7 +241,10 @@ named commit; append-mostly.
 
 Every 📐 source-identification entry names its backing
 `resources/<slug>/` entry and is marked ⚠️/CONJECTURED until that
-entry exists — the external mirror of the 🧪↔`Gloss.*` bijection.
-(T16 → `resources/mellies-dialogue-chiralities`; T15's Kelly
+entry is *vetted* — Lane-ratified, not merely present; a PROVISIONAL
+entry does not lift ⚠️ (a directed agent ingestion creates the
+entry, Lane's confirmation vets it). This is the external mirror of
+the 🧪↔`Gloss.*` bijection. (T16 → `resources/mellies-dialogue-
+chiralities`, PROVISIONAL, so T16 stays ⚠️; T15's Kelly
 identification stays ⚠️/CONJECTURED until a
-`resources/kelly-mac-lane-coherence` entry is vendored.)
+`resources/kelly-mac-lane-coherence` entry is vendored and vetted.)

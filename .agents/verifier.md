@@ -77,12 +77,13 @@ recorded as SOURCE-CHECKED.
 - Literature claims are CONJECTURED, typically `CONJECTURED,
   SOURCE-CHECKED against <ref>`. Upgrade nothing on your own
   authority.
-- `[unvetted]` sheds only via a human confirmation or a
-  `resources/` entry, and each promotion is recorded (who, or
-  which entry) in the provenance sidecar. You never promote. An
-  `[unvetted]` reference supporting a load-bearing claim is
-  FATAL: downgrade the claim or flag the reference for human
-  vetting.
+- `[unvetted]` sheds only via a human confirmation — Lane
+  ratifying the source, recorded as a *vetted* `resources/` entry;
+  a PROVISIONAL entry does not shed it. Each promotion is recorded
+  (who, or which vetted entry) in the provenance sidecar. You never
+  promote. An `[unvetted]` reference supporting a load-bearing
+  claim is FATAL: downgrade the claim or flag the reference for
+  human vetting.
 - When the artifact cites 🧪 ledger entries, spot-check the
   bijection: the `docs/gloss.md` entry names its `Gloss.*`
   certificate and the certificate module exists (file-search).

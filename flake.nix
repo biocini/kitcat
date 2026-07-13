@@ -37,8 +37,12 @@
           gnugrep
           coreutils
           findutils
+          gitMinimal # bin/lint, bin/mmv, and the ingest path shell out to git
+          curl # direct arXiv e-print/abs fetch (the R12 acquisition path)
+          gnutar # extract the e-print tarball (the canonical LaTeX artifact)
+          perl # shasum (canonical-artifact hashing) and bin/mmv's rewrite engine
           shellcheck
-          poppler_utils # pdftotext, pdfinfo — the .pdftext extraction
+          poppler-utils # pdftotext, pdfinfo — the .pdftext extraction
           ocrmypdf # a broken text layer
           qpdf # repair a broken xref before extraction
           mupdf

@@ -18,13 +18,50 @@ rules) is the root `CLAUDE.md`.
 This file is the only place these cross-agent conventions — output
 locations, the slug rule, the epistemic lexicon, provenance-sidecar
 contents, delegation and degraded-delegation handling, and
-ingestion — are stated. Every skill body, agent definition, and
+ingestion — are stated. Every prompt body, agent definition, and
 workflow NAMES a convention and defers here ("derive a run slug per
 the contract", "write the sidecar per the contract"), never
 restating its content; a slug/lexicon/sidecar spec appearing
-verbatim in a `SKILL.md` body or an agent definition is an
-authoring defect a human confirms — exactly as `HARNESS.md` is the
-sole home of tool names.
+verbatim in a prompt body (`.agents/prompts/`) or an agent
+definition is an authoring defect a human confirms — exactly as
+`HARNESS.md` is the sole home of tool names.
+
+## Workflow surface topology
+
+The workflow suite is authored once under `.agents/` — the masters
+live here, and every harness reaches them from its own idiomatic
+location, by native discovery or a symlink, never a per-harness
+copy. The systems are parallel: each harness does the same thing
+from a different path.
+
+Two master layers, following the feynman-style shim/prompt split:
+
+- **`.agents/prompts/<name>.md`** — the master **prompt**: the full
+  workflow body, invoked as the typed `/<name>` command. This is
+  where the work is written; capability nouns and `$ARGUMENTS` live
+  here.
+- **`.agents/skills/kitcat/<name>/SKILL.md`** — the master
+  **skill**: a small auto-trigger shim (frontmatter `name` +
+  `description`, a one-line body routing to `/<name>`). A harness
+  matches the `description` to auto-invoke the workflow; the shim
+  stays lightweight so the heavy body is never duplicated. This
+  buys prompt/command ergonomics *and* automatic skill discovery
+  from one source.
+
+How each harness reaches the masters:
+
+- **pi and every other `.agents`-native harness** read
+  `.agents/prompts/` and `.agents/skills/` directly — no adapter
+  files.
+- **Claude Code** reads its own dirs, which are single directory
+  symlinks to the masters: `.claude/commands` → `.agents/prompts`,
+  `.claude/skills` → `.agents/skills/kitcat`.
+
+Adding or renaming a workflow touches only the two masters; the
+harness surfaces are symlinks and need no maintenance. The
+authoring mechanics (frontmatter, the shim template, the
+`$ARGUMENTS` rule) and the capability rosetta live in
+`.agents/skills/kitcat/HARNESS.md`.
 
 ## Output locations
 
@@ -77,8 +114,9 @@ states the claim at the cited location; every mathematical claim
 harvested from literature is CONJECTURED (typically `CONJECTURED,
 SOURCE-CHECKED against <ref>`); references surfaced by automated
 search are `[unvetted]` and support nothing load-bearing until a
-human confirmation or a `resources/` entry covers them — each
-promotion is recorded in the run's sidecar. Novelty language is
+human confirmation — Lane ratifying the source, recorded as a
+*vetted* `resources/` entry — covers them (a PROVISIONAL entry does
+not lift the bar); each promotion is recorded in the run's sidecar. Novelty language is
 "we are not aware of prior work" plus the search performed.
 
 A "verified" claim names the command or check that verified it, so

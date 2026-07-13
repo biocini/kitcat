@@ -36,8 +36,12 @@ everything below — follow them, do not restate them.
   location→content map whose depth tracks the source's load (a full
   map for a mechanization target, a short outline for background), a
   Files inventory naming the canonical format, and a "what the
-  source establishes" summary. Every mathematical claim recorded is
-  CONJECTURED until machine-checked.
+  source establishes" summary. The exemplar entry is
+  `resources/rijke-hott/` (Rijke, *Introduction to Homotopy Type
+  Theory*, arXiv 2212.11082) — the library's foundational reference
+  and the fully R11-conformant depth model; match its structure.
+  Every mathematical claim recorded is CONJECTURED until
+  machine-checked.
 - **Mark the entry PROVISIONAL** in its Vetting section; no
   load-bearing citation rests on it until Lane confirms.
 

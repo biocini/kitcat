@@ -1,1 +1,0 @@
-../../.agents/skills/kitcat/eli5/SKILL.md

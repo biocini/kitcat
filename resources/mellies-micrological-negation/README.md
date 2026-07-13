@@ -15,7 +15,8 @@ serves). The author's tensorial-logic page
 links a *different, later* compile
 (`4-micrological-study-of-negation.pdf`, sha256 `9d4f4208…`, with a
 `-old` variant `4b6a1f3a…` also hosted); the vendored copy is its
-own vintage and section/proposition numbers below refer to it.
+own vintage and every section/definition/proposition number below
+refers to it, not to the later compile or the journal version.
 
 ## Vetting
 
@@ -26,61 +27,107 @@ the definition/proposition inventory below extracted from the full
 text (pdftotext) of the vendored copy. Journal record (APAL 168(2),
 pp. 321–372, DOI) confirmed against dblp's APAL volume 168 index.
 Bit-identity of the vendored file with the IRIF URL above verified
-by sha256 on 2026-07-11. PROVISIONAL: agent-vetted; Lane's
-confirmation of this entry is pending.
+by sha256 on 2026-07-11.
+
+Brought to the `resources/` format bar 2026-07-12 by Claude (Opus
+4.8): canonical format recorded, Files inventory added, and the
+key-item locations promised "by pdftotext line region" actually
+supplied as `l.NNN` anchors into the `.pdftext`. The recorded PDF
+hash was re-verified (`shasum -a 256`) and matches.
+
+PROVISIONAL: agent-vetted; Lane's confirmation of this entry is
+pending. No load-bearing citation rests on a PROVISIONAL entry.
+
+## Files
+
+Canonical format: **PDF** (no source markup is published for this
+paper). All vendored and derived forms are gitignored; only this
+README is tracked.
+
+- `3-microlocal-study-of-negation.pdf` — the canonical artifact:
+  the 41-page IRIF manuscript compile (this is **not** the journal
+  compile; the published APAL version spans 52 journal pages, and
+  all numbering below is pinned to this vendored 41-page vintage).
+  This is the file the hash below is of.
+- `micrological-negation.pdftext` — a `pdftotext` extraction of the
+  canonical PDF (greppability fallback; the map's `l.NNN` anchors
+  index this file). Regenerate with
+  `pdftotext 3-microlocal-study-of-negation.pdf micrological-negation.pdftext`.
+
+Grep `micrological-negation.pdftext` for a definition; jump with
+`sed -n 'A,Bp' micrological-negation.pdftext`.
 
 ## Document hash
 
-41-page manuscript compile (this is not the journal compile; the
-published version spans 52 journal pages).
+sha256 of the canonical artifact (the 41-page manuscript PDF):
 
 ```
 0b482777192521606253a92264176f077027adbdcf888cb02f2d9d2ec0405a50  3-microlocal-study-of-negation.pdf
 ```
 
-## Summaries
+## Section map
+
+Line anchors are into `micrological-negation.pdftext`; jump with
+`sed -n 'A,Bp' micrological-negation.pdftext`. Section numbers are
+as fixed by the paper's plan-of-the-paper paragraph (`l.444`); the
+subsection header text is verbatim from the extraction. All numbers
+are pinned to the vendored 41-page vintage.
+
+- **§1 Introduction** — `l.11`. Plan of the paper — `l.444`.
+- **§2 Linearly distributive categories** (Cockett–Seely) — `l.458`.
+  - Right duality in linearly distributive categories — `l.694`.
+  - Definition 1 (right duality in a ld category) — `l.700`.
+  - Proposition 1 (its basic consequences) — `l.817`.
+  - Corollary 2 (∗-autonomous category = symmetric ld category with
+    a right duality) — `l.893`.
+- **§3 Dialogue chiralities** (recalled from the author's earlier
+  work as the symmetric, two-sided formulation) — `l.897`.
+  - Proposition 3 (a dialogue chirality is the same as a pair of
+    monoidal categories (A, 7, true) and (B, 6, false) with a
+    monoidal equivalence and adjunction data) — `l.1013`.
+  - Proposition 4 (an alternative formulation of the same) — `l.1308`.
+- **§4 Transjunctions and parametric monads** — Transjunctions
+  `l.1454`.
+  - Definition 2 (transjunction, F ⊣ G along L₁ ⊣ R₁ and L₂ ⊣ R₂)
+    — `l.1458`.
+  - Proposition 5 (a transjunction along the two adjunctions) —
+    `l.1542`.
+  - Definition 3 (homomorphism between transjunctions) — `l.1661`.
+  - Parametric monads — `l.1905`.
+  - Definition 4 (parametric monad: a lax monoidal functor into a
+    0-cell of a 2-category) — `l.1909`.
+  - Commutators between parametric monads — `l.2033`; Definition 5
+    (commutator between two parametric monads) — `l.2064`.
+- **§5 Linearly distributive chiralities** (the technical core) —
+  `l.2519`.
+  - Right duality in linearly distributive chiralities — `l.3068`.
+  - Proposition 6 (every ld chirality equipped with a right duality
+    induces the dialogue-chirality structure) — `l.3466`.
+  - §5.4 Depolarization — Definition 6 (depolarized ld chirality)
+    `l.4118`; Proposition 9 (a ld category is the same as a
+    depolarized ld chirality) `l.4121`; Proposition 10 (the two
+    notions of right duality coincide) `l.4125`.
+- Conclusion — `l.4137`. References — `l.4162`.
+
+## What the source establishes
 
 Everything below records what the source states (checked against
 the vendored copy); every mathematical claim is CONJECTURED until
 machine-checked.
 
-**Abstract.** A purely combinatorial presentation of dialogue
-categories, based on the symmetric notion of *linearly distributive
-chirality*; the micrological analysis decomposes the molecular
-notion of negation in tensorial logic into primary elements.
-
-**Plan of the paper** (as stated in §1): §2 recalls linearly
-distributive categories (Cockett–Seely) together with the notion of
-right duality of specific interest; §3 recalls the notion of
-dialogue chirality from the author's earlier work as a symmetric,
-two-sided formulation; the core of the paper introduces linearly
-distributive chiralities and establishes that dialogue chiralities
-coincide with linearly distributive chiralities equipped with a
-right duality when the underlying monoidal category is symmetric —
-a discrepancy remains in the non-symmetric case.
-
-**Key definitions and propositions** (locations in the vendored
-copy, by pdftotext line region — the compile has no numbered
-section headings extractable, so positions are approximate):
-
-- Definition 1 (right duality in a linearly distributive
-  category); Proposition 1 (its basic consequences).
-- Propositions 3 and 4: two alternative formulations of dialogue
-  chirality — as a pair of monoidal categories (A, ⅋-like and
-  ⊗-like sides written (A, 7, true) and (B, 6, false) in the
-  compile's rendering) with a monoidal equivalence and adjunction
-  data.
-- Definition 2 (transjunction) and Proposition 5: a transjunction
-  F ⊣ G along adjunctions L₁ ⊣ R₁ and L₂ ⊣ R₂.
-- Definition 4 (parametric monad: a lax monoidal functor into a
-  0-cell of a 2-category); Definition 5 (commutator between two
-  parametric monads).
-- Proposition 6: every linearly distributive chirality equipped
-  with a right duality (induces the dialogue-chirality structure).
-- Definition 6 (depolarized linearly distributive chirality);
-  Proposition 9: a linearly distributive category is the same thing
-  as a depolarized linearly distributive chirality; Proposition 10:
-  the two notions of right duality coincide.
+A purely combinatorial presentation of dialogue categories, based
+on the symmetric notion of *linearly distributive chirality*; the
+micrological analysis decomposes the molecular notion of negation
+in tensorial logic into primary elements. The core result: dialogue
+chiralities coincide with linearly distributive chiralities
+equipped with a right duality when the underlying monoidal category
+is symmetric (Proposition 6 supplies one direction) — a discrepancy
+remains in the non-symmetric case. §2 recalls linearly distributive
+categories (Cockett–Seely) with the right duality of specific
+interest; §3 recalls dialogue chirality as the symmetric, two-sided
+formulation; the depolarization results (Def 6, Props 9–10) identify
+a linearly distributive category with a depolarized linearly
+distributive chirality.
 
 **Framing.** The introduction argues that the "classical"
 symmetries of linear logic are intrinsic to logic itself and apply

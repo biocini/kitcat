@@ -29,8 +29,8 @@ record the delegation as degraded.
 | `researcher` | External literature evidence: arXiv/nLab/1lab sweeps, file-based notes |
 | `verifier` | Citation checks: URLs resolve, sources state their claims, ledger bijection |
 | `ingest` | Acquire and vendor a source (arXiv LaTeX / PDF), hash the canonical artifact, prepare a PROVISIONAL `resources/` entry |
-| `writer` | Turn research, ledger entries, and certificates into structured exposition (adds no citations — the verifier does) |
-| `suite-maintainer` | Author or repair skills and agent definitions; the authoring lint; the three-surface symlinks and bind-once contract |
+| `writer` | Turn research, ledger entries, and certificates into structured exposition (adds no citations — the lead cites, the verifier audits) |
+| `suite-maintainer` | Author or repair skills and agent definitions; the authoring lint; the shim/prompt masters, harness symlinks, and bind-once contract |
 
 Agent registries are per-harness and availability varies; a
 workflow that names an absent agent runs lead-owned and records the
@@ -147,8 +147,8 @@ The agent-facing context is exactly: this file, src/Gloss/CLAUDE.md,
 (the working discipline), the agent roster (`.agents/*.md`),
 README.md, CHANGELOG.md, docs/gloss.md (the theorem ledger),
 docs/provenance.md, docs/roadmap.md, the workflow suite
-(`.agents/skills/kitcat/`), `resources/`, and `notes/`. Nothing
-else in the repository is
+(`.agents/prompts/` bodies + `.agents/skills/kitcat/` shims),
+`resources/`, and `notes/`. Nothing else in the repository is
 loaded, cited, or consulted as an authority. Style law: match the
 local idiom of the module you are editing — Core.* is the exemplar
 — and escalate style questions to Lane. Sessions open by reading
@@ -162,8 +162,16 @@ the latest `notes/session-logs/` entry and docs/roadmap.md, and close with
 - **resources/** — vetted source entries: citation, vetting record,
   document hash, summaries (resources/README.md is the format
   authority); vet claims against these, and cite by entry
+- [Rijke, *Introduction to Homotopy Type Theory*](https://arxiv.org/abs/2212.11082)
+  (`resources/rijke-hott/`) — the library's mathematical-foundations
+  reference (univalent mathematics); the common knowledge base every
+  role draws on for definitions and terminology
 - [1lab](https://1lab.dev) — idiomatic cubical Agda patterns
 - [Capriotti–Kraus](https://arxiv.org/abs/1707.03693) — univalent higher categories
+- [Petrakis, *Categories with dependent arrows*](https://arxiv.org/abs/2303.14754)
+  (`resources/petrakis-dep-arrows/`) — the dependent-arrows ancestor
+  of `Cat.Codep`; the codependent half is in
+  `resources/petrakis-codep-slides/`
 - [Petrakis](https://arxiv.org/abs/2205.06651) — univalent typoids
 - [Sterling](https://www.jonmsterling.com/005B) — virtual bicategory theory
 
@@ -179,7 +187,7 @@ the latest `notes/session-logs/` entry and docs/roadmap.md, and close with
 | `just new <Mod> [--aggregator]` | New module with correct boilerplate |
 | `just mv Old.Name New.Name [--dry-run]` | Move/rename, updating references |
 | `just sync [--fix]` | Report/fix drift between All and the filesystem |
-| `just lint [width\|flags]` | Lint (72 prose / 85 code, pragmas) |
+| `just lint [width\|flags\|authoring\|changed]` | Lint (72 prose / 85 code, pragmas; `authoring` gates the skills tree; `changed` is the non-regression pre-commit gate) |
 | `just stats` / `just wip` | Inventories |
 | `just html` / `html-serve` | Docs site, built and served locally |
 
@@ -190,9 +198,21 @@ moving a cited module.
 
 Use the tools, not raw invocations: after creating a module →
 `just sync --fix`; after renaming → `just mv`; before committing →
-`just lint` + `just check <Mod>` on every touched module;
+`just lint changed` + `just check <Mod>` on every touched module;
 investigating structure → the file-search capability over imports.
 Never hand-edit `All.lagda.md` imports when `sync` can do it.
+
+Lint baseline: the library is in flight, so the full `just lint`
+currently reports a known width baseline (~197 lines, all width, no
+flag violations — run `just lint width` for the live list). The
+pre-commit gate is therefore `just lint changed`, the non-regression
+scope: it lints only files modified vs HEAD and flags width only on
+lines the change itself adds or modifies, so a touched file's
+pre-existing baseline does not block the commit while a newly
+over-width line does. The full `just lint` is the periodic
+strictification target (drive the baseline down deliberately, not as
+a side effect); `just lint flags` and `just lint authoring` are
+always strict (zero tolerance).
 
 **Test/ scratchpad**: agents may create timestamped scratch files
 `src/Test/<Name>-<timestamp>.lagda.md` for experiments; the
@@ -202,18 +222,21 @@ evidence to `Gloss.*` follows src/Gloss/CLAUDE.md.
 
 ## Workflow Suite
 
-Research workflows live in `.agents/skills/kitcat/<name>/SKILL.md`
-— one self-contained, harness-generic skill per workflow.
-`.agents/skills/kitcat/HARNESS.md` is the capability rosetta: skill
-bodies name capabilities, HARNESS.md alone names harness tools, and
-it carries the authoring rules for the tree. Claude Code discovers
-the tree through per-skill symlinks in `.claude/skills/`; Pi
-discovers it natively (project trust required). Skills invoke as
-`/name` and auto-trigger by description; `spike-echo` is the
-discovery diagnostic. The suite: deep-research, lit, compare,
-audit, mechanize, formulation-survey, critique, draft, autoresearch,
-watch, eli5, log, jobs, preview, session-search, alpha-research,
-prove.
+Each workflow is two harness-generic masters under `.agents/`: the
+prompt body `.agents/prompts/<name>.md` (the full `/name` workflow)
+and a small auto-trigger shim `.agents/skills/kitcat/<name>/SKILL.md`.
+The masters live once; each harness reads them from its own location
+— Pi natively (project trust required), Claude Code through two
+directory symlinks (`.claude/commands` → `.agents/prompts`,
+`.claude/skills` → `.agents/skills/kitcat`). The full topology is in
+`.agents/CLAUDE.md` ("Workflow surface topology");
+`.agents/skills/kitcat/HARNESS.md` is the capability rosetta (prompt
+bodies name capabilities, HARNESS.md alone names harness tools) and
+carries the authoring mechanics. Workflows invoke as `/name` and
+auto-trigger by the shim's description; `spike-echo` is the discovery
+diagnostic. The suite: deep-research, lit, compare, audit, mechanize,
+formulation-survey, critique, draft, autoresearch, watch, eli5, log,
+jobs, preview, session-search, alpha-research, prove.
 
 ## Research Artifacts
 

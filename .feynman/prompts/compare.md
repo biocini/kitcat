@@ -1,1 +1,0 @@
-../../.agents/skills/kitcat/compare/SKILL.md

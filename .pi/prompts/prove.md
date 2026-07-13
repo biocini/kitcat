@@ -1,1 +1,0 @@
-../../.agents/skills/kitcat/prove/SKILL.md

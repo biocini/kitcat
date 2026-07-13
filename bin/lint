@@ -9,17 +9,29 @@ set -euo pipefail
 # (stderr is untouched either way).
 rg_allow_empty() { rg "$@" || [ $? -eq 1 ]; }
 
+# grep -v exits 1 when it selects no lines (every line was filtered
+# out) — an empty set, not an error; exit 2 is a real failure and
+# must propagate. Same discipline as rg_allow_empty above.
+grep_v_allow_empty() { grep -v "$@" || [ $? -eq 1 ]; }
+
 cd "$(git rev-parse --show-toplevel)"
 
 PROSE_WIDTH=72
 CODE_WIDTH=85
 checks=()
+changed_mode=false
 while [ $# -gt 0 ]; do
     case "$1" in
         --check) shift; checks+=("$1"); shift ;;
+        --changed|changed) changed_mode=true; shift ;;
         -h|--help)
-            echo "Usage: lint [--check width] [--check flags]"
-            echo "No args = run all checks."
+            echo "Usage: lint [width] [flags] [authoring] [changed]"
+            echo "  No args      run width + flags over the whole src/ tree."
+            echo "  changed      non-regression gate: only files modified vs"
+            echo "               HEAD, and width only on added/modified lines"
+            echo "               (the whole tree carries a known width baseline"
+            echo "               while the library is in flight — full 'lint'"
+            echo "               is the periodic strictification target)."
             exit 0 ;;
         *) checks+=("$1"); shift ;;
     esac
@@ -34,6 +46,50 @@ files="$(fd -e lagda.md . src/ | sort)"
 if [ -z "$files" ]; then
     echo "lint: no .lagda.md files found under src/" >&2
     exit 1
+fi
+
+# Changed mode: the non-regression gate. Restrict the set to src/
+# .lagda.md files modified vs HEAD (tracked edits + untracked new
+# files), and record which line numbers are added/modified so the
+# width check reports only those — a change is clean when it adds no
+# over-width line, regardless of the tree's known baseline. An empty
+# changed set is a clean pass here, not the enumeration error above.
+declare -A ADDED_LINES=()
+if $changed_mode; then
+    changed_files="$(
+        { git diff --name-only --diff-filter=d HEAD -- 'src/*.lagda.md' 'src/**/*.lagda.md'
+          git ls-files --others --exclude-standard -- 'src/*.lagda.md' 'src/**/*.lagda.md'
+        } | sort -u)"
+    if [ -z "$changed_files" ]; then
+        echo "lint: no changed .lagda.md files under src/ — clean."
+        exit 0
+    fi
+    while IFS= read -r f; do
+        [ -f "$f" ] || continue
+        if git ls-files --error-unmatch "$f" >/dev/null 2>&1; then
+            # Tracked: added/modified new-side line numbers from the
+            # zero-context diff hunk headers (@@ -a,b +c,d @@).
+            while IFS= read -r hh; do
+                plus="${hh#*+}"; plus="${plus%% *}"
+                start="${plus%%,*}"; count="${plus#*,}"
+                [ "$count" = "$plus" ] && count=1
+                i=0
+                while [ "$i" -lt "$count" ]; do
+                    ADDED_LINES["$f"$'\t'"$((start + i))"]=1
+                    i=$((i + 1))
+                done
+            done < <(git diff --unified=0 HEAD -- "$f" | grep '^@@')
+        else
+            # Untracked new file: every line is added.
+            n="$(wc -l < "$f")"
+            i=1
+            while [ "$i" -le "$n" ]; do
+                ADDED_LINES["$f"$'\t'"$i"]=1
+                i=$((i + 1))
+            done
+        fi
+    done <<< "$changed_files"
+    files="$changed_files"
 fi
 
 issues=0
@@ -66,6 +122,12 @@ check_width() {
 
         len=${#line}
         if [ "$len" -gt "$limit" ]; then
+            # Changed mode reports only lines the change itself adds or
+            # modifies, so a pre-existing baseline violation in a touched
+            # file does not block the commit.
+            if $changed_mode && [ -z "${ADDED_LINES["$file"$'\t'"$lineno"]:-}" ]; then
+                continue
+            fi
             echo "  ${file}:${lineno}: ${len} chars (limit ${limit})"
             issues=$((issues + 1))
         fi
@@ -119,9 +181,15 @@ run_flags() {
 }
 
 # ── authoring check (the skills tree's own rules) ────────────
-# Opt-in (`lint authoring`): surfaces candidates a human confirms —
-# harness tool names in a skill body, a $-token other than $ARGUMENTS,
-# a name≠dir or missing description, and a missing three-surface symlink.
+# Opt-in (`lint authoring`): surfaces candidates a human confirms.
+# Topology (see .agents/CLAUDE.md): a workflow is two masters — a
+# small shim `.agents/skills/kitcat/<name>/SKILL.md` and a prompt body
+# `.agents/prompts/<name>.md` — reached by two dir-level symlinks
+# (.claude/commands → .agents/prompts, .claude/skills →
+# .agents/skills/kitcat); pi reads the masters directly. Checks:
+# shim name≠dir or no description, an unpaired shim or prompt, a
+# harness tool name or a $-token other than $ARGUMENTS in a prompt
+# body, and a broken harness symlink.
 run_authoring() {
     echo "── authoring ──"
     # Distinctive tool identifiers only — never English words like Read
@@ -129,11 +197,13 @@ run_authoring() {
     # PCRE (-P): the subagent lookahead excludes the capability noun
     # "subagent-dispatch".
     local tools='WebSearch|WebFetch|AskUserQuestion|NotebookEdit|web_search|fetch_content|web_fetch|batch_web_fetch|ask_user_question|subagent(?!-dispatch)|perplexity_search|ffgrep|fffind|get_subagent_result|steer_subagent|session_search|preview_export|memory_remember|run_in_background'
-    local dir name skill fmname hits dollars
+    local dir name skill prompt fmname hits dollars link target
+
+    # Skill shims: name equals dir, has a description, and pairs with a prompt.
     for dir in .agents/skills/kitcat/*/; do
         name="$(basename "$dir")"
         skill="${dir}SKILL.md"
-        [ -f "$skill" ] || continue
+        [ -f "$skill" ] || { echo "  ${dir}: no SKILL.md shim"; issues=$((issues + 1)); continue; }
         fmname="$(rg_allow_empty -m1 -N '^name:[[:space:]]*(.+)' -or '$1' "$skill")"
         if [ "$fmname" != "$name" ]; then
             echo "  ${skill}: frontmatter name '$fmname' != dir '$name'"; issues=$((issues + 1))
@@ -141,19 +211,36 @@ run_authoring() {
         if ! rg -q '^description:' "$skill"; then
             echo "  ${skill}: missing 'description:' frontmatter"; issues=$((issues + 1))
         fi
-        hits="$(rg_allow_empty -P -o -N "$tools" "$skill" | sort -u | tr '\n' ' ')"
+        if [ ! -f ".agents/prompts/${name}.md" ]; then
+            echo "  ${skill}: no master prompt .agents/prompts/${name}.md"; issues=$((issues + 1))
+        fi
+    done
+
+    # Prompt bodies: no harness tool names, no $-token but $ARGUMENTS, paired with a shim.
+    for prompt in .agents/prompts/*.md; do
+        [ -f "$prompt" ] || continue
+        name="$(basename "$prompt" .md)"
+        if [ ! -d ".agents/skills/kitcat/${name}" ]; then
+            echo "  ${prompt}: no matching skill shim .agents/skills/kitcat/${name}/"; issues=$((issues + 1))
+        fi
+        hits="$(rg_allow_empty -P -o -N "$tools" "$prompt" | sort -u | tr '\n' ' ')"
         if [ -n "$hits" ]; then
-            echo "  ${skill}: harness tool name in body (candidate): ${hits}"; issues=$((issues + 1))
+            echo "  ${prompt}: harness tool name in body (candidate): ${hits}"; issues=$((issues + 1))
         fi
-        dollars="$(rg_allow_empty -o -N '\$\{?[A-Za-z0-9_@]+' "$skill" | { grep -v '^\$ARGUMENTS$' || true; } | sort -u | tr '\n' ' ')"
+        dollars="$(rg_allow_empty -o -N '\$\{?[A-Za-z0-9_@]+' "$prompt" | grep_v_allow_empty '^\$ARGUMENTS$' | sort -u | tr '\n' ' ')"
         if [ -n "$dollars" ]; then
-            echo "  ${skill}: \$-token other than \$ARGUMENTS (candidate): ${dollars}"; issues=$((issues + 1))
+            echo "  ${prompt}: \$-token other than \$ARGUMENTS (candidate): ${dollars}"; issues=$((issues + 1))
         fi
-        for surface in ".claude/skills/$name" ".claude/commands/$name.md" ".pi/prompts/$name.md"; do
-            if [ ! -e "$surface" ]; then
-                echo "  ${skill}: missing $surface symlink"; issues=$((issues + 1))
-            fi
-        done
+    done
+
+    # Harness bridges: the two dir-level symlinks resolve to the masters.
+    for pair in ".claude/commands:.agents/prompts" ".claude/skills:.agents/skills/kitcat"; do
+        link="${pair%%:*}"; target="${pair##*:}"
+        if [ ! -L "$link" ]; then
+            echo "  ${link}: not a symlink (expected → ${target})"; issues=$((issues + 1))
+        elif [ ! -d "$link" ]; then
+            echo "  ${link}: symlink does not resolve to a directory"; issues=$((issues + 1))
+        fi
     done
 }
 

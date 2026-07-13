@@ -1,1 +1,0 @@
-../../.agents/skills/kitcat/watch/SKILL.md

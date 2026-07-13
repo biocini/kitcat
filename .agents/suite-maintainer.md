@@ -25,25 +25,35 @@ do not restate it.
   restatement is a defect. Each body opens with "Read
   `.agents/CLAUDE.md` and `.agents/skills/kitcat/HARNESS.md` first".
 - **`$ARGUMENTS` only.** No other dollar token appears anywhere in a
-  body, including code fences.
-- **Three surfaces.** Each skill is a canonical
-  `.agents/skills/kitcat/<name>/SKILL.md` with three symlinks:
-  `.claude/skills/<name>`, `.claude/commands/<name>.md`,
-  `.pi/prompts/<name>.md`. An agent is `.agents/<name>.md` symlinked
-  from `.claude/agents/` and `.pi/agents/`. Skill names are
-  kebab-case and equal the directory; `description:` frontmatter is
-  mandatory (a skill without it does not load under pi).
-- **After any tree change**, run the `spike-echo` diagnostic and
-  expect `SPIKE-ECHO OK ARGS=[<args>]`; add or repair symlinks so
-  none dangle.
+  prompt body, including code fences.
+- **Two masters, per-harness symlinks** (the topology is in
+  `.agents/CLAUDE.md`, "Workflow surface topology"). A workflow is a
+  prompt body `.agents/prompts/<name>.md` plus a small shim
+  `.agents/skills/kitcat/<name>/SKILL.md`; the harness surfaces are
+  two directory symlinks already in place
+  (`.claude/commands` → `.agents/prompts`,
+  `.claude/skills` → `.agents/skills/kitcat`), and pi reads the
+  masters directly — adding a workflow adds no per-skill symlink. An
+  agent is `.agents/<name>.md` symlinked from `.claude/agents/` and
+  `.pi/agents/`. Names are kebab-case and equal across the pair; the
+  shim's `description:` frontmatter is mandatory (a skill without it
+  does not load under pi).
+- **After any tree change**, run `just lint authoring` (the
+  mechanical authoring gate over the skills tree) and the
+  `spike-echo` diagnostic, expecting both clean
+  (`SPIKE-ECHO OK ARGS=[<args>]`); confirm the two harness symlinks
+  resolve. The authoring lint now covers the shim↔prompt pairing, the
+  prompt-body tool-name and `$`-token checks, and the two dir
+  symlinks; the agent-definition checks below stay manual — this
+  agent is their gate.
 
 ## Auditing the tree
 
 Surface, as candidates a human confirms: a harness tool name in a
 body; a `$`-token other than `$ARGUMENTS`; a verbatim slug / lexicon
 / sidecar restatement; a missing opener; a skill whose name ≠
-directory or lacks `description:`; a skill missing one of its three
-symlinks; a broken symlink. Report findings graded, with file:line;
+directory or lacks `description:`; an unpaired shim or prompt; a
+broken harness symlink. Report findings graded, with file:line;
 propose the fix, apply only what is unambiguous, and escalate
 naming or scope changes to Lane. Provenance and honesty standards
 (`docs/provenance.md`) govern any norms survey you run.

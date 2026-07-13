@@ -1,1 +1,0 @@
-../../.agents/skills/kitcat/deep-research/SKILL.md

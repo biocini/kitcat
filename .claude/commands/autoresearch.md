@@ -1,1 +1,0 @@
-../../.agents/skills/kitcat/autoresearch/SKILL.md

@@ -34,9 +34,12 @@ fixes, with the finding count per severity.
 
 Mechanical (run them; do not take the author's word):
 
-- `just lint` is clean and every touched module passes
-  `just check <Mod>`. Zero warnings; exit 42 is failure. Any `-W` suppression flag
-  added without explicit authorization is Blocking.
+- `just lint changed` is clean (the non-regression gate — the change
+  adds no new over-width line; the in-flight tree carries a known
+  width baseline that full `just lint` reports) and `just lint flags`
+  is clean, and every touched module passes `just check <Mod>`. Zero
+  warnings; exit 42 is failure. Any `-W` suppression flag added
+  without explicit authorization is Blocking.
 - The two named traps: InlineNoExactSplit (constructor
   application where copatterns are required) and UselessPrivate
   (`private` inside `where`).
@@ -86,6 +89,9 @@ binding):
 
 Style:
 
+- The library's foundational reference is Rijke, *Introduction to
+  Homotopy Type Theory* (arXiv 2212.11082, `resources/rijke-hott/`);
+  terminology and prose in a reviewed module follow its idiom.
 - Match the local idiom of the module under review; Core.* is
   the exemplar. Comment style per CLAUDE.md: direct, no
   heading-style labels, constraints the code cannot show.

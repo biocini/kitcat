@@ -140,8 +140,8 @@ and parallel definitions that should be one.
    never re-derive a ledger result, cite it.
 2. resources/ — vetted source entries; cite by entry. The library's
    foundational reference is Rijke, *Introduction to Homotopy Type
-   Theory* (arXiv 2212.11082); draw on it for the univalent-
-   mathematics idiom.
+   Theory* (arXiv 2212.11082, `resources/rijke-hott/`); draw on it
+   for the univalent-mathematics idiom.
 3. Literature, via the paper-search capability. Literature claims
    are CONJECTURED; add SOURCE-CHECKED only when you opened the
    document and it states the claim at the cited location, per

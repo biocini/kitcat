@@ -28,11 +28,14 @@ per session.
    kill criteria (memory: chirality record).
 5. **Framed syntax instance** — the syntax instance targeting the
    plain record; the braid/twist layer follows.
-6. **Workflow suite, next phases** — memory-externalization sweep
-   into `notes/plans/`, founding `resources/` entries (repo-root
-   PDFs; Kelly and Melliès for the ledger's T15/T16), and the
-   untracked-file cleanup (every stray cleaned up, ignored, or
-   given a canonical home).
-7. **Housekeeping** — `Cat/Type` whitespace (Lane's call);
-   `Cat/Experiment/Base` OPTIONS pragma; the Coherent killcheck
-   casing nit; conservativity battery re-migration.
+6. **Workflow suite, next phases** — the memory-externalization
+   sweep into canonical repo homes (gloss.md, session logs, roadmap;
+   memory left as pointers, per R10 — never gitignored working
+   memory); the T15 Kelly `resources/` entry still to vendor
+   (paywalled, needs Lane's access) to upgrade T15 off ⚠️; and the
+   untracked-file cleanup (every stray cleaned up, ignored, or given
+   a canonical home). The six founding `resources/` entries (five +
+   Rijke) landed PROVISIONAL and await ratification.
+7. **Housekeeping** — `Cat/Type` whitespace (Lane's call); the
+   Coherent killcheck casing nit; conservativity battery
+   re-migration.
