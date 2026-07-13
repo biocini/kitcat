@@ -78,11 +78,14 @@ apply and why any do not:
    plan file instead, then continue through to final artifact and
    provenance verification.
 2. **Inspect** — Read local artifacts with the file-read
-   capability; fetch remote ones with the url-fetch capability,
-   recording the URL. For PDFs, fetch with the url-fetch capability
-   and extract text via the shell capability when needed; when
-   extraction fails, record the failure and still produce a partial
-   or blocked review. Inspect linked
+   capability; fetch remote pages with the url-fetch capability,
+   recording the URL. For a PDF, the url-fetch capability serves
+   metadata and the abstract only; stage the document itself on
+   disk with the shell capability (`curl -sL -o` to a run-local
+   file under `notes/research/`, then `pdftotext`) and read the
+   extraction — the document body never enters context via
+   url-fetch. When staging or extraction fails, record the failure
+   and still produce a partial or blocked review. Inspect linked
    formalizations, code, and cited sources when they are reachable
    and materially affect a finding. For internal artifacts, also
    read `docs/gloss.md` and
@@ -121,16 +124,13 @@ apply and why any do not:
    `src/Test/<Name>-<timestamp>.lagda.md` spike, a `docs/gloss.md`
    entry, a `resources/` candidate — recorded in the review, never
    executed by this run.
-6. **Verify** — Run an adversarial pass over the review draft
-   itself: findings without a quoted passage, criticisms the
+6. **Verify** — Run the verify protocol per the contract over the
+   review draft itself. The adversarial sweep for this workflow:
+   findings without a quoted passage, criticisms the
    evidence file does not support, severity inflation, status
    labels stronger than their evidence, novelty language without a
    recorded search, and sections surviving from earlier drafts that
-   the final evidence no longer supports. Dispatch the
-   `verifier` agent when present; otherwise self-review.
-   Grade this pass's findings FATAL / MAJOR / MINOR. Fix FATAL
-   findings before delivery and run one more pass after the fixes;
-   note MAJOR findings in Open Questions; accept MINOR.
+   the final evidence no longer supports.
 7. **Deliver** — Save the review to
    `notes/research/<slug>-review.md` with these sections: Summary
    Assessment; Strengths; Findings (FATAL, MAJOR, MINOR
@@ -160,10 +160,9 @@ proposals recorded in the review — never created as a side effect.
   as a weakness of the artifact.
 - No reference supports a finding unless the cited document was
   opened and says what it is cited for; a reference surfaced by
-  automated search remains `[unvetted]` — supporting no
-  load-bearing finding — until a human or a `resources/` entry
-  confirms it; record each promotion (who, or which entry) in the
-  sidecar.
+  automated search remains `[unvetted]`, supporting no load-bearing
+  finding, until it sheds per the contract's epistemic lexicon;
+  record each promotion in the sidecar.
 - Novelty language is "we are not aware of prior work", accompanied
   by the searches actually performed — never "new" or "first"; this
   applies both to crediting the artifact's originality and to

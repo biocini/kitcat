@@ -114,14 +114,14 @@ order:
 
 ## Verify and deliver
 
-Before saving, run an adversarial pass over the draft: claims
+Before saving, run the verify protocol per the contract over the
+draft (a log run dispatches no agents; its direct-mode self-review
+applies). The adversarial sweep for this workflow: claims
 labeled stronger than their evidence, spike fates asserted without
 checking the file, ledger statuses that disagree with
 `docs/gloss.md`, novelty language without a recorded search, and
 sections surviving from earlier drafts that the final evidence no
-longer supports. Grade findings FATAL / MAJOR / MINOR. Fix FATAL
-findings before delivery and run one more pass after the fixes;
-move MAJOR findings into Open Questions; accept MINOR.
+longer supports.
 
 Before writing the log, confirm every load-bearing result proven
 this session is in its canonical home: a `docs/gloss.md` entry

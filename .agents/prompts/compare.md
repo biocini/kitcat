@@ -90,40 +90,38 @@ the only place VERIFIED evidence can appear.
    url-fetch capability: the URL resolves, and the document states
    what it is cited for. Label every claim per the contract lexicon
    (`docs/provenance.md` binding); an `[unvetted]` reference
-   supports no matrix row's evidence-type label until it is
-   confirmed. When a load-bearing claim rests on a source not yet
+   supports no matrix row's evidence-type label until it sheds
+   per the contract lexicon. When a load-bearing claim rests on a
+   source not yet
    vendored, ingest per the contract: dispatch the `ingest` agent
    for a directed PROVISIONAL entry (lead-owned degraded when
-   absent); Lane ratifies before the claim is treated as
-   load-bearing.
-5. **Verify** — Run an adversarial pass over the cited draft: rows
+   absent); the claim bears load once the entry's statement audit
+   is recorded, per the contract.
+5. **Verify** — Run the verify protocol per the contract over the
+   cited draft. The adversarial sweep for this workflow: rows
    whose evidence-type label is stronger than the opened source
    supports, disagreements flattened into false consensus,
    single-source claims presented as settled, caveats or confidence
    ratings without recorded grounds, status labels stronger than
    their evidence, and sections surviving from earlier drafts that
-   the final evidence no longer supports. Dispatch the
-   `verifier` agent when present — it re-checks the
-   citations and runs this adversarial pass; otherwise self-review
-   and record the delegation as degraded. Grade findings FATAL /
-   MAJOR / MINOR. Fix FATAL findings before
-   delivery and run one more pass after the fixes; note MAJOR
-   findings in Open Questions; accept MINOR.
+   the final evidence no longer supports.
 6. **Deliver** — Save exactly one comparison to
-   `notes/research/<slug>-comparison.md`, ending with a Sources
-   section giving a direct URL or DOI for every source used, and
-   write its provenance sidecar
-   `notes/research/<slug>-comparison.provenance.md` per the
-   contract. Verify on disk that both files exist before stopping;
-   never stop at an intermediate draft.
+   `notes/research/<slug>.md` — the contract's final-artifact
+   path — ending with a Sources section giving a direct URL or DOI
+   for every source used, and write its provenance sidecar
+   `notes/research/<slug>.provenance.md` per the contract. When the
+   matrix motivates mechanizing a variant, name
+   `/formulation-survey` as the follow-up in the artifact's next
+   steps: the feasibility ranking is that skill's machinery, and
+   this matrix is its input. Verify on disk that both files exist
+   before stopping; never stop at an intermediate draft.
 
 ## Honesty rules (binding)
 
 - No matrix row carries a claim unless the cited document was
   opened and says what it is cited for; and a reference surfaced by
-  automated search remains `[unvetted]` — supporting no
-  load-bearing claim — until a human or a `resources/` entry
-  confirms it.
+  automated search remains `[unvetted]`, supporting no load-bearing
+  claim, until it sheds per the contract's epistemic lexicon.
 - Evidence-type labels never exceed their evidence: ✅/🧪 name a
   module or Gloss certificate in this repository, or they do not
   appear.

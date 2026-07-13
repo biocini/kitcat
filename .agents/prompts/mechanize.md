@@ -42,10 +42,13 @@ its module named, not re-mechanized.
 1. **Extract** — Write `notes/plans/<slug>.md`: the target claims,
    key questions, a task ledger, a verification log, and a
    placeholder for the success criteria that step 2 will fix. Then
-   pull from the source — with the paper-search and url-fetch
-   capabilities, or from the covering `resources/` entry when one
-   exists — the definitions, theorem statements, hypotheses, and
-   proof strategy, into `notes/research/<slug>-extraction.md`.
+   pull from the source the definitions, theorem statements,
+   hypotheses, and proof strategy, into
+   `notes/research/<slug>-extraction.md`. Extraction is lead-owned,
+   never delegated. Check `resources/` before fetching: a vendored
+   source is read from its entry — the committed map and content
+   digests, plus the vendored copy; only an unvendored source is
+   retrieved with the paper-search and url-fetch capabilities.
    Label every extracted claim per the contract lexicon —
    CONJECTURED for everything harvested, `[unvetted]` for
    automated-search references until promoted. Mark every planned
@@ -99,7 +102,9 @@ its module named, not re-mechanized.
    lead-owned and record the delegation as degraded. Constraints in
    both executing modes: `--safe --erased-cubical
    --no-guardedness`, no postulates, no external libraries, never
-   truncate homs; the run never commits. Two consecutive failures on
+   truncate homs; a construction ported from the source carries a
+   credit comment per root `CLAUDE.md`'s format; the run never
+   commits. Two consecutive failures on
    the same goal is a full stop: record what is known, what was
    tried, and what is missing in the plan ledger, and return to the
    user for direction. Preserve every failed proof attempt's text
@@ -116,8 +121,14 @@ its module named, not re-mechanized.
    fails `just check`; a dead route is banked as a WALL
    transcribing its refl-probe goal. After the success criteria
    pass, run `just lint` and `just check <Mod>` on every touched
-   module, and dispatch the
-   `reviewer` agent (lead-owned degraded when absent).
+   module; then, in full-module mode, close the symmetric bracket
+   per the contract's Delegation ordering — the two passes run in
+   sequence, never in the same parallel dispatch: the `analyzer`'s
+   accuracy review first (does it prove what the ledger specified,
+   by the route specified, resting on the lemmas it claims), then
+   the `reviewer`'s mechanical gate. In spike mode, dispatch the
+   `reviewer` alone. Either stage runs lead-owned, recorded as
+   degraded, when its agent is absent.
    Append to the plan ledger `notes/plans/<slug>.md` after
    meaningful progress, after failed attempts, and before stopping:
    active objective, what changed, what was checked, next step. The
@@ -125,17 +136,15 @@ its module named, not re-mechanized.
    resume, read its tail first. (`notes/session-logs/` belongs
    exclusively to the session-close log.)
 
-5. **Verify** — Run an adversarial pass over the draft report:
+5. **Verify** — Run the verify protocol per the contract over the
+   draft report. The adversarial sweep for this workflow:
    status labels stronger than their evidence (a target is
    mechanized only if its pre-registered check actually passed —
    never on "should typecheck"), extraction claims the source does
    not state, hypotheses silently strengthened or dropped between
    ledger and implementation, single-source critical claims, novelty
    language without a recorded search, and sections surviving from
-   earlier drafts that the final evidence no longer supports. Grade
-   findings FATAL / MAJOR / MINOR. Fix FATAL findings before
-   delivery and run one more pass after the fixes; note MAJOR
-   findings in Open Questions; accept MINOR.
+   earlier drafts that the final evidence no longer supports.
 
 6. **Report** — Save the final report to `notes/research/<slug>.md`:
    each target's outcome against its pre-registered success

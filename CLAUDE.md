@@ -15,7 +15,8 @@ Delegate:**
 
 Your role is orchestration: gather minimal context, delegate with
 complete self-contained briefs, synthesize results. The roster is
-authored per-harness; when a named agent is not registered in your
+authored once in `.agents/` and registered per-harness via the
+agent symlinks; when a named agent is not registered in your
 harness, do the work lead-owned under the same discipline and
 record the delegation as degraded.
 

@@ -36,7 +36,10 @@ supplied as `l.NNN` anchors into the `.pdftext`. The recorded PDF
 hash was re-verified (`shasum -a 256`) and matches.
 
 PROVISIONAL: agent-vetted; Lane's confirmation of this entry is
-pending. No load-bearing citation rests on a PROVISIONAL entry.
+pending (the format authority governs what the marker means).
+
+Statements verified: 4/4 CONFIRMED (spot-check), 2026-07-13, by
+verifier (Claude), @ 0b482777.
 
 ## Files
 

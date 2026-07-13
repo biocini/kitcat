@@ -70,9 +70,12 @@ substantially harder than the paper's presentation suggests.
    if an edit fails or would embed a large block, rewrite the full
    plan file instead, then continue through to final artifact and
    provenance verification.
-2. **Gather** — Paper side: retrieve the paper with the url-fetch
-   capability; use the paper-search and web-search capabilities to
-   locate the current version, errata, and companion material.
+2. **Gather** — Paper side: check `resources/` first — a vendored
+   source is read from its entry, through the committed map and
+   content digests plus the vendored copy; only for an unvendored
+   source retrieve the paper with the url-fetch capability, using
+   the paper-search and web-search capabilities to locate the
+   current version, errata, and companion material.
    Formalization side: when auditing this repository, read the
    modules with the file-read and file-search capabilities and
    consult `docs/gloss.md` and `resources/` before searching
@@ -105,17 +108,14 @@ substantially harder than the paper's presentation suggests.
    url-fetch capability: the URL resolves, and the document states
    what it is cited for. Label every claim per the contract lexicon
    (`docs/provenance.md` binding).
-5. **Verify** — Run an adversarial pass over the draft: table rows
+5. **Verify** — Run the verify protocol per the contract over the
+   draft. The adversarial sweep for this workflow: table rows
    whose status is stronger than their evidence (a MATCHES without a
    named module, a MISMATCH whose delta is vague), unsupported
    claims, single-source critical claims, overstated confidence,
    novelty language without a recorded search, and sections
    surviving from earlier drafts that the final evidence no longer
-   supports. Dispatch the `verifier` agent when present —
-   it re-checks the citations and runs this adversarial pass;
-   otherwise self-review. Grade findings FATAL / MAJOR / MINOR. Fix
-   FATAL findings before delivery and run one more pass after the
-   fixes; note MAJOR findings in Open Questions; accept MINOR.
+   supports.
 6. **Deliver** — Save the audit to `notes/research/<slug>-audit.md`,
    ending with a Sources section listing the paper (URL or DOI) and
    the formalization (module paths for this repository, repository
@@ -130,8 +130,8 @@ substantially harder than the paper's presentation suggests.
   an external formalization's proof supports at most SOURCE-CHECKED.
 - No reference supports a claim unless the cited document was opened
   and says what it is cited for; and a reference surfaced by
-  automated search remains `[unvetted]` — supporting no load-bearing
-  claim — until a human or a `resources/` entry confirms it.
+  automated search remains `[unvetted]`, supporting no load-bearing
+  claim, until it sheds per the contract's epistemic lexicon.
 - Findings are reported, never fixed mid-audit; every remediation is
   a proposal inside the audit artifact.
 - Blocked capabilities and failed checks are reported as BLOCKED in

@@ -170,18 +170,22 @@ the cells are twist-variant (h-level 2).
 📐⚠️ (2026-07-11, bimodule memo); the Kelly source-identification is
 CONJECTURED until `resources/kelly-mac-lane-coherence` is vendored.
 
-**T16 — The Melliès convergence.** kitcat's `op`/`op-invol` is the
-involution `†` of Melliès' "involutive 2-category" reading of Cat;
+**T16 — The Melliès convergence.** kitcat's `op`/`op-invol` is
+Melliès' `(−)op` involution in his "involutive 2-category" reading
+of Cat;
 `op-coherent`'s θ-bridge structure is the chiral-functor filler
 `F̃` (invertible, not identity). At the category core the chirality
 presentation is optional (T10 = the strict-chirality warm-up); at
 the coherence level it is forced (T12 forbids the strict filler).
 The tautological chirality `(C, op C)` is fully definitional
 BECAUSE of Route-B (`op-comp-eq = refl` ⇒ `star-comp = refl`).
-📐⚠️ design-level identification against the paper
+📐 design-level identification against the paper
 (2026-07-11, chirality memo); backed by
-`resources/mellies-dialogue-chiralities` (PROVISIONAL) — the ⚠️
-lifts when Lane ratifies that entry.
+`resources/mellies-dialogue-chiralities`, whose statement audit
+covers the identification (the involutive-2-category reading and
+Theorem 3 verified at their anchors, 2026-07-13; the audit also
+corrected this entry's notation — the source writes `(−)op`, not
+`†`).
 
 **T17 — Binary-ancestor calibration.** The one-sided ancestor
 (`repr : hom ↪ endo-operators`) is the `fam := unit` filling of the
@@ -241,10 +245,10 @@ named commit; append-mostly.
 
 Every 📐 source-identification entry names its backing
 `resources/<slug>/` entry and is marked ⚠️/CONJECTURED until that
-entry is *vetted* — Lane-ratified, not merely present; a PROVISIONAL
-entry does not lift ⚠️ (a directed agent ingestion creates the
-entry, Lane's confirmation vets it). This is the external mirror of
-the 🧪↔`Gloss.*` bijection. (T16 → `resources/mellies-dialogue-
-chiralities`, PROVISIONAL, so T16 stays ⚠️; T15's Kelly
-identification stays ⚠️/CONJECTURED until a
-`resources/kelly-mac-lane-coherence` entry is vendored and vetted.)
+entry's **statement audit covers the cited identification** —
+fidelity verified against the source, not merely present on disk;
+an unaudited entry lifts nothing, and a Lane veto of the entry
+re-imposes ⚠️. This is the external mirror of the 🧪↔`Gloss.*`
+bijection. (T15's Kelly identification stays ⚠️/CONJECTURED until
+a `resources/kelly-mac-lane-coherence` entry is vendored and
+audited.)

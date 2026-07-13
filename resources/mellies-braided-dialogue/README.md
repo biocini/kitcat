@@ -51,7 +51,10 @@ anchored). The recorded PDF hash was re-verified
 publication-status negative was re-checked and recorded above.
 
 PROVISIONAL: agent-vetted; Lane's confirmation of this entry is
-pending. No load-bearing citation rests on a PROVISIONAL entry.
+pending (the format authority governs what the marker means).
+
+Statements verified: 3/4 CONFIRMED on first pass, 1 CORRECTED
+applied (spot-check), 2026-07-13, by verifier (Claude), @ fd7fb96e; confirming re-pass clean 2026-07-13.
 
 ## Files
 
@@ -162,11 +165,14 @@ proposition numbers are as printed in the manuscript; a full
     algebra) — `l.4130`; Definition 18 (braiding on a bialgebra) —
     `l.4286`; Definition 19 (thin Hopf algebra) — `l.4359`;
     Definition 20 (ribbon Hopf algebra) — `l.4473`.
-    - **Proposition 23 (headline):** for a thin ribbon Hopf algebra
-      `H` with invertible antipode in a balanced dialogue category,
-      `Mod(H)` (left H-modules of arbitrary dimension) is a balanced
-      dialogue category with tensorial pole the left H-module ⊥ —
-      `l.4568`.
+    - **Proposition 23 (headline):** given a ribbon Hopf algebra
+      `H` in a balanced dialogue category `C`, together with a left
+      H-module structure on the tensorial pole ⊥, with `H` thin in
+      `C` and of invertible antipode, `Mod(H)` (left H-modules) is
+      a balanced dialogue category with tensorial pole the left
+      H-module ⊥ — `l.4568`. (The abstract states the
+      Vect-instance: modules of arbitrary dimension over a field,
+      pole the underlying field k.)
     - Proposition 24 (the subcategory of H-modules with a left dual
       is a ribbon category — the finite-dimensional recovery) —
       `l.4573`.

@@ -31,8 +31,8 @@ metadata (title, author, subjects, v1-only submission date 26 Mar
 The theorem/definition numbering was reconciled against the
 source's shared section counter (all numbered environments share
 one per-section counter — see the map) and matches the numbers in
-the prior PDF-based entry. This entry becomes vetted only on Lane's
-confirmation; no load-bearing citation rests on a PROVISIONAL entry.
+the prior PDF-based entry. PROVISIONAL: Lane's confirmation pending (the format authority
+governs what the marker means).
 
 Format-conformance update 2026-07-13 (Claude, Fable 5): added the
 Source URL and re-fetch and Content digests sections per the
@@ -46,6 +46,19 @@ definition/theorem inventory from `pdftotext`). That entry pinned
 the PDF as canonical; R11 reclassifies the e-print `.tar.gz` as
 canonical and the PDF as a secondary derived artifact (retained,
 gitignored).
+
+Statements verified: 8/10 CONFIRMED on first pass, 2 CORRECTED
+applied (full), 2026-07-13, by verifier (Claude), @ 3cb80488; confirming re-pass clean 2026-07-13.
+
+## Source errata
+
+One systematic source typo, normalized faithful-to-intent in the
+digests below (the normalized reading is what the digests state):
+`Arxiv_Dep_CAT.tex:2486` (Thm 4.6's quantifier) writes
+`λ ∈ dHom(a)` for the intended `λ ∈ fHom(a)` — fixed by the
+definition body (`Σₐλ` needs `λ ∈ fHom(a)`, Def 3.1(i)) and by the
+correct parallel at `l.1597`; the slip recurs at `l.2760` (§5's
+opening prose) and `l.2873` (Thm 5.4's quantifier).
 
 ## Files
 
@@ -158,9 +171,10 @@ here, not by label.
   `pr₁^{a,λ} : Σₐλ → a`, and for each `f∈Hom(b,a)` an operation
   `Σf` with `Σ_λ f : Σ_b(λ∘f) → Σₐλ` making the projection square a
   **pullback**, plus strictness `(σ₁) Σ_λ1ₐ = 1`, `(σ₂)
-  Σ_λ(f∘g) = (Σ_λf)∘Σ_{λ∘f}g`. Remark following: a
-  `(𝔣, Σ)`-category with terminal object is exactly a type-category
-  of Pitts / category with attributes of Cartmell.
+  Σ_λ(f∘g) = (Σ_λf)∘Σ_{λ∘f}g`. The source states in the abstract
+  (`l.1003–1004`) and §1 (`l.1099–1102`): a `(𝔣, Σ)`-category with
+  a terminal object is exactly a type-category of Pitts / category
+  with attributes of Cartmell.
 - `l.1706, 1738, 1763, 1834, 1869` — Examples 3.2–3.6 (trivial
   Sigma-object; Sigma-set and Sigma-type; Sigma-object of a
   constant family; weak Sigma-objects in the slice; commutative
@@ -238,7 +252,8 @@ own terms and notation.
   `C₂`), with a composition `∘ : fHom(a) × Hom(b,a) → fHom(b)`,
   (𝔣₁) `λ∘1ₐ = λ`, (𝔣₂) `λ∘(f∘g) = (λ∘f)∘g`.
 - **Def 2.8, the category `fHom(𝒞)` = 𝒞₂** (`Arxiv_Dep_CAT.tex:1535`)
-  — the category of elements `Σ(𝒞, fHom)` of the presheaf
+  — for a 𝔣-category 𝒞 with a locally small 𝔣-structure, the
+  category of elements `Σ(𝒞, fHom)` of the presheaf
   `fHom : 𝒞ᵒᵖ → Set`, `[fHom(f)](λ) := λ∘f`: objects `(a,λ)`; an
   arrow `(b,μ) → (a,λ)` is an `f : b → a` with `μ = λ∘f`.
 - **Def 3.1, (𝔣,Σ)-category** (`Arxiv_Dep_CAT.tex:1604`) — a
@@ -262,7 +277,8 @@ own terms and notation.
   λ); `φ(f)` is the unique pullback-induced arrow with
   `φ∘f = (Σ_λf)∘φ(f)` and `pr₁^{b,λ∘f}∘φ(f) = 1_b`.
 - **Def 4.8, the category `dHom(𝒞)` = 𝒞₃** (`Arxiv_Dep_CAT.tex:2731`)
-  — the category of elements `Σ(fHom(𝒞), dHom)` of the presheaf
+  — for a 𝔡𝔦-category 𝒞 with a locally small 𝔡𝔦-structure, the
+  category of elements `Σ(fHom(𝒞), dHom)` of the presheaf
   `dHom : fHom(𝒞)ᵒᵖ → Set`, `[dHom(f)](Φ) := Φ(f)`: objects
   `((a,λ), Φ)`; an arrow `((b,μ),Ψ) → ((a,λ),Φ)` is an arrow
   `f : (b,μ) → (a,λ)` of `fHom(𝒞)` with `Ψ = Φ(f)`.

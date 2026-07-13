@@ -55,9 +55,10 @@ math.LO, math.AT), nLab, 1lab, TypeTopology, author and lab pages,
 and proof-assistant library documentation (Agda, cubical, mathlib).
 Before searching outward, consult what the repository has already
 vetted or proven: `resources/` (vetted source entries — cite these
-by entry when they cover a source) and `docs/gloss.md` (the theorem
-ledger). Known prior context is a starting point, not something to
-rediscover.
+by entry when they cover a source), `docs/gloss.md` (the theorem
+ledger), and `notes/watches/` — a standing watch baseline or delta
+on the topic is an already-swept front to build on. Known prior
+context is a starting point, not something to rediscover.
 
 Prefer paper metadata, abstracts, HTML pages, and official docs.
 Do not fetch PDFs in this workflow: when only a PDF exists, cite
@@ -122,20 +123,18 @@ machinery; run that skill separately when a source demands it.
    contract lexicon (`docs/provenance.md` binding). When a
    load-bearing claim rests on a source not yet vendored, ingest per
    the contract: dispatch the `ingest` agent for a directed
-   PROVISIONAL entry (lead-owned degraded when absent); Lane
-   ratifies before the claim is treated as load-bearing.
-6. **Verify** — Run an adversarial pass over the cited draft:
-   unsupported claims, logical gaps, single-source critical claims,
-   overstated confidence, status labels stronger than their
-   evidence, novelty language without a recorded search, and
-   sections surviving from earlier drafts that the final evidence
-   no longer supports. Dispatch the `verifier` agent when
-   present — it re-checks the citations and runs this adversarial
-   pass; otherwise self-review. Record findings in
-   `notes/research/<slug>-verification.md`, graded FATAL / MAJOR /
-   MINOR. Fix FATAL findings before delivery and run one more pass
-   after the fixes; note MAJOR findings in Open Questions; accept
-   MINOR. Apply 1–3 simple corrections as small localized edits;
+   PROVISIONAL entry (lead-owned degraded when absent); the claim
+   bears load once the entry's statement audit is recorded, per
+   the contract.
+6. **Verify** — Run the verify protocol per the contract over the
+   cited draft; the findings report lands at
+   `notes/research/<slug>-verification.md`, the contract's path.
+   The adversarial sweep for this workflow: unsupported claims,
+   logical gaps, single-source critical claims, overstated
+   confidence, status labels stronger than their evidence, novelty
+   language without a recorded search, and sections surviving from
+   earlier drafts that the final evidence no longer supports.
+   Apply 1–3 simple corrections as small localized edits;
    for section rewrites or more than 3 substantive fixes, write a
    corrected full file to `notes/research/<slug>-revised.md`
    instead. Prove every applied fix on disk with the file-search or
@@ -155,8 +154,8 @@ machinery; run that skill separately when a source demands it.
 
 - No reference supports a claim unless the cited document was opened
   and says what it is cited for; and a reference surfaced by
-  automated search remains `[unvetted]` — supporting no load-bearing
-  claim — until a human or a `resources/` entry confirms it.
+  automated search remains `[unvetted]`, supporting no load-bearing
+  claim, until it sheds per the contract's epistemic lexicon.
 - Novelty language is "we are not aware of prior work", accompanied
   by the searches actually performed — never "new" or "first".
 - Blocked capabilities and failed checks are reported as BLOCKED in

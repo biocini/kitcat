@@ -123,10 +123,15 @@ claims machine-checked in this repository, naming the module or
 states the claim at the cited location; every mathematical claim
 harvested from literature is CONJECTURED (typically `CONJECTURED,
 SOURCE-CHECKED against <ref>`); references surfaced by automated
-search are `[unvetted]` and support nothing load-bearing until a
-human confirmation — Lane ratifying the source, recorded as a
-*vetted* `resources/` entry — covers them (a PROVISIONAL entry does
-not lift the bar); each promotion is recorded in the run's sidecar. Novelty language is
+search are `[unvetted]` and support nothing load-bearing until an
+**audited** `resources/` entry covers them — identity hash-verified
+and the statement audit recorded, the human-free fidelity bar; an
+entry without its audit lifts nothing — or a human confirms the
+opened document directly. Each promotion is recorded in the run's
+sidecar, and a citation resting on an entry whose Lane-discretion
+is unexercised carries that state there (`audited; discretion
+pending`). Lane's ratification and veto are self-initiated
+discretion over the shelf, never a gate the pipeline queues behind. Novelty language is
 "we are not aware of prior work" plus the search performed.
 
 A "verified" claim names the command or check that verified it, so
@@ -164,10 +169,19 @@ created as a silent side effect (see Ingestion below).
 - When a skill names an agent absent in the current harness, the
   work runs lead-owned under the same discipline and the ledger
   records the delegation as degraded.
-- Critical claims get at least one adversarial verification pass
-  after synthesis (FATAL / MAJOR / MINOR; fix FATAL before
-  delivery and re-pass; MAJOR goes to Open Questions; accept
-  MINOR).
+- **The verify protocol** (stated once here; workflows name it and
+  defer): critical claims get at least one adversarial verification
+  pass after synthesis. Dispatch the `verifier` with the artifact,
+  its evidence files, and the report path
+  `notes/research/<slug>-verification.md`; when the verifier is
+  absent, self-review under the same contract and record the
+  delegation as degraded. Findings are graded FATAL / MAJOR /
+  MINOR: fix FATAL before delivery and run one confirming pass
+  after the fixes; MAJOR goes to the artifact's Open Questions;
+  MINOR is noted and accepted. Direct-mode exemption: a run that
+  dispatched no agents and answered an explainer-scale question
+  self-reviews — never spawn a verifier for work smaller than the
+  dispatch.
 - Two consecutive failures on the same goal is a full stop: state
   what is known, what is not, what was tried; wait for direction.
 - Delegation is an ordered sequence, not a set: when a run cites,
@@ -181,9 +195,39 @@ created as a silent side effect (see Ingestion below).
 `resources/README.md` is the format authority. When a load-bearing
 claim rests on a source not yet vendored, the default action is to
 ingest it — vendor it as a PROVISIONAL entry immediately
-(ingest-on-firsthand-need), not merely propose a candidate; Lane
-ratifies before the claim is treated as load-bearing. No
-load-bearing citation rests on a provisional entry.
+(ingest-on-firsthand-need), not merely propose a candidate. The
+load-bearing gate is the audit, not a signature: an entry supports
+load-bearing citation once its identity is hash-verified and its
+statement audit is recorded, and an entry with no recorded
+statement audit supports nothing. Lane's discretion over the shelf
+— ratify, spot-audit, veto — is self-initiated at any time; a veto
+retires the entry and voids every claim that leaned on it.
+
+A directed ingestion is complete only after the **statement audit**:
+the dispatching lead (never the ingest agent — dispatch stays
+lead-owned) dispatches the `verifier` in its entry-statement-audit
+mode over the new entry, at the depth the entry's load declares —
+every digest statement for a mechanization target, a spot-check for
+a background reference. The lead applies corrections verbatim and
+runs one confirming re-pass; an entry whose statements fail at
+roughly one in five or worse goes back to ingestion. The pass is
+recorded in the entry's Vetting section as its `Statements
+verified:` field (the format authority specs it); load-bearing use
+requires the field, and a re-fetch or re-extraction voids it — the
+record is bound to the canonical hash.
+
+An entry exists for a named research need — ingest-on-firsthand-need
+is the only default trigger — and its quality bar is that its
+statements are actionable by the library's own apparatus:
+extraction-ready for formulation-survey and mechanize, resolving at
+`<file>:LINE`, honest about hypotheses. Verification of the
+mathematics completes at the theorem ledger, not at any signature —
+a digested claim is CONJECTURED until machine-checked, whoever
+approved what — so the pipeline's reliability is human-independent
+end to end. Human gates in this layer (Lane's discretion, the GO
+gates) are authorization and direction, never truth: work is
+presented as checked only when the system's own checks actually
+ran, and "the human will catch it" is never a licensed assumption.
 
 Prefer the canonical source format. House the source's own markup —
 LaTeX/`.tex` (an arXiv e-print) or other markup — when it is
@@ -212,6 +256,41 @@ Before stopping, verify on disk that every promised artifact
 exists at its named path — never stop at an unsaved draft or an
 intermediate. Report outcomes faithfully: failed checks and
 blocked capabilities are reported as such, never smoothed over.
+
+After a run's plan is approved, never end chat-only: a failed or
+blocked capability degrades the run, and the final artifact and its
+sidecar are still written — partial or blocked, with
+`Verification: BLOCKED` naming the check that could not run. An
+empty gather is reported as empty, never padded. Before citing from
+a locally vendored source, re-verify its recorded hash
+(`just resources-verify` covers the whole tree).
+
+## Layer scope
+
+The layer stays simple yet potent: it serves the library's research
+loop, never adjacent productivity lanes. Every proposed addition —
+a skill, prompt, agent, tool, recipe, or document surface — must
+fight for its life before it is built: state the core research job
+it serves and the smallest existing surface that could absorb it,
+and record that justification in the session log when it lands.
+The core jobs are: discovering sources (papers, formalizations,
+prior art); reading and extracting their content; verifying claims
+against sources and the typechecker; planning and running
+mechanizations and spikes; synthesizing research into auditable
+artifacts; source custody and provenance; and the speed,
+observability, and reliability of that loop. Reject by default
+anything serving none of these; when the value is not concrete and
+testable, do not add it. The suite-maintainer audits additions for
+a recorded justification.
+
+Worked records for the two post-port additions (retroactive, under
+the same test): `/prove` serves planning-and-running mechanization
+— it codifies the repository's most-run flow (the symmetric
+bracket) and no existing surface orchestrated it; `/hott` serves
+reading-and-extracting foundational content — a lookup grounded in
+the vendored Rijke entry's map and digests, whose smallest surface
+is a thin prompt over that entry (the acquisition and explanation
+skills are paper-scoped and heavier). Both pass.
 
 ## Context-layer design decisions
 

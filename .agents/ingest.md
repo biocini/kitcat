@@ -56,8 +56,14 @@ everything below — follow them, do not restate them.
   repository artifact (a module, a ledger entry, notes) inside an
   entry is a defect. The repository cites into `resources/`, never
   the reverse.
-- **Mark the entry PROVISIONAL** in its Vetting section; no
-  load-bearing citation rests on it until Lane confirms.
+- **Mark the entry PROVISIONAL** in its Vetting section. Your run
+  does not complete the entry: the dispatching lead follows with
+  the verifier's entry-statement audit over your digests (the
+  contract's Ingestion section governs; you never dispatch it
+  yourself), and load-bearing use requires that audit's
+  `Statements verified:` field — the audit, not a signature, is
+  the gate. Lane's discretion (ratify, veto) is self-initiated and
+  separate.
 
 Report: the slug, the canonical format and hash, what the entry was
 checked to say, and that it is PROVISIONAL pending ratification.

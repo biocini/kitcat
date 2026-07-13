@@ -63,6 +63,10 @@ read directly — no staging. For an external or file document, run
 every guard below before any tier logic; a failure here is cheap, a
 failure mid-window is not.
 
+- Source covered by a `resources/<slug>/` entry: read the entry's
+  section map and content digests, then the vendored readable copy
+  directly (the `.pdftext`, or the mapped source files) — never
+  re-stage or re-extract beside an existing `.pdftext`.
 - A repository URL `https://github.com/owner/repo` (exactly 4
   slashes) means the README: fetch the raw file at
   `raw.githubusercontent.com/owner/repo/main/README.md`, then
@@ -99,8 +103,12 @@ Log: `[eli5] tier=<direct|windowed> chars=<count>`.
 
 ## Windowed reading (checkpointed)
 
-The document stays on disk. Extract windows by character offset via
-the shell capability:
+The document stays on disk. Before window 1, open
+`notes/research/<slug>-summary.md` with the resolved configuration
+as its first line (`[eli5] config window=<w> overlap=<o> tier=<t>`):
+window offsets are a pure function of these values, and the
+recorded line is what realigns a resumed run. Extract windows by
+character offset via the shell capability:
 
 ```python
 # file-read tools address lines, not characters; char-boundary
@@ -123,9 +131,11 @@ For each window, in order:
    loses at most one window.
 3. Log: `[eli5] window <N>/<total> done`.
 
-On restart, count the `## Window <N>` headings already in
-`notes/research/<slug>-summary.md` and resume from the next
-window — never re-read from the top. When every window is done,
+On restart, read the configuration line at the top of
+`notes/research/<slug>-summary.md` and honor it over current flags
+and environment, then count the `## Window <N>` headings already
+there and resume from the next window — never re-read from the
+top. When every window is done,
 synthesize the accumulated notes into a closing summary section of
 the same file — a claim appearing in overlapping windows is one
 claim; keep the most complete formulation — then write the
@@ -158,14 +168,15 @@ Guidelines, all binding:
 
 ## Verify
 
-Before delivery, run one adversarial pass over the draft:
+Before delivery, run the verify protocol per the contract — this
+run dispatches no agents, so its direct-mode self-review applies.
+The adversarial sweep for this workflow:
 load-bearing claims without an epistemic label, labels stronger
 than their evidence, an analogy implying properties the source
 never establishes, jargon left undefined, and sections surviving
 from earlier drafts that the final evidence no longer supports.
-Grade findings FATAL / MAJOR / MINOR; fix FATAL findings and run
-one more pass after the fixes; carry MAJOR findings into a closing
-"Open questions" line of the explanation; accept MINOR.
+MAJOR findings land in a closing "Open questions" line of the
+explanation.
 
 ## Deliver
 
@@ -191,8 +202,8 @@ in chat or in the working notes — never executed as a side effect.
 
 - No reference supports a claim unless the cited document was
   opened and says what it is cited for. A reference surfaced by
-  automated search is `[unvetted]` and supports no load-bearing
-  claim until a human or a `resources/` entry confirms it.
+  automated search remains `[unvetted]`, supporting no load-bearing
+  claim, until it sheds per the contract's epistemic lexicon.
 - A capability with no visible tool is reported BLOCKED with the
   manual command a human could run; never simulate a capability or
   claim its result. Windowed runs record BLOCKED entries in

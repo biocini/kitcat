@@ -41,8 +41,11 @@ Begin with the plan artifact, not with prose about the protocol.
 ## Inputs
 
 This workflow synthesizes what already exists; it is not a research
-run. Draw from, in priority order: `notes/research/` files on the
-topic, `docs/gloss.md` entries and their `src/Gloss/` certificates,
+run. Draw from, in priority order: `notes/research/` finals on the
+topic — a deep-research or lit run's final lands at
+`notes/research/<slug>.md` per the contract's slug scheme; consume
+those pinned paths — then
+`docs/gloss.md` entries and their `src/Gloss/` certificates,
 `resources/` vetted source entries (cite these by entry when they
 cover a source), and the latest `notes/session-logs/` entry plus
 `docs/roadmap.md` for current-state context. Use the
@@ -71,7 +74,9 @@ capability when needed — rather than padding with invention.
    brief that names the collected material files (the
    `notes/research/` inputs, the `docs/gloss.md` entries and their
    `Gloss.*` certificates, the `resources/` entries) and the output
-   path, and carries the hard rules above — every statement tagged
+   path — the writer's exposition lands at
+   `notes/research/<slug>-paper-draft.md`, this chain's draft
+   stage — and carries the hard rules above — every statement tagged
    with its ledger status, nothing invented. The writer produces the
    structured exposition prose and adds no citations and no Agda.
    When the writer is absent in your harness, draft the exposition
@@ -104,30 +109,26 @@ capability when needed — rather than padding with invention.
    it>` — never as connective prose that implies the result holds.
    Diagrams and comparison tables appear only when source-supported
    and decision-changing; every one carries its provenance.
-3. **Cite** — Attach inline citations per the hard rules. Check
+3. **Cite** — Attach inline citations per the hard rules to the
+   writer's draft at `notes/research/<slug>-paper-draft.md`. Check
    every external source with the url-fetch capability: the URL
    resolves, and the document states what it is cited for. Label
    every claim per the contract lexicon (`docs/provenance.md`
    binding), novelty language included. When a load-bearing claim
    rests on a source not yet vendored, ingest per the contract:
    dispatch the `ingest` agent for a directed PROVISIONAL entry
-   (lead-owned degraded when absent); Lane ratifies before the claim
-   is treated as load-bearing.
-4. **Verify** — Run an adversarial pass over the cited draft:
+   (lead-owned degraded when absent); the claim bears load once the
+   entry's statement audit is recorded, per the contract.
+4. **Verify** — Run the verify protocol per the contract over the
+   cited draft. The adversarial sweep for this workflow:
    statements stronger than their ledger status, claims without a
    module / certificate / source, proofs presented as complete that
    are sketches, gaps smoothed into prose, single-source critical
    claims, overstated confidence, novelty language without a
    recorded search, and sections surviving from earlier drafts that
-   the final evidence no longer supports. Dispatch the
-   `verifier` agent when present — it re-checks the
-   citations and runs this adversarial pass; otherwise self-review
-   and record the delegation as degraded. Grade findings FATAL /
-   MAJOR / MINOR. Fix FATAL findings before delivery and run one
-   more pass after the fixes; note MAJOR findings in Limitations and
-   Open Questions; accept MINOR. Sweep once more for any claim that
-   sounds stronger than its support: downgrade or remove it now
-   rather than deliver it.
+   the final evidence no longer supports. Sweep once more for any
+   claim that sounds stronger than its support: downgrade or remove
+   it now rather than deliver it.
 5. **Deliver** — Save exactly one final draft to
    `notes/research/<slug>-paper.md` and write its provenance sidecar
    `notes/research/<slug>-paper.provenance.md` per the contract,
@@ -153,7 +154,7 @@ side effect.
 
 - No reference supports a claim unless the cited document was opened
   and says what it is cited for; a reference surfaced by automated
-  search remains `[unvetted]` — supporting no load-bearing claim —
-  until a human or a `resources/` entry confirms it.
+  search remains `[unvetted]`, supporting no load-bearing claim,
+  until it sheds per the contract's epistemic lexicon.
 - Blocked capabilities and failed checks are reported as BLOCKED in
   the provenance sidecar; a missing check is never smoothed over.

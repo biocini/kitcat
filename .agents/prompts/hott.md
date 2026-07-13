@@ -32,8 +32,11 @@ never by guessing a file:
    load-bearing definitions/theorems at `<lecture>.tex:LINE`, and the
    **Content digests** section carries statement-level digests of
    those items at the same anchors. Find the target with the
-   file-search capability; a single-definition lookup is often
-   answerable from the digest alone (cite its anchor).
+   file-search capability; the digest orients the lookup and often
+   carries what the answer needs — but the SOURCE-CHECKED label
+   attaches only after the vendored source is read at the anchor
+   (step 2). An answer given from the digest alone is cited as
+   "per the entry digest at <anchor>", never SOURCE-CHECKED.
 2. For anything beyond the digest's statement — hypotheses in full,
    the surrounding development, a proof's shape — read the vendored
    source at the anchor (`resources/rijke-hott/<lecture>.tex`) with
@@ -73,16 +76,21 @@ walks the relevant subsections in order.
 
 ## Honesty rules (binding)
 
-- SOURCE-CHECKED means the vendored document states the claim at the
-  cited `<lecture>.tex:LINE`; label every statement drawn from the
-  text that way, and quote or paraphrase only what is actually there.
+- SOURCE-CHECKED means the claimant opened the vendored source at
+  the cited `<lecture>.tex:LINE` this run and it states the claim
+  there; a digest is a derivative and licenses only "per the entry
+  digest at <anchor>". Quote or paraphrase only what is actually in
+  the text read.
 - VERIFIED is reserved for what is machine-checked in THIS repository
   — a named module or `Gloss.*` certificate. Rijke stating a theorem
   is never VERIFIED for kitcat; it is the source's claim.
-- `resources/rijke-hott/` is PROVISIONAL pending Lane's ratification:
-  it grounds understanding and orients a construction, but no
-  load-bearing proof citation rests on it until it is vetted. Say so
-  if a caller leans on it as authority for a kitcat result.
+- The entry's standing governs what a citation on it may bear (the
+  contract's Ingestion section: the statement audit is the
+  load-bearing gate; Lane's discretion is separate and
+  self-initiated). Note the standing when a caller leans on the
+  entry as authority — and a mathematical claim stays CONJECTURED
+  until machine-checked in this repository, whatever the entry's
+  standing.
 - A capability with no visible tool, or a missing vendored file, is
   reported BLOCKED with the manual command a human could run; never
   simulate the source or invent a statement or a line number.

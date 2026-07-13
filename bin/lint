@@ -231,6 +231,13 @@ run_authoring() {
         if [ -n "$dollars" ]; then
             echo "  ${prompt}: \$-token other than \$ARGUMENTS (candidate): ${dollars}"; issues=$((issues + 1))
         fi
+        # Shedding-rule drift canary: the [unvetted] conditions are
+        # stated once in the contract; a prompt restating them has
+        # drifted before and will again. Any of these phrases in a
+        # prompt body is a restatement, not a deferral.
+        if rg -qi 'until a human|until it is vetted|Lane ratifies before|rests on a PROVISIONAL' "$prompt"; then
+            echo "  ${prompt}: shedding-rule restatement (defer to the contract lexicon)"; issues=$((issues + 1))
+        fi
     done
 
     # Harness bridges: the two dir-level symlinks resolve to the masters.

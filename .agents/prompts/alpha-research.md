@@ -18,9 +18,10 @@ your harness. The paper-search capability resolves per HARNESS.md —
 direct arXiv fetch by id via the shell capability, plus web-search
 and url-fetch against the primary venues — and reaches all of arXiv. Paper questions go to paper-search,
 current topics to web-search and url-fetch, mixed questions to both
-with the two evidence streams kept distinct. This skill runs inside
-a requesting workflow (a review, comparison, audit, or direct
-request); its findings, hashes, and proposals are recorded in that
+with the two evidence streams kept distinct. This skill serves
+direct requests and is available to any requesting workflow (a
+review, comparison, audit) that invokes it; when one does, its
+findings, hashes, and proposals are recorded in that
 workflow's run artifact and provenance sidecar. On a direct request
 with no enclosing workflow, findings and BLOCKED reports are
 delivered in chat, and any working copies still go to
@@ -34,9 +35,9 @@ url-fetch, scope queries to the primary venues: arXiv (math.CT,
 cs.LO, math.LO, math.AT), nLab, 1lab, TypeTopology, author pages,
 proof-assistant library documentation.
 
-Automated-search references are `[unvetted]` per the contract
-lexicon until a human confirms the opened document or a
-`resources/` entry covers it. A tier that fails on authentication
+Automated-search references remain `[unvetted]`, supporting no
+load-bearing claim, until they shed per the contract's epistemic
+lexicon. A tier that fails on authentication
 or a missing tool is reported BLOCKED with the manual command a
 human could run; never simulate a search or claim its result.
 

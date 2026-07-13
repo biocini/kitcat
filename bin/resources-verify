@@ -86,5 +86,33 @@ if [ "$entries" -eq 0 ]; then
     exit 1
 fi
 
+# Entry standing (informational), per the format authority: the
+# load-bearing gate is the statement audit (human-free); Lane's
+# `Vetted:` line is self-initiated discretion, never a queue the
+# pipeline waits on. Also report consumption — which tracked kitcat
+# artifacts cite each entry (reverse grep, kitcat-side, so entries
+# stay source-only). An entry nothing consumes failed the usefulness
+# criterion regardless of its audit status.
+echo "── entry standing ──"
+for dir in resources/*/; do
+    readme="${dir}README.md"
+    [ -f "$readme" ] || continue
+    entry="$(basename "$dir")"
+    if rg -qi '^\s*-?\s*Vetted:' "$readme"; then
+        standing="vetted (Lane discretion exercised)"
+    elif rg -qi 'Statements verified:' "$readme"; then
+        standing="audited — load-bearing capable; Lane discretion open"
+    else
+        standing="NOT audited — supports nothing load-bearing"
+    fi
+    # Consumers: tracked files outside resources/ citing the entry.
+    consumers="$(git grep -l "resources/${entry}" -- ':!resources' 2>/dev/null | tr '\n' ' ' || true)"
+    if [ -n "$consumers" ]; then
+        echo "  ${entry}: ${standing}; consumed by: ${consumers}"
+    else
+        echo "  ${entry}: ${standing}; consumed by: NOTHING (usefulness flag)"
+    fi
+done
+
 echo "resources-verify: ${entries} entries, ${checked} hashes verified, ${missing} missing, ${fatal} FATAL"
 [ "$fatal" -eq 0 ]

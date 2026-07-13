@@ -50,8 +50,28 @@ yet ignored is added to `.gitignore` as encountered.
   year, DOI or arXiv id, URL.
 - **Vetting** — who opened the document and when, and what it was
   checked to say. A directed agent ingestion produces a PROVISIONAL
-  entry (say so here); it becomes vetted only after Lane confirms.
-  No load-bearing citation rests on a PROVISIONAL entry.
+  entry (say so here). **The load-bearing gate is the statement
+  audit, not a signature**: an entry supports load-bearing citation
+  once its identity is hash-verified and its statement audit is
+  recorded; an entry with no recorded audit supports nothing. Two
+  structured fields live here:
+  - `Statements verified: N/M CONFIRMED (<depth>), <date>, by
+    <agent>, @ <canonical-hash prefix>` — the independent
+    statement audit of the content digests (the verifier's
+    entry-statement-audit mode, dispatched by the lead after the
+    entry is built; the contract's Ingestion section governs).
+    **Load-bearing use requires this field.** A re-fetch or
+    re-extraction changes what the anchors index, so it voids the
+    field until the audit is re-run — the `@ <hash>` binding is
+    what makes that mechanical.
+  - `Vetted: <date>, Lane` — Lane's discretion record, written only
+    by Lane or at Lane's explicit direction; writing it retires the
+    PROVISIONAL marker. Discretion is self-initiated, never a gate
+    the pipeline queues behind: a citation on an audited-but-
+    unvetted entry bears load and carries `audited; discretion
+    pending` in the citing artifact's sidecar. A Lane veto retires
+    the entry and voids every claim that leaned on it.
+    `just resources-verify` lists where each entry stands.
 - **Files** — an inventory of the vendored artifacts (the source
   tarball, the extracted markup or `.pdftext`), naming the canonical
   format and which file the reader greps. A `.pdftext` extraction

@@ -28,7 +28,13 @@ into the `.pdftext` plus slide numbers, with the codependent half
 hash was re-verified (`shasum -a 256`) and matches.
 
 PROVISIONAL: agent-vetted; Lane's confirmation of this entry is
-pending. No load-bearing citation rests on a PROVISIONAL entry.
+pending (the format authority governs what the marker means).
+
+Statements verified: 5/5 CONFIRMED (spot-check), 2026-07-13, by
+verifier (Claude), @ 84aa016d.
+
+Caveat: slide-41 diagram bodies are unverifiable in the extraction
+(χ glyphs); manual fallback is the PDF, slide 41.
 
 ## Files
 

@@ -104,17 +104,18 @@ change on a target module must typecheck with zero warnings (exit
      is a full stop: state what you know, what you don't, and what
      you tried, then wait for direction. Never stack fixes on a
      broken approach.
-5. **Verify** — Run an adversarial pass over the ledger and draft
-   summary: ledger entries missing metric values, kept changes
+5. **Verify** — Run the verify protocol per the contract over the
+   ledger and draft summary. The adversarial sweep for this
+   workflow: ledger entries missing metric values, kept changes
    without a recorded passing measurement, target-module changes
    kept without a zero-warning typecheck, metric gains from
    weakened checks, claims stronger than their evidence, and
    sections surviving from earlier drafts that the final evidence
-   no longer supports. Dispatch the `reviewer` agent
-   for kept target-module changes when present; otherwise
-   self-review. Grade findings FATAL / MAJOR / MINOR; fix FATAL
-   before delivery and run one more pass after the fixes; note
-   MAJOR in Open Questions; accept MINOR.
+   no longer supports. This run cites no external sources, so the
+   delegated check is the `reviewer` agent, dispatched for kept
+   target-module changes when present; map its verdicts into the
+   protocol's grades — Blocking → FATAL, Suggestion → MAJOR,
+   Nitpick → MINOR.
 6. **Deliver** — Save the summary to `notes/research/<slug>.md`:
    baseline vs final metric values, the iteration ledger (or a
    pointer to the plan file plus the kept/reverted counts), the

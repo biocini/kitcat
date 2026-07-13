@@ -24,13 +24,18 @@ briefs, prose:
   is CONJECTURED until the typechecker says otherwise;
   implementation gates on a spike for conjectured claims.
 - **`[unvetted]`** — a reference surfaced by automated search that
-  no human has confirmed. It supports no load-bearing claim, and it
-  sheds the marker only when a human confirms the opened document or
-  a *vetted* (Lane-ratified) `resources/` entry covers it — a
-  PROVISIONAL entry does not lift the marker (a directed agent
-  ingestion creates the entry; Lane's confirmation vets it). Each
-  promotion is recorded (who, or which vetted entry) in the run's
-  provenance sidecar.
+  nothing has yet confirmed. It supports no load-bearing claim, and
+  it sheds the marker when an **audited** `resources/` entry covers
+  it — identity hash-verified and the independent statement audit
+  recorded, the human-free fidelity bar; a bare entry without its
+  audit lifts nothing — or when a human confirms the opened
+  document directly. Each promotion is recorded (which audited
+  entry, or who) in the run's provenance sidecar; a citation on an
+  audited entry where Lane's discretion is unexercised carries
+  `audited; discretion pending` there. Lane's ratification and veto
+  are self-initiated discretion over the shelf, not a gate the
+  pipeline queues behind; a veto retires the entry and voids every
+  claim that leaned on it.
 - The ledger statuses in `docs/gloss.md` (✅ machine-checked
   committed, 🧪 machine-checked evidence in `Gloss.*`, 📐 rigorous
   argument not mechanized, ⚠️ partially conjectured) govern claim

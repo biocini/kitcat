@@ -37,7 +37,10 @@ math.LO, math.AT), nLab, 1lab, TypeTopology, author and lab pages,
 and proof-assistant library documentation (Agda, cubical, mathlib).
 Before searching outward, consult what the repository has already
 vetted or proven: `resources/` (cite by entry when one covers a
-source) and `docs/gloss.md` (the theorem ledger). Known prior
+source) and `docs/gloss.md` (the theorem ledger). A prior compare
+run's matrix on this target — its final at the contract's slug
+path under `notes/research/` — is a primary input when present:
+adopt its rows rather than re-deriving them. Known prior
 context is a starting point, not something to rediscover.
 
 Every candidate is judged against this library's constraints:
@@ -120,19 +123,15 @@ well-sourced it is.
    which entry) in the sidecar. When a load-bearing claim rests on
    a source not yet vendored, ingest per the contract: dispatch the
    `ingest` agent for a directed PROVISIONAL entry (lead-owned
-   degraded when absent); Lane ratifies before the claim is treated
-   as load-bearing. Then run an adversarial pass over the draft:
+   degraded when absent); the claim bears load once the entry's
+   statement audit is recorded, per the contract. Then run the verify protocol per the contract
+   over the draft; the adversarial sweep for this workflow:
    unsupported claims, logical gaps, single-source
    critical claims, overstated confidence, feasibility verdicts or
    status labels stronger than their evidence, prerequisites
    claimed present without a named module, novelty language without
    a recorded search, and sections surviving from earlier drafts
-   that the final evidence no longer supports. Dispatch the
-   `verifier` agent when present — it re-checks the
-   citations and runs this adversarial pass; otherwise self-review.
-   Grade findings FATAL / MAJOR / MINOR; fix FATAL findings before
-   delivery and run one more pass after the fixes; note MAJOR
-   findings in Open Questions; accept MINOR.
+   that the final evidence no longer supports.
 8. **Deliver** — Save the final brief to `notes/research/<slug>.md`
    and write its provenance sidecar
    `notes/research/<slug>.provenance.md` per the contract. Verify
@@ -159,7 +158,9 @@ The final brief must include:
   CONJECTURED prerequisite, then the module (placement per the
   namespace conventions, created with `just new`). This plan is a
   proposal recorded in the brief; the survey run executes none of
-  it.
+  it. Execution belongs to the pipeline: run the recommendation
+  through `/mechanize` (or `/prove` for a single lemma), which
+  adopts this brief's prerequisite inventory.
 - **Known gaps:** missing prerequisites, unassessed obstructions,
   sources that could not be checked, statements whose intended
   generality is unclear.
@@ -170,8 +171,8 @@ The final brief must include:
 
 - No reference supports a claim unless the cited document was
   opened and says what it is cited for; a reference surfaced by
-  automated search remains `[unvetted]` — supporting no load-bearing
-  claim — until a human or a `resources/` entry confirms it.
+  automated search remains `[unvetted]`, supporting no load-bearing
+  claim, until it sheds per the contract's epistemic lexicon.
 - Never claim a formulation mechanizes cleanly here unless the
   mechanization exists and is VERIFIED.
 - Novelty language is "we are not aware of prior work", accompanied

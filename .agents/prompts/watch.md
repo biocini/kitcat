@@ -61,8 +61,8 @@ generic topic noise.
    (titles, authors, dates, arXiv ids), nLab page revision and
    last-modified signal, the 1lab module inventory for the watched
    area, latest items on author pages. Mark every planned source
-   `done` or `blocked` in the task ledger — never silently skip
-   one.
+   `done`, `blocked`, or `superseded` in the task ledger — never
+   silently skip one.
 3. **Baseline artifact** — Save exactly one baseline to
    `notes/watches/<slug>-baseline.md`: the swept state of each
    source, dated; anything worth the user's attention now, labeled
@@ -70,13 +70,12 @@ generic topic noise.
    Provenance section recording what the contract's sidecar spec
    requires; and a closing Sources section with a direct URL for
    every source used.
-4. **Verify** — Run an adversarial pass over the baseline: sources
+4. **Verify** — Run the verify protocol per the contract over the
+   baseline. The adversarial sweep for this workflow: sources
    cited but never actually opened, claims or status labels stronger
    than their evidence, sources named in the plan but missing from
    the baseline, and sections surviving from earlier drafts that the
-   final evidence no longer supports. Grade findings FATAL / MAJOR /
-   MINOR; fix FATAL before delivery and run one more pass after the
-   fixes; note MAJOR in an Open Questions section; accept MINOR.
+   final evidence no longer supports.
    Record the verification status in the Provenance section per the
    contract's sidecar spec.
 5. **Schedule** — Only after the baseline artifact with its Sources
@@ -97,7 +96,9 @@ generic topic noise.
 
 1. Read the watch file, the baseline, and any prior delta entries.
    Re-sweep every monitored source with the same capabilities as the
-   baseline sweep.
+   baseline sweep; a re-sweep's evidence notes go to dated files
+   `notes/watches/<slug>-research-<YYYY-MM-DD>-*.md`, never
+   overwriting the baseline's evidence notes.
 2. Diff the fresh sweep against the baseline and the most recent
    deltas: new postings, revised pages, added or changed modules,
    dead sources (an unreachable URL is itself a delta, recorded as
@@ -106,14 +107,16 @@ generic topic noise.
    changed, what did not, changes flagged as meaningful against the
    plan's own definition, the same epistemic labels as the baseline,
    and a direct URL for everything cited. No change is a valid,
-   recorded result. Update the run log; never rewrite prior entries.
-4. Run an adversarial pass over the fresh delta entry: sources
+   recorded result. A meaningful delta proposes its follow-up in
+   the entry: a `/lit` or `/deep-research` run on the moved front
+   (those workflows consult `notes/watches/` before searching
+   outward). Update the run log; never rewrite prior entries.
+4. Run the verify protocol per the contract over the fresh delta
+   entry. The adversarial sweep for this workflow: sources
    cited in the delta but not opened this run, claims or status
    labels stronger than their evidence, and sources named in the
-   plan but missing from the sweep. Grade findings FATAL / MAJOR /
-   MINOR; fix FATAL before the entry stands and run one more pass
-   after the fixes; note MAJOR in the entry's open questions;
-   accept MINOR. Record the pass outcome in the delta entry.
+   plan but missing from the sweep. Record the pass outcome in the
+   delta entry.
 5. When the front has moved — sources consistently dead, or the
    signal concentrated somewhere the plan does not cover — amend the
    source list in the watch file with the change dated and its
@@ -132,10 +135,9 @@ never executed as a side effect.
 - A source appears in the baseline or a delta only if it was opened
   this run via the url-fetch capability and states what it is cited
   for — record that as SOURCE-CHECKED. A reference surfaced by
-  automated search remains `[unvetted]` — supporting no load-bearing
-  claim — until a human confirms the opened document or a
-  `resources/` entry covers it; record each promotion (who, or which
-  entry) in the Provenance section.
+  automated search remains `[unvetted]`, supporting no load-bearing
+  claim, until it sheds per the contract's epistemic lexicon;
+  record each promotion in the Provenance section.
 - VERIFIED applies only to claims machine-checked in this repository
   (name the module or Gloss certificate); everything harvested from
   literature is CONJECTURED.

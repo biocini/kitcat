@@ -31,7 +31,10 @@ hash `f685daec…`) was removed on Lane's ruling; only the citation
 copy is vendored now.
 
 PROVISIONAL: agent-vetted; Lane's confirmation of this entry is
-pending. No load-bearing citation rests on a PROVISIONAL entry.
+pending (the format authority governs what the marker means).
+
+Statements verified: 3/5 CONFIRMED on first pass, 2 CORRECTED
+applied (spot-check), 2026-07-13, by verifier (Claude), @ 3e74e139; confirming re-pass clean 2026-07-13.
 
 ## Files
 
@@ -97,9 +100,10 @@ source.
 
 - Abstract: `l.4`. Forewords: `l.12`.
 - **§1 Introduction** — `l.34`. The **involutive 2-category**
-  reading of Cat (Cat as an "involutive" 2-category equipped with a
-  2-functor `†`) — `l.202`. Involutive negations transporting A
-  into B — `l.605`.
+  reading of Cat (Cat as an "involutive" 2-category equipped with
+  the 2-functor `(−)op : Cat → Cat^op(2)`, where `Cat^op(2)` is Cat
+  with the 2-cells reversed) — `l.202`. Involutive negations
+  transporting A into B — `l.605`.
 - **§2 The basic case: categories and chiralities** — `l.893`.
   - Definition 1 (chirality) — `l.902`: a pair (A, B) of categories
     with an equivalence between B and the opposite of A.
@@ -150,9 +154,10 @@ monoidal categories (Theorem 2), and dialogue structure (Theorem 3)
 **Framing.** The Forewords situate the paper in the tensorial-logic
 program: the interactive nature of continuations, with a dialogue
 category recast as a category of proofs confronted with a category
-of counter-proofs (the revision's wording; the older preprint said
-"refutations"). The introduction reads Cat as an involutive
-2-category equipped with a 2-functor `†` (`l.202`), and the two
-negations (a ↦ a∗) and (b ↦ ∗b) as the involutive forms of that
-negation transporting the objects of A into B. It states MacLane's
+of counter-proofs (the abstract's wording; the Forewords say
+"refutations (or environments)"). The introduction reads Cat as an
+involutive 2-category equipped with the 2-functor
+`(−)op : Cat → Cat^op(2)` (`l.202`), and the two negations
+(a ↦ a∗) and (b ↦ ∗b) as the involutive forms of that negation
+transporting the objects of A into B. It states MacLane's
 coherence theorem as the paradigm being generalized.
