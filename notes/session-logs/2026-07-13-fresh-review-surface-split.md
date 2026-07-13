@@ -73,6 +73,20 @@ The arc, with course-corrections pinned:
    analyzer lexicon trimmed to defer; Test/ reference rule scoped to
    the dependency/evidence-citation sense; methodology P5 exemplar
    repointed to the tracked killcheck witnesses.
+7. **Coda after the `/log` close (Lane): the Rijke map and `/hott`.**
+   The session was logged, then Lane asked to make the Rijke
+   foundational entry comprehensively organized and to add a `/hott`
+   skill. A 22-agent workflow extracted each lecture's subsection
+   structure and load-bearing definitions/theorems; the entry's
+   section map was rewritten to 3 parts / 22 lectures / 247 line
+   anchors at `<lecture>.tex:LINE` (spot-checked against the source,
+   all landing on the right environment). `/hott` was added as the
+   19th skill — reference lookups grounded in that map. It was the
+   first exercise of the new surface design: only the two masters
+   (`.agents/prompts/hott.md` + the shim) were written, and the
+   directory symlinks surfaced it in both harnesses (it auto-loaded
+   mid-session). Committed as `118cd4b`; this log and the CHANGELOG
+   entry were amended into it.
 
 Movement against the previous preview (2026-07-12 next-steps): step 1
 (fresh review) done and applied; step 3 (flake shakedown) done — it
@@ -124,7 +138,9 @@ analyzer/coder/reviewer/ingest/writer/verifier/suite-maintainer,
 (18 — `.pi/prompts` removed); `.feynman/` (17 — removed);
 `resources/` (5 tracked READMEs brought to R11 + rijke unchanged);
 `docs/` (gloss, provenance, roadmap); `flake.nix` + `flake.lock`;
-`CLAUDE.md`; `bin/lint`.
+`CLAUDE.md`; `bin/lint`. Coda (`118cd4b`): `.agents/prompts/hott.md`
++ `.agents/skills/kitcat/hott/SKILL.md` (new), `CLAUDE.md` (suite
+list), `resources/rijke-hott/README.md` (the comprehensive map).
 
 ## 4. Spikes
 

@@ -65,6 +65,16 @@ deferrals). Session log:
 [`notes/session-logs/2026-07-13-fresh-review-surface-split.md`](notes/session-logs/2026-07-13-fresh-review-surface-split.md).
 Six `resources/` entries remain PROVISIONAL pending ratification.
 
+**Coda (same session, post-`/log`, commit `118cd4b`).** The Rijke
+foundational entry (`resources/rijke-hott/`) was given a comprehensive
+part-organized section map — 3 parts, 22 lectures, 247 line anchors at
+`<lecture>.tex:LINE` (extracted per-lecture by a 22-agent workflow,
+spot-checked against the source). A new `/hott` skill (the 19th) does
+reference lookups grounded in that map: the standard formulation
+SOURCE-CHECKED at the line, plus the kitcat cross-reference. Adding it
+needed only the two masters — the directory symlinks surfaced it in
+both harnesses — the first exercise of the new surface design.
+
 ## 2026-07-12 — the context-layer hardening arc
 
 The feynman-derived context layer was audited against a studied

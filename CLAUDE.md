@@ -250,8 +250,8 @@ bodies name capabilities, HARNESS.md alone names harness tools) and
 carries the authoring mechanics. Workflows invoke as `/name` and
 auto-trigger by the shim's description; `spike-echo` is the discovery
 diagnostic. The suite: deep-research, lit, compare, audit, mechanize,
-formulation-survey, critique, draft, autoresearch, watch, eli5, log,
-jobs, preview, session-search, alpha-research, prove.
+formulation-survey, critique, draft, autoresearch, watch, eli5, hott,
+log, jobs, preview, session-search, alpha-research, prove.
 
 ## Research Artifacts
 
