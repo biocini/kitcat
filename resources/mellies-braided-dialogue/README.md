@@ -66,9 +66,33 @@ this README is tracked.
   the canonical PDF (greppability fallback; the map's `l.NNN`
   anchors index this file). Regenerate with
   `pdftotext mellies-braided-dialogue.pdf mellies-braided-dialogue.pdftext`.
+  Provenance: pdftotext 26.06.0 (flake-pinned poppler; regenerate
+  inside `nix develop`); regenerating with this version reproduces
+  the vendored extraction byte-identically (checked 2026-07-13
+  against a temp-file regeneration).
 
 Grep `mellies-braided-dialogue.pdftext` for a definition; jump with
 `sed -n 'A,Bp' mellies-braided-dialogue.pdftext`.
+
+## Source URL and re-fetch
+
+Fetched 2026-07-11 from the author's IRIF tensorial-logic page:
+<https://www.irif.fr/~mellies/tensorial-logic/6-braided-notions-of-dialogue-categories.pdf>
+(bit-identity of the vendored copy with this URL verified by sha256
+at fetch time; the URL still served a PDF when HEAD-checked
+2026-07-13). The vendored filename differs from the URL basename;
+re-fetch:
+
+```
+curl -L -o mellies-braided-dialogue.pdf \
+  https://www.irif.fr/~mellies/tensorial-logic/6-braided-notions-of-dialogue-categories.pdf
+```
+
+This is an unpublished manuscript hosted only on the author's page,
+which can recompile or relink it at any time (the sibling entry
+`mellies-micrological-negation` documents exactly such a drift), so
+a re-fetch is not guaranteed to reproduce this vintage. Verify any
+re-fetched copy against the hash below; the hash is the identity.
 
 ## Document hash
 

@@ -1,0 +1,90 @@
+#!/usr/bin/env bash
+# shellcheck disable=SC2016
+# (SC2016: '$1'/'$2' in single quotes below are rg -r replacement
+# tokens, deliberately unexpanded by the shell.)
+set -euo pipefail
+
+# resources-verify — mechanical custody check for resources/ entries.
+#
+# For every entry README, re-verify each recorded sha256 line
+# ("<64-hex>  <filename>") against the vendored file beside it:
+#   - a mismatch is FATAL (exit 1) — the entry describes a different
+#     document than the one on disk; resolve before citing anything;
+#   - an absent file is reported MISSING (informational) — vendored
+#     artifacts are gitignored, so a fresh clone legitimately lacks
+#     them; re-fetch per the entry's recorded URL/command.
+# Hash lines without a filename (piped-form fallbacks like the
+# inner-tar hash) are skipped: they carry no on-disk target.
+#
+# --remote additionally reports, for each arXiv-identified entry, the
+# latest version on arxiv.org beside what the entry records, so
+# version drift is visible. Informational: the reader judges; an
+# unreachable network is reported, never silently ignored.
+
+# rg exits 1 when nothing matches — an empty set here, not an error.
+# Any other nonzero status is a real failure and must propagate.
+rg_allow_empty() { rg "$@" || [ $? -eq 1 ]; }
+
+cd "$(git rev-parse --show-toplevel)"
+
+remote=false
+for arg in "$@"; do
+    case "$arg" in
+        --remote) remote=true ;;
+        -h|--help)
+            echo "Usage: resources-verify [--remote]"
+            echo "Verify recorded hashes against vendored artifacts;"
+            echo "--remote also reports latest arXiv versions."
+            exit 0 ;;
+        *) echo "resources-verify: unknown argument '$arg'" >&2; exit 2 ;;
+    esac
+done
+
+entries=0 checked=0 missing=0 fatal=0
+
+for dir in resources/*/; do
+    readme="${dir}README.md"
+    [ -f "$readme" ] || continue
+    entries=$((entries + 1))
+    entry="$(basename "$dir")"
+
+    while read -r hash file; do
+        [ -n "${hash:-}" ] || continue
+        target="${dir}${file}"
+        if [ ! -f "$target" ]; then
+            echo "  ${entry}: MISSING ${file} — vendored artifact absent; re-fetch per the entry"
+            missing=$((missing + 1))
+            continue
+        fi
+        actual="$(shasum -a 256 "$target" | awk '{print $1}')"
+        if [ "$actual" = "$hash" ]; then
+            checked=$((checked + 1))
+        else
+            echo "  ${entry}: FATAL hash mismatch on ${file}"
+            echo "    recorded: ${hash}"
+            echo "    actual:   ${actual}"
+            fatal=$((fatal + 1))
+        fi
+    done < <(rg_allow_empty -o -N '^([a-f0-9]{64})[[:space:]]+(\S+)[[:space:]]*$' -r '$1 $2' "$readme")
+
+    if $remote; then
+        while read -r id; do
+            [ -n "${id:-}" ] || continue
+            abs="$(curl -sfL --max-time 20 "https://arxiv.org/abs/${id}" 2>/dev/null)" || {
+                echo "  ${entry}: arXiv ${id} UNREACHABLE — version drift not checked"
+                continue
+            }
+            latest="$(printf '%s' "$abs" | rg_allow_empty -o '\[v([0-9]+)\]' -r 'v$1' | tail -1)"
+            recorded="$(rg_allow_empty -o -m1 "arXiv:${id}v?[0-9]*" "$readme" | head -1)"
+            echo "  ${entry}: arXiv ${id} latest ${latest:-unknown} (entry records: ${recorded:-no version pin})"
+        done < <(rg_allow_empty -o -N 'arXiv:\s?([0-9]{4}\.[0-9]{4,5})' -r '$1' "$readme" | sort -u)
+    fi
+done
+
+if [ "$entries" -eq 0 ]; then
+    echo "resources-verify: no entries found under resources/" >&2
+    exit 1
+fi
+
+echo "resources-verify: ${entries} entries, ${checked} hashes verified, ${missing} missing, ${fatal} FATAL"
+[ "$fatal" -eq 0 ]

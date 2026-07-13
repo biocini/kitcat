@@ -27,6 +27,12 @@ everything below — follow them, do not restate them.
   record it, naming which artifact the hash is of. For an existing
   entry, verify the recorded hash before citing; a mismatch is
   FATAL — stop and resolve which document the entry describes.
+- **Record the fetch URL** whenever a known URL sourced the artifact
+  — binding for PDFs — plus the explicit re-fetch command when a
+  stable URL exists, or an honest note that none does. A `.pdftext`
+  extraction records its provenance: the exact `pdftotext` command
+  and the poppler version (run inside `nix develop` — the flake pins
+  the extractor, which is what keeps line anchors stable).
 - **Vendored and derived forms stay gitignored** (the tarball, the
   extracted markup, the `.pdftext`); a new unfolded-source extension
   not yet ignored is added to `.gitignore`. Only the entry README —
@@ -34,14 +40,22 @@ everything below — follow them, do not restate them.
   tracked.
 - **Build the entry to serve a proof at speed:** a line-anchored
   location→content map whose depth tracks the source's load (a full
-  map for a mechanization target, a short outline for background), a
-  Files inventory naming the canonical format, and a "what the
-  source establishes" summary. The exemplar entry is
+  map for a mechanization target, a short outline for background),
+  content digests at matching depth (statement-level for the parts a
+  development leans on, so the entry is usable without opening the
+  source), a Files inventory naming the canonical format, and a
+  "what the source establishes" summary. The exemplar entry is
   `resources/rijke-hott/` (Rijke, *Introduction to Homotopy Type
   Theory*, arXiv 2212.11082) — the library's foundational reference
   and the fully R11-conformant depth model; match its structure.
   Every mathematical claim recorded is CONJECTURED until
   machine-checked.
+- **The entry is self-contained, information flowing one way** —
+  from the source out. It describes the source in the source's own
+  terms and references at most sibling entries; a reference to any
+  repository artifact (a module, a ledger entry, notes) inside an
+  entry is a defect. The repository cites into `resources/`, never
+  the reverse.
 - **Mark the entry PROVISIONAL** in its Vetting section; no
   load-bearing citation rests on it until Lane confirms.
 

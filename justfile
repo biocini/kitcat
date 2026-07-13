@@ -48,6 +48,11 @@ stats:
 lint *checks:
     bin/lint {{checks}}
 
+# Verify resources/ custody: recorded hashes vs vendored artifacts
+# (--remote also reports latest arXiv versions for drift)
+resources-verify *flags:
+    bin/resources-verify {{flags}}
+
 # List WIP modules
 wip:
     @rg '^\-\- import' src/All.lagda.md

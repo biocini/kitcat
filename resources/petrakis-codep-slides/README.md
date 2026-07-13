@@ -43,9 +43,32 @@ gitignored; only this README is tracked.
   canonical PDF (greppability fallback; the map's `l.NNN` anchors
   index this file). Regenerate with
   `pdftotext petrakis-slides.pdf petrakis-slides.pdftext`.
+  Provenance: pdftotext 26.06.0 (flake-pinned poppler; regenerate
+  inside `nix develop`); regenerating with this version reproduces
+  the vendored extraction byte-identically (checked 2026-07-13
+  against a temp-file regeneration).
 
 Grep `petrakis-slides.pdftext` for a slide title; jump with
 `sed -n 'A,Bp' petrakis-slides.pdftext`.
+
+## Source URL and re-fetch
+
+Fetched 2026-07-11 from the EuroProofNet WG6 Genoa meeting site
+(linked from the meeting programme page named under Citation):
+<https://europroofnet.github.io/_pages/WG6/Genova/talks/petrakis.pdf>
+(bit-identity of the vendored copy with this URL verified by sha256
+at fetch time; the URL still served a PDF when HEAD-checked
+2026-07-13). The vendored filename differs from the URL basename;
+re-fetch:
+
+```
+curl -L -o petrakis-slides.pdf \
+  https://europroofnet.github.io/_pages/WG6/Genova/talks/petrakis.pdf
+```
+
+A meeting-archive URL on a GitHub Pages site is reasonably stable
+but not a persistent identifier. Verify any re-fetched copy against
+the hash below; the hash is the identity.
 
 ## Document hash
 

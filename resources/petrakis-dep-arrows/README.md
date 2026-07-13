@@ -3,10 +3,9 @@
 The source paper for the **categories-with-dependent-arrows**
 formulation: an abstract categorical account of dependent functions
 taken as primitive (family-arrows and dependent arrows), rather than
-reduced to the Σ-construction. It is the external reference feeding
-the rep-system ↔ Petrakis substrate dictionary; a potential
-mechanization target, so the map below is line-anchored to the
-`.tex` at definition/theorem depth.
+reduced to the Σ-construction. A potential mechanization target, so
+the map below is line-anchored to the `.tex` at definition/theorem
+depth.
 
 ## Citation
 
@@ -35,6 +34,12 @@ one per-section counter — see the map) and matches the numbers in
 the prior PDF-based entry. This entry becomes vetted only on Lane's
 confirmation; no load-bearing citation rests on a PROVISIONAL entry.
 
+Format-conformance update 2026-07-13 (Claude, Fable 5): added the
+Source URL and re-fetch and Content digests sections per the
+updated format authority; the canonical hash was re-verified
+against the vendored tarball and each digest anchor re-checked
+against the vendored `.tex`. Status unchanged: PROVISIONAL.
+
 Prior ingestion: opened 2026-07-11 by Claude (Fable 5) from the
 arXiv v1 PDF (title/abstract/subjects checked against the abs page;
 definition/theorem inventory from `pdftotext`). That entry pinned
@@ -59,6 +64,26 @@ and derived forms are gitignored; only this README is tracked.
 - `cat-dep-arrows.pdf` — the arXiv v1 PDF compile (20 pp.); a
   secondary derived artifact, superseded as canonical by the
   e-print. Retained for convenience, gitignored.
+
+## Source URL and re-fetch
+
+Fetched directly from arXiv by stable identifier; the canonical
+fetch URL is the LaTeX e-print, the metadata page the abs URL:
+
+- E-print (canonical): <https://arxiv.org/e-print/2303.14754>
+- Metadata: <https://arxiv.org/abs/2303.14754>
+
+Re-fetch with
+
+```
+curl -L -o petrakis-dep-arrows.tar.gz https://arxiv.org/e-print/2303.14754
+```
+
+and re-verify against the canonical hash below. Version pin: v1 —
+the only version on arXiv as of 2026-07-13 (`[v1] Sun, 26 Mar 2023
+15:18:02 UTC`), so the unversioned e-print URL currently serves v1;
+should a later version ever appear, pin explicitly with
+`https://arxiv.org/e-print/2303.14754v1`.
 
 ## Document hash
 
@@ -203,6 +228,62 @@ here, not by label.
 **Bibliography** (`l.3528` `\begin{thebibliography}`, 41 items;
 `l.3658` `\end{document}`).
 
+## Content digests
+
+Statement-level digests of the map's key items, in the source's
+own terms and notation.
+
+- **Def 2.1, fam-category (𝔣-category)** (`Arxiv_Dep_CAT.tex:1193`)
+  — per object `a` a collection `fHom(a)` of family-arrows (union
+  `C₂`), with a composition `∘ : fHom(a) × Hom(b,a) → fHom(b)`,
+  (𝔣₁) `λ∘1ₐ = λ`, (𝔣₂) `λ∘(f∘g) = (λ∘f)∘g`.
+- **Def 2.8, the category `fHom(𝒞)` = 𝒞₂** (`Arxiv_Dep_CAT.tex:1535`)
+  — the category of elements `Σ(𝒞, fHom)` of the presheaf
+  `fHom : 𝒞ᵒᵖ → Set`, `[fHom(f)](λ) := λ∘f`: objects `(a,λ)`; an
+  arrow `(b,μ) → (a,λ)` is an `f : b → a` with `μ = λ∘f`.
+- **Def 3.1, (𝔣,Σ)-category** (`Arxiv_Dep_CAT.tex:1604`) — a
+  𝔣-category with `Σₐλ ∈ C₀`, `pr₁^{a,λ} : Σₐλ → a`, and
+  `Σ_λf : Σ_b(λ∘f) → Σₐλ` per `f ∈ Hom(b,a)`, with
+  `pr₁^{a,λ}∘Σ_λf = f∘pr₁^{b,λ∘f}` a pullback square; (σ₁)
+  `Σ_λ1ₐ = 1_{Σₐλ}`, (σ₂) `Σ_λ(f∘g) = (Σ_λf)∘Σ_{λ∘f}g`.
+- **Prop 3.7, transport arrows** (`Arxiv_Dep_CAT.tex:2135`) — in a
+  (𝔣,Σ)-category with terminal object 1, for global elements
+  `i, j ∈ a`: (i) `Σ_λi` is monic, so `Σ₁λ(i)` is a subobject of
+  `Σₐλ`, and `pr₁^{1,λ(i)} = !`; (ii) if `i = j`, the pullbacks
+  induce `λᵢⱼ : Σ₁λ(i) → Σ₁λ(j)` and `λⱼᵢ`, forming an iso.
+- **Def 4.1, dep-category (𝔡𝔦-category)** (`Arxiv_Dep_CAT.tex:2322`)
+  — a 𝔣-category with, per `a` and `λ ∈ fHom(a)`, a collection
+  `dHom(a,λ)` of dependent arrows (union `C₃`), and an application
+  `Φ(f) ∈ dHom(b, λ∘f)` per `Φ ∈ dHom(a,λ)`, `f ∈ Hom(b,a)`, with
+  (𝔡𝔦₁) `Φ(1ₐ) = Φ`, (𝔡𝔦₂) `Φ(f∘g) = [Φ(f)](g)`.
+- **Thm 4.6, (𝔣,Σ) ⇒ 𝔡𝔦** (`Arxiv_Dep_CAT.tex:2485`) — every
+  (𝔣,Σ)-category becomes a 𝔡𝔦-category with `dHom(a,λ) := Diₐλ :=
+  {φ ∈ Hom(a, Σₐλ) ∣ pr₁^{a,λ}∘φ = 1ₐ}` (the dependent objects of
+  λ); `φ(f)` is the unique pullback-induced arrow with
+  `φ∘f = (Σ_λf)∘φ(f)` and `pr₁^{b,λ∘f}∘φ(f) = 1_b`.
+- **Def 4.8, the category `dHom(𝒞)` = 𝒞₃** (`Arxiv_Dep_CAT.tex:2731`)
+  — the category of elements `Σ(fHom(𝒞), dHom)` of the presheaf
+  `dHom : fHom(𝒞)ᵒᵖ → Set`, `[dHom(f)](Φ) := Φ(f)`: objects
+  `((a,λ), Φ)`; an arrow `((b,μ),Ψ) → ((a,λ),Φ)` is an arrow
+  `f : (b,μ) → (a,λ)` of `fHom(𝒞)` with `Ψ = Φ(f)`.
+- **Def 5.1, (𝔡𝔦,Σ)-category** (`Arxiv_Dep_CAT.tex:2767`) — a
+  𝔡𝔦-category with an (𝔣,Σ)-structure and, per `a`, `λ ∈ fHom(a)`,
+  a second-projection-dependent arrow
+  `pr₂^{a,λ} ∈ dHom(Σₐλ, λ∘pr₁^{a,λ})` satisfying
+  `pr₂^{b,λ∘f} = pr₂^{a,λ}(Σ_λf)` for every `f ∈ Hom(b,a)`.
+- **Thm 5.4, (𝔣,Σ) ⇒ (𝔡𝔦,Σ)** (`Arxiv_Dep_CAT.tex:2872`) — every
+  (𝔣,Σ)-category with Thm 4.6's 𝔡𝔦-structure becomes a
+  (𝔡𝔦,Σ)-category, `pr₂^{a,λ}` the unique arrow induced by the
+  pullback of `pr₁^{a,λ}` along itself with both cone legs `1_{Σₐλ}`.
+- **Prop 5.6, element-level Σ-projections** (`Arxiv_Dep_CAT.tex:3219`)
+  — in a (𝔡𝔦,Σ)-category with terminal object 1, for `z, w ∈ Σₐλ`,
+  with `u` the unique global element of `Σ₁λ(pr₁^{a,λ}(z))` such
+  that `!∘u = 1₁` and `z = (Σ_λ pr₁^{a,λ}(z))∘u` (`u′` likewise
+  for `w`): (i) `pr₂^{a,λ}(z) = pr₂^{1,λ(pr₁^{a,λ}(z))}(u)`;
+  (ii) `z = w` iff `pr₁^{a,λ}(z) = pr₁^{a,λ}(w)` and `u′ = λᵢⱼ∘u`,
+  `λᵢⱼ` the Prop 3.7 transport arrow between them; then
+  `pr₂^{a,λ}(z) = pr₂^{a,λ}(w)`.
+
 ## What the source establishes
 
 Everything below records what the source states; every mathematical
@@ -228,6 +309,6 @@ second-projection-dependent arrow (Thm 5.4). The thesis (§6) is that
 dependency lives natively in the third dimension `C₃` of dependent
 arrows — including dependent arrows *not* arising from
 Sigma-objects (Examples 4.2, 4.4) — rather than being reconstructed
-from Σ. This is the external formulation the rep-system ↔ Petrakis
-dictionary is measured against; a kitcat result is machine-checked
-only when its module or `Gloss.*` certificate says so.
+from Σ. Everything recorded here is the source's own content, stated
+in its own terms; every mathematical claim is CONJECTURED until
+machine-checked.

@@ -49,9 +49,35 @@ README is tracked.
   canonical PDF (greppability fallback; the map's `l.NNN` anchors
   index this file). Regenerate with
   `pdftotext 2-dialogue-categories-and-chiralities.pdf dialogue-chiralities.pdftext`.
+  Provenance: pdftotext 26.06.0 (flake-pinned poppler; regenerate
+  inside `nix develop`) — the extraction was normalized onto the
+  pinned extractor 2026-07-13 (the original 2026-07-11 extraction
+  was made with pdftotext 25.10.0; the two outputs differ only in
+  five localized two-line transpositions of diacritic/superscript
+  layout, with identical line count 4778, so every `l.NNN` anchor
+  held across the normalization — spot-checked at `l.202`).
 
 Grep `dialogue-chiralities.pdftext` for a definition; jump with
 `sed -n 'A,Bp' dialogue-chiralities.pdftext`.
+
+## Source URL and re-fetch
+
+Fetched 2026-07-11 from the author's IRIF tensorial-logic page:
+<https://www.irif.fr/~mellies/tensorial-logic/2-dialogue-categories-and-chiralities.pdf>
+(bit-identity of the vendored copy with this URL verified by sha256
+at fetch time; the URL still served a PDF when HEAD-checked
+2026-07-13). Re-fetch:
+
+```
+curl -L -o 2-dialogue-categories-and-chiralities.pdf \
+  https://www.irif.fr/~mellies/tensorial-logic/2-dialogue-categories-and-chiralities.pdf
+```
+
+An author-page URL is not a stable identifier — the page can be
+recompiled or relinked (the sibling entry
+`mellies-micrological-negation` documents exactly such a drift).
+Verify any re-fetched copy against the hash below; the hash is the
+identity.
 
 ## Document hash
 
@@ -67,7 +93,7 @@ Line anchors are into `dialogue-chiralities.pdftext`; jump with
 `sed -n 'A,Bp' dialogue-chiralities.pdftext`. The pdftotext run
 emits the table of contents last (`l.4718–4776`); the section
 bodies are anchored below. Depth is full — this is a load-bearing
-source (T16).
+source.
 
 - Abstract: `l.4`. Forewords: `l.12`.
 - **§1 Introduction** — `l.34`. The **involutive 2-category**

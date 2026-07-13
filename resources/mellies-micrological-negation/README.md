@@ -53,9 +53,33 @@ README is tracked.
   canonical PDF (greppability fallback; the map's `l.NNN` anchors
   index this file). Regenerate with
   `pdftotext 3-microlocal-study-of-negation.pdf micrological-negation.pdftext`.
+  Provenance: pdftotext 26.06.0 (flake-pinned poppler; regenerate
+  inside `nix develop`); regenerating with this version reproduces
+  the vendored extraction byte-identically (checked 2026-07-13
+  against a temp-file regeneration).
 
 Grep `micrological-negation.pdftext` for a definition; jump with
 `sed -n 'A,Bp' micrological-negation.pdftext`.
+
+## Source URL and re-fetch
+
+Fetched 2026-07-11 from the author's IRIF tensorial-logic page:
+<https://www.irif.fr/~mellies/tensorial-logic/3-microlocal-study-of-negation.pdf>
+(bit-identity of the vendored copy with this URL verified by sha256
+at fetch time). Re-fetch attempt:
+
+```
+curl -L -o 3-microlocal-study-of-negation.pdf \
+  https://www.irif.fr/~mellies/tensorial-logic/3-microlocal-study-of-negation.pdf
+```
+
+The recorded URL served this 41-page vintage at fetch time, but the
+vendored manuscript is NOT the compile the author's page currently
+links (`4-micrological-study-of-negation.pdf`, a later compile —
+see the naming note under Citation). A re-fetch may therefore yield
+a different document: the URL still served a PDF when HEAD-checked
+2026-07-13, but which compile it now serves was not re-downloaded.
+The hash below is the identity of this vintage.
 
 ## Document hash
 

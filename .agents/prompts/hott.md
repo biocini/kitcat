@@ -29,15 +29,17 @@ never by guessing a file:
 
 1. Read `resources/rijke-hott/README.md` — the section map lists the
    three parts and every lecture with its subsections and the
-   load-bearing definitions/theorems at `<lecture>.tex:LINE`. Find
-   the lecture and the anchor for the target with the file-search
-   capability.
-2. Read the vendored source at the anchor
-   (`resources/rijke-hott/<lecture>.tex`) with the file-read
-   capability — the actual statement, its hypotheses, and enough
-   surrounding text to state it faithfully. The `.tex` is gitignored
-   but present on disk; if it is absent, the entry needs
-   re-ingestion — report that as BLOCKED, do not fabricate the
+   load-bearing definitions/theorems at `<lecture>.tex:LINE`, and the
+   **Content digests** section carries statement-level digests of
+   those items at the same anchors. Find the target with the
+   file-search capability; a single-definition lookup is often
+   answerable from the digest alone (cite its anchor).
+2. For anything beyond the digest's statement — hypotheses in full,
+   the surrounding development, a proof's shape — read the vendored
+   source at the anchor (`resources/rijke-hott/<lecture>.tex`) with
+   the file-read capability. The `.tex` is gitignored but present on
+   disk; if it is absent, the entry records the re-fetch command —
+   report the gap as BLOCKED with that command, do not fabricate the
    statement.
 3. When the target is broader than one anchor (a topic, a
    comparison), read the relevant subsections across the lecture,

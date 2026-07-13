@@ -196,6 +196,7 @@ the latest `notes/session-logs/` entry and docs/roadmap.md, and close with
 | `just mv Old.Name New.Name [--dry-run]` | Move/rename, updating references |
 | `just sync [--fix]` | Report/fix drift between All and the filesystem |
 | `just lint [width\|flags\|authoring\|changed]` | Lint (72 prose / 85 code, pragmas; `authoring` gates the skills tree; `changed` is the non-regression pre-commit gate) |
+| `just resources-verify [--remote]` | Custody check: entry hashes vs vendored artifacts; `--remote` adds arXiv version drift |
 | `just stats` / `just wip` | Inventories |
 | `just html` / `html-serve` | Docs site, built and served locally |
 
