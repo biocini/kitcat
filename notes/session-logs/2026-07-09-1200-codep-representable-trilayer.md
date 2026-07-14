@@ -445,4 +445,4 @@ naming redo. Not in this session's transcript: the `hcategory`
 rename, collapsed tower, and `Cat.Codep.Op` (T3/T9/T10) — sibling
 evening session. Verification of spike line-counts is by subagent
 self-report (transcript), not re-run in this reconstruction.
-See `notes/session-logs/2026-07-09-codep-representable-trilayer.md`.
+See `notes/session-logs/2026-07-09-1200-codep-representable-trilayer.md`.

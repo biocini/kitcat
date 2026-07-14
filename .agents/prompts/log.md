@@ -18,10 +18,13 @@ cross-agent conventions this workflow defers to, the latter maps
 every capability named below to the tools in your harness.
 
 Derive a run slug from the session's main thread per the contract;
-when $ARGUMENTS supplies one, use it. This run's durable output is
-exactly two things: the log
-`notes/session-logs/<YYYY-MM-DD>-<slug>.md`, and one dated entry
-appended at the TOP of `CHANGELOG.md` (newest first); the
+when $ARGUMENTS supplies one, use it. Also derive the `HHMM`
+stamp — a 4-digit 24-hour local time — from the current wall-clock
+time at session close with the shell capability (`date +%H%M`), so
+the filename records when the log is written. This run's durable
+output is exactly two things: the log
+`notes/session-logs/<YYYY-MM-DD>-<HHMM>-<slug>.md`, and one dated
+entry appended at the TOP of `CHANGELOG.md` (newest first); the
 process-review stage below adds one working-memory report beside
 them, and the roadmap reconciliation stage edits `docs/roadmap.md`
 only when one of its header's triggers fired. The division
@@ -209,7 +212,7 @@ shadow store. A ruling, design, or state summary surviving in
 memory as content at session exit is a hygiene defect the sweep
 must clear, not merely flag.
 
-Save the log to `notes/session-logs/<YYYY-MM-DD>-<slug>.md`. Then
+Save the log to `notes/session-logs/<YYYY-MM-DD>-<HHMM>-<slug>.md`. Then
 append the changelog entry at the TOP of `CHANGELOG.md` (creating
 the file with its header when absent): a dated `## <YYYY-MM-DD> —
 <title>` section, concise and newest-first, stating what landed,

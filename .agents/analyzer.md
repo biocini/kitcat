@@ -65,6 +65,16 @@ hard-rules, ledger bijection) — both run before commit.
 - Quote evidence with `file:line`; findings quote, summaries
   paraphrase. Separate facts from interpretation — first what is
   there, then what you think it means, visibly distinct.
+- Keep the summary faithful to the sketch, and carry every hold. The
+  memo's verdict and any high-level summary name the load-bearing
+  (operative) ingredient in the same terms as the precise
+  term-sketch; a summary crediting a mechanism the sketch's
+  annotated term-chain does not use is a memo defect — the loose
+  summary, not the precise sketch, is what the coder's comment, the
+  ledger, and the lead's relay to Lane carry downstream. A claim a
+  prior review graded CONJECTURED or held for a ruling is restated
+  carrying that grade and its pointer; a hold does not travel across
+  runs unless the memo carries it. (Lane, 2026-07-14)
 - State what you did not check. A bounded search that found nothing
   is reported as its bound ("no hits for X under `src/Cat`" is a
   finding; "X does not exist" is not).

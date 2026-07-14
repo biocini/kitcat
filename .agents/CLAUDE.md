@@ -82,7 +82,7 @@ authoring mechanics (frontmatter, the shim template, the
 - `notes/research/` — research intermediates and finals: **local
   working memory** (gitignored), with `.provenance.md` sidecars
   beside finals.
-- `notes/session-logs/<YYYY-MM-DD>-<slug>.md` — session logs,
+- `notes/session-logs/<YYYY-MM-DD>-<HHMM>-<slug>.md` — session logs,
   written only by the log workflow; append-only history. This and
   `CHANGELOG.md` are the tracked, durable session bridge; the
   working-memory notes above are local and are distilled into these
@@ -113,8 +113,15 @@ its topic: lowercase, hyphens, no filler words, at most 5 words.
 **Every `notes/` artifact of every kind is date-prefixed**
 (`<YYYY-MM-DD>-<slug>…`, the date of the run or the artifact's
 creation) — uniformly, for provenance analysis; there are no
-undated classes (Lane, 2026-07-13; methodology P6). All files in
-one run use that slug:
+undated classes (Lane, 2026-07-13; methodology P6).
+
+Session logs additionally carry an `HHMM` 24-hour time before the
+slug (`<YYYY-MM-DD>-<HHMM>-<slug>`): they recur intra-day, so their
+order must be legible at a glance and sort correctly under the
+session-open read of the latest entry. This adds a grain to that
+one class; no other class changes (Lane, 2026-07-14).
+
+All files in one run use that slug:
 
 - Plan: `notes/plans/<YYYY-MM-DD>-<slug>.md`
 - Evidence: `notes/research/<YYYY-MM-DD>-<slug>-research-<angle>.md`
@@ -174,6 +181,16 @@ created as a silent side effect (see Ingestion below).
   the exact output path; do not spawn them for trivial or narrow
   work — scale the fleet to the task, and never delegate an
   explainer-scale question.
+- **Repo-tooling dispatch template**: repo-tooling and
+  source-convention work — lint, render, scripts, frontmatter,
+  non-Agda source hygiene — has no chartered roster agent (the
+  `coder` is Agda-only; the `suite-maintainer` is scoped to the
+  context layer), so it goes to a general-purpose dispatch. The brief
+  names the conventions the agent must read: `docs/styleguide.md`,
+  the width and lint regime (the 72/85 caps, `just lint`), the
+  Agda-safety boundary (no change alters what typechecks or its
+  flags), and the Layer scope gate for any new surface it proposes.
+  (Lane, 2026-07-14)
 - **File ownership under dispatch**: every dispatch brief names
   its file scope — write targets and the read baselines whose
   anchors must not be invalidated — and while the agent is in
@@ -197,6 +214,15 @@ created as a silent side effect (see Ingestion below).
   cheaper alternative to restart-and-rebrief. Work completed under
   the superseded reading gets a re-pass before its final gates.
   (Lane, 2026-07-13)
+- **Counted inventories are live commands, not frozen numbers**: a
+  count in a brief or contract is written as its live derivation
+  command (`fd …`, `just stats`), never a baked-in number — the
+  author writes the command, the executor runs it. This is the
+  authoring-side complement of the re-derive-live rule above: a
+  static count drifts and ships wrong in the brief before the
+  executing agent's live sweep catches it (the recurring case: a
+  briefed "~11 old-header files" against a live sweep of 29).
+  (Lane, 2026-07-14)
 - File-based handoffs: subagents write evidence to disk and reply
   with a short completion report; the lead reads the file, never
   the dump.

@@ -76,4 +76,8 @@ everything below — follow them, do not restate them.
   separate.
 
 Report: the slug, the canonical format and hash, what the entry was
-checked to say, and that it is PROVISIONAL pending ratification.
+checked to say, and that it is PROVISIONAL pending ratification. The
+PROVISIONAL `resources/<slug>/` entry on disk is the deliverable and
+this report is the completion-report channel beside it, never a
+substitute for the entry (HARNESS.md reconciles the two where a
+harness returns your final message to the lead).

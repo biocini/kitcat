@@ -295,10 +295,11 @@ log, jobs, preview, session-search, alpha-research, prove.
   (gitignored), readable by any harness on this machine.
 - `notes/research/` — research intermediates, finals, and their
   `.provenance.md` sidecars: local working memory (gitignored).
-- `notes/session-logs/<YYYY-MM-DD>-<slug>.md` — append-only session
-  logs: where things stand, open questions, next-step preview. This
-  and `CHANGELOG.md` are the tracked session bridge; the
-  working-memory notes are distilled into them at session close.
+- `notes/session-logs/<YYYY-MM-DD>-<HHMM>-<slug>.md` — append-only
+  session logs: where things stand, open questions, next-step
+  preview. This and `CHANGELOG.md` are the tracked session bridge;
+  the working-memory notes are distilled into them at session
+  close.
 - `CHANGELOG.md` — the lab notebook: what happened, newest first,
   with honest verification markers. `/log` writes both at session
   close.
@@ -473,7 +474,8 @@ Its method, which new Cat.* work follows:
   `Cat.Coherence`) use the older composite-witness style; follow
   their local idiom when editing them, but do not export it into
   new work. They are slated for rebase-or-retire at THE REFACTOR
-  (docs/roadmap.md target 3, which owns the plan and its gates).
+  (docs/roadmap.md target 2, which owns the plan and its gates —
+  OPENED 2026-07-14; the core replacement is active).
 
 ## Ternary-First Composition (Core.*)
 

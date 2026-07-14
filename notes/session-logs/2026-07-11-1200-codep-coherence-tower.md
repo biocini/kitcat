@@ -4,7 +4,7 @@
 during the same day's separate context-reboot session). This log
 covers the day's MATHEMATICS work only; the infrastructure reboot is
 logged separately at
-`notes/session-logs/2026-07-11-context-layer-reboot.md`.
+`notes/session-logs/2026-07-11-1809-context-layer-reboot.md`.
 
 **Scope:** A marathon on `Cat.Codep`, resumed from the prior
 handoff. The session opened by landing the flat-carrier reshape and
@@ -38,7 +38,7 @@ zero warnings, cold-rebuild). Four commits are this session's
 (`cfccb0b`, `9133396`, `2327309`, `593f44a`); the session opened by
 committing the prior day's ready work (`40e6743`, `ed94308`,
 `97e3157` — the 07-10 reshape + `Cat.Codep.Op`, owned by
-`2026-07-10-hcategory-reshape-opposite-category.md`), a documented
+`2026-07-10-12-00-hcategory-reshape-opposite-category.md`), a documented
 boundary overlap. The coherence saga is closed by theorem; Chir and
 the two faithful-theory strata are designed-and-waiting, not built.
 

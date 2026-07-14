@@ -16,12 +16,55 @@ concise, and honest about verification status (`verified` /
 
 ---
 
+## 2026-07-14 (eighth session) — process-revision backlog (F2–F5) cleared; the session-log HHMM filename convention
+
+Object: a process/context-layer session, no mathematics. Ratified and
+applied the open process-revision backlog carried from the prior
+session's review, and — at Lane's direction — added and retrofitted a
+timestamp grain to the session-log filename convention. Session log:
+[`notes/session-logs/2026-07-14-1048-process-revisions-log-timestamps.md`](notes/session-logs/2026-07-14-1048-process-revisions-log-timestamps.md).
+Uncommitted at this writing — the whole changeset (7 modified files +
+12 renames + memory-file reference fixes) awaits Lane's word.
+
+**Applied — the F2–F5 process revisions** (Lane ratified all four).
+`verified` (landed to tracked homes, `just lint authoring`/`changed`
+clean, each diff checked against the run ledger): F3+F6 memo-fidelity
+clause (`.agents/analyzer.md:68`); F2+F5b counted-inventory
+live-command convention (`.agents/CLAUDE.md:217`); F4 repo-tooling
+dispatch template (`.agents/CLAUDE.md:177`, no new agent — R1
+preserved); F1-siblings dual-channel sweep (`.agents/ingest.md`,
+`.agents/writer.md`). F5b's *structural* self-tracking prong remains
+open and deprioritized (not subsumed — flagged by the close review).
+
+**Landed — the session-log HHMM convention** (Lane's initiative).
+Filenames gain a 4-digit 24-hour time between date and slug
+(`<YYYY-MM-DD>-<HHMM>-<slug>`) so same-day logs order at a glance and
+sort correctly for the session-open read. `verified`: the
+authoritative rule + rationale in `.agents/CLAUDE.md` "Slugs and file
+naming", format strings at three mirror sites (root `CLAUDE.md`,
+`.agents/CLAUDE.md:85`, `.agents/prompts/log.md` ×2), and `/log` now
+derives the stamp from the close-time wall clock. 12 existing logs
+renamed with `git mv` and every reference repointed — `CHANGELOG.md`,
+3 intra-log cross-refs, 9 memory files — all resolve; order verified
+against the logs' own content cross-reference chain.
+
+**Process review** (`/log` close): a low-friction validation session —
+encode-at-ruling-time (the primary mode), the disjoint-file-ownership
+concurrency split, and deviation-surfacing all ran as designed. Two
+proposals for Lane's discretion: FP2 (ratify-now, a one-clause `/log`
+template fix — license omitting an empty Proposals section), FP1/FP3
+(next-session questions). Report:
+[`notes/research/2026-07-14-process-revisions-log-timestamps-process-review.md`](notes/research/2026-07-14-process-revisions-log-timestamps-process-review.md).
+
+**Roadmap:** no triggers — nothing landed, was added, or was re-gated;
+`docs/roadmap.md` untouched.
+
 ## 2026-07-14 (seventh session) — the bimodule spike lands (→ Cat.Bimodule); the frontmatter convention; the output-handoff fix
 
 Object: continued the roadmap (target 1, the bimodule record spike via
 `/prove`) and, at Lane's direction, adopted a library-wide frontmatter
 convention and fixed a context-layer output-handoff seam. Session log:
-[`notes/session-logs/2026-07-14-bimodule-frontmatter-harness.md`](notes/session-logs/2026-07-14-bimodule-frontmatter-harness.md).
+[`notes/session-logs/2026-07-14-0949-bimodule-frontmatter-harness.md`](notes/session-logs/2026-07-14-0949-bimodule-frontmatter-harness.md).
 Committed at close (this `/log`).
 
 **Landed — the bimodule spike (roadmap target 1).** The regular
@@ -131,7 +174,7 @@ one-spike-one-certificate fidelity reading; `hcategory-structure`'s
 implicit hom universe; the empty `Trait.*`/`Meta.*` namespace rows.
 
 Session log:
-[`notes/session-logs/2026-07-13-promotions-gloss-standard.md`](notes/session-logs/2026-07-13-promotions-gloss-standard.md)
+[`notes/session-logs/2026-07-13-2309-promotions-gloss-standard.md`](notes/session-logs/2026-07-13-2309-promotions-gloss-standard.md)
 (process review inside: 7 friction points — the
 ruling-vs-in-flight-lag re-proposal leads — 4 validations).
 
@@ -189,7 +232,7 @@ strata" (three, by theorem); roadmap target 1 (landed — the
 bimodule spike leads).
 
 Session log:
-[`notes/session-logs/2026-07-13-independence-kelly-shelf.md`](notes/session-logs/2026-07-13-independence-kelly-shelf.md)
+[`notes/session-logs/2026-07-13-1831-independence-kelly-shelf.md`](notes/session-logs/2026-07-13-1831-independence-kelly-shelf.md)
 (the held list — the three stratum ledger entries — and the
 process review's eight ratify-now proposals await Lane).
 
@@ -247,7 +290,7 @@ surfaces (now defined once at the contract's oracle-contract
 bullet).
 
 Session log:
-[`notes/session-logs/2026-07-13-prove-shakedown-faithful-stratum.md`](notes/session-logs/2026-07-13-prove-shakedown-faithful-stratum.md)
+[`notes/session-logs/2026-07-13-1559-prove-shakedown-faithful-stratum.md`](notes/session-logs/2026-07-13-1559-prove-shakedown-faithful-stratum.md)
 (carries the pre-registered bimodule-spike design for roadmap
 target 2 and the held-for-Lane rulings list).
 
@@ -299,7 +342,7 @@ PROVISIONAL blocking rule ("no load-bearing citation on a
 PROVISIONAL entry") and the ratification queue — replaced by
 audit-as-gate with discretion open. Commits `af73f50`, `e1d9f62`.
 Session log:
-[`notes/session-logs/2026-07-13-reliability-audited-shelf.md`](notes/session-logs/2026-07-13-reliability-audited-shelf.md).
+[`notes/session-logs/2026-07-13-1323-reliability-audited-shelf.md`](notes/session-logs/2026-07-13-1323-reliability-audited-shelf.md).
 
 ## 2026-07-13 — the fresh review and the shim/prompt surface split
 
@@ -347,7 +390,7 @@ Three commits: `1b50416` (the amended 2026-07-12 `/log` close, with
 the external codename scrubbed from history — `dev` is local-only),
 `38dcb3c` (apply-pass + surface redesign), `4c7d34b` (resolved
 deferrals). Session log:
-[`notes/session-logs/2026-07-13-fresh-review-surface-split.md`](notes/session-logs/2026-07-13-fresh-review-surface-split.md).
+[`notes/session-logs/2026-07-13-0959-fresh-review-surface-split.md`](notes/session-logs/2026-07-13-0959-fresh-review-surface-split.md).
 Six `resources/` entries remain PROVISIONAL pending ratification.
 
 **Coda (same session, post-`/log`, commit `118cd4b`).** The Rijke
@@ -387,7 +430,7 @@ check-all` under the flake (no Agda changed; last green `593f44a`).
 ratification. Superseded: the reboot's harness-mechanics claims
 (re-audited against live builds) and the ad-hoc convention set.
 Commits `f70cf94`, `6103b7f`, `202dfe7`, `9e4dfaf`. Session log:
-[`notes/session-logs/2026-07-12-context-layer-hardening.md`](notes/session-logs/2026-07-12-context-layer-hardening.md).
+[`notes/session-logs/2026-07-12-0313-context-layer-hardening.md`](notes/session-logs/2026-07-12-0313-context-layer-hardening.md).
 
 ## 2026-07-11 — the context-layer reboot (feynman port)
 
@@ -430,7 +473,7 @@ the roadmap), six pre-reboot research memos, the four agent
 definitions, and the docs-drift porcelain (recipe removed).
 No Agda changed; `just check-all` not run (last green `593f44a`);
 everything staged, commit pending Lane's go-ahead. Session log:
-[`notes/session-logs/2026-07-11-context-layer-reboot.md`](notes/session-logs/2026-07-11-context-layer-reboot.md).
+[`notes/session-logs/2026-07-11-1809-context-layer-reboot.md`](notes/session-logs/2026-07-11-1809-context-layer-reboot.md).
 
 ---
 
@@ -452,7 +495,7 @@ interchange / Kelly / Melliès / binary-ancestor identifications
 (T14–T17) recorded 📐. `verified` (`check-all` exit 0). This
 session's commits `cfccb0b`, `9133396`, `2327309`, `593f44a`.
 Session log:
-[`notes/session-logs/2026-07-11-codep-coherence-tower.md`](notes/session-logs/2026-07-11-codep-coherence-tower.md).
+[`notes/session-logs/2026-07-11-1200-codep-coherence-tower.md`](notes/session-logs/2026-07-11-1200-codep-coherence-tower.md).
 
 ## 2026-07-10 — Cat.Codep: hcategory reshape + the opposite category
 
@@ -466,7 +509,7 @@ derivable (T9), giving strict self-duality of the category core
 produced here (certificates frozen the next day, `2327309`).
 `verified` (per-commit machine-checked). Commits `40e6743`,
 `ed94308`, `97e3157`. Session log:
-[`notes/session-logs/2026-07-10-hcategory-reshape-opposite-category.md`](notes/session-logs/2026-07-10-hcategory-reshape-opposite-category.md).
+[`notes/session-logs/2026-07-10-1200-hcategory-reshape-opposite-category.md`](notes/session-logs/2026-07-10-1200-hcategory-reshape-opposite-category.md).
 
 ## 2026-07-09 — Cat.Codep: the representable trilayer
 
@@ -481,4 +524,4 @@ class). Ancestors of ledger T1 (`Cat.Codep.Base`) and T4
 witness is the T18 ancestor. `verified` (five commits
 machine-checked). Commits `dc52571`, `2376d5b`, `bd75cd1`,
 `b5756c1`, `9bddaf8`. Session log:
-[`notes/session-logs/2026-07-09-codep-representable-trilayer.md`](notes/session-logs/2026-07-09-codep-representable-trilayer.md).
+[`notes/session-logs/2026-07-09-1200-codep-representable-trilayer.md`](notes/session-logs/2026-07-09-1200-codep-representable-trilayer.md).

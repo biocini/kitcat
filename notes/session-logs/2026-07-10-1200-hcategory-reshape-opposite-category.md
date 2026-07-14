@@ -14,7 +14,7 @@ and the `Cat.Codep.Op` build fell in the first ~50 minutes of the
 immediately-following transcript `f6847759` (opened
 2026-07-11T02:08Z with "continue from where we left off in the
 handoff"); the scope boundary and the overlap with the
-`2026-07-11-codep-coherence-tower.md` log are recorded in
+`2026-07-11-12-00-codep-coherence-tower.md` log are recorded in
 Reconstruction notes.
 
 **Scope:** A cleanup-turned-reshape of `Cat.Codep`, opened to fix a
@@ -522,7 +522,7 @@ Confirmed vs inferred, and gaps:
   ends with op explicitly deferred ("next session I want to… recover
   the op framing"). The physical commits and the op module fell in the
   first ~50 minutes of `f6847759`. The existing
-  `2026-07-11-codep-coherence-tower.md` log **front-loads the same
+  `2026-07-11-12-00-codep-coherence-tower.md` log **front-loads the same
   reshape + op as its "opening" and claims all seven commits
   `40e6743`→`593f44a`** — so `40e6743`/`ed94308`/`97e3157` are recorded
   in both logs. This log's warrant for them is that they are the
@@ -574,4 +574,4 @@ instance-payoff-justified), the classifier-vs-Chir-polarity decision,
 and the triangle from the new shape. Spike line-counts are subagent
 self-reports (transcript), not re-run here; T-numbers are reconstructed
 attributions (the ledger postdates the session).
-See `notes/session-logs/2026-07-10-hcategory-reshape-opposite-category.md`.
+See `notes/session-logs/2026-07-10-1200-hcategory-reshape-opposite-category.md`.

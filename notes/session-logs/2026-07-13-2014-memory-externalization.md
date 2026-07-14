@@ -77,7 +77,7 @@ decision now lives. Epistemic status is unchanged by this listing.
   carrier + the formalize-only-the-abstract-twist-lemma directive).
 
 **2026-07-09 (RCC and the codep foundation; session log
-2026-07-09-codep-representable-trilayer.md):**
+2026-07-09-12-00-codep-representable-trilayer.md):**
 
 - Petrakis comparison run; Lane rejects the adopt-vocabulary-only
   framing; the RCC schema adopted; naming workshop (flavor A;
@@ -100,7 +100,7 @@ decision now lives. Epistemic status is unchanged by this listing.
   `notes/research/2026-07-13-coherence-strata.md` (open).
 
 **2026-07-10 (the reshape and the coherence saga, sessions 1–2;
-session log 2026-07-10-hcategory-reshape-opposite-category.md):**
+session log 2026-07-10-12-00-hcategory-reshape-opposite-category.md):**
 
 - Six-law Petrakis dictionary verified exact; Tier-1 renames; the
   flat-ctx reshape; Coupling/Unit consolidated into the axioms
@@ -141,8 +141,8 @@ session log 2026-07-10-hcategory-reshape-opposite-category.md):**
   `notes/research/2026-07-13-faithful-theory-doctrine.md`.
 
 **2026-07-11 (the tower closed + the context reboot; session logs
-2026-07-11-codep-coherence-tower.md,
-2026-07-11-context-layer-reboot.md):**
+2026-07-11-12-00-codep-coherence-tower.md,
+2026-07-11-18-09-context-layer-reboot.md):**
 
 - Prop-pinning impossibility (T13); the η-design rounds close into
   the 3-cell overlay; θ-core derived (T6); gauges derived (T7);

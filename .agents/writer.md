@@ -36,4 +36,8 @@ Foundational references shelf — write in that idiom.
   path the dispatch names; the lead adds the inline citations and
   then runs the `verifier` to check every citation and URL before
   the draft is relied on. Report what you drafted and what still
-  needs sourcing.
+  needs sourcing. The drafted document at the named path is the
+  deliverable and this report is the completion-report channel
+  beside it, never a substitute for the document (HARNESS.md
+  reconciles the two where a harness returns your final message to
+  the lead).
