@@ -272,6 +272,7 @@ run_authoring() {
     local pattern_rows=(
         $'plan\t^- Plan: `([^`]+)`'
         $'research\t^- Final: `([^`]+)`'
+        $'watch\t^- Watch state: `([^`]+)`'
     )
     local layer_files=() pf row label anchor canonical stem occ_re lineno occ
     shopt -s globstar

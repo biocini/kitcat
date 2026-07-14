@@ -9,8 +9,13 @@
 #
 # Usage:
 #   sync-all                # report drift (missing / stale / redundant)
-#   sync-all --fix          # add missing roots, drop stale + redundant
+#   sync-all --fix          # insert missing roots, drop stale + redundant
 #   sync-all --regenerate   # rewrite All from scratch (grouped, sorted)
+#
+# --fix inserts each missing root into its namespace cluster — the
+# first contiguous block of imports sharing the module's top-level
+# namespace — alphabetically; with no such cluster it opens a new
+# one after the last import line. Existing lines are never moved.
 #
 # Test/* is unmanaged: never added automatically, existing entries kept.
 set -euo pipefail
@@ -136,7 +141,7 @@ if $regen; then
   exit 0
 fi
 
-# ── fix: surgical — drop stale/redundant, append missing roots ───────
+# ── fix: surgical — drop stale/redundant, insert missing roots ───────
 if $fix; then
   changed=0
   # Remove stale and redundant active imports.
@@ -148,13 +153,49 @@ if $fix; then
       echo "Removed: import $mod"; changed=1
     fi
   done
-  # Append missing roots before the closing fence.
-  if [ -n "$missing" ]; then
-    imports=""; for mod in $missing; do imports+="import ${mod}\n"; done
-    awk -v new="$imports" '/^```$/ && !done { printf "%s", new; done=1 } { print }' \
-      "$ALL" > "${ALL}.tmp" && mv "${ALL}.tmp" "$ALL"
-    for mod in $missing; do echo "Added: import $mod"; done
-    changed=1
-  fi
+  # Insert each missing root into its namespace cluster: the first
+  # contiguous block of `import` lines sharing the module's
+  # top-level namespace, kept alphabetical. Pass 1 names the
+  # insertion point as "<line> <mode>" (insert before <line>):
+  # `cluster` — inside the namespace cluster; `newcluster` — no
+  # cluster exists, open one (blank-line separator) after the last
+  # import line; `fence` — no imports at all, fall back to before
+  # the closing fence. Existing lines (manual Test/* entries, WIP
+  # comments, earlier strays) are never moved.
+  for mod in $missing; do
+    ns="${mod%%.*}"
+    point=$(awk -v mod="$mod" -v ns="$ns" '
+      BEGIN { new = "import " mod }
+      {
+        isns = (index($0, "import " ns ".") == 1 || $0 == "import " ns)
+        if ($0 ~ /^import /) last_import = NR
+        if (isns && !cluster_done) {
+          in_cluster = 1; cluster_last = NR
+          if (!found && $0 > new) found = NR
+        } else if (in_cluster) { in_cluster = 0; cluster_done = 1 }
+      }
+      END {
+        if (cluster_last) print (found ? found : cluster_last + 1) " cluster"
+        else if (last_import) print last_import + 1 " newcluster"
+        else print "0 fence"
+      }' "$ALL")
+    line="${point% *}"; mode="${point#* }"
+    if [ "$mode" = "fence" ]; then
+      awk -v mod="$mod" \
+        '/^```$/ && !done { print "import " mod; done = 1 } { print }' \
+        "$ALL" > "${ALL}.tmp" && mv "${ALL}.tmp" "$ALL"
+    else
+      text="import ${mod}"
+      # awk -v expands the \n escape: newcluster carries its
+      # blank-line separator inside the inserted text.
+      if [ "$mode" = "newcluster" ]; then text="\n${text}"; fi
+      awk -v n="$line" -v text="$text" '
+        NR == n { printf "%s\n", text }
+        { print }
+        END { if (NR < n) printf "%s\n", text }
+      ' "$ALL" > "${ALL}.tmp" && mv "${ALL}.tmp" "$ALL"
+    fi
+    echo "Added: import $mod"; changed=1
+  done
   [ "$changed" -eq 0 ] && echo "Nothing to fix." || true
 fi

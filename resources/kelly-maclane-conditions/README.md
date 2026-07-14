@@ -30,7 +30,7 @@ space of modern usage; the citation keeps the printed form.)
 
 ## Vetting
 
-PROVISIONAL. Ingested 2026-07-13 by Claude (Fable 5), the ingest
+Provisional marker retired 2026-07-13 (Vetted, below). Ingested 2026-07-13 by Claude (Fable 5), the ingest
 agent, at Lane's direction; the document was supplied by Lane via
 institutional access (the source is paywalled). Checked: the full
 six-page text was read from the PDF directly — the fine print
@@ -64,6 +64,9 @@ verbatim by the dispatching lead; the re-extraction pass (the
 tracked correction patch) preceded the confirming pass, which
 re-verified corrections, anchors, patch honesty, and the
 frontmatter identity fresh.
+
+Vetted: 2026-07-13, Lane (ratified at Lane's explicit direction,
+conveyed in-session).
 
 ## Files
 

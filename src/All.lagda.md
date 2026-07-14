@@ -69,6 +69,7 @@ import Lib.Ternary.Structures
 import Lib.Ternary.Structures.Syntax
 
 import Gloss.EightFieldWall
+import Gloss.ExtractAgreeIndependence
 import Gloss.PathGroupoid
 import Gloss.PcomConservation
 import Gloss.PropPinning
@@ -97,5 +98,4 @@ import Cat.Monoidal.Hexagon
 import Core.Coherence.Base
 import Cat.Codep
 import Cat.Codep.Instances
-import Gloss.ExtractAgreeIndependence
 ```

@@ -13,6 +13,9 @@ set -euo pipefail
 # `artifact`/`sha256` pair, plus the `secondary-artifact`/
 # `secondary-sha256` pair when present. `sha256-inner` is a
 # re-fetch fallback with no on-disk target and is not checked.
+# The four required keys — `artifact`, `sha256`, `format`,
+# `fetch-url` — must all be present; a missing one is FATAL.
+# `fetch-url: none` is the valid explicit no-public-URL record.
 #   - a mismatch is FATAL (exit 1) — the entry describes a different
 #     document than the one on disk; resolve before citing anything;
 #   - an absent file is reported MISSING (informational) — vendored
@@ -86,6 +89,20 @@ for dir in resources/*/; do
 
     artifact="$(fm_get "$readme" artifact)"
     hash="$(fm_get "$readme" sha256)"
+
+    # Required-key policing: the schema (resources/README.md
+    # "Entry format") makes artifact, sha256, format, and fetch-url
+    # mandatory on every entry. `fetch-url: none` is the valid
+    # explicit no-public-URL record, so presence is what is
+    # checked, never a URL shape.
+    for key in artifact sha256 format fetch-url; do
+        if [ -z "$(fm_get "$readme" "$key")" ]; then
+            echo "  ${entry}: FATAL missing required frontmatter key '${key}'" \
+                 "— see resources/README.md \"Entry format\""
+            fatal=$((fatal + 1))
+        fi
+    done
+
     if [ -n "$artifact" ] && [ -n "$hash" ]; then
         check_hash "$entry" "$dir" "$artifact" "$hash"
         sec_artifact="$(fm_get "$readme" secondary-artifact)"
@@ -96,9 +113,6 @@ for dir in resources/*/; do
             echo "  ${entry}: FATAL secondary-artifact/secondary-sha256 must appear as a pair"
             fatal=$((fatal + 1))
         fi
-    else
-        echo "  ${entry}: FATAL no custody frontmatter (artifact + sha256) — migrate per resources/README.md"
-        fatal=$((fatal + 1))
     fi
 
     if $remote; then
