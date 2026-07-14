@@ -108,8 +108,9 @@ cell-carrying bridge.
 📐 countermodel over the S² path groupoid, dimension count
 verified (2026-07-11). The `ap(ap E)`-transfer analysis confirms
 no derivation route exists (faithful transfer, residue located).
-🧪 `Gloss.EightFieldWall` (the Gate-3 `-- WALL:` block; also the
-Route-B/discharge verifications).
+🧪 `Gloss.EightFieldWall` (the irreducible-obligation display in
+"The double-opposite obstruction"; also the definitional-center
+opposite-axioms/discharge verifications).
 
 **T12 — The op-involution regress ("coherence of the dualizing
 involution forces truncation of the hom ∞-groupoid").** For wild
@@ -260,6 +261,82 @@ its countermodel-grade upgrade is registered, designed, unbuilt.
 Consequence: the faithful stratum's abstract propositional-strata
 count is three BY THEOREM.
 🧪 `Gloss.ExtractAgreeIndependence` (2026-07-13).
+
+## 6. The faithful stratum
+
+The three-layer stratum — Petrakis fam/cofam substrate, Π-integral
+codep-structure, representability overlay — from the
+faithful-stratum arc. Prior entries: T14/T17 (identifications),
+T21 (extract-agree independence, with the records' definition).
+
+**T22 — The tautological filling recovers the representable core
+definitionally.** Every hcategory tautologically fills the
+three-layer faithful stratum (T21's records):
+`fam y = Σ v , hom y v`, `cofam x = Σ w , hom w x`, actions by
+`pre`/`post`, `⨾ᵇ := ⨾` (the extracted center — no raw data
+survives at the instance),
+`res γ = hom (γ .fst .fst) (γ .snd .fst)`. The filling is
+definitional at every operation: res-invariance is accepted as the
+identity function, the four codep laws as `refl` (their PathP
+families are definitionally constant), `extract-agree` as `refl`,
+the stratum's fixed-endpoint action recovers the frozen Base
+action `_·_` by `refl` (`killcheck-dot`), and interchange-1 is
+definitional
+(`killcheck-itc1`). Function-valued res-invariance is load-bearing
+for the operation-level recovery: the path-valued form recovers
+the action only propositionally, since `transport refl` is not
+definitionally the identity. At the filling, two of the abstract
+stratum's three propositional strata (T21) definitionalize —
+res-invariance and extract-agree; the interchange stratum remains
+propositional.
+🧪 `Gloss.TautologicalFilling` (2026-07-13).
+
+**T23 — Agreement ⟺ interchange-2 over the two-sided stratum;
+both walled from the fields.** Over the abstract faithful stratum
+with two-sided representability (the right field `compose-contr`
+plus a hypothesis-explicit left contractibility `ccL`),
+extraction-agreement (`f ⨾ g ≡ f ⨾L g`) and interchange-2
+(`emb f · g ≡ f ⟩ emb g`) are inter-derivable — one `pcom` upward,
+a one-fiber transport downward — so the two-sided route to
+interchange is exactly circular (the constructive sharpening of
+T14's circularity trace). Neither side was derived from the
+stratum + ccL alone: both pre-registered routes wall at the same
+pointwise bridge,
+`res-inv-r g … (emb f …) ≡ res-inv-l f … (emb g …)` at `res γ`,
+frozen as verbatim refl-probe residues. The representability
+fields are twist-blind (`is-contr` is propositional,
+`cc-τ-blind`), and the stratum's field inventory has no slot of
+interchange's type, so a T5-style twist has nothing to deform. At
+the tautological filling the interchange-2 statement is
+term-for-term the base category's `interchange` (`itc2-taut`,
+machine-checked in T22's certificate): the coherence cells are
+intrinsic to wild two-sidedness, not artifacts of the
+representable presentation. The wall's `⨾ᵇ`-shaped twin is
+independent by theorem (T21); consistent with the T13 trichotomy.
+🧪 `Gloss.InterchangeCircularity` (2026-07-13).
+
+**T24 — Conservation of the pentagon engine over the abstract
+stratum.** The pentagon engine transplants from
+`Cat.Codep.Coherence` to the abstract faithful stratum at +0 extra
+bridge steps per face, with res-invariance an opaque field:
+`·-comp` closes in two links (a dependent line moving the
+extraction gap along `extract-agree`; a `codep₂-r` PathP applied
+over the same `fam₂` track), after which the assoc tower,
+`reindex-face`/`face₂₃` (reindex family), and
+`whisker-face`/`face₁₂` (whisker family) transplant unmodified —
+the face proofs are the baseline proofs textually, so the count is
+exact, not estimated. The res-invariance cost is confined to
+`·-comp`'s interior; the engine is right-action-only. Unchecked
+residue: face₄₅ (same reindex family) and face₃₅ untested —
+face₃₅'s Coherence lift is `ctr`-dependent, which does not exist
+at the stratum, so it plausibly gates on the interchange bridge
+(T23); face₁₄'s `homotopy-natural` bridge out of scope.
+📐 machine-checked in the tracked spike
+`Test.CodepFaithful-20260713-140913 @ dde1f57` (module A3), not
+frozen; transplant identity verified line-for-line in the accuracy
+review (2026-07-13). The Test/ citation is Lane's granted
+exception to the promotion-trigger rule (2026-07-13): the spike is
+retained at any future Test/ sweep while this entry stands.
 
 ## Standing results from earlier strata (pre-2026-07-10)
 

@@ -5,14 +5,48 @@ Gloss: machine-checked evidence for T13(ii)/(iii) in docs/gloss.md.
 Self-contained modulo Core.* and Gloss.PathGroupoid (whose frozen
 `hcategory` this builds on); no Cat.* import.
 
-Exploratory SPIKE — the level-2 representability axiom ("couple²").
-GO/NO-GO for whether one prop-valued overlay `level-2-representable`
-discharges the two stuck coherences `R-core` (CodepTriangleCrux) and
-`θ-core` (CodepOpTheta), and whether the path-groupoid model inhabits
-it. Tracked Gloss evidence (T13).
+Can a proposition-valued predicate on the five hcategory axioms
+pin the coherence cells? This certificate examines the natural
+candidate — a contractibility axiom `couple²` over a space of
+pinned homotopies — and establishes three findings, which
+together supply the machine-checked part of two clauses of a
+trichotomy: every prop-valued candidate is blind to the twist
+(that clause rests on `Gloss.PathGroupoid`), obstructed in what
+it can discharge, or false in the intended models.
 
-The unifying discovery behind this file (recorded up front so the code
-below can be read against it):
+First, the encoding is not inert: the space `swap-lift` is not
+inhabitable from the five axioms — the only available total
+homotopy is the absorption route, and its two boundary
+obligations are exactly the two stuck coherences (module
+`absorb-route`); by contrast, `θ-core` does follow from `couple²`
+(module `theta`), by one naturality square collapsed at the two
+pins.
+
+Second, the same method cannot reach `R-core`: any lift space
+tight enough to be contractible is a fiber of an equivalence —
+hence inert, already contractible from the axioms — and
+re-imposes `R-core` as the membership obligation of the
+interchange route (module `Rcore-attempt`; the dichotomy is
+stated in full below).
+
+Third, the decisive correction: the `is-contr` wrapper over a
+Π-family pinned at finitely many points is FALSE in
+path-groupoid models over higher types — off the pinned points
+the family's values range over wild path spaces — so this entire
+encoding class is model-false, even though its coherence CONTENT
+holds in every path groupoid (module `path-model` inhabits the
+center).
+
+The corrected axiom shape — representability,
+`is-contr (fiber emb T)`, of a swap-derived composite, which is
+prop-valued unconditionally and model-true — is identified in the
+final section; exhibiting the composite `T` whose
+representability projects to the two coherences remains open. One
+boundary the reader should carry: that these clauses exhaust the
+candidate space is argued, not machine-checked.
+
+The unifying discovery behind this file (recorded up front so the
+code below can be read against it):
 
 BOTH `θ-core` and `R-core` are instances of ONE statement — the
 natural slot-swap homotopy between the *pre-action* and the
@@ -20,17 +54,21 @@ natural slot-swap homotopy between the *pre-action* and the
 doubly-centered point and with `refl` at the identity. Writing
 `Ψ a b := emb e ((x,a),(x,b))` for `e = idn x` and `D₀ := Ψ e e`:
 
-  * `θ-core` (from CodepOpTheta) is
+  * `θ-core` is
       `ap (pre e) pe ≡ interchange e e e e ∙ ap (post e) pe`
-    with `pe = post-eval e : D₀ ≡ e`. This is exactly
-    `homotopy-natural η pe` for a homotopy `η : pre e ⟹ post e` with
-    `η D₀ = interchange e e e e` and `η e = refl`.
+    with `pe = post-eval e : D₀ ≡ e` — the reconciliation, at the
+    identity, of the two transports of the evaluation law. This is
+    exactly `homotopy-natural η pe` for a homotopy
+    `η : pre e ⟹ post e` with `η D₀ = interchange e e e e` and
+    `η e = refl`.
 
-  * `R-core` (from CodepTriangleCrux) is `crux` lifted through the
-    equivalence `ap (pre (idn y))`. `crux : absorb-l c ≡ IC ∙ AR`
-    (c = pre g b) says the unit-route proof of `pre (idn y) c ≡ c`
-    agrees with the interchange-route proof. Same slot-swap coherence,
-    smeared over the context `c`.
+  * `R-core` is the mixed-argument sibling, lifted through the
+    equivalence `ap (pre (idn y))`: at a general point
+    `c = pre g b`, it says the unit-route proof of
+    `pre (idn y) c ≡ c` (the absorption path) agrees with the
+    interchange-route proof (`IC ∙ AR` in the notation of module
+    `Rcore-attempt` below). Same slot-swap coherence, smeared
+    over the context `c`.
 
 Both are genuinely non-`refl` 2-cells; both are `true` in the path
 groupoid (concrete `pcom` algebra) but NOT derivable from the five
@@ -47,40 +85,16 @@ open import Core.Data.Sigma
 open import Core.Kan
   using ( is-contr→is-prop; is-contr→is-set; total-contr-unique
         ; _∙_; module Path; pcom; pfil; module pcom; pcom→∙ )
-open import Core.Transport.J using (subst; J)
-open import Core.Transport.Base using (transport-refl)
 open import Core.Homotopy using (homotopy-natural)
 open import Core.Equiv.Base using (is-equiv; iso→equiv; eqv-fibers)
 open import Core.Function.Embedding
   using ( equiv→lc; equiv→lc-section
         ; is-embedding→ap-equiv; is-equiv→is-embedding )
-open import Core.Path.Base using (ap-comp)
 
 open import Gloss.PathGroupoid using (hcategory; path-cat)
 ```
 
-## Generic path helpers
-
-```agda
-sym-sym : ∀ {u} {A : Type u} {a b : A} (p : a ≡ b) → sym (sym p) ≡ p
-sym-sym p = J (λ _ p → sym (sym p) ≡ p) refl p
-
-sym-∙ : ∀ {u} {A : Type u} {a b d : A} (p : a ≡ b) (q : b ≡ d)
-      → sym (p ∙ q) ≡ sym q ∙ sym p
-sym-∙ {a = a} p q =
-  J (λ _ q → sym (p ∙ q) ≡ sym q ∙ sym p)
-    (ap sym (Path.unitr p) ∙ sym (Path.unitl (sym p))) q
-
-subst-path-l
-  : ∀ {u w} {A : Type u} {B : Type w} (Q : A → B)
-    {a a' : A} {D : B} (e : a ≡ a') (P : Q a ≡ D)
-  → subst (λ t → Q t ≡ D) e P ≡ sym (ap Q e) ∙ P
-subst-path-l Q {D = D} e P =
-  J (λ a'' e' → subst (λ t → Q t ≡ D) e' P ≡ sym (ap Q e') ∙ P)
-    (transport-refl P ∙ sym (Path.unitl P)) e
-```
-
-## (1) The encoding — slot-swap homotopy at an identity endo
+## The encoding: the slot-swap homotopy at an identity endo
 
 `swap-lift e` (for an endo `e : hom x x`) is the space of homotopies
 `η` between the pre-action `pre e` and the post-action `post e`, both
@@ -91,12 +105,13 @@ in the cofam slot). The two boundary clauses pin `η` at the identity
 (the `interchange` cell). At `e = idn x` the boundary types line up
 definitionally: `interchange e e e e : pre e D₀ ≡ post e D₀`.
 
-Design note. `η` ranges over ALL of `hom x x`, and the two boundary
-values sit at two distinct points; this is why the space is not
-inert (KILL-A). The pointwise `interchange` supplies the value at
-`D₀`, and the unit structure supplies `refl` at `e`, but no total
-homotopy carrying BOTH prescribed values is constructible from the
-five axioms.
+Design note. `η` ranges over ALL of `hom x x`, and the two
+boundary values sit at two distinct points; this is why the space
+is not inert — and inertness disqualifies a candidate, since an
+axiom whose content is already derivable pins nothing. The
+pointwise `interchange` supplies the value at `D₀`, and the unit
+structure supplies `refl` at `e`, but no total homotopy carrying
+BOTH prescribed values is constructible from the five axioms.
 
 Rejected encodings (one line each):
   * `fiber emb T` / `fiber (ap emb) Θ` — INERT: `emb` is an embedding
@@ -105,11 +120,11 @@ Rejected encodings (one line each):
   * `Σ p ∶ (pre(idn) c ≡ c) , ap (pre idn) p ≡ Qc`
     = `fiber (ap (pre idn)) Qc`
     — INERT for the same reason (`unit-eqvl` makes `ap (pre idn)` an
-    equivalence; this is `kill-1`).
+    equivalence; this is `ap-pre-inert` of `Gloss.PathGroupoid`).
   * `Σ η , (η ≡ interchange)` — INERT: a singleton around `interchange`.
   * plain `pre(idn) c ≡ c` (no cut) — the opposite failure: a wild
     (untruncated) path space, NOT contractible; the axiom would be
-    false, killing the model (KILL-B).
+    false in the intended models.
 The surviving encoding threads between "free fiber" and "wild path
 space" by pinning a total homotopy at two points.
 
@@ -127,6 +142,9 @@ module encoding {o h} (C : hcategory o h) where
 
 ## The overlay record
 
+The candidate axiom, packaged: `couple²` asserts that the space
+of pinned slot-swap homotopies is contractible at every object.
+
 ```agda
 record level-2-representable {o h} (C : hcategory o h) : Type (o ⊔ h) where
   no-eta-equality
@@ -136,12 +154,12 @@ record level-2-representable {o h} (C : hcategory o h) : Type (o ⊔ h) where
     couple² : (x : ob) → is-contr (swap-lift x)
 ```
 
-## (4) θ-core from couple²
+## θ-core follows from couple²
 
-`θ-core` (verbatim from CodepOpTheta) is the naturality square of the
-slot-swap homotopy along `post-eval e`, collapsed by the two boundary
-clauses. It is `homotopy-natural η (post-eval e)` with `η e = refl`
-and `η D₀ = interchange e e e e`.
+`θ-core` is the naturality square of the slot-swap homotopy along
+`post-eval e`, collapsed by the two boundary clauses. It is
+`homotopy-natural η (post-eval e)` with `η e = refl` and
+`η D₀ = interchange e e e e`.
 
 ```agda
 module theta {o h} {C : hcategory o h} (L2 : level-2-representable C) where
@@ -186,13 +204,15 @@ module theta {o h} {C : hcategory o h} (L2 : level-2-representable C) where
       ∙ ap (_∙ apPost) ηD₀
 ```
 
-θ-core has the exact type CodepOpTheta's stuck `θ-core` hole demands
+This θ-core has exactly the type consumed downstream
 (`ap (pre e) (post-eval e) ≡ interchange e e e e ∙ ap (post e)
-(post-eval e)`, `e = idn x`). Plugging this into that file's hole
-closes its κ / M-B≡M-A / ξ / θ chain verbatim — those four
-definitions consume only `θ-core` of this type, so no edits there.
+(post-eval e)`, `e = idn x`): the derivation reconciling the
+opposite idempotent with the base one — the `θ-derivation` chain
+in `Gloss.EightFieldWall`, whose κ / M-B≡M-A / ξ / θ definitions
+consume only a θ-core of this type — could take `couple²` as its
+source without further change.
 
-## (2) KILL-A — swap-lift is NOT inhabitable from the five axioms
+## Non-inertness: swap-lift is not inhabitable from the five axioms
 
 The honest inhabitant attempt. The only total homotopy
 `pre (idn x) ⟹ post (idn x)` the five axioms furnish is the absorb
@@ -200,7 +220,7 @@ route `η-abs t = absorb-l t ∙ sym (absorb-r t)` (both actions cancel
 the identity, so the composite crosses through `t`). This typechecks.
 
 ```agda
-module killA {o h} (C : hcategory o h) where
+module absorb-route {o h} (C : hcategory o h) where
   open hcategory C
 
   module _ {x : ob} where
@@ -208,8 +228,8 @@ module killA {o h} (C : hcategory o h) where
     η-abs t = absorb-l t ∙ sym (absorb-r t)
 ```
 
-But neither boundary clause closes. The two obligations are, verbatim,
-the two stuck cores of this whole program:
+But neither boundary clause closes. The two obligations are,
+verbatim, the two stuck coherences themselves:
 
 ```text
 -- NON-CHECKED — the two boundary obligations for (η-abs , _ , _):
@@ -233,12 +253,14 @@ the two stuck cores of this whole program:
   -- discharges, unequal on the nose.
 ```
 
-VERDICT (KILL-A): `swap-lift x` is NOT inhabitable from the five
-axioms. `η-abs` gives the carrier; both boundary clauses wall at the
-naturality that pointwise `interchange` (one value at one point) cannot
-supply. The encoding is non-inert.
+So `swap-lift x` is not inhabitable from the five axioms: `η-abs`
+gives the carrier, and both boundary clauses demand a naturality
+that pointwise `interchange` — one value at one point — cannot
+supply. The encoding is therefore not inert: an axiom asserting
+its contractibility says something the five axioms do not already
+say.
 
-## (3) GO/NO-GO — R-core from couple²
+## R-core: the same method is obstructed
 
 Two independent facts settle this.
 
@@ -250,11 +272,12 @@ carrying a general `g`. No free structure bridges the mixed cell to the
 identity self-cell (`g` does not factor out of `emb g`), so `R-core` is
 not a projection of `couple² y`. A `g`-carrying `swap-lift` is required.
 
-FACT 2 (the two-points method is obstructed for ANY `g`-carrying lift
-space). We reconstruct `R-core`'s context and probe the memo's stated
-route (two points `L = absorb`, `R = interchange`, `is-contr→is-prop`,
-project). The natural lift-fiber is `fiber (ap E) Qc` with
-`E = pre (idn y)`.
+FACT 2 (the two-points method is obstructed for ANY `g`-carrying
+lift space). We reconstruct `R-core`'s context and probe the
+natural route: exhibit two points of one contractible space — the
+absorption route `L` and the interchange route `R` — identify
+them by `is-contr→is-prop`, and project. The natural lift-fiber
+is `fiber (ap E) Qc` with `E = pre (idn y)`.
 
 ```agda
 module Rcore-attempt {o h} (C : hcategory o h) where
@@ -280,9 +303,10 @@ module Rcore-attempt {o h} (C : hcategory o h) where
 ```
 
 The absorb route `L` is a free point of `fiber (ap E) Qc`, and that
-fiber is contractible from `unit-eqvl` alone (`kill-1`: `E` is an
-equivalence, so `ap E` is, so its fibers are contractible). So the
-contractibility of THIS space is inert — it cannot be the axiom.
+fiber is contractible from `unit-eqvl` alone (`ap-pre-inert`: `E`
+is an equivalence, so `ap E` is, so its fibers are contractible).
+So the contractibility of THIS space is inert — it cannot be the
+axiom.
 
 ```agda
     L : fiber (ap E) Qc
@@ -306,30 +330,33 @@ its membership obligation is `R-core` itself:
         R-core-obligation : ap E (IC ∙ AR) ≡ Qc
         -- = ap-comp E IC AR ∙ (ap E IC ∙ ap E AR ≡ ap E (absorb-l c))
         -- The bracketed part, after equiv→lc-section unfolds Qc, is
-        -- exactly CodepTriangleCrux.R-core. So R is a point of the
-        -- fiber IFF R-core already holds. Circular.
+        -- exactly R-core. So R is a point of the fiber IFF R-core
+        -- already holds. Circular.
 ```
 
-The dichotomy: to make the interchange route a FREE point, the lift
-space must not cut down the wild path type `pre (idn y) c ≡ c` (else
-membership needs `R-core`); but the uncut wild path type is not
-contractible, so `couple²` would be false there (KILL-B). Any cut
-tight enough for contractibility is a fiber of an equivalence
-(`emb`, `ap emb`, or `ap E`) — inert — and re-imposes `R-core` on the
-interchange route. There is no middle encoding for which BOTH routes
-are free points of a contractible non-inert space.
+The dichotomy: to make the interchange route a FREE point, the
+lift space must not cut down the wild path type
+`pre (idn y) c ≡ c` (else membership needs `R-core`); but the
+uncut wild path type is not contractible, so `couple²` would be
+false there. Any cut tight enough for contractibility is a fiber
+of an equivalence (`emb`, `ap emb`, or `ap E`) — inert — and
+re-imposes `R-core` on the interchange route. There is no middle
+encoding for which BOTH routes are free points of a contractible
+non-inert space.
 
-VERDICT (3, GO/NO-GO): the memo's "two free points + is-contr→is-prop"
-derivation of `R-core` is a **NO-GO** — the interchange-route point is
-never constructible without `R-core` itself. `couple²` can still
-discharge `R-core` only by DIRECTLY positing the coherence (θ-style, a
-total homotopy pinned at two values), which requires a `g`-carrying
-overlay strictly larger than the identity `swap-lift` and whose second
-pin-point I could not exhibit within budget (see report). So: **GO for
-θ-core, NO-GO for R-core by the stated method; R-core is discharged
-only by a baked g-carrying coherence, whose construction is open.**
+The conclusion: a two-free-points derivation of `R-core` is
+impossible — the interchange-route point is never constructible
+without `R-core` itself. `couple²` can still discharge `R-core`
+only by DIRECTLY positing the coherence (as with θ: a total
+homotopy pinned at two prescribed values), which requires a
+`g`-carrying overlay strictly larger than the identity
+`swap-lift`; this certificate does not exhibit its second
+pin-point, and constructing it is open. In sum: `couple²`
+discharges `θ-core`; it does not reach `R-core` by this method;
+and a `g`-carrying coherence field would be a genuinely new
+posit.
 
-## (5) KILL-B — the path-groupoid model
+## The path-groupoid model: the content is true
 
 Inhabiting `swap-lift x` in `path-cat A` reduces EXACTLY to the two
 identities (A), (B) of Gloss.PathGroupoid. In the model
@@ -344,7 +371,7 @@ refl refl` (definitionally), so the model-native slot-swap homotopy is
     `interchange (idn x)^4`.
 
 ```agda
-module killB {u} (A : Type u) where
+module path-model {u} (A : Type u) where
   open hcategory (path-cat A)
   open encoding (path-cat A)
 
@@ -366,10 +393,11 @@ module killB {u} (A : Type u) where
     clause-e = Path.invr (pcom.ideml refl)
 ```
 
-(A) is clause-D₀ — the MUST-PROVE. It is `refl`-REJECTED (verified:
-LHS `x`, RHS an `hfil` term — a genuine non-`refl` 2-cell). Concrete
-partial progress: the model `interchange (idn x)⁴` is definitionally
-the ternary `pcom (sym (lsplit refl refl R)) (lr R R) (sym (rsplit R
+(A) is clause-D₀ — the load-bearing obligation. The `refl` probe
+rejects it (the left side is the point `x`, the right an `hfil`
+term): a genuine non-`refl` 2-cell. Concrete partial progress:
+the model `interchange (idn x)⁴` is definitionally the ternary
+`pcom (sym (lsplit refl refl R)) (lr R R) (sym (rsplit R
 refl refl))`, so `pcom→∙` rewrites it to a binary chain. This
 typechecks and reduces (A) to a pure `pcom`-filler identity.
 
@@ -407,10 +435,10 @@ the residual model-verification item.
   -- critical finding below: is-contr (swap-lift x) is MODEL-FALSE.
 ```
 
-## (6) CRITICAL FINDING — the `is-contr` wrapper is MODEL-FALSE
+## The `is-contr` wrapper is false in higher models
 
-The decisive obstruction, and a correction to BOTH this encoding and
-the memo's schematic. `swap-lift x` has the shape
+The decisive obstruction, and a correction to the entire encoding
+class. `swap-lift x` has the shape
 
     Σ (η : (t : hom x x) → P t) , (η D₀ ≡ IC) × (η idn ≡ refl)
 
@@ -426,12 +454,15 @@ path-groupoid over a higher type (`A = S²`, `x ≡ x = Ω S²` is not a
 set), `P t` is not a proposition, so `swap-lift x` is NOT a proposition
 and `is-contr (swap-lift x)` is FALSE.
 
-So `couple²` as `is-contr (swap-lift x)` is NOT satisfiable by all
-path-groupoid models — KILL-B fails at the level of the CONTRACTIBILITY
-WRAPPER, not the coherence content. Crucially, this is inherent to
-"`is-contr` of a Π-family pinned at finitely many points": the memo's
-`Σ η ∶ (∀ {w} (a) → PathP …) , <normalization at a = idn>` has the SAME
-Π-over-`a` freedom cut at one point, so it is model-false the same way.
+So `couple²` as `is-contr (swap-lift x)` is NOT satisfiable by
+all path-groupoid models — the model failure is at the level of
+the CONTRACTIBILITY WRAPPER, not the coherence content. And it is
+inherent to "`is-contr` of a Π-family pinned at finitely many
+points": any variant
+`Σ η ∶ (∀ {w} (a) → PathP …) , <pins>` has the SAME Π-over-`a`
+freedom cut at finitely many points, so it is model-false the
+same way. This refutes the entire encoding class, not one
+formulation.
 
 What IS model-true:
   * the COHERENCE CONTENT — (A), (B), θ-core, R-core — holds in every
@@ -447,12 +478,13 @@ proposition, not a Π-family. The right shape is representability:
     couple² : … → is-contr (fiber emb T)
 
 for a swap-derived composite `T`. `is-contr (fiber emb T)` is
-prop-valued unconditionally (`emb` is an embedding), model-true (`emb`
-is an EQUIVALENCE in path groupoids, so surjective — every `T` is hit,
-"contract through eqv-fibers" as the memo anticipated), and non-inert
-when `T` is not an `emb`-image abstractly (`emb` is NOT surjective from
-the five axioms — that is precisely a NEW representability demand,
-sibling to `compose-contr`). The open constructive gap: exhibit the `T`
-whose representability PROJECTS (via `is-contr→is-set` + `ap fst`, the
-`unitl`/`unitr` pattern one rung up) to θ-core and R-core. This spike
-did not close that projection.
+prop-valued unconditionally (`emb` is an embedding), model-true
+(`emb` is an EQUIVALENCE in path groupoids, so surjective — every
+`T` is hit, and the fiber contracts through `eqv-fibers`), and
+non-inert when `T` is not an `emb`-image abstractly (`emb` is NOT
+surjective from the five axioms — that is precisely a NEW
+representability demand, sibling to `compose-contr`). The open
+constructive gap: exhibit the `T` whose representability PROJECTS
+(via `is-contr→is-set` + `ap fst`, the `unitl`/`unitr` pattern
+one rung up) to θ-core and R-core. This certificate does not
+close that projection.

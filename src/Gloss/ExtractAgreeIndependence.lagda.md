@@ -2,43 +2,61 @@ Lane Biocini
 July 2026
 
 Gloss: machine-checked evidence for T21 in docs/gloss.md.
-Self-contained modulo Core.* — no Cat.* import. Every frozen block
-below is marked `Frozen from Test.CodepExtractAgree-20260713-171000
-@ dde1f57`: the stratum records' first committed home is the Test
-tier, so the markers carry tracked-Test provenance (ruled
-2026-07-13).
+Self-contained modulo Core.*, with no Cat.* import: every code
+block is a frozen copy of its tracked source at the marked commit,
+apart from one block of additions marked as such below.
 
-Independence of the extract-agree bridge: over the three-layer
-faithful stratum — the Petrakis fam/cofam substrate (Layer A), the
-Π-integral codep-structure (Layer B), the representability overlay
-(Layer C) — the `extract-agree` field
-(`compose-contr f g .center .fst ≡ f ⨾ᵇ g`) is not derivable from
-the remaining fields, nor from any representability, orbit, or
-pointed-fam strengthening the collapsed countermodel satisfies.
-"Memo §n" references below are to the run's design memo
-(2026-07-13, the extract-agree bridge run). The pre-registered kill
-criteria, restated:
+Over a three-layer structure — a substrate of families and
+cofamilies with actions (`fam-structure`, following Petrakis), a
+layer of dependent composites with result-invariance
+(`codep-structure`), and a representability overlay
+(`codep-representable`) — the field `extract-agree` asserts that
+the composition extracted from the contractible representability
+fiber agrees with the substrate's primitive composition `⨾ᵇ`.
+This certificate proves that `extract-agree` is independent: not
+derivable from the other fields of the three records, nor from
+any representability, orbit-surjectivity, or pointedness
+strengthening in the class examined below. The argument has three
+parts.
 
-- Arm 1 (C4, bridge-forms): {EA, EH, EE} inter-derivable over the
-  compose-contr hypothesis. Expected DERIVED; consequence: one
-  countermodel refutes the whole class.
-- Arm 2 (C0, collapsed): the countermodel typechecks including the
-  ★ killcheck-center and no-extract-agree ⇒ irreducibility PINNED
-  (kills C1, C2(i), pointed-fam).
-- Arm 3 (C3, honest): routes (a)/(b) forced-refl probes over
-  {FS, CS, emb, cc} alone; expected STUCK ×2, residues
-  transcribed, with the ⊥-detector restated at the arm.
+First (`bridge-forms`): the three natural formulations of the
+agreement — at the extraction (`EA-stmt`), under the embedding
+(`EH-stmt`), and between embeddings (`EE-stmt`) — are
+inter-derivable over the contractibility hypothesis, since all
+three inhabit one contractible fiber; hence a single countermodel
+refutes the entire class.
 
-Verdicts (2026-07-13; per-arm detail at each `-- VERDICT` block):
-Arm 1 DERIVED; Arm 2 DERIVED — extract-agree REFUTED at
-(false, true), the irreducibility pin; Arm 3 STUCK ×2, both walls
-transcribed verbatim (the Gloss.EightFieldWall precedent: walls
-are certificate content). `killcheck-center` is the Mechanization
-Discipline's pinned reduction: if a Core change stops the
-qinv-center reduction, this certificate fails the next check. The
-freeze adds, beyond the spike (accuracy review MINOR 1/2, same
-run): the ▹-side orbit twin and the class refutation as terms
-(`no-EH`/`no-EE`).
+Second (`collapsed`): the countermodel — one object, Boolean homs
+with `⨾ᵇ = xor`, trivial families, constant embedding — satisfies
+every remaining field, and moreover every representability-shaped
+strengthening (`all-repr`), pointedness of the families
+(`fam-pt`), and orbit surjectivity on both sides (`orbit-surj`,
+`orbit-surj-cofam`); yet the extracted composite is definitionally
+the left argument (`killcheck-center`, a pinned reduction), so
+`extract-agree` fails at `(false , true)` (`no-extract-agree`,
+with `no-EH` and `no-EE` closing the class).
+
+Third (the section ending the file): the two honest derivation
+routes over the abstract hypotheses are each pushed to the point
+where it demands exactly the missing content, and the
+typechecker's rejections are preserved verbatim — both exhibit
+the same gap, a conversion between embedding-level and
+substrate-level equalities that no field supplies.
+
+Consequence: the composition law at the substrate level
+(`·-comp-base`) is free — it never mentions the embedding — and
+only the functoriality of the extracted composition costs the
+bridge; the independence settles that the agreement is a genuine
+axiom of the overlay, not a redundancy.
+
+The refutation's honest boundary. Decoding structures in the
+style of a chosen centre with evaluation equations are outside
+the refuted class by design: such structure derives the agreement
+because it is the agreement in a different wrapper. And one
+candidate class — action-faithfulness, or two-sided
+representability — fails in the model but is excluded only by
+argument together with the two preserved walls; its dedicated
+countermodel is designed but not built here.
 
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
@@ -56,16 +74,27 @@ open import Core.Equiv.Base using (iso→equiv; _≃_; eqv-fibers)
 open import Core.Transport.J using (subst)
 ```
 
-## The stratum records
+## The three records
 
-Layer A is the Petrakis substrate; Layer B the Π-integral
-composite with function-valued res-invariance; Layer C the
-representability overlay whose `extract-agree` field is this
-certificate's subject.
+`fam-structure` is the substrate, following Petrakis: a graph
+with identities and a primitive composition `⨾ᵇ`, together with
+families and cofamilies acted on from the two sides (`◃`, `▹`),
+each action functorial over `⨾ᵇ`. `codep-structure` adds a result
+type over each context, dependent composites as sections of it,
+and function-valued result-invariance: fields converting a result
+over an acted-on context back to the plain context, with laws
+(`codep₁-r` through `codep₂-l`) tying the conversions to the
+substrate's action laws. `codep-representable` is the
+representability overlay: an embedding of morphisms into
+composites, contractibility of the embedding's fiber over an
+acted image (`compose-contr`), and the field under study —
+`extract-agree`, asserting that the extracted centre agrees with
+`⨾ᵇ`.
 
 ```agda
 -- Frozen from Test.CodepExtractAgree-20260713-171000 @ dde1f57
--- (tracked-Test provenance; the spike may drift — this may not).
+-- (tracked-Test provenance; the source may drift — this may not);
+-- comments revised to the presentation standard 2026-07-13.
 -- Following Petrakis (arXiv:2303.14754), Def 2.1 (families:
 -- ◃, 𝔣₁/𝔣₂) and §6 (cofamily-arrows: ▹, cf₁/cf₂);
 -- entry resources/petrakis-dep-arrows/.
@@ -99,7 +128,8 @@ record fam-structure {o h fℓ} (ob : Type o)
 
 ```agda
 -- Frozen from Test.CodepExtractAgree-20260713-171000 @ dde1f57
--- (tracked-Test provenance; the spike may drift — this may not).
+-- (tracked-Test provenance; the source may drift — this may not);
+-- comments revised to the presentation standard 2026-07-13.
 -- Following Petrakis (arXiv:2303.14754), Def 4.1 (dependent
 -- application at the Π-integral: ·, 𝔡𝔦₁/𝔡𝔦₂); the codependent
 -- duals (⟩, codep-l laws) follow Petrakis's WG6 2025 slides
@@ -154,13 +184,14 @@ record codep-structure {o h fℓ rℓ} {ob : Type o}
   (f ⟩ F) (c , φ) = res-inv-l f c φ (F (c ▹ f , φ))
 ```
 
-Layer C carries no external credit: the representability overlay is
-native to kitcat (memo §5-C5 — Petrakis's composition is primitive,
-so the agreement question cannot arise in the source).
+The overlay carries no source credit: in Petrakis's development
+composition is primitive, so the agreement question cannot arise
+there; the representability presentation is this library's own.
 
 ```agda
 -- Frozen from Test.CodepExtractAgree-20260713-171000 @ dde1f57
--- (tracked-Test provenance; the spike may drift — this may not).
+-- (tracked-Test provenance; the source may drift — this may not);
+-- comments revised to the presentation standard 2026-07-13.
 record codep-representable {o h fℓ rℓ} {ob : Type o}
   {FS : fam-structure {o} {h} {fℓ} ob}
   (CS : codep-structure {o} {h} {fℓ} {rℓ} FS)
@@ -186,19 +217,23 @@ record codep-representable {o h fℓ rℓ} {ob : Type o}
   emb-comp f g = compose-contr f g .center .snd
 ```
 
-## Arm 1 — the equivalence class (C4, memo §4)
+## The three formulations are equivalent
 
-Over the abstract stratum with hypothesis-explicit {emb, cc} (the
-`*-from-coupling` pattern), the three bridge formulations sit in
-one contractible fiber, so agreement among them is free (the
-T4-side of the free/paid boundary): EA (the current field form),
-EH (emb-hom), EE (agreement under emb) are inter-derivable.
-Consequence: one countermodel refutes the whole class (pinned as
-terms at `no-EH`/`no-EE` below).
+Over the abstract records, with the embedding and its
+contractibility taken as explicit hypotheses (`bridge-forms`
+binds `emb` and `cc` as module parameters), the three
+formulations of the agreement all describe points of one
+contractible fiber, and points of a single contractible fiber
+are identified for free. `EA-stmt` is the field form, at the
+extraction; `EH-stmt` states the agreement under the embedding;
+`EE-stmt` states it between embeddings. Each derives the others,
+so one countermodel refutes all three (realized as terms at
+`no-EH`/`no-EE` below).
 
 ```agda
 -- Frozen from Test.CodepExtractAgree-20260713-171000 @ dde1f57
--- (tracked-Test provenance; the spike may drift — this may not).
+-- (tracked-Test provenance; the source may drift — this may not);
+-- comments revised to the presentation standard 2026-07-13.
 module bridge-forms {o h fℓ rℓ} {ob : Type o}
   {FS : fam-structure {o} {h} {fℓ} ob}
   {CS : codep-structure {o} {h} {fℓ} {rℓ} FS}
@@ -209,8 +244,8 @@ module bridge-forms {o h fℓ rℓ} {ob : Type o}
       → is-contr (fiber emb (emb f · g)))
   where
 
-  -- the extraction over the hypothesis (not a wrapper: cc is a
-  -- module parameter).
+  -- the extraction over the hypothesis: cc is a module parameter,
+  -- so ⨾R is relative to it, not a renaming of the record's ⨾.
   _⨾R_ : ∀ {x y z} → hom x y → hom y z → hom x z
   f ⨾R g = cc f g .center .fst
 
@@ -248,13 +283,16 @@ module bridge-forms {o h fℓ rℓ} {ob : Type o}
   ee→ea ee = hom→ea (λ f g → sym (ee f g) ∙ cc f g .center .snd)
 ```
 
-The §2 corollary: the bridge is exactly one link wide — the
-⨾ᵇ-level composition law is extract-agree-free (emb never
-mentioned); only ⨾-functoriality costs the bridge.
+A corollary locating the cost precisely: the composition law at
+the substrate level, `F · (g ⨾ᵇ h) ≡ (F · g) · h`, is derivable
+with no appeal to `extract-agree` — indeed with no mention of the
+embedding at all. Only the functoriality of the extracted
+composition `⨾` costs the bridge.
 
 ```agda
 -- Frozen from Test.CodepExtractAgree-20260713-171000 @ dde1f57
--- (tracked-Test provenance; the spike may drift — this may not).
+-- (tracked-Test provenance; the source may drift — this may not);
+-- comments revised to the presentation standard 2026-07-13.
 module one-link {o h fℓ rℓ} {ob : Type o}
   {FS : fam-structure {o} {h} {fℓ} ob}
   {CS : codep-structure {o} {h} {fℓ} {rℓ} FS}
@@ -270,31 +308,34 @@ module one-link {o h fℓ rℓ} {ob : Type o}
       (ap F (λ j → γ .fst , fam₂ g h (γ .snd) j) i)
 ```
 
--- VERDICT ARM 1: DERIVED. {EA, EH, EE} inter-derivable over the
--- stratum + cc (ea→hom / hom→ea / ea→ee / ee→ea, all first-try:
--- one contractible fiber, elementary fiber algebra). The one-link
--- corollary ·-comp-base also DERIVED: the ⨾ᵇ-level composition
--- law costs no extract-agree.
+The equivalence is complete: `ea→hom`, `hom→ea`, `ea→ee`, and
+`ee→ea` close by elementary fiber algebra in one contractible
+fiber, and `·-comp-base` closes beside them — the substrate-level
+composition law needs no agreement axiom.
 
-## Arm 2 — the collapsed-context countermodel (C0, memo §3)
+## The collapsed-context countermodel
 
-The decisive arm. Over `ob = ⊤`, `hom = Bool`, `⨾ᵇ = xor`,
-`fam = cofam = ⊤`, `res = Bool`, `emb₀ = const`: every stratum
-field minus extract-agree holds — the four ⨾ᵇ-mentioning laws are
-paths in ⊤-derived types (refl by ⊤-eta), the codep laws are paths
-between identity functions over a constant `res` — and `emb₀` is an
-equivalence, so every representability-shaped strengthening holds
-too; the fam side is even pointed. The extraction is definitionally
-the left argument, so extract-agree at (false, true) asserts
-`false ≡ true`. `xor` over right-projection deliberately:
-(Bool, xor, false) is a group, so the refutation survives any
-future base unit/assoc laws for ⨾ᵇ. Everything at 0ℓ: a
-level-polymorphic derivation would specialize here, so the
-refutation kills derivations at all levels.
+The decisive construction. Over `ob = ⊤`, `hom = Bool`,
+`⨾ᵇ = xor`, `fam = cofam = ⊤`, `res = Bool`, and the constant
+embedding `emb₀`, every field of the three records except
+`extract-agree` holds: the four laws mentioning `⨾ᵇ` are paths in
+`⊤`-derived types (`refl` by `⊤`-eta), the result-invariance laws
+are paths between identity functions over a constant `res`, and
+`emb₀` is an equivalence, so every representability-shaped
+strengthening holds as well; the family side is even pointed. The
+extracted composite is definitionally the left argument, so
+`extract-agree` at `(false , true)` asserts `false ≡ true`. The
+composition is `xor` rather than a projection deliberately:
+`(Bool, xor, false)` is a group, so the refutation survives any
+future unit or associativity laws for `⨾ᵇ`. And everything lives
+at the lowest universe level, so a level-polymorphic derivation
+would specialize here: the refutation kills derivations at every
+level.
 
 ```agda
 -- Frozen from Test.CodepExtractAgree-20260713-171000 @ dde1f57
--- (tracked-Test provenance; the spike may drift — this may not).
+-- (tracked-Test provenance; the source may drift — this may not);
+-- comments revised to the presentation standard 2026-07-13.
 module collapsed where
 
   FS : fam-structure {0ℓ} {0ℓ} {0ℓ} ⊤
@@ -329,8 +370,7 @@ module collapsed where
   eval₀ F = F (tt , tt)
 
   -- retr goal emb₀ (F (tt , tt)) ≡ F: γ ≐ (tt , tt) by Σ-eta +
-  -- ⊤-eta, so both sides are λ γ → F (tt , tt) (memo §3 hinge 1;
-  -- fallback funext λ γ → refl).
+  -- ⊤-eta, so both sides are λ γ → F (tt , tt) and refl suffices.
   emb₀-equiv : ∀ {x y} → hom x y ≃ CS.composite x y
   emb₀-equiv = iso→equiv emb₀ eval₀ (λ _ → refl) (λ _ → refl)
 
@@ -339,23 +379,27 @@ module collapsed where
   cc₀ f g = emb₀-equiv .snd .eqv-fibers (CS._·_ (emb₀ f) g)
 ```
 
-The definitional trace the refutation leans on (memo §3 hinge 2):
-the qinv-derived center is `(eval₀ T , ε T)` — its fst is the
-inverse's value, `Core.Equiv.Base:150-152` — and
+The definitional trace the refutation leans on: the center that
+`iso→equiv` produces is `(eval₀ T , ε T)` — its first component
+is the inverse's value (`Core.Equiv.Base`) — and
 `eval₀ (CS._·_ (emb₀ f) g)` unfolds to
 `res-inv-r g tt tt (emb₀ f (tt , g ◃ tt)) = (λ s → s) f = f`.
+`killcheck-center` pins this reduction: were a change to the
+equivalence machinery to stop it firing, this certificate would
+fail to typecheck.
 
 ```agda
   -- Frozen from Test.CodepExtractAgree-20260713-171000 @ dde1f57
-  -- (tracked-Test provenance; the spike may drift — this may not).
-  -- ★ the pin (fallback if rejected: hand-built is-contr with
-  -- center (f , refl); the refutation needs only center .fst ≐ f).
+  -- (tracked-Test provenance; the source may drift — this may
+  -- not); comments revised to the presentation standard 2026-07-13.
+  -- The load-bearing reduction, pinned: the refutation needs only
+  -- that the center's first component is definitionally f.
   killcheck-center : (f g : Bool) → cc₀ f g .center .fst ≡ f
   killcheck-center f g = refl
 
-  -- extract-agree refuted at (false, true): LHS ≐ false (the ★
-  -- reduction), RHS ≐ xor false true ≐ true. Pattern-lambda
-  -- precedent: Core.Data.Bool.Properties:26-27.
+  -- extract-agree refuted at (false, true): the left side is
+  -- definitionally false (the killcheck-center reduction), the
+  -- right side is xor false true ≐ true.
   no-extract-agree
     : ¬ ((f g : Bool) → cc₀ f g .center .fst ≡ xor f g)
   no-extract-agree ea = subst P (ea false true) tt
@@ -370,16 +414,17 @@ inverse's value, `Core.Equiv.Base:150-152` — and
   no-extract-agree-field ea = no-extract-agree (λ f g → ea f g)
 ```
 
-The kill instances (memo §3/§5): every representability-flavored
-strengthening in the candidate space holds in this model while
-extract-agree fails, so none can entail it.
+The strengthenings, refuted wholesale: every representability-
+flavored strengthening in the examined class holds in this model
+while `extract-agree` fails, so none can entail it.
 
 ```agda
   -- Frozen from Test.CodepExtractAgree-20260713-171000 @ dde1f57
-  -- (tracked-Test provenance; the spike may drift — this may not).
-  -- C1 killer: EVERY emb₀-fiber is contractible, so any
-  -- representability-shaped axiom (idn-repr included, at any
-  -- target in the §2 inventory) holds here.
+  -- (tracked-Test provenance; the source may drift — this may
+  -- not); comments revised to the presentation standard 2026-07-13.
+  -- Every emb₀-fiber is contractible, so any representability-
+  -- shaped axiom — idn-repr included, at any target composite —
+  -- holds here.
   all-repr : ∀ {x y} (T : CS.composite x y)
            → is-contr (fiber emb₀ T)
   all-repr = emb₀-equiv .snd .eqv-fibers
@@ -387,24 +432,25 @@ extract-agree fails, so none can entail it.
   idn-repr-holds : ∀ {x} → is-contr (fiber emb₀ (emb₀ (idn x)))
   idn-repr-holds = all-repr _
 
-  -- pointed-fam killer: the rejected design (b) HOLDS here — the
-  -- missing ingredient is Base's decoding at the point, not the
-  -- point itself.
+  -- Pointedness of the families also holds here, so a pointed-
+  -- family strengthening cannot entail the agreement: the missing
+  -- ingredient is a decoding at the point, not the point itself.
   fam-pt : ∀ {y} → fam y
   fam-pt = tt
 
-  -- C2(i) killer: Σ-form orbit surjectivity (the prop-truncated
-  -- form is a fortiori inhabited).
+  -- Orbit surjectivity on the family side, in Σ-form (the
+  -- prop-truncated form is a fortiori inhabited).
   orbit-surj : ∀ {y z} (φ : fam z) (ψ : fam y)
              → Σ g ∶ hom y z , (g ◃ φ) ≡ ψ
   orbit-surj φ ψ = false , refl
 ```
 
-Added at freeze (2026-07-13; accuracy review MINOR 1/2 — not in
-the spike @ dde1f57): the ▹-side orbit twin, mirroring
-`orbit-surj` on the cofam side, and the class refutation as terms
-— `bridge-forms` instantiated at the collapsed model, so "one
-countermodel refutes the whole class" is itself machine-checked.
+The two definitions below are additions made at the freeze
+(2026-07-13), not present in the frozen source: the cofamily-side
+orbit twin, mirroring `orbit-surj`, and the class refutation as
+terms — `bridge-forms` instantiated at the collapsed model, so
+that one countermodel refuting the entire class is itself
+machine-checked (`no-EH`, `no-EE`).
 
 ```agda
   orbit-surj-cofam : ∀ {x y} (c : cofam x) (c' : cofam y)
@@ -420,41 +466,50 @@ countermodel refutes the whole class" is itself machine-checked.
   no-EE ee = no-extract-agree-field (BF.ee→ea ee)
 ```
 
--- VERDICT ARM 2: DERIVED — irreducibility PINNED. The full
--- stratum-minus-extract-agree is inhabited over trivial families
--- (every Layer A/B refl accepted first-try), emb₀ is an
--- equivalence (both iso→equiv legs closed by refl — memo hinge 1
--- held, no funext fallback), the ★ killcheck-center reduction
--- fired (memo hinge 2 held, no hand-built fallback), and
--- no-extract-agree / no-extract-agree-field refute the field at
--- (false, true). Candidates C1 (all-repr, idn-repr-holds), C2(i)
--- (orbit-surj), and pointed-fam (fam-pt) all HOLD in the model,
--- so none entails extract-agree.
+What the countermodel establishes, in sum: every field of the
+substrate and composite layers is inhabited over the trivial
+families, `emb₀` is an equivalence with both `iso→equiv` legs
+closing by `refl`, the extraction's reduction is pinned
+(`killcheck-center`), and `no-extract-agree` /
+`no-extract-agree-field` refute the agreement at `(false , true)`.
+Every strengthening in the examined class holds in the model —
+full representability (`all-repr`, `idn-repr-holds`), orbit
+surjectivity on both sides (`orbit-surj`, `orbit-surj-cofam`),
+pointed families (`fam-pt`) — so none of them entails
+`extract-agree`.
 
-## Arm 3 — the honest derivation arm (C3, memo §5)
+## The two derivation routes and their obstructions
 
-Pure derivability of EA over the abstract stratum hypotheses
-{FS, CS, emb, cc} alone — the two pre-registered routes, forced at
-the annotated goal types from memo §5-C3 and run to their walls
-inside the bridge-forms telescope. Both probes were run live in
-the source spike (2026-07-13) and reverted per the failure
-protocol; each fenced block below is the raw typechecker error
-verbatim from `The terms` onward — the leading location/error-tag
-line (`<file>:<pos>: error: [UnequalTerms]`) is omitted, since it
-names the transient probe site.
+Could the agreement be derived outright — from the two record
+layers, the embedding, and the contractibility hypothesis alone?
+The two natural routes were fixed before the attempt, so the
+obstruction below is not an artifact of proof search. Each route
+is pushed, inside `bridge-forms`, to the point where it demands
+exactly the missing content; the missing equation is then forced
+with `refl` and the typechecker's rejection recorded. Both
+attempts were made in the tracked source at the pinned commit and
+reverted there; each fenced block below is the raw typechecker
+error, verbatim from `The terms` onward — the leading
+location/error-tag line (`<file>:<pos>: error: [UnequalTerms]`)
+is omitted, since it names the transient probe site.
 
--- STUCK (route a — the fiber route): inject (f ⨾ᵇ g , ?) into
--- cc f g's contractible fiber and project with ap fst.
---   attempted term (inside bridge-forms):
---     agree-attempt-a : EA-stmt
---     agree-attempt-a f g =
---       ap fst (is-contr→is-prop (cc f g)
---         (cc f g .center) (f ⨾ᵇ g , forced))
---       where
---         forced : emb (f ⨾ᵇ g) ≡ emb f · g
---         forced = refl
---   `forced` demands EH itself; forcing it with refl, the checker
---   rejects (exit 42):
+Route (a), the fiber route: inject `(f ⨾ᵇ g , ?)` into the
+contractible fiber of `cc f g` and project with `ap fst`. The
+attempted term, inside `bridge-forms`:
+
+```text
+agree-attempt-a : EA-stmt
+agree-attempt-a f g =
+  ap fst (is-contr→is-prop (cc f g)
+    (cc f g .center) (f ⨾ᵇ g , forced))
+  where
+    forced : emb (f ⨾ᵇ g) ≡ emb f · g
+    forced = refl
+```
+
+The hole `forced` demands `EH-stmt` itself — the route begs its
+own question. Forcing it with `refl`, the checker rejects
+(exit 42):
 
 ```text
 The terms
@@ -466,18 +521,22 @@ when checking that the expression refl has type
 emb (f ⨾ᵇ g) ≡ emb f · g
 ```
 
--- STUCK (route b — the action route): reach fam₂-at-the-
--- extraction via ap (_◃ φ) on the agreement, which is the goal
--- itself.
---   attempted term (inside bridge-forms):
---     fam2-ext
---       : ∀ {x y z} (f : hom x y) (g : hom y z) (φ : fam z)
---       → ((f ⨾R g) ◃ φ) ≡ (f ◃ (g ◃ φ))
---     fam2-ext f g φ = ap (_◃ φ) forced ∙ fam₂ f g φ
---       where
---         forced : f ⨾R g ≡ f ⨾ᵇ g
---         forced = refl
---   forcing it with refl, the checker rejects (exit 42):
+Route (b), the action route: derive the substrate action law at
+the extraction, `((f ⨾R g) ◃ φ) ≡ (f ◃ (g ◃ φ))`, by transporting
+`fam₂` along the agreement — which is the goal itself. The
+attempted term, inside `bridge-forms`:
+
+```text
+fam2-ext
+  : ∀ {x y z} (f : hom x y) (g : hom y z) (φ : fam z)
+  → ((f ⨾R g) ◃ φ) ≡ (f ◃ (g ◃ φ))
+fam2-ext f g φ = ap (_◃ φ) forced ∙ fam₂ f g φ
+  where
+    forced : f ⨾R g ≡ f ⨾ᵇ g
+    forced = refl
+```
+
+Forcing the agreement with `refl`, the checker rejects (exit 42):
 
 ```text
 The terms
@@ -488,18 +547,19 @@ are not equal at type hom x z
 when checking that the expression refl has type (f ⨾R g) ≡ (f ⨾ᵇ g)
 ```
 
--- Route (b)'s residue is the naked bridge — the machine-checked
--- record that rejected option (a) of the prep memo's note 7 (fam₂
--- stated at the extraction) is the same missing content, reached
--- from the other end.
---
--- ⊥-detector (pre-registered, memo §5-C3): DID NOT FIRE — neither
--- route closed. Had either closed while arm 2 stayed green, the
--- closure instantiated at collapsed (FS, CS, emb₀, cc₀) and fed
--- to no-extract-agree would have derived ⊥ — full stop, escalate.
---
--- VERDICT ARM 3: STUCK ×2 — the expected, healthy outcome; the
--- residues are the calibration record (arm 2 carries the pin).
--- Both walls are the A2 wall's ⨾ᵇ-shaped twin, consistent with
--- the §2 empty-interface inventory: no stratum field converts
--- emb-level paths into fam-level paths or vice versa.
+Route (b)'s residue is the bridge equation itself, bare — the
+same missing content as route (a), reached from the other end: a
+substrate action law stated at the extraction would demand
+precisely this equality, and no field supplies it.
+
+A consistency check binds the two halves of the certificate: had
+either route closed, instantiating the closure at the collapsed
+model and feeding it to `no-extract-agree` would have derived
+`⊥`. Neither closed, as the countermodel requires.
+
+Both rejections exhibit the same missing conversion — between
+equalities at the embedding level and equalities at the substrate
+level — and the records' field inventory offers nothing of that
+type. The walls recorded in `Gloss.InterchangeCircularity` meet
+the same missing conversion in another shape, on the two-sided
+interchange routes.

@@ -51,9 +51,13 @@ x ≢ y = ¬ (x ≡ y)
 
 ## Cancellation
 
-Left- and right-cancellation for `_∙_`, and the conjugation
-cancellation: a loop `ζ` conjugated into a composite that agrees
-with the plain composite must be trivial.
+Left- and right-cancellation for `_∙_`, the transposition
+`move-r` — from `p ∙ sym q ≡ r` conclude `p ≡ r ∙ q` — and the
+conjugation cancellation: a loop `ζ` conjugated into a composite
+that agrees with the plain composite must be trivial. `move-r`
+leans on the definitional involution `sym (sym q) ≐ q` to convert
+the cancellation endpoint (the involution is pinned by
+`Core.Groupoid.op-invol`).
 
 ```agda
 cancell
@@ -73,6 +77,13 @@ cancelr q t =
   sym (Path.assoc t q (sym q))
   ∙ ap (t ∙_) (Path.invr q)
   ∙ Path.unitr t
+
+move-r
+  : ∀ {u} {A : Type u} {a b c : A}
+  → (p : a ≡ b) (q : c ≡ b) (r : a ≡ c)
+  → p ∙ sym q ≡ r → p ≡ r ∙ q
+move-r p q r h =
+  sym (cancelr (sym q) p) ∙ ap (_∙ q) h
 
 conj-cancel
   : ∀ {u} {A : Type u} {a b c : A}

@@ -87,7 +87,10 @@ at the end — do not invent a rule from a split.
   2026-07-13): `u v w` for `Level`; `ℓ` is reserved for
   interval-indexed levels `ℓ : I → Level`
   (`src/Core/Base.lagda.md:33-34`). Core's `ℓ ℓ'`-for-`Level`
-  minority sites are baseline, not precedent.
+  minority sites are baseline, not precedent. In `Cat.*`, the
+  domain names `o` (object level) and `h` (hom level) are
+  sanctioned for category-shaped records (ruled 2026-07-13);
+  auxiliary levels there follow the general rule.
 
 ## Definitions and proofs
 
@@ -177,6 +180,21 @@ at the end — do not invent a rule from a split.
 - **Derived members live inside the record body** after `field`;
   consumer-facing projection interfaces are parameterized modules
   beside the type (`module Equiv (e : A ≃ B)`).
+- **Implicit universe parameters are earned by inference** (ruled
+  2026-07-13): a `Level` parameter is implicit exactly when a
+  later explicit argument's type determines it by unification
+  (`ob : Type o` determines `o`); a universe occurring only in
+  field types — or only in the record's own sort — is not
+  inferable at type formation and is declared explicit. Core
+  already practices this: `hMap (u : Level) {v} (X : Type v)`
+  makes the field-only `u` explicit and infers `v` from `X`
+  (`src/Core/Function/Partial/Fiber.lagda.md:39`). The ruling's
+  exemplar is `hcategory-structure {o} (h : Level) (ob : Type o)`
+  (`src/Cat/Codep/Base.lagda.md`), corrected from an implicit `h`
+  every use site had to brace-feed. A definition body that
+  happens to solve the meta (a copattern clause pinning the
+  field's level) is not inference — the signature must stand
+  alone.
 
 ## Prose and comments
 
@@ -224,7 +242,8 @@ author/date headers standard; no globally-redundant per-module
 flags; `u v w` for `Level` with `ℓ` reserved for `I → Level`; the
 ternary-first conformance sweep over Core's legacy `∙`-chains is
 GO; the WIP-module probe sections migrate to `Test/` per Public
-Module Style.
+Module Style; implicit universe parameters are earned by inference
+(the hcategory-structure correction).
 
 Still open (Core splits — flagged, not legislated):
 

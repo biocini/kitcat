@@ -16,6 +16,69 @@ concise, and honest about verification status (`verified` /
 
 ---
 
+## 2026-07-13 (sixth session) — the ratified promotions executed; the Gloss canonization standard
+
+Object: the queued A-batch promotions landed, and Lane's in-session
+rulings hardened Gloss into a canonization tier — formal
+mathematical presentation, no operational vocabulary, custody-
+disciplined re-freezes — applied to all eight certificates the same
+session. Everything below is UNCOMMITTED at close (one working set,
+19 modified + 2 new files), awaiting Lane's commit word.
+
+**Landed.** **T22 — the tautological filling recovers the
+representable core definitionally** (verified:
+`Gloss.TautologicalFilling`, frozen from the substrate spike +
+`Cat.Codep.Base` @ `dde1f57`; four killchecks now run with every
+check-all). **T23 — agreement ⟺ interchange-2, both routes
+walled** (verified: `Gloss.InterchangeCircularity`; walls re-pinned
+live, raw residues frozen). **T24 — the pentagon engine at +0**
+(inferred-from-machine-check: the tracked spike @ `dde1f57`, module
+A3, not frozen; the Test/ citation is Lane's granted exception,
+recorded in the entry). Bijection 8↔8. **The Gloss presentation
+standard** (Lane, four rulings; `src/Gloss/CLAUDE.md`): no
+operational vocabulary (ledger numbers, buzzwords, contentless
+labels), no templated prose, outcomes-as-mathematics with
+ledger-locators-follow-the-certificate, the Test/Gloss division of
+labor ("if it needs operational phrasing to be comprehensible, it
+isn't ready for Gloss"), and the comment-only re-freeze custody
+spec. **The retrofit of all eight certificates** under it
+(verified: code tokens byte-identical to their pins under
+independent comment-stripped extraction; every comment delta
+enumerated; `move-r` landed in `Core.Path.Base`; `sym-∙` uses
+swapped to the existing `sym-distr`; `sym-sym` verified
+refl-redundant and dropped; PropPinning dead code deleted; six
+operational identifiers renamed to mathematical names, rename map
+awaiting Lane's veto). **The `hcategory-structure` universe
+refactor** (Lane's ruling: non-inferable `h` explicit; verified:
+three modules edited, downstream proven zero-edit, T10 untouched;
+the earned-by-inference principle in `docs/styleguide.md` +
+root-contract cross-reference; the uniformity sweep found the
+library otherwise already conformant, 1 violator in 92 records).
+**The hotpath CLAUDE.md audit** (Lane-invoked; scores 89/95/84/92):
+nine approved edits applied — sharpest catch: the ratified
+re-freeze custody spec lived only in a gitignored ledger and is now
+contract-encoded; `Trait.*`/`Meta.*` rows dropped by Lane's ruling.
+**`Cat.Codep.Coherent`** swapped to the Core lemmas (Lane's GO).
+
+**Verified.** `just check-all` exit 0 at zero warnings (the
+mechanical gate's independent run pre-ruling-items; the final
+delta's coder run + lead spot-check per Lane's directive);
+mechanical gate PASS 0-Blocking over the 17+2 tree; citation review
+both Petrakis credits CONFIRMED at source; two accuracy reviews
+PASS-with-fixes, all fixes applied; freeze fidelity proven by
+per-block byte-match with a coverage map (now the contract's
+multi-certificate reading).
+
+**Superseded.** The pre-standard certificate presentation (run
+vocabulary, T-references, templated custody boilerplate); the
+one-spike-one-certificate fidelity reading; `hcategory-structure`'s
+implicit hom universe; the empty `Trait.*`/`Meta.*` namespace rows.
+
+Session log:
+[`notes/session-logs/2026-07-13-promotions-gloss-standard.md`](notes/session-logs/2026-07-13-promotions-gloss-standard.md)
+(process review inside: 7 friction points — the
+ruling-vs-in-flight-lag re-proposal leads — 4 validations).
+
 ## 2026-07-13 (fourth session) — T21 independence, the Kelly lift, the shelf's machine surface
 
 Object: the evening cascade after the shakedown close — the

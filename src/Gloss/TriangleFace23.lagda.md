@@ -4,29 +4,37 @@ July 2026
 Gloss: machine-checked evidence for T7 (history) in docs/gloss.md.
 Self-contained modulo Core.*; Cat.* definitions frozen at 9133396.
 
-UPDATE (2026-07-11): the "independent 2-cell" framing below was
-REFUTED. `absorb-r (idn y) ≡ post-eval (idn y)` is DERIVABLE — it is
-`gauge-r` in `Cat.Codep.Coherent` (homotopy-naturality of `absorb-r`
-along `post-eval`, whiskered against the θ-core reconciliations). The
-full `face₂₃` and Mac Lane triangle now live in
-`Cat.Codep.Triangle.triangle-full-tower`. This file is kept as the
-historical isolation of the bridge.
+This certificate is the historical isolation of the last face of
+the Mac Lane triangle in the representability presentation. What
+it pins down: with the coherence overlay in scope, the
+full-triangle face landing on the library's left-unit law
+(`face₂₃`) reduces exactly to the single 2-cell
+`absorb-r (idn y) ≡ post-eval (idn y)`.
 
-Wall witness: with the coherence overlay in scope, the full-triangle
-face₂₃ (landing on the *library* `unitl g`) reduces exactly to the
-2-cell `absorb-r (idn y) ≡ post-eval (idn y)` (once thought
-independent; now derived as `gauge-r`).
+In detail: the library's `unitl g` (from `Cat.Codep.Base`, frozen
+below) bakes in `emb-idn-absorb g`, whose pre-position reading is
+*definitionally* the `absorb-r` form (`K-is-absorbr = refl` below
+— the definitional half of the isolation). The overlay's
+`absorb-lcoh` supplies `absorb-l` in the `post-eval` form.
+Bridging the two — which the face must — is exactly
+`absorb-r (idn y) ≡ post-eval (idn y)`; everything *except* that
+cell closes by `refl`/`ap`, so `bridge-from-cell` is a total
+function of it and the cell is the entire remaining content of
+the face.
 
-The library `unitl g` (Cat.Codep.Base) bakes in `emb-idn-absorb g`,
-whose pre-position reading is *definitionally* the `absorb-r` form
-(`K-is-absorbr = refl` below). The overlay `absorb-lcoh` supplies
-`absorb-l` in the `post-eval` form. Bridging the two — which face₂₃
-must — is exactly `absorb-r (idn y) ≡ post-eval (idn y)`, which the
-`Cat.Codep.Coherent` header and MEMORY declare independent of the five
-base fields (S²/π₃ countermodel). Everything *except* that cell closes
-by `refl`/`ap`, so `bridge-from-cell` is a total function of it.
-
-Tracked Gloss evidence (T7 history).
+History, recorded honestly. When this file was written the cell
+was believed independent of the five base axioms, by
+misattribution to a countermodel that in fact obstructs one
+dimension higher — the sphere-based argument refutes the 3-cell
+obligation of the double-opposite involution, whose
+machine-checked obstruction is recorded in `Gloss.EightFieldWall`,
+not this π₁-level cell. On 2026-07-11 the cell was derived: it is
+`gauge-r` in `Cat.Codep.Coherent` (the free naturality square of
+`absorb-r` along `post-eval`, whiskered against the θ-core
+reconciliations), and the full `face₂₃` and Mac Lane triangle now
+live in `Cat.Codep.Triangle.triangle-full-tower`. The certificate
+stands as the frozen record of the reduction and of the corrected
+attribution.
 
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
@@ -359,6 +367,20 @@ record hcategory-2-coherent {o h} (C : hcategory o h) : Type (o ⊔ h) where
       ≡ interchange (idn x) (idn x) (idn x) (idn x)
 ```
 
+## The isolation
+
+`probe` reconstructs the face's context: an arbitrary `g` with a
+family leg `b`, the composite `c = pre g b`, and the two
+competing readings of the identity's absorption at `c`. The two
+formalization facts claimed above live here. `K-is-absorbr =
+refl` is the definitional half: the library's baked-in reading IS
+the absorb-r form, by conversion, so no proof step separates
+them. And `bridge-from-cell` is the reduction: a total function
+from the single cell to the face's bridge, with no other
+hypothesis — the typechecker accepting it with the cell as its
+only argument is the formalization of "the face reduces exactly
+to this cell".
+
 ```agda
 module _ {o h} (C : hcategory o h) (A2 : hcategory-2-coherent C) where
   open hcategory C
@@ -390,7 +412,7 @@ module _ {o h} (C : hcategory o h) (A2 : hcategory-2-coherent C) where
     absorb-l-posteval = absorb-lcoh g b
 
     -- The face₂₃ bridge (K ≡ absorb-l c) is a TOTAL function of the
-    -- one independent cell: everything else closes by refl/ap. No hole.
+    -- one remaining cell: everything else closes by refl/ap. No hole.
     bridge-from-cell
       : absorb-r (idn y) ≡ post-eval (idn y)
       → K-absorbr ≡ absorb-l c

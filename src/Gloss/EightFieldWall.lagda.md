@@ -4,11 +4,50 @@ July 2026
 Gloss: machine-checked evidence for T11 in docs/gloss.md.
 Self-contained modulo Core.*; Cat.* definitions frozen at 9133396.
 
-Spike: the ruled 8-field `hcategory-axioms₈` — the five base fields
-plus the three coherence cells (`absorb-lcoh`, `absorb-rcoh`,
-`couple-D₀`) — with the full op story (Route-B `compose-contrᵒ`, the
-θ bridges, the discharge of the three cells, and `op-invol`). Tracked
-Gloss evidence (T11). Gate-by-gate validation of Lane's design.
+This certificate concerns categories presented by
+representability: composition is not a primitive operation but is
+extracted from a contractibility axiom (`compose-contr`,
+asserting that each composite has a contractible fiber of
+representing morphisms), alongside an interchange law, an
+evaluation law, and two unit equivalences — the five-field record
+`hcategory-axioms`. The eight-field record `hcategory-axioms₈`
+extends these with three coherence cells (`absorb-lcoh`,
+`absorb-rcoh`, `couple-D₀`): 2-cells relating the derived
+identity-absorption paths to the interchange cell. Four results
+are established.
+
+First, the reconciliation `θ-core` — that the two ways of
+transporting the evaluation law across the identity's pre- and
+post-actions differ exactly by the interchange cell — is a
+theorem of the three cells, by direct path algebra.
+
+Second, the eight fields dualize (`op-axioms₈`, in module
+`op-dualization`): the opposite structure carries an eight-field
+record, with the opposite composition center chosen to be the
+swapped base center — so the extraction equation holds
+definitionally (`⨾ᴮ-def = refl`) — and the three cells discharged
+through two bridge 2-cells induced by `θ : idemᵒ ≡ idem`.
+
+Third, the obstruction (module `double-op`): for the double
+opposite,
+the five base fields lift to an involution record path
+(`invol-compose-contr` and the definitional lifts), but each
+coherence-cell component reduces to an irreducible 3-cell
+obligation — `bridge-lᴮ ∙ bridge-rᴬ ≡ qmove`, recorded below with
+the exact goal of the `refl` probe — which closes neither by path
+algebra nor by projection from a contractible fiber. The two
+routes probed were fixed in advance, so the obstruction is not an
+artifact of proof search; both are recorded with their residues.
+What this file establishes is that the involution is not
+derivable by these routes; the stronger claim — that no
+derivation exists at all — rests on a countermodel argument
+recorded in the theorem ledger and is NOT mechanized here.
+
+Fourth, the record is inhabitable and assembles: propositional
+homs discharge all three cells (`prop-homs`), and `assemble₈`
+packages five axioms plus three cells into the bundle
+`hcategory₈`, instantiated from a four-axiom category record
+(`gate4-type-instance`).
 
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
@@ -30,7 +69,8 @@ open import Core.Function.Embedding
         ; image-fibers-contr→is-embedding )
 open import Core.HLevel.Base using (retract→is-hlevel)
 open import Core.Coherence.Base using (coh-project; coh-project₃)
-open import Core.Path.Base using (ap-comp)
+open import Core.Path.Base using (ap-comp; move-r)
+open import Core.Groupoid using (sym-distr)
 open import Core.Data.Nat.Type using (Z)
 open import Core.Data.Sigma.Base using (swap)
 ```
@@ -41,6 +81,8 @@ Verbatim copies of the `Cat.Codep.Base` structure record, coupling
 provenance lemmas, and five-field axioms record (the bundle is not
 needed — this file bundles its own `hcategory₈`). Self-contained
 modulo `Core.*`; the live `Cat.*` sources may change, this may not.
+Parenthetical tags such as `(fam₂)` in the frozen comments name the
+corresponding law in Petrakis's family-structure presentation.
 
 ```agda
 -- Frozen from Cat.Codep.Base @ 9133396 (Gloss certificates inline
@@ -314,8 +356,9 @@ record hcategory-axioms {o h} {ob : Type o}
 ## Frozen `Cat.Codep.Op` opposite machinery
 
 The subset of `Cat.Codep.Op` this file consumes: `op-structure`, the
-composite transposers `swap·`/`swap·'`, the Route-B `op-comp-path`/
-`op-axioms`, and `op-structure-invol`. The unused parity witnesses and
+composite transposers `swap·`/`swap·'`, the definitional-center
+`op-comp-path`/`op-axioms`, and `op-structure-invol`. The unused
+parity witnesses and
 `op`/`op-invol`/`op-axioms-invol` are omitted.
 
 ```agda
@@ -463,32 +506,7 @@ record category o h : Type₊ (o ⊔ h) where
 
 ```
 
-## Generic path helpers
-
-```agda
-sym-sym : ∀ {u} {A : Type u} {a b : A} (p : a ≡ b) → sym (sym p) ≡ p
-sym-sym p = J (λ _ p → sym (sym p) ≡ p) refl p
-
-sym-∙ : ∀ {u} {A : Type u} {a b d : A} (p : a ≡ b) (q : b ≡ d)
-      → sym (p ∙ q) ≡ sym q ∙ sym p
-sym-∙ {a = a} p q =
-  J (λ _ q → sym (p ∙ q) ≡ sym q ∙ sym p)
-    (ap sym (Path.unitr p) ∙ sym (Path.unitl (sym p))) q
-
--- Move a `sym q` factor across the equation: from p ∙ sym q ≡ r to
--- p ≡ r ∙ q.
-move-r
-  : ∀ {u} {A : Type u} {a b c : A}
-    (p : a ≡ b) (q : c ≡ b) (r : a ≡ c)
-  → p ∙ sym q ≡ r → p ≡ r ∙ q
-move-r p q r H =
-    sym (Path.unitr p)
-  ∙ ap (p ∙_) (sym (Path.invl q))
-  ∙ Path.assoc p (sym q) q
-  ∙ ap (_∙ q) H
-```
-
-## GATE 1 — the 8-field record and the derived θ-core
+## The eight-field record and the derived θ-core
 
 `hcategory-axioms₈` is `hcategory-axioms` with the three coherence
 cells spliced in after `absorb-r`. The five base fields and the
@@ -625,7 +643,7 @@ record hcategory-axioms₈ {o h} {ob : Type o}
     : ∀ {x y} (F : composite x y) → is-prop (is-representable F)
   is-representable-prop = image-fibers-contr→is-embedding emb-image-contr
 
-  -- Spike-0: θ-core derived from the three cells by direct ∙-algebra.
+  -- θ-core derived from the three cells by direct ∙-algebra.
   θ-core
     : ∀ {x}
     → ap (pre (idn x)) (post-eval (idn x))
@@ -668,7 +686,11 @@ record hcategory-axioms₈ {o h} {ob : Type o}
         ∙ Path.unitl apPre
 ```
 
-## The 8-field bundle
+## The eight-field bundle
+
+The bundle packages a carrier, a structure, and the eight-field
+axioms, re-exporting both records' fields; `assemble₈` and the
+instance module at the end of the file return it.
 
 ```agda
 record hcategory₈ (o h : Level) : Type ((o ⊔ h) ₊) where
@@ -681,7 +703,15 @@ record hcategory₈ (o h : Level) : Type ((o ⊔ h) ₊) where
   open hcategory-axioms₈ axioms public
 ```
 
-## GATE-1 regression witnesses
+## Regression witnesses: the two pinned reductions
+
+The derivation of `θ-core` leans on two definitional reductions:
+reading `emb (idn x)` at a context whose family slot holds the
+identity is definitionally the `post` action, and at a
+cofamily-centered context it is definitionally the `pre` action.
+The two witnesses below pin those reductions as `refl`: were a
+change to stop either from firing, this certificate would fail to
+typecheck.
 
 ```agda
 module _ {o h} {ob : Type o} {S : hcategory-structure {o} {h} ob}
@@ -707,14 +737,15 @@ module _ {o h} {ob : Type o} {S : hcategory-structure {o} {h} ob}
   killcheck-apPre = refl
 ```
 
-## GATE 2 — Route-B op axioms and the 8-field discharge
+## The opposite axioms and the eight-field discharge
 
-Working context: an 8-field axioms value `A₈` over `S`, with the
-5-field projection `A₅`, the op structure `Sᵒ`, and the Route-B op
-axioms `Aᵒᴮ`.
+Working context: an eight-field axioms value `A₈` over `S`, with
+the five-field projection `A₅`, the opposite structure `Sᵒ`, and
+the opposite axioms `Aᵒᴮ`, whose composition center is chosen
+definitionally below.
 
 ```agda
-module gate2 {o h} {ob : Type o} {S : hcategory-structure {o} {h} ob}
+module op-dualization {o h} {ob : Type o} {S : hcategory-structure {o} {h} ob}
   (A₈ : hcategory-axioms₈ S) where
   private
     module S  = hcategory-structure S
@@ -733,7 +764,14 @@ module gate2 {o h} {ob : Type o} {S : hcategory-structure {o} {h} ob}
   private module A₅ = hcategory-axioms A₅
 ```
 
-### Route-B `compose-contrᴮ` — definitional center
+### `compose-contrᴮ` — the definitional choice of center
+
+The opposite composition center is not re-derived: it is CHOSEN
+to be the swapped base center `g ⨾ f`, with the contractibility
+transported from the base record. Under this choice the
+op-extraction equation holds definitionally (`⨾ᴮ-def = refl`
+below), which is what makes the eight-field discharge and the
+later double-opposite analysis tractable.
 
 ```agda
   compose-contrᴮ
@@ -789,7 +827,7 @@ Regression witness: the op extraction is the base extraction swapped.
       IC' = A₅.interchange (S.idn x) (S.idn x) (S.idn x) c
 ```
 
-### θ — `idemᵒ ≡ idem`, closed against the GATE-1 θ-core
+### θ — `idemᵒ ≡ idem`, closed against the derived θ-core
 
 ```agda
   module θ-derivation {x : ob} where
@@ -862,6 +900,11 @@ op record's `absorb-r` to the base `absorb-l`, needing both `θ` and the
 
 ### `couple-D₀ᵒ` — the conjugated ap-sym image
 
+The opposite record's centre cell follows from the two bridges
+and the base cell: the two bridge paths carry the statement onto
+the base absorption paths, and the base `couple-D₀`, conjugated
+through `sym`, closes it.
+
 ```agda
   couple-D₀ᵒ
     : ∀ {x}
@@ -874,8 +917,7 @@ op record's `absorb-r` to the base `absorb-l`, needing both `θ` and the
       IC = A₅.interchange (S.idn x) (S.idn x) (S.idn x) (S.idn x)
       conj : A₅.absorb-r D₀ ∙ sym (A₅.absorb-l D₀) ≡ sym IC
       conj =
-          ap (_∙ sym (A₅.absorb-l D₀)) (sym (sym-sym (A₅.absorb-r D₀)))
-        ∙ sym (sym-∙ (A₅.absorb-l D₀) (sym (A₅.absorb-r D₀)))
+          sym (sym-distr (A₅.absorb-l D₀) (sym (A₅.absorb-r D₀)))
         ∙ ap sym (A₈.couple-D₀ {x})
 ```
 
@@ -906,28 +948,36 @@ op record's `absorb-r` to the base `absorb-l`, needing both `θ` and the
   ⨾ᵒ₈-def f g = refl
 ```
 
-## GATE 3 — op-invol for the 8 fields
+## The double-opposite obstruction
 
-`op-axioms₈` exposed as a function, so the double op composes.
+Strict self-duality at the eight-field level would be a dependent
+path of records over the structure involution
+`op-structure-invol S`, identifying the double-opposite axioms
+with the original ones. This section establishes exactly how far
+that path exists: the five base fields lift, and each coherence
+cell walls at an irreducible 3-cell obligation. First,
+`op-axioms₈` exposed as a function, so the double opposite
+composes.
 
 ```agda
 op-axioms₈-op
   : ∀ {o h} {ob : Type o} {S : hcategory-structure {o} {h} ob}
   → hcategory-axioms₈ S → hcategory-axioms₈ (op-structure S)
-op-axioms₈-op A₈ = gate2.op-axioms₈ A₈
+op-axioms₈-op A₈ = op-dualization.op-axioms₈ A₈
 ```
 
 ### Positive result: the five old fields lift
 
-The five old components lift exactly as the Op module's
-`op-axioms-invol`: `interchange` double sym-mirror cancels (`~~i = i`),
+The five old components lift exactly as in `Cat.Codep.Op`'s
+five-field `op-axioms-invol`: `interchange` double sym-mirror
+cancels (`~~i = i`),
 `post-eval` is self-mirror, the unit equivalences swap back, and
 `compose-contr` is bridged by `is-prop→PathP` (its family is constant
 along `op-structure-invol`, since `emb`/`pre`/`post` are). The four
 non-`compose-contr` lifts are definitional (`refl`), checked here.
 
 ```agda
-module gate3 {o h} {ob : Type o} {S : hcategory-structure {o} {h} ob}
+module double-op {o h} {ob : Type o} {S : hcategory-structure {o} {h} ob}
   (A₈ : hcategory-axioms₈ S) where
   private
     module S  = hcategory-structure S
@@ -947,7 +997,7 @@ module gate3 {o h} {ob : Type o} {S : hcategory-structure {o} {h} ob}
     : ∀ {x y} (f : S.hom x y) → OO.post-eval f ≡ A₈.post-eval f
   invol-post-eval-def f = refl
 
-  -- The double-op compose-contr changes value (Route-B center), but its
+  -- The double-op compose-contr changes value (the chosen center), but its
   -- fibre-of-`emb` family is constant along `op-structure-invol` and
   -- `is-contr`-propositional, so `is-prop→PathP` covers it.
   invol-compose-contr
@@ -961,11 +1011,13 @@ module gate3 {o h} {ob : Type o} {S : hcategory-structure {o} {h} ob}
       (OO.compose-contr f g) (A₈.compose-contr f g)
 ```
 
-### WALL: the three cell components
+### The three cell components do not close
 
-The three cell components of the involution do NOT close. The `refl`
-probe (attempt 1) reports, for the `absorb-lcoh` component, the exact
-PathP goal (at outer dim `i`, inner dim `i₁`):
+The three cell components of the involution do NOT close. The
+probe protocol: force the missing component with `refl`, record
+the typechecker's report, revert. For the `absorb-lcoh` component
+the probe reports the exact PathP goal (at outer dimension `i`,
+inner dimension `i₁`):
 
 ```text
 -- Goal (both endpoints : S.hom y v, at dim i,i₁):
@@ -1002,19 +1054,19 @@ whiskering off `A₈.absorb-lcoh`
 leaves the irreducible obligation
 
 ```text
---   bridge-lᴮ ∙ bridge-rᴬ  ≡  qmove          -- WALL
+--   bridge-lᴮ ∙ bridge-rᴬ  ≡  qmove    -- the irreducible obligation
 ```
 
 both sides paths `op(op).absorb-l (pre g b) ≡ A₈.absorb-l (pre g b)` in
 the path space `pre (idn y) (pre g b) ≡ pre g b`.
 
-WALL, route (a) — direct telescope: `bridge-lᴮ ∙ bridge-rᴬ ≡ qmove` is
-a genuine 3-cell. The bridges are `ap _ θ` composites and `qmove` is a
-transport of `absorb-l` along the `compose-contr` `is-prop→PathP`; they
-do not agree by `∙`-algebra (nor definitionally — the `refl` probe
-rejects). Not closable.
+Route (a), the direct telescope: `bridge-lᴮ ∙ bridge-rᴬ ≡ qmove`
+is a genuine 3-cell. The bridges are `ap _ θ` composites and
+`qmove` is a transport of `absorb-l` along the `compose-contr`
+`is-prop→PathP`; they do not agree by `∙`-algebra (nor
+definitionally — the `refl` probe rejects). Not closable.
 
-WALL, route (b) — `coh-project₃` (attempt 2): inapplicable.
+Route (b), projection through `coh-project₃`: inapplicable.
 `coh-project₃` frees a 3-cell only when both 2-cells are `ap (ap π)`
 images of paths in
 a CONTRACTIBLE fibre. But the target path space
@@ -1026,14 +1078,18 @@ which to project. And the `absorb-l` route factors through
 `equiv→lc unit-eqvl` (a unit-equivalence cancellation), not an
 `emb`-fibre projection, so it is not in the image of any `ap (ap π)`.
 
-Both routes wall. The three cells are structurally identical
+Both routes fail. The three cells are structurally identical
 (`absorb-rcoh` is the `pre`/`post` mirror; `couple-D₀` the
 doubly-centered instance), so all three carry the same 3-cell
-obligation. This confirms the design memo's flag: `op-invol` for the
-cells is the one unverified claim, and it needs either a new coherence
-field (a chosen `bridge-lᴮ ∙ bridge-rᴬ ≡ qmove` datum) or a
-representability overlay one rung up — not derivable by the machinery
-available. The non-closing involution is left commented below.
+obligation. That the involution might not extend to the cells was
+registered in advance as the design's one unverified claim; the
+obstruction here confirms it: an involution for the cells needs
+either a new coherence field (a chosen
+`bridge-lᴮ ∙ bridge-rᴬ ≡ qmove` datum) or a representability
+overlay one rung up — it is not derivable by the machinery
+available here. The non-closing involution is displayed below,
+commented out; it is exactly the dependent record path that
+strict eight-field self-duality would require.
 
 ```text
 -- op-axioms-invol₈
@@ -1050,13 +1106,15 @@ available. The non-closing involution is left commented below.
 -- op-axioms-invol₈ A₈ i .couple-D₀     = {! doubly-centered !}
 ```
 
-## GATE 4 — instance skeletons
+## Inhabitation: instances and assembly
 
 ### Walking-arrow style: prop homs discharge all three cells
 
 If homs are propositions, hom-path spaces are propositions
-(`is-prop→is-set`), so every 2-cell is inhabited — the three cells are
-one-liners.
+(`is-prop→is-set`), so every 2-cell is inhabited — the three
+cells are one-liners. In particular the eight-field record is not
+vacuous: any five-field structure with propositional homs
+inhabits it.
 
 ```agda
 module prop-homs {o h} {ob : Type o} (S : hcategory-structure {o} {h} ob)
@@ -1081,11 +1139,12 @@ module prop-homs {o h} {ob : Type o} (S : hcategory-structure {o} {h} ob)
   axioms₈ .hcategory-axioms₈.couple-D₀       = hom-set _ _ _ _
 ```
 
-### The refactor equation's new shape
+### Assembly: five axioms plus three cells
 
-`assemble₈` is the new refactor shape: the five base axioms plus the
-three coherence cells assemble into the 8-field record. Checked, not
-merely statable.
+`assemble₈` assembles the five base axioms plus the three
+coherence cells into the eight-field record — the equation
+"category = five axioms + three cells" as a checked term, not
+merely a statable one.
 
 ```agda
 assemble₈
@@ -1127,8 +1186,8 @@ The structure transcription from `Cat.Type.category` is a clean
 uncurry of the `emb` context (`noy`/`yon` = `pre`/`post`). Feeding the
 materialised five-field axioms `A₅` and the three cells into
 `assemble₈` yields the bundle — the literal
-`category → coh-l → coh-r → coh-θ → hcategory₈` shape. The five-field
-materialisation `A₅` (the existing refactor) is taken as a parameter.
+`category → coh-l → coh-r → coh-θ → hcategory₈` shape. The
+five-field materialisation `A₅` is taken as a parameter.
 
 ```agda
 module gate4-type-instance where

@@ -4,22 +4,45 @@ July 2026
 Gloss: machine-checked evidence for T20 in docs/gloss.md.
 Self-contained modulo Core.*; Cat.* definitions frozen at 9133396.
 
-Spike: reindex/whisker face bridges via native `pcom` operations.
+This certificate is a measurement: what does it cost, in
+proof-term plumbing, to carry the pentagon construction's fiber
+witnesses in the library's native ternary composition `pcom`
+rather than in right-nested binary form? The object measured is
+the Mac Lane pentagon for the representability presentation: five
+fiber points over the four-fold composite, five faces relating
+adjacent points inside one contractible fiber, and the projected
+pentagon identity. Three staged variants are compared against a
+fixed reference; the cost unit throughout — an "atom" — is one
+lemma application in a bridge term.
 
-Four staged variants of the `Cat.Codep` pentagon tower, testing whether
-the reindex snd-bridges reduce to single `pcom.catr` applications and
-whether the whisker faces incur a conservation-law `+1` step when the
-`ptᵢ` endpoints are carried in native ternary `pcom` form.
+`baseline` is the reference: the unmodified construction, fiber
+paths collapsed inside one contractible fiber and no unit axiom
+invoked, against which every variant is diffed.
 
-- `baseline` — verbatim `collapse-B` (Move B only, unit-free). Oracle.
-- `stage1`  — reindex faces routed through `pcom.catr`, pt-endpoints
-              kept binary. (KILL-gate K1.)
-- `stage2`  — pt-endpoints as native `pcom`; reindex via `catr`,
-              whisker faces reconciled. (Conservation-law gate K2.)
-- `stage3`  — scaffold helpers `reindex-face`/`whisker-face` on the
-              K2 winner.
+`stage1` tests whether the reindexing faces can route through
+`pcom.catr` while the endpoints stay binary. It fails to
+typecheck, and the verbatim error is preserved: the binary
+endpoint `A ∙ (B ∙ C)` and `pcom.catr`'s ternary left-hand side
+are distinct hcom terms, so no definitional match exists. The
+failure was registered in advance as the expected outcome — the
+mismatch is structural, not a defect to patch.
 
-Tracked Gloss evidence (T20).
+`stage2` carries all five endpoints in native ternary form: the
+reindex faces then close in a single `catr` application each, but
+every whisker face pays one `pcom→∙` reconciliation per bridge —
+the conservation observation that names this file: the cost does
+not vanish, it moves. The face with a naturality tail (`face₁₄`)
+resists the uniform treatment entirely and keeps its binary
+reassociation.
+
+`stage3` factors the surviving pattern into scaffold helpers
+(`reindex-face`, `whisker-face`).
+
+The reading: binary right-nested fiber witnesses are the measured
+optimum among these variants for witnesses born by iterated
+lifting — a comparison among the staged variants, not a global
+optimum over all conceivable constructions. The library's
+ternary-first idiom governs born-ternary compositions, not these.
 
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
@@ -326,7 +349,14 @@ record hcategory (o h : Level) : Type ((o ⊔ h) ₊) where
   open hcategory-axioms axioms public
 ```
 
-## Stage 0 — baseline (verbatim collapse-B, Move B only, unit-free)
+## Stage 0 — the reference construction
+
+`baseline` is the unmodified pentagon construction, the fixed
+reference every later variant is diffed against: the ternary
+associator `assoc` from one contractible fiber, the five fiber
+points over the four-fold composite `E₄`, the five faces, and the
+projected `pentagon`. Parallel fiber paths are identified inside
+one contractible fiber throughout; no unit axiom is invoked.
 
 ```agda
 module baseline {o h} (C : hcategory o h) where
@@ -517,14 +547,18 @@ module baseline {o h} (C : hcategory o h) where
           (ap (f ⨾_) (assoc g h k))
 ```
 
-## Stage 1 — reindex faces via `pcom.catr`; binary pt-ends (K1)
+## Stage 1 — reindex via `pcom.catr` over binary endpoints: impossible
 
-**KILL K1 (confirmed).** With the four reindex snd-bridges rerouted to
-`pcom.catr` but the `ptᵢ.snd` kept in binary 3-segment form, the very
-first reindex bridge (`w₂₃`) fails to typecheck. `pcom.catr A B C` has
-type `pcom (sym A) B C ≡ (A ∙ B) ∙ C`; its RHS `(A ∙ B) ∙ C` does match
-`R₂₃ (pt-l …) .snd` definitionally, but its LHS `pcom (sym A) B C` does
-NOT match the binary `pt₂ .snd = A ∙ (B ∙ C)`. The verbatim error was:
+The impossibility, confirmed. With the four reindex snd-bridges
+rerouted to `pcom.catr` but the `ptᵢ.snd` kept in binary
+3-segment form, the very first reindex bridge (`w₂₃`) fails to
+typecheck. `pcom.catr A B C` has type
+`pcom (sym A) B C ≡ (A ∙ B) ∙ C`; its RHS `(A ∙ B) ∙ C` does match
+`R₂₃ (pt-l …) .snd` definitionally, but its LHS `pcom (sym A) B C`
+does NOT match the binary `pt₂ .snd = A ∙ (B ∙ C)` — the two are
+distinct hcom terms, so no definitional match can exist and the
+typecheck failure is evidence of impossibility, not of a
+misassembled proof. The verbatim error was:
 
     error: [UnequalTerms]
     The terms
@@ -538,10 +572,12 @@ NOT match the binary `pt₂ .snd = A ∙ (B ∙ C)`. The verbatim error was:
         (ap (_· k) (·-comp (emb f) g h₁))
     has type pt₂ .snd ≡ R₂₃ (pt-l f (g ⨾ h₁) k) .snd
 
-Per K1, we do not patch with an extra `∙` — the fix is structural
-(carry the endpoints in native `pcom` form), which is exactly Stage 2.
-The module below is preserved verbatim in a non-checked fence for the
-record; only the reindex snd-bridges differ from `baseline`.
+The registered criterion forbids patching with an extra `∙` — a
+patch would concede the point being measured; the fix is
+structural (carry the endpoints in native `pcom` form), which is
+exactly Stage 2. The module below is preserved verbatim in a
+non-checked fence for the record; only the reindex snd-bridges
+differ from `baseline`.
 
 ```text
 -- Stage 1 changed ONLY the reindex snd-bridges (Path.assoc → pcom.catr)
@@ -564,17 +600,20 @@ record; only the reindex snd-bridges differ from `baseline`.
 --
 -- Typechecking halts at the FIRST reindex bridge (w₂₃) with the
 -- [UnequalTerms] error quoted above: the binary pt₂.snd = A ∙ (B ∙ C)
--- does not match pcom.catr's LHS pcom (sym A) B C. KILL K1 — reindex
--- via catr is impossible while the pt-endpoints stay binary.
+-- does not match pcom.catr's LHS pcom (sym A) B C. Reindex via catr
+-- is impossible while the pt-endpoints stay binary.
 ```
 
-## Stage 2 — pt-endpoints native `pcom`; reindex via `catr` (K2 gate)
+## Stage 2 — native ternary endpoints: the cost moves
 
-All five `ptᵢ.snd` carry the native ternary `pcom (sym s1) s2 s3` form.
-Reindex faces now typecheck through `pcom.catr` (its LHS is the pt's
-literal form). Whisker faces each pay a `+1` `pcom→∙` reconciliation
-(prepended on `w`, appended on `v`) to bridge the pcom endpoint against
-the `Λ`-lift's right-nested binary form — see the K2 analysis note.
+All five `ptᵢ.snd` carry the native ternary `pcom (sym s1) s2 s3`
+form. Reindex faces now typecheck through `pcom.catr` (its LHS is
+the pt's literal form). Whisker faces each pay a `+1` `pcom→∙`
+reconciliation (prepended on `w`, appended on `v`) to bridge the
+pcom endpoint against the `Λ`-lift's right-nested binary form:
+the lift composes its witness with `_∙_`, so each whisker bridge
+must convert between the ternary endpoint and that binary shape
+once per side.
 
 ```agda
 module stage2 {o h} (C : hcategory o h) where
@@ -789,15 +828,16 @@ module stage2 {o h} (C : hcategory o h) where
           (ap (f ⨾_) (assoc g h k))
 ```
 
-## Stage 3 — scaffold helpers on the K2 survivor (stage2)
+## Stage 3 — scaffold helpers on the surviving variant
 
-Two local helpers factor the face boilerplate. `reindex-face` cleanly
-handles face₂₃/face₄₅ (pure `catr` on both bridges). `whisker-face`
-factors the `contr-face` + `Λ`-core skeleton for face₁₂/face₃₅ (the
-`+1` `pcom→∙` bridges stay caller-side — their `s1 s2 s3` segment types
-depend on the face and resist being hidden without fragile inference).
-face₁₄ stays bespoke: its naturality tail forbids the uniform `catr`
-(K3, expected).
+Two local helpers factor `stage2`'s face boilerplate.
+`reindex-face` cleanly handles face₂₃/face₄₅ (pure `catr` on both
+bridges). `whisker-face` factors the `contr-face` + `Λ`-core
+skeleton for face₁₂/face₃₅ (the `+1` `pcom→∙` bridges stay
+caller-side — their `s1 s2 s3` segment types depend on the face
+and resist being hidden without fragile inference). face₁₄ stays
+bespoke: its naturality tail forbids the uniform `catr`, an
+outcome registered in advance as expected.
 
 ```agda
 module stage3 {o h} (C : hcategory o h) where
@@ -985,7 +1025,7 @@ module stage3 {o h} (C : hcategory o h) where
     face₄₅ : α₄₅ ≡ assoc f g (h ⨾ k)
     face₄₅ = reindex-face f g (h ⨾ k) (·-comp (emb f · g) h k) σ₄₅
 
-    -- face₁₄: bespoke (K3). The naturality tail needs the binary
+    -- face₁₄: bespoke. The naturality tail needs the binary
     -- intermediate, so the reassociation stays Path.assoc and the native
     -- pcom endpoint is reached by a trailing pcom→∙.
     R₁₄ : fiber emb (E₃ (f ⨾ g) h k) → fiber emb E₄

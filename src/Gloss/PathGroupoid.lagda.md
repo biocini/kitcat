@@ -4,18 +4,43 @@ July 2026
 Gloss: machine-checked evidence for T18, T13(i) in docs/gloss.md.
 Self-contained modulo Core.*; Cat.* definitions frozen at 9133396.
 
-Bounded SPIKE — path-groupoid instance of `hcategory` over an
-abstract type, plus the level-2 coherence rungs and membership
-diagnosis, checked by concrete path algebra.
+For any type `A`, its path groupoid — objects the points of `A`,
+morphisms the identifications `x ≡ y`, identity `refl` — is a
+category in the representability presentation (`path-cat`). The
+embedding sends a morphism to its two-sided composite action:
+`emb f ((w , a) , (v , b)) = pcom (sym a) f b`, the born-ternary
+composite that traverses the cofamily leg backwards, then `f`,
+then the family leg. The context of such a composite is a product
+of contractible singletons, so `emb` is an equivalence
+(`emb-is-equiv`), and the representability axiom `compose-contr`
+holds for free — fibers of an equivalence are contractible; the
+remaining four axioms are concrete path algebra over `pcom`.
 
-The carrier: `ob := A`, `hom x y := x ≡ y`, `idn := refl`, and the
-two-sided embedding `emb f ((w , a) , (v , b)) := pcom (sym a) f b`
-— the born-ternary composite `a ⁻¹-side · f · b`. `emb` is an
-equivalence (its context `ctx x y` is a product of contractible
-singletons), so `compose-contr` is `eqv-fibers`; the other four
-axioms are pcom path algebra. This reuses the `Cat.Type` path
-groupoid design (`Cat.Groupoid`, `Core.Groupoid.Virtual.repr`) but
-targets the uncurried `hcategory` record of `Cat.Codep.Base`.
+Two further results calibrate what such carriers can and cannot
+detect. Because `emb` is an equivalence, `ap emb` is one too, so
+every fiber over a path between `emb`-images is contractible
+(`ap-emb-inert`): paths between embedded morphisms carry no data
+beyond their endpoints. This grounds the first clause of the
+trichotomy against propositional pinning of the coherence cells —
+every representability-shaped proposition is contractible in
+path-groupoid carriers, in honest and twisted structures alike,
+so no such proposition can pin the cells; the trichotomy's other
+clauses live in `Gloss.PropPinning`. The generic membership
+machinery (`ap-pre-inert`, `rung-l-from-membership`) makes the
+inertness reusable over any hcategory.
+
+Finally, the three level-2 coherence rungs are recorded as stated
+goals with their empirical residues: even in this maximally
+coherent carrier each rung is a genuine non-trivial 2-cell (the
+`refl` probe rejects, with the hcom mismatch transcribed), and
+the analytic decomposition reduces the θ-rung to two identities
+(A) and (B) relating the interchange filler to the two unit
+contractions — evidence that the obstruction belongs to the
+structure, not to exotic carriers.
+
+The construction reuses the `Cat.Type` path-groupoid design
+(`Cat.Groupoid`, `Core.Groupoid.Virtual.repr`) but targets the
+uncurried `hcategory` record of `Cat.Codep.Base`.
 
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
@@ -322,6 +347,11 @@ record hcategory (o h : Level) : Type ((o ⊔ h) ₊) where
 
 ## The instance
 
+The carrier: `ob := A`, `hom x y := x ≡ y`, and `idn x := refl` —
+the identity morphism is the constant path, the only canonical
+inhabitant. The embedding reads a context as the ternary
+composite of its three legs, with the cofamily leg reversed.
+
 ```agda
 module _ {u} (A : Type u) where
 
@@ -390,9 +420,10 @@ The five axioms.
   path-cat .hcategory.axioms = path-axioms
 ```
 
-## Deliverable (3): membership machinery — generic over any hcategory
+## Membership machinery, generic over any hcategory
 
-`kill-1` — because `pre (idn x)` is an equivalence (`unit-eqvl`),
+`ap-pre-inert` — because `pre (idn x)` is an equivalence
+(`unit-eqvl`),
 `ap (pre (idn x))` is an equivalence, so all its fibers are
 contractible. Free from `unit-eqvl`; the composite
 `is-embedding→ap-equiv ∘ is-equiv→is-embedding : is-equiv f →
@@ -403,21 +434,24 @@ Core gap here.
 module membership {o h} (C : hcategory o h) where
   open hcategory C
 
-  kill-1 : ∀ {x v} (w : hom x v)
-           (ε : pre (idn x) (pre (idn x) w) ≡ pre (idn x) w)
-         → is-contr (fiber (ap (pre (idn x))) ε)
-  kill-1 {x} w ε =
+  ap-pre-inert
+    : ∀ {x v} (w : hom x v)
+      (ε : pre (idn x) (pre (idn x) w) ≡ pre (idn x) w)
+    → is-contr (fiber (ap (pre (idn x))) ε)
+  ap-pre-inert {x} w ε =
     is-embedding→ap-equiv (is-equiv→is-embedding unit-eqvl) .eqv-fibers ε
 ```
 
-`kill-3` — membership + `kill-1` ⇒ rung-l. Given the membership
-witness `M` (that the interchange-route's image under
-`ap (pre (idn y))` is the idempotency square `Qc`), the crux closes
-by the `equiv→lc-section` uniqueness argument: `ap (pre (idn y))` is
-injective, `ap (pre (idn y)) (absorb-l c) = Qc` by
-`equiv→lc-section`, and `M` matches it against the route. This is
-`CodepTriangleCrux.crux'` with its stuck residue `R-core` supplied
-as the hypothesis. Fully generic.
+`rung-l-from-membership` — membership + `ap-pre-inert` ⇒ rung-l.
+Given the membership witness `M` (that the interchange-route's
+image under `ap (pre (idn y))` is the idempotency square `Qc`),
+the crux closes by the `equiv→lc-section` uniqueness argument:
+`ap (pre (idn y))` is injective,
+`ap (pre (idn y)) (absorb-l c) = Qc` by `equiv→lc-section`, and
+`M` matches it against the route. This is
+the crux closure with its one stuck residue — the 2-cell `R-core`
+reconciling the interchange route with the unit route for
+`pre (idn y)` — supplied as the hypothesis. Fully generic.
 
 ```agda
   module _ {y z v} (g : hom y z) (b : hom z v) where
@@ -433,19 +467,23 @@ as the hypothesis. Fully generic.
       Qc = sym (subst (λ t → pre t c ≡ pre (idn y) (pre (idn y) c))
                  idem (pre-comp (idn y) (idn y) c))
 
-    kill-3 : ap (pre (idn y)) RHSl ≡ Qc
-           → absorb-l c ≡ RHSl
-    kill-3 M =
+    rung-l-from-membership
+      : ap (pre (idn y)) RHSl ≡ Qc
+      → absorb-l c ≡ RHSl
+    rung-l-from-membership M =
       equiv→lc (is-embedding→ap-equiv (is-equiv→is-embedding unit-eqvl))
         (equiv→lc-section unit-eqvl Qc ∙ sym M)
 ```
 
-## Deliverable (4, STRETCH): inertness of `ap emb`
+## Inertness of `ap emb`
 
 Since `emb` is an equivalence in the instance, `ap emb` is an
 equivalence, so `fiber (ap emb) Θ` is contractible for any
-`Θ : emb f ≡ emb f'`. The trap is real: paths between `emb`-images
-carry no extra data.
+`Θ : emb f ≡ emb f'`: paths between `emb`-images carry no data
+beyond their endpoints in this carrier. This is the blindness the
+synopsis describes — a proposition of this shape is contractible
+whatever 2-cell data the structure carries, so it cannot
+distinguish an honest structure from a twisted one.
 
 ```agda
 module inert {u} {A : Type u} where
@@ -459,7 +497,7 @@ module inert {u} {A : Type u} where
       (is-equiv→is-embedding (emb-is-equiv A {x} {y})) .eqv-fibers Θ
 ```
 
-## Deliverable (2): the three rungs — not closed (2-cell residues)
+## The three coherence rungs: genuine open 2-cells
 
 The three rung statements are stated below in a non-checked block.
 Each is a coherence *between two paths* with coinciding endpoints; in
@@ -478,13 +516,14 @@ Empirical residues (both probed with `refl`, both rejected):
     Underlying mismatch: `primHComp {φ = ~i∨i}` (LHS, one hcom)
     vs `primHComp {φ = (~i₁∨i₁)∨~i∨i}` (RHS, interchange layer added).
 
-  * **rung-l residue** (rung-l `= kill-3 g b M`, so the content is `M`):
+  * **rung-l residue** (rung-l
+    `= rung-l-from-membership g b M`, so the content is `M`):
     `ap (pre (idn y)) RHSl ≡ Qc`, i.e.
-    `primHComp {~i∨i}` vs `primHComp {(i₁∨~i₁)∨~i∨i}`. This is exactly
-    the `R-core` residue `CodepTriangleCrux` found stuck *generically*
-    — here fully concrete, but still a non-refl pcom 2-cell.
+    `primHComp {~i∨i}` vs `primHComp {(i₁∨~i₁)∨~i∨i}`. This is
+    exactly the `R-core` residue that is stuck generically — here
+    fully concrete, but still a non-refl pcom 2-cell.
 
-Analytic decomposition of **rung-θ** (the calibration data asked for).
+Analytic decomposition of **rung-θ**.
 Write `η = pcom.ideml` (`pre e ∼ id`), `ζ = pcom.idemr`
 (`post e ∼ id`), `R = pcom refl refl refl`, and
 `u = post-eval e : R ≡ refl`.
@@ -498,14 +537,15 @@ conjunction
   (B) `pcom.ideml refl ≡ pcom.idemr refl`      — the two canonical
       contractions of `R` to `refl` agree.
 
-(A) is the crux: it re-relates the `lsplit ∙ lr ∙ rsplit` interchange
-filler to `ideml`/`idemr` and is *not* itself refl. This is the
-groupoid-law bill the rung consumes: `homotopy-natural` ×2,
-`Path.assoc`/`invl`/`unitr`, plus (A)+(B). The finding: even in the
-maximally coherent carrier the rung is a real 2-cell — its content is
-carrier-independent (matches the abstract `R-core`), confirming the
-obstruction is about the *structure* (the level-2 axiom must supply
-this 2-cell), not about exotic carriers.
+(A) is the crux: it re-relates the `lsplit ∙ lr ∙ rsplit`
+interchange filler to `ideml`/`idemr` and is *not* itself refl.
+This is the groupoid-law cost the rung consumes:
+`homotopy-natural` ×2, `Path.assoc`/`invl`/`unitr`, plus (A)+(B).
+The finding: even in the maximally coherent carrier the rung is a
+real 2-cell — its content is carrier-independent (it matches the
+abstract `R-core`), confirming the obstruction is about the
+*structure* (a level-2 axiom must supply this 2-cell), not about
+exotic carriers.
 
 ```text
 -- NON-CHECKED (documented goals; each is a non-refl 2-cell):
@@ -521,7 +561,8 @@ module rungs {u} {A : Type u} where
     → absorb-l (pre g b)
     ≡ interchange (idn y) g (idn y) b
       ∙ ap (λ a' → emb g ((y , a') , (v , b))) (post-eval (idn y))
-  -- rung-l g b = kill-3 g b M   with   M : ap (pre (idn y)) RHSl ≡ Qc
+  -- rung-l g b = rung-l-from-membership g b M
+  --   with M : ap (pre (idn y)) RHSl ≡ Qc
 
   rung-r : ∀ {w x y} (f : hom x y) (a : hom w x)
     → absorb-r (post f a)

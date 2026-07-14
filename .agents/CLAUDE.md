@@ -27,8 +27,8 @@ design decisions in the last section below.
 This file is the source of truth — the only place the cross-agent
 conventions (output locations, the slug rule, the epistemic lexicon,
 provenance-sidecar contents, delegation and degraded-delegation
-handling, ingestion, and the foundational-reference grounding) are
-stated with authority. Root `CLAUDE.md`
+handling, delivery, ingestion, and the foundational-reference
+grounding) are stated with authority. Root `CLAUDE.md`
 may summarize one for the repo user, but defers here. Every prompt
 body, agent definition, and workflow NAMES a convention and defers
 here ("derive a run slug per the contract", "write the sidecar per

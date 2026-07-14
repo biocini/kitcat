@@ -21,10 +21,10 @@ checks these triggers each session and edits only when one fires.
    unit-coherence framing. (Its predecessor, the faithful-stratum
    substrate spike A1–A3, LANDED 2026-07-13: all three checks
    green, extract-agree's irreducibility enshrined as T21 /
-   `Gloss.ExtractAgreeIndependence`. The A1/A2/A3 ledger-entry
-   promotions are RATIFIED — Lane, 2026-07-13 evening: A1 🧪
-   freeze, A2 🧪 freeze, A3 📐 citing the tracked spike —
-   execution queued as next session's opening task.)
+   `Gloss.ExtractAgreeIndependence`; the A1/A2/A3 ledger-entry
+   promotions EXECUTED 2026-07-13 as ratified — T22
+   `Gloss.TautologicalFilling`, T23 `Gloss.InterchangeCircularity`,
+   T24 📐 citing the tracked spike @ dde1f57.)
 2. **THE REFACTOR** — the conditional promotion of `Cat.Codep`:
    if the hcategory line keeps earning it (the substrate spikes
    and the coherence program keep landing), `hcategory` becomes
@@ -66,20 +66,7 @@ checks these triggers each session and edits only when one fires.
    Lane 2026-07-13, kelly's discretion open; T16 and T15 both
    lifted under the audit-keyed rule — no ⚠️
    source-identifications remain.
-6. **Housekeeping** — the Core path-lemma landing (Lane,
-   2026-07-13: `sym-sym`, `sym-∙`, `move-r` and kin — currently
-   re-derived inside `Gloss.EightFieldWall` — land in their
-   matching `Core.*` home with CUBICAL-NATIVE proofs and the
-   mandatory REDUNDANCY CHECK per the styleguide rule: search
-   Core by type shape and naming grammar first; definitional
-   facts earn no lemma — `sym-sym` is likely `refl`-redundant
-   cubically and may be dropped rather than landed); the
-   **Gloss presentation retrofit** (Lane, 2026-07-13;
-   src/Gloss/CLAUDE.md "Presentation"): all six existing
-   certificates gain the mandatory synopsis, de-jargonized
-   public-facing prose, polished citations, formalization
-   justifications, and Core-lemma extraction — the A1/A2 freezes
-   are born under the new standard; the styleguide conformance
+6. **Housekeeping** — the styleguide conformance
    sweeps (ruled GO, Lane 2026-07-13; docs/styleguide.md
    "Rulings"): author/date
    headers onto the 123 header-less Core files; removal of

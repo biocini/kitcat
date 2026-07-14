@@ -118,7 +118,8 @@ they live here), the lax substitution `sub` and application `_·_`, and
 the unconditional total-space equivalence `hom≃representable`.
 
 ```agda
-record hcategory-structure {o h} (ob : Type o) : Type (o ⊔ h ₊) where
+record hcategory-structure {o} (h : Level) (ob : Type o)
+  : Type (o ⊔ h ₊) where
   no-eta-equality
   field
     hom : ob → ob → Type h
@@ -199,7 +200,7 @@ its own fields. The `⨾` in the statements is the extraction
 
 ```agda
 post-comp-from-coupling
-  : ∀ {o h} {ob : Type o} (S : hcategory-structure {o} {h} ob)
+  : ∀ {o h} {ob : Type o} (S : hcategory-structure h ob)
     (open hcategory-structure S)
     (cc : ∀ {x y z} (f : hom x y) (g : hom y z)
         → is-contr (is-representable (emb f · g)))
@@ -214,7 +215,7 @@ post-comp-from-coupling S cc ic {x} {y} {z} f g {w} a =
   where open hcategory-structure S
 
 comp-eq-from-coupling
-  : ∀ {o h} {ob : Type o} (S : hcategory-structure {o} {h} ob)
+  : ∀ {o h} {ob : Type o} (S : hcategory-structure h ob)
     (open hcategory-structure S)
     (cc : ∀ {x y z} (f : hom x y) (g : hom y z)
         → is-contr (is-representable (emb f · g)))
@@ -231,7 +232,7 @@ comp-eq-from-coupling S cc ic pe f g =
   where open hcategory-structure S
 
 idem-from-coupling
-  : ∀ {o h} {ob : Type o} (S : hcategory-structure {o} {h} ob)
+  : ∀ {o h} {ob : Type o} (S : hcategory-structure h ob)
     (open hcategory-structure S)
     (cc : ∀ {x y z} (f : hom x y) (g : hom y z)
         → is-contr (is-representable (emb f · g)))
@@ -249,8 +250,10 @@ idem-from-coupling S cc ic pe {x} =
 
 `hcategory-axioms` gates every derived law on the five fields —
 `compose-contr`, the coupling `interchange`/`post-eval`, and the two
-unit equivalences — over a `hcategory-structure` value. The structure
-parameter is annotated `{o} {h}` so the level is fixed by the value.
+unit equivalences — over a `hcategory-structure` value. The hom
+universe `h` is an explicit parameter of `hcategory-structure` (it
+occurs only in field types, so no argument's type determines it),
+and the annotation supplies it directly: `hcategory-structure h ob`.
 
 The internal order matters: the extraction `_⨾_`, `emb-comp`,
 `pre-comp` (the old `act-comp`, now read at the center), `sub-comp`,
@@ -263,7 +266,7 @@ finally `emb-post` before `unit-is-prop` and `is-representable-prop`.
 
 ```agda
 record hcategory-axioms {o h} {ob : Type o}
-  (S : hcategory-structure {o} {h} ob) : Type (o ⊔ h) where
+  (S : hcategory-structure h ob) : Type (o ⊔ h) where
   no-eta-equality
   open hcategory-structure S
 
@@ -426,7 +429,7 @@ record hcategory (o h : Level) : Type ((o ⊔ h) ₊) where
   no-eta-equality
   field
     ob        : Type o
-    structure : hcategory-structure {o} {h} ob
+    structure : hcategory-structure h ob
     axioms    : hcategory-axioms structure
   open hcategory-structure structure public
   open hcategory-axioms axioms public
@@ -440,7 +443,7 @@ read at the center. The bundle re-export recovers both structure-level
 and axioms-level names from one `open`.
 
 ```agda
-module _ {o h} {ob : Type o} (S : hcategory-structure {o} {h} ob) where
+module _ {o h} {ob : Type o} (S : hcategory-structure h ob) where
   open hcategory-structure S
 
   composite-is-Π : ∀ {x y} (F : composite x y) (γ : ctx x y) → res γ
@@ -450,7 +453,7 @@ module _ {o h} {ob : Type o} (S : hcategory-structure {o} {h} ob) where
     : ∀ {x y} (f : hom x y) → pre f (idn y) ≡ post f (idn x)
   pre-eval-is-post-eval f = refl
 
-module _ {o h} {ob : Type o} {S : hcategory-structure {o} {h} ob}
+module _ {o h} {ob : Type o} {S : hcategory-structure h ob}
   (A : hcategory-axioms S) where
   open hcategory-structure S
   open hcategory-axioms A

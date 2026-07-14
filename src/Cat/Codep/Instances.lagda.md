@@ -89,7 +89,7 @@ module walking-arrow where
   hom-prop o1 o0 = λ e _ → ex-falso e
   hom-prop o1 o1 = λ _ _ → refl
 
-  walk-structure : hcategory-structure Ob
+  walk-structure : hcategory-structure 0ℓ Ob
   walk-structure .hcategory-structure.hom = homW
   walk-structure .hcategory-structure.idn o0 = tt
   walk-structure .hcategory-structure.idn o1 = tt
@@ -168,7 +168,7 @@ module type-instance {o h} (C : category o h) where
     → (∀ w → C.hom w x → ∀ v → C.hom y v → C.hom w v)
   curryT F w a v b = F ((w , a) , (v , b))
 
-  Type-structure : hcategory-structure {o} {h} C.ob
+  Type-structure : hcategory-structure h C.ob
   Type-structure .hcategory-structure.hom = C.hom
   Type-structure .hcategory-structure.idn x = C.idn
   Type-structure .hcategory-structure.emb f = uncurryT (C.emb f)
@@ -239,7 +239,7 @@ module monoidal-instance {o hh} {C : category o hh} (M : monoidal C) where
   curryM : CompositeM tt tt → (C.ob → C.ob → C.ob)
   curryM F l r = F ((tt , l) , (tt , r))
 
-  Monoidal-structure : hcategory-structure {0ℓ} {o} ⊤
+  Monoidal-structure : hcategory-structure o ⊤
   Monoidal-structure .hcategory-structure.hom _ _ = C.ob
   Monoidal-structure .hcategory-structure.idn _ = I
   Monoidal-structure .hcategory-structure.emb x = uncurryM (tensor-emb x)

@@ -34,10 +34,6 @@ record the delegation as degraded.
 | `suite-maintainer` | Author or repair skills and agent definitions; the authoring lint; the shim/prompt masters, harness symlinks, and bind-once contract |
 | `process-reviewer` | Session-close process review (the `/log` stage): friction points mapped to workflow revision/addition proposals or named system weaknesses, tagged ratify-now / next-session for Lane's discretion |
 
-Agent registries are per-harness and availability varies; a
-workflow that names an absent agent runs lead-owned and records the
-delegation as degraded.
-
 Consult the `analyzer` BEFORE the coder starts any proof
 involving: h-levels or truncation, equivalence constructions,
 coherence or naturality, transport/substitution chains, fiber
@@ -137,7 +133,8 @@ Global flags in `kitcat.agda-lib`: `--no-import-sorts`,
 Agda builtins only — no agda-stdlib, no cubical library. Records:
 `no-eta-equality` for multi-field or proof-valued records, `INLINE`
 constructors via copatterns, `@0` on law fields (never on
-operations).
+operations), implicit universe parameters only where a later
+explicit argument's type determines them (docs/styleguide.md).
 
 ## Namespaces
 
@@ -148,8 +145,6 @@ operations).
 | `HData.*` | Higher inductive types (pushouts, quotients)   |
 | `Cat.*`   | Category theory (`Cat.Codep` is canonical)     |
 | `Lib.*`   | Extended developments (groups, cubical sets)   |
-| `Trait.*` | Typeclass-like interfaces and instances        |
-| `Meta.*`  | Metaprogramming, reflection, tactics           |
 | `Gloss.*` | Frozen evidence certificates for docs/gloss.md (in All; see src/Gloss/CLAUDE.md) |
 | `Test.*`  | Tracked scratch + regression witnesses (gate-exempt; upgrade path: `Gloss.*`) |
 
@@ -172,7 +167,8 @@ The agent-facing context is exactly: this file, src/Gloss/CLAUDE.md,
 (`.agents/*.md`), README.md, CHANGELOG.md, docs/gloss.md (the theorem
 ledger), docs/provenance.md, docs/roadmap.md, docs/styleguide.md
 (the Core.* idiom codified), the workflow suite
-(`.agents/prompts/` bodies + `.agents/skills/kitcat/` shims),
+(`.agents/prompts/` bodies + `.agents/skills/kitcat/` shims) with
+its capability rosetta `.agents/skills/kitcat/HARNESS.md`,
 `resources/`, and `notes/`. Nothing else in the repository is
 loaded, cited, or consulted as an authority. Style law: match the
 local idiom of the module you are editing — Core.* is the exemplar,
@@ -428,13 +424,17 @@ named, present-tense `killcheck-<name> = refl` witness (the
 reduction stated as its own type) in an untimestamped Test/
 regression file imported by `All`, so a reduction that stops
 firing fails the next `just check-all` — killchecks and probative
-tests never live in the public modules themselves. Exemplar
+tests never live in the library modules themselves (a frozen
+`Gloss.*` certificate may carry killchecks as part of its frozen
+evidence; those pin against its frozen copies, not the live
+foundation — the live tripwire stays in Test/). Exemplar
 `src/Test/CodepCoherentKillchecks.lagda.md`
 (`killcheck-apPost`/`killcheck-apPre = refl`, which record the
 reductions θ-core relies on). A route that should close but provably
-does not is banked as a WALL transcribing the verbatim refl-probe
-goal at the stuck hole (`Gloss.EightFieldWall`), never dropped
-silently. When a settled spike graduates to a `Gloss.*` certificate
+does not is banked as a documented obstruction — the verbatim
+refl-probe residue preserved, the rejected term and the missing
+equation stated in plain language around it
+(`Gloss.EightFieldWall` is the exemplar) — never dropped silently. When a settled spike graduates to a `Gloss.*` certificate
 it is frozen self-contained modulo `Core`, each needed `Cat.*`
 definition inlined `Frozen from <Module> @ <commit>`, re-typechecked
 against CURRENT `Core` before landing (never copy-forward on faith —

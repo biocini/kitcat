@@ -70,9 +70,11 @@ import Lib.Ternary.Structures.Syntax
 
 import Gloss.EightFieldWall
 import Gloss.ExtractAgreeIndependence
+import Gloss.InterchangeCircularity
 import Gloss.PathGroupoid
 import Gloss.PcomConservation
 import Gloss.PropPinning
+import Gloss.TautologicalFilling
 import Gloss.TriangleFace23
 
 -- Manual regression tripwire (Test/ rules): sync preserves, never adds.

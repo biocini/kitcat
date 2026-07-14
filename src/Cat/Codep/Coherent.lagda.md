@@ -62,41 +62,15 @@ open import Core.Type
 open import Core.Base
 open import Core.Data.Sigma
 open import Core.Kan using (_∙_; module Path; pcom)
-open import Core.Path.Base using (cancell)
+open import Core.Path.Base using (cancell; move-r)
+open import Core.Groupoid using (sym-distr)
 open import Core.Homotopy using (homotopy-natural)
-open import Core.Transport.J using (J; subst)
+open import Core.Transport.J using (subst)
 open import Core.Transport.Properties using (is-prop→is-set)
 open import Core.Function.Embedding using (equiv→lc)
 
 open import Cat.Codep.Base
 open import Cat.Codep.Op using (op)
-```
-
-## Generic path helpers
-
-Three small path lemmas the θ-core and the op dualization need:
-involution of `sym`, its distribution over `∙`, and transposing a
-`sym q` factor across an equation.
-
-```agda
-sym-sym : ∀ {u} {A : Type u} {a b : A} (p : a ≡ b) → sym (sym p) ≡ p
-sym-sym p = J (λ _ p → sym (sym p) ≡ p) refl p
-
-sym-∙ : ∀ {u} {A : Type u} {a b d : A} (p : a ≡ b) (q : b ≡ d)
-      → sym (p ∙ q) ≡ sym q ∙ sym p
-sym-∙ p q =
-  J (λ _ q → sym (p ∙ q) ≡ sym q ∙ sym p)
-    (ap sym (Path.unitr p) ∙ sym (Path.unitl (sym p))) q
-
-move-r
-  : ∀ {u} {A : Type u} {a b c : A}
-    (p : a ≡ b) (q : c ≡ b) (r : a ≡ c)
-  → p ∙ sym q ≡ r → p ≡ r ∙ q
-move-r p q r H =
-    sym (Path.unitr p)
-  ∙ ap (p ∙_) (sym (Path.invl q))
-  ∙ Path.assoc p (sym q) q
-  ∙ ap (_∙ q) H
 ```
 
 ## The coherence overlay
@@ -405,8 +379,7 @@ module _ {o h} {C : hcategory o h} (A2 : hcategory-2-coherent C) where
 
         conj : A.absorb-r D₀ ∙ sym (A.absorb-l D₀) ≡ sym IC
         conj =
-            ap (_∙ sym (A.absorb-l D₀)) (sym (sym-sym (A.absorb-r D₀)))
-          ∙ sym (sym-∙ (A.absorb-l D₀) (sym (A.absorb-r D₀)))
+            sym (sym-distr (A.absorb-l D₀) (sym (A.absorb-r D₀)))
           ∙ ap sym (A2.couple-D₀ {x})
 
   op-coherent : hcategory-2-coherent (op C)

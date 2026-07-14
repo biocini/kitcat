@@ -51,7 +51,7 @@ module _ {o h} {ob : Type o} where
   open hcategory-structure
 
   op-structure
-    : hcategory-structure {o} {h} ob → hcategory-structure {o} {h} ob
+    : hcategory-structure h ob → hcategory-structure h ob
   op-structure S .hom x y = S .hom y x
   op-structure S .idn     = S .idn
   op-structure S .emb f γ = S .emb f (swap γ)
@@ -66,7 +66,7 @@ carry composites across the reversal; both roundtrips are the identity
 by Σ- and function-eta, and `embᵒ f = swap· (emb f)` definitionally.
 
 ```agda
-module _ {o h} {ob : Type o} (S : hcategory-structure {o} {h} ob) where
+module _ {o h} {ob : Type o} (S : hcategory-structure h ob) where
   private
     module S  = hcategory-structure S
     module Sᵒ = hcategory-structure (op-structure S)
@@ -103,7 +103,7 @@ reversed arguments under `sym`; `post-eval`, `unit-eqvl`, and
 `unit-eqvr` are base fields verbatim (the last two swapped).
 
 ```agda
-module _ {o h} {ob : Type o} {S : hcategory-structure {o} {h} ob}
+module _ {o h} {ob : Type o} {S : hcategory-structure h ob}
   (A : hcategory-axioms S) where
   private
     module S  = hcategory-structure S
@@ -164,13 +164,13 @@ module _ {o h} {ob : Type o} where
   open hcategory-structure
 
   op-structure-invol
-    : (S : hcategory-structure {o} {h} ob)
+    : (S : hcategory-structure h ob)
     → op-structure (op-structure S) ≡ S
   op-structure-invol S i .hom = S .hom
   op-structure-invol S i .idn = S .idn
   op-structure-invol S i .emb = S .emb
 
-module _ {o h} {ob : Type o} {S : hcategory-structure {o} {h} ob} where
+module _ {o h} {ob : Type o} {S : hcategory-structure h ob} where
   private module S = hcategory-structure S
 
   op-axioms-invol
