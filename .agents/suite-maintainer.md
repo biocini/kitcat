@@ -64,5 +64,15 @@ contract's Layer scope section — every addition states its core
 research job and the smallest surface that could absorb it).
 Report findings graded, with file:line;
 propose the fix, apply only what is unambiguous, and escalate
-naming or scope changes to Lane. Provenance and honesty standards
-(`docs/provenance.md`) govern any norms survey you run.
+naming or scope changes to Lane.
+
+Any layer audit includes an enumeration-drift sweep: for each
+definitional or "exactly"-style enumeration in the context layer —
+a convention-family list, a namespace table, an authority set —
+enumerate the live members from the filesystem, the file's own
+section headings, or `just stats`, and diff against the stated
+list; a claimed-exhaustive list that omits a live member or names
+a phantom one is a finding. (Lane, 2026-07-13)
+
+Provenance and honesty standards (`docs/provenance.md`) govern any
+norms survey you run.

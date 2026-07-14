@@ -195,6 +195,11 @@ the held list rather than promoting it unruled. If you re-derived
 something this session that an earlier session already worked out,
 that is the signal to persist it before logging.
 
+Sweep the session's plan ledgers the same way for rulings and
+ratified parameters whose tracked home is not named, and encode
+each to its home NOW per the contract's encode-at-ruling-time
+rule.
+
 Run the memory-hygiene sweep per the contract's memory-is-links
 convention: EXTERNALIZE every memory content that is not yet in
 its stipulated canonical home (the contract names the home per

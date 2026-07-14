@@ -179,6 +179,20 @@ created as a silent side effect (see Ingestion below).
   exemption: record a drift note in the run ledger at mutation
   time, and every downstream consumer of the stale anchors
   re-verifies them before use.
+- **Mid-run ruling reconciliation**: when a ruling lands while
+  briefs are in flight or a pipeline stage has just completed, the
+  lead enumerates the in-flight briefs and just-landed artifacts
+  the ruling touches — the uniform-application discipline applied
+  on the time axis: in-flight work is a member of the ruling's
+  category. A mid-run amendment to a running agent is a complete
+  re-derivation of every affected instruction from the ruling
+  itself, never a delta against the superseded brief or memo;
+  brief-carried derived lists (keep-lists, protections) and
+  counted inventories are re-derived live at execution, where the
+  live sweep governs — mid-run amendment of a running agent is the
+  cheaper alternative to restart-and-rebrief. Work completed under
+  the superseded reading gets a re-pass before its final gates.
+  (Lane, 2026-07-13)
 - File-based handoffs: subagents write evidence to disk and reply
   with a short completion report; the lead reads the file, never
   the dump.
@@ -444,3 +458,9 @@ local working memory. The full deliberation is in the session logs
   dropped, not re-housed.
   A content paragraph in memory at session exit is a hygiene
   defect, not a convenience; memory is never a shadow store.
+  The same discipline binds a ruling the moment it is made: a Lane
+  ruling that revises a convention or standard is encoded to its
+  tracked home in-session, as part of applying the ruling, and the
+  run ledger records that home and a pointer to it, never the sole
+  copy — a ruling resident only in a gitignored ledger is an open
+  task, not a record (Lane, 2026-07-13).
