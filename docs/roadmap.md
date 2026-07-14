@@ -36,8 +36,15 @@ checks these triggers each session and edits only when one fires.
    `Product`, `Slice`, `Yoneda`, `Displayed`, `Rezk`,
    `Covariant`, `Dep`) is re-expressed over the new foundation,
    with per-module dispositions (rebase / keep / retire) decided
-   when the refactor opens, not before. Downstream of targets
-   1–2. Gates behind it: the Chir dialogue tier, the braid/ribbon
+   when the refactor opens, not before. **`Cat.Bimodule` is added
+   new in the re-founding** — the regular-representation bimodule
+   hom over `hcategory` (the two-sided embedding as a bimodule hom
+   from the regular representation into the internal-hom bimodule;
+   spiked green 2026-07-13 as `Test.CodepBimodule-20260713-234309`,
+   all DERIVED over β, reviewed clean). Lane ruled 2026-07-14: it
+   graduates to this `Cat.*` home, NOT to gloss (no ledger entry, no
+   `Gloss.*` cert); the spike is the recipe until the refactor opens
+   its foundation. Downstream of targets 1–2. Gates behind it: the Chir dialogue tier, the braid/ribbon
    layer, the monoidal side of the chirality convergence theorem,
    and the post-refactor standardization arc — opened only on
    Lane's word.
@@ -68,8 +75,15 @@ checks these triggers each session and edits only when one fires.
    source-identifications remain.
 6. **Housekeeping** — the styleguide conformance
    sweeps (ruled GO, Lane 2026-07-13; docs/styleguide.md
-   "Rulings"): author/date
-   headers onto the 123 header-less Core files; removal of
+   "Rulings"): the **frontmatter
+   sweep** — convert every tracked `.lagda.md` to the YAML
+   frontmatter convention (ruled 2026-07-14 — author/date/contents
+   core + optional synopsis; docs/styleguide.md Opener). The tooling
+   (build.py rendering + the tolerant `bin/lint` frontmatter canary)
+   and a limited two-file pilot (`Core.Path.Base`, `Core.Type`)
+   landed 2026-07-14; the BULK is this target's scheduled work — the
+   123 header-less Core files plus reformatting the old-prose-header
+   files, then flipping the canary to require-presence; removal of
    globally-redundant per-module flags; the ternary-first
    conformance sweep over Core's ~112 legacy `∙`-chains; the
    WIP-module probe sections (`Core.Path.Composition` and

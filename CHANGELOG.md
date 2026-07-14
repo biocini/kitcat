@@ -16,6 +16,62 @@ concise, and honest about verification status (`verified` /
 
 ---
 
+## 2026-07-14 (seventh session) — the bimodule spike lands (→ Cat.Bimodule); the frontmatter convention; the output-handoff fix
+
+Object: continued the roadmap (target 1, the bimodule record spike via
+`/prove`) and, at Lane's direction, adopted a library-wide frontmatter
+convention and fixed a context-layer output-handoff seam. Session log:
+[`notes/session-logs/2026-07-14-bimodule-frontmatter-harness.md`](notes/session-logs/2026-07-14-bimodule-frontmatter-harness.md).
+Committed at close (this `/log`).
+
+**Landed — the bimodule spike (roadmap target 1).** The regular
+representation embeds as a bimodule hom into the internal-hom
+bimodule; left-equivariance `emb (a ⨾ f) ≡ a ⟩ emb f` derives over a
+full hcategory residue-free (the load-bearing ingredient is base
+`interchange` via `op-comp-path` + the definitional concreteness of
+the actions — NOT op's `compose-contr`), the same bridge that walls
+over the abstract stratum (T23); symmetrization is thereby free over a
+full hcategory. `verified`: `Test.CodepBimodule-20260713-234309`, all
+checks DERIVED over β, review bracket clean (accuracy PASS-WITH-FIXES /
+citations both CONFIRMED / mechanical PASS, 0 Blocking; fresh
+interface-deleted re-check exit 0 zero warnings). **Lane ruled: it
+promotes to a `Cat.*` library home (`Cat.Bimodule`, post-refactor),
+NOT to gloss** — no ledger entry, no `Gloss.*` cert (bijection
+unchanged 8↔8); the spike is the recipe until THE REFACTOR opens the
+foundation (roadmap target 2 updated to carry `Cat.Bimodule`).
+
+**Landed — the frontmatter convention** (Lane's initiative). YAML
+frontmatter on tracked `.lagda.md` sources: three registers
+(frontmatter metadata / a `contents:` tagline / optional synopsis
+prose), required core `author`/`date`(`YYYY-MM`)/`contents`, extensible
+via tolerated unknown keys. Phase-1 tooling `verified`: `site/build.py`
+frontmatter rendering (byline + `contents` lede + module title; strips
+before the `---`→`<hr>` rule, no leak), the `bin/lint` tolerant
+frontmatter canary, and a width **soft cap at 100** (bite-tested both
+directions); a limited two-file pilot (`Core.Path.Base`, `Core.Type`,
+both `just check` exit 0). The styleguide Opener + Rulings rewritten.
+The tree-wide bulk sweep (29 old-header files + the header-less set) is
+`deferred` to roadmap target 6.
+
+**Landed — the output-handoff reconciliation** (`HARNESS.md` +
+companions). A dispatched `verifier` read the file-based-handoff
+contract and the harness's "final message = result" framing as
+contradictory and dropped its file-write. Fixed: HARNESS.md now states
+the dual-channel rule (write the file AND return a short completion
+report; the message never substitutes for the artifact), with
+name-and-defer companions in `.agents/CLAUDE.md` and
+`.agents/verifier.md`. `verified`: `just lint authoring`/`changed`
+green. (The process review found one sibling, `researcher.md:33`,
+still carries the mirror phrasing — a ratify-now one-liner,
+`unapplied` this session per `/log` discipline.)
+
+**Process.** All bimodule checks DERIVED — no walls preserved. The
+accuracy review caught loose WHY-prose (S1, corrected at four sites);
+the citation review confirmed both credits (Kelly SOURCE-CHECKED,
+Petrakis reworded to a see-also register). Process review: 4 friction
+points, 1 ratify-now (the `researcher.md` reword), the dominant
+finding a validation — eight prior-review fixes ran clean.
+
 ## 2026-07-13 (sixth session) — the ratified promotions executed; the Gloss canonization standard
 
 Object: the queued A-batch promotions landed, and Lane's in-session
