@@ -13,18 +13,32 @@ at the end — do not invent a rule from a split.
 
 ## Module anatomy
 
-- **Opener** (ruled 2026-07-13): author/date header — author name,
-  then month and year, as two plain lines (`src/Core/Path/Base.lagda.md:1-2`
-  is the exemplar) — then a blank line, one plain-prose sentence
-  naming the module's content (not a heading), blank line, first
-  fence, OPTIONS pragma, blank line, `module … where`.
-  (`src/Core/Type.lagda.md:1-6`, `src/Core/Kan.lagda.md:1-6` show
-  the body shape; the 123 header-less Core files are a scheduled
-  sweep, not precedent.) The header rule is uniform across tracked
-  `src/` — library modules, `Gloss.*` certificates, and
-  untimestamped `Test/` regression witnesses alike (ruled
-  2026-07-13, resolving the two-register question in favor of one
-  register).
+- **Opener** (ruled 2026-07-14, superseding the 2026-07-13
+  prose-header ruling): a leading YAML frontmatter block, then the
+  first fence, OPTIONS pragma, blank line, `module … where`. Three
+  registers, cleanly separated. **(1) frontmatter** — a `---` …
+  `---` block at the very top, machine-readable metadata; required
+  core `author` (string), `date` (`YYYY-MM`), `contents` (string),
+  and any further keys tolerated unenforced (`tags`, `status`,
+  `updated`, …) — that tolerance is the extensibility. **(2) the
+  `contents:` tagline** — one plain line naming the module's content
+  (structured and indexable; it replaces the old prose content
+  sentence). **(3) synopsis prose** — optional documentation prose
+  below the frontmatter, blank-line-separated, rendered as the
+  docs-page intro; omit it for small modules.
+  `src/Core/Path/Base.lagda.md:1-5` is the exemplar (frontmatter,
+  blank, fence — no synopsis); `src/Core/Kan.lagda.md:1-6` shows the
+  post-fence body shape. The frontmatter rule is uniform across
+  tracked `src/` — library modules, `Gloss.*` certificates, and
+  untimestamped `Test/` regression witnesses alike; timestamped
+  `Test/` scratch is exempt. Everything before the first fence is
+  ignored by Agda, so the block never affects the typecheck. A
+  tolerant canary (`just lint frontmatter`) validates the core
+  where a block is present, and frontmatter lines carry a 100-char
+  width soft cap (`bin/lint`, wider than the 72 prose limit — a
+  `contents:` tagline is one unwrappable line); the tree-wide
+  conversion of the header-less and prose-header files is
+  docs/roadmap.md target 6.
 - **Pragma tracks the stratum**: default
   `--safe --erased-cubical --no-guardedness`; pure-MLTT foundation
   leaves use `--cubical-compatible`
@@ -236,14 +250,23 @@ at the end — do not invent a rule from a split.
 
 ## Rulings
 
+Ruled by Lane, 2026-07-14: the `.lagda.md` opener is a YAML
+frontmatter block — required core `author` / `date` (`YYYY-MM`) /
+`contents`, unknown keys tolerated, optional synopsis prose,
+uniform across tracked `src/` (timestamped `Test/` scratch
+exempt). This supersedes the 2026-07-13 "author/date headers
+standard" ruling (the two-plain-lines format). See the Opener norm
+above; the canary is `just lint frontmatter`, and the tree-wide
+conversion sweep is docs/roadmap.md target 6.
+
 Ruled by Lane, 2026-07-13 (now stated as norms above, with their
-conformance sweeps scheduled in docs/roadmap.md Housekeeping):
-author/date headers standard; no globally-redundant per-module
-flags; `u v w` for `Level` with `ℓ` reserved for `I → Level`; the
-ternary-first conformance sweep over Core's legacy `∙`-chains is
-GO; the WIP-module probe sections migrate to `Test/` per Public
-Module Style; implicit universe parameters are earned by inference
-(the hcategory-structure correction).
+conformance sweeps scheduled in docs/roadmap.md Housekeeping): no
+globally-redundant per-module flags; `u v w` for `Level` with `ℓ`
+reserved for `I → Level`; the ternary-first conformance sweep over
+Core's legacy `∙`-chains is GO; the WIP-module probe sections
+migrate to `Test/` per Public Module Style; implicit universe
+parameters are earned by inference (the hcategory-structure
+correction).
 
 Still open (Core splits — flagged, not legislated):
 

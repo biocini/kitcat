@@ -1,4 +1,8 @@
-Primitive types, universes, and basic combinators.
+---
+author: Lane Biocini
+date: 2025-10
+contents: Primitive types, universes, and basic combinators.
+---
 
 ```agda
 {-# OPTIONS --safe --cubical-compatible --no-guardedness #-}

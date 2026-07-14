@@ -1,7 +1,8 @@
-Lane Biocini
-October 2025
-
-Path algebra: symmetry, concatenation, squares, and coherences.
+---
+author: Lane Biocini
+date: 2025-10
+contents: Path algebra — symmetry, concatenation, squares, and coherences.
+---
 
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}

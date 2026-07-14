@@ -31,6 +31,88 @@ def load_css(site_dir: Path) -> str:
     return (site_dir / "style.css").read_text(encoding="utf-8")
 
 
+# ── Frontmatter ─────────────────────────────────────────────
+# A leading YAML block delimited by `---` lines carries module
+# metadata (author, date, contents, plus any extension keys).  It
+# is stripped before markdown conversion so its `---` fences are
+# never mistaken for horizontal rules or setext headings.  Parsing
+# is deliberately minimal `key: value` line-scanning — no YAML
+# dependency — and unknown keys (including list-valued ones like
+# `tags: [a, b]`) are tolerated and skipped.
+
+_MONTHS = ("January", "February", "March", "April", "May", "June",
+           "July", "August", "September", "October", "November",
+           "December")
+
+
+def split_frontmatter(text: str) -> tuple[dict[str, str], str]:
+    """Peel a leading `---`…`---` block off text.
+
+    Returns (metadata, remaining_text).  Frontmatter is recognized
+    only when the file's first line is exactly `---` and a later
+    `---` line closes it; otherwise metadata is empty and the text
+    is returned unchanged (the header-less fallback).
+    """
+    lines = text.split("\n")
+    if not lines or lines[0].strip() != "---":
+        return {}, text
+
+    close = None
+    for i in range(1, len(lines)):
+        if lines[i].strip() == "---":
+            close = i
+            break
+    if close is None:
+        return {}, text
+
+    meta: dict[str, str] = {}
+    for line in lines[1:close]:
+        key, sep, value = line.partition(":")
+        if not sep:
+            continue
+        key = key.strip()
+        if key and key not in meta:
+            meta[key] = value.strip()
+
+    # Drop the block and one blank separator line if present.
+    rest = lines[close + 1:]
+    if rest and not rest[0].strip():
+        rest = rest[1:]
+    return meta, "\n".join(rest)
+
+
+def friendly_date(date: str) -> str:
+    """Render a `YYYY-MM` date as e.g. `October 2025`.
+
+    Anything not matching that shape is returned unchanged.
+    """
+    m = re.fullmatch(r'(\d{4})-(\d{2})', date.strip())
+    if not m:
+        return date.strip()
+    year, month = m.group(1), int(m.group(2))
+    if 1 <= month <= 12:
+        return f"{_MONTHS[month - 1]} {year}"
+    return date.strip()
+
+
+def render_frontmatter(meta: dict[str, str]) -> str:
+    """Build the page-header HTML from frontmatter metadata.
+
+    A byline (`author · friendly date`) and the `contents` tagline
+    as a lede.  Emits nothing when no relevant keys are present.
+    """
+    parts = []
+    author = meta.get("author", "").strip()
+    date = friendly_date(meta.get("date", ""))
+    byline = " · ".join(p for p in (author, date) if p)
+    if byline:
+        parts.append(f'<p class="byline">{_inline(byline)}</p>')
+    contents = meta.get("contents", "").strip()
+    if contents:
+        parts.append(f'<p class="lede">{_inline(contents)}</p>')
+    return "\n".join(parts)
+
+
 # ── Minimal markdown converter ──────────────────────────────
 # Handles: headings, paragraphs, links, bold, italic, code
 # spans, unordered lists, horizontal rules.  Agda <pre> blocks
@@ -214,7 +296,12 @@ def build(agda_dir: Path, out_dir: Path, site_dir: Path):
         modules.append(mod_name)
 
         content = md_file.read_text(encoding="utf-8")
+        meta, content = split_frontmatter(content)
         body = md_to_html(content)
+        if meta:
+            header = render_frontmatter(meta)
+            title = f'<h1 class="module-title">{html.escape(mod_name)}</h1>'
+            body = "\n".join(p for p in (title, header, body) if p)
         page = render_page(template, mod_name, body)
 
         (out_dir / f"{mod_name}.html").write_text(encoding="utf-8", data=page)

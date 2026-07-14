@@ -8,6 +8,7 @@
   --border: #d0d7de;
   --code-bg: #f6f8fa;
   --nav-bg: #f0f2f5;
+  --muted: #57606a;
   --max-width: 52rem;
 }
 
@@ -20,6 +21,7 @@
     --border: #30363d;
     --code-bg: #161b22;
     --nav-bg: #161b22;
+    --muted: #8b949e;
   }
 
   /* Override Agda.css colors for dark mode */
@@ -93,6 +95,25 @@ h3 { font-size: 1.1rem; }
 
 p {
   margin: 0.8em 0;
+}
+
+/* Module page header from frontmatter */
+.module-title {
+  margin-top: 0;
+  margin-bottom: 0.1em;
+}
+
+.byline {
+  margin: 0 0 0.6em;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.lede {
+  margin: 0 0 1.5em;
+  font-size: 1.15rem;
+  line-height: 1.4;
+  color: var(--muted);
 }
 
 a {

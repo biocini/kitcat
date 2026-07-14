@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # lint — unified lint runner for kitcat
-# Usage: lint [--check width|flags]
+# Usage: lint [--check width|flags|authoring|frontmatter]
 
 # rg exits 1 when nothing matches — an empty set here, not an error.
 # Any other nonzero status is a real failure and must propagate
@@ -18,6 +18,7 @@ cd "$(git rev-parse --show-toplevel)"
 
 PROSE_WIDTH=72
 CODE_WIDTH=85
+FRONTMATTER_WIDTH=100
 checks=()
 changed_mode=false
 while [ $# -gt 0 ]; do
@@ -25,13 +26,20 @@ while [ $# -gt 0 ]; do
         --check) shift; checks+=("$1"); shift ;;
         --changed|changed) changed_mode=true; shift ;;
         -h|--help)
-            echo "Usage: lint [width] [flags] [authoring] [changed]"
+            echo "Usage: lint [width] [flags] [authoring] [frontmatter] [changed]"
             echo "  No args      run width + flags over the whole src/ tree."
             echo "  changed      non-regression gate: only files modified vs"
             echo "               HEAD, and width only on added/modified lines"
             echo "               (the whole tree carries a known width baseline"
             echo "               while the library is in flight — full 'lint'"
             echo "               is the periodic strictification target)."
+            echo "  frontmatter  tolerant canary: where a tracked src/ .lagda.md"
+            echo "               carries a YAML frontmatter block, require the"
+            echo "               core keys (author, date=YYYY-MM, contents) and"
+            echo "               tolerate unknown ones; a file with no block is"
+            echo "               not yet an error. Timestamped Test/ scratch is"
+            echo "               exempt. Individually invocable, out of the"
+            echo "               default aggregate (Phase 1 of the convention)."
             exit 0 ;;
         *) checks+=("$1"); shift ;;
     esac
@@ -100,11 +108,28 @@ issues=0
 check_width() {
     local file="$1"
     local in_code=false
+    local in_frontmatter=false
     local lineno=0
     local limit
 
     while IFS= read -r line; do
         lineno=$((lineno + 1))
+
+        # Leading YAML frontmatter (line 1 is `---` through its
+        # closing `---`) is structured metadata: an unwrappable
+        # `contents:` tagline gets the wider soft cap
+        # (FRONTMATTER_WIDTH, applied at the limit selection below)
+        # rather than the prose limit, but runaway values are still
+        # caught. Delimiter lines are skipped; only the leading block
+        # counts, a later `---` is a normal horizontal rule.
+        if [ "$lineno" -eq 1 ] && [ "$line" = '---' ]; then
+            in_frontmatter=true
+            continue
+        fi
+        if $in_frontmatter && [ "$line" = '---' ]; then
+            in_frontmatter=false
+            continue
+        fi
 
         # Toggle code blocks — closing fence is bare ```, opening
         # fence may have a language tag (```agda, ```bash, etc.)
@@ -116,7 +141,9 @@ check_width() {
             continue
         fi
 
-        if $in_code; then
+        if $in_frontmatter; then
+            limit=$FRONTMATTER_WIDTH
+        elif $in_code; then
             limit=$CODE_WIDTH
         else
             limit=$PROSE_WIDTH
@@ -310,12 +337,82 @@ run_authoring() {
     done
 }
 
+# ── frontmatter check (the metadata canary) ──────────────────
+# Phase 1, TOLERANT: a tracked src/ .lagda.md that carries a
+# leading YAML frontmatter block must carry the required core —
+# author, date (YYYY-MM), contents — with unknown keys tolerated
+# (that tolerance is the convention's extensibility guarantee). A
+# file with no block is NOT yet an error; Phase 2 flips this to
+# require-presence tree-wide. Scope is the whole src/ tree save
+# timestamped Test/ scratch (`-YYYYMMDD-HHMMSS`); untimestamped
+# Test/ regression witnesses are in scope. Kept out of the default
+# aggregate so the header-less tree does not fail the build now.
+check_frontmatter() {
+    local file="$1"
+    local first
+    IFS= read -r first < "$file" || first=""
+    # Tolerant: only files that OPEN a block are validated.
+    [ "$first" = "---" ] || return 0
+
+    local lineno=0 closed=false
+    local have_author=false have_date=false have_contents=false
+    local date_val="" date_line=0
+    while IFS= read -r line; do
+        lineno=$((lineno + 1))
+        [ "$lineno" -eq 1 ] && continue          # the opening ---
+        if [ "$line" = "---" ]; then closed=true; break; fi
+        case "$line" in
+            author:*)   have_author=true ;;
+            contents:*) have_contents=true ;;
+            date:*)     have_date=true; date_val="${line#date:}"; date_line=$lineno ;;
+        esac
+    done < "$file"
+
+    if ! $closed; then
+        echo "  ${file}:1: frontmatter opened with '---' but never closed"
+        issues=$((issues + 1))
+        return 0
+    fi
+
+    $have_author   || { echo "  ${file}:1: frontmatter missing required key 'author'"; issues=$((issues + 1)); }
+    $have_contents || { echo "  ${file}:1: frontmatter missing required key 'contents'"; issues=$((issues + 1)); }
+    if ! $have_date; then
+        echo "  ${file}:1: frontmatter missing required key 'date'"
+        issues=$((issues + 1))
+    else
+        # Trim surrounding whitespace off the value, then require YYYY-MM.
+        date_val="${date_val#"${date_val%%[![:space:]]*}"}"
+        date_val="${date_val%"${date_val##*[![:space:]]}"}"
+        case "$date_val" in
+            [0-9][0-9][0-9][0-9]-[0-9][0-9]) ;;
+            *) echo "  ${file}:${date_line}: date '${date_val}' is not YYYY-MM"; issues=$((issues + 1)) ;;
+        esac
+    fi
+}
+
+run_frontmatter() {
+    echo "── frontmatter ──"
+    # Own enumeration: the whole src/ tree minus timestamped Test/
+    # scratch. Untimestamped Test/ witnesses stay in scope.
+    local fm_files
+    fm_files="$(fd -e lagda.md . src/ \
+        | rg_allow_empty -v '/Test/.*-[0-9]{8}-[0-9]{6}\.lagda\.md$' | sort)"
+    if [ -z "$fm_files" ]; then
+        echo "lint: no in-scope .lagda.md files for the frontmatter canary" >&2
+        exit 1
+    fi
+    while IFS= read -r f; do
+        check_frontmatter "$f"
+    done <<< "$fm_files"
+}
+
 # Run requested checks
 for check in "${checks[@]}"; do
     case "$check" in
         width) run_width ;;
         flags) run_flags ;;
         authoring) run_authoring ;;
+        frontmatter) run_frontmatter ;;
         *) echo "Unknown check: $check" >&2; exit 1 ;;
     esac
 done
