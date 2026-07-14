@@ -4,7 +4,7 @@
 
 module All where
 
--- import Cat.Base  -- WIP: THE REFACTOR — re-founding (P6/P7)
+import Cat.Base
 -- import Cat.Covariant  -- WIP: THE REFACTOR — re-founding (P6/P7)
 -- import Cat.Groupoid  -- WIP: THE REFACTOR — re-founding (P6/P7)
 -- import Cat.Iso  -- WIP: THE REFACTOR — re-founding (P6/P7)
