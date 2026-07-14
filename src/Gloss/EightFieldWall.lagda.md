@@ -1,3 +1,6 @@
+Lane Biocini
+July 2026
+
 Gloss: machine-checked evidence for T11 in docs/gloss.md.
 Self-contained modulo Core.*; Cat.* definitions frozen at 9133396.
 

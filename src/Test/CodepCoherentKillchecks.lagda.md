@@ -1,3 +1,6 @@
+Lane Biocini
+July 2026
+
 Regression witnesses for the @identity ap-legs of the θ-core in
 `Cat.Codep.Coherent`. The absorb-cell family slots hold an identity,
 so `emb (idn x)` at the doubly-centered context reads back as

@@ -1,3 +1,6 @@
+Lane Biocini
+July 2026
+
 Gloss: machine-checked evidence for T13(ii)/(iii) in docs/gloss.md.
 Self-contained modulo Core.* and Gloss.PathGroupoid (whose frozen
 `hcategory` this builds on); no Cat.* import.
