@@ -31,8 +31,8 @@ coder's deliverable IS the verdict set; the accuracy review still
 runs in full; the mechanical gate scopes to the tier — the
 typecheck at zero warnings is the pin, and timestamped `Test/`
 scratch is lint-exempt by name per root `CLAUDE.md`'s Test rules;
-the close delivers verdicts and promotions HELD for Lane's ruling,
-not a committed-ready module.
+the close delivers verdicts and the promotion decision block for
+Lane's ruling, not a committed-ready module.
 
 ## 1. Prepare — the `analyzer`
 
@@ -103,9 +103,19 @@ sequence, in order, per `.agents/CLAUDE.md`'s Delegation section:
 
 ## 4. Close
 
-Report the outcome: modules touched with typecheck status, any
-`docs/gloss.md` entry or `Gloss.*` certificate the result graduates
-into (same-session, per the methodology), spikes and their fates,
-and any wall preserved with its salvage. Commit nothing — Lane
-commits. Two consecutive failures on the same goal is a full stop:
-state what is known, what was tried, what is needed.
+Open the close with the promotion decision block per the contract's
+Delegation section: every candidate the run produced — ledger
+entry, certificate freeze, or status upgrade — surfaced to Lane
+immediately as an explicit decision request leading this report,
+never buried in the run ledger, a held list, or a follow-up answer;
+a run with no candidates says so in one line. The close is not
+complete until the block is presented. A promotion Lane holds
+follows the methodology's P3 held-promotion clause: the tracked
+evidence carries it, and the session log's held list keeps it until
+ruled.
+
+Then report the rest: modules touched with typecheck status, spikes
+and their fates, and any wall preserved with its salvage. Commit
+nothing — Lane commits. Two consecutive failures on the same goal
+is a full stop: state what is known, what was tried, what is
+needed.

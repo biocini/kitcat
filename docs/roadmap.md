@@ -9,8 +9,10 @@ session artifact. Session history, activity provenance, and
 next-step previews live in the session logs
 (`notes/session-logs/`, one entry per session, written by `/log`
 at close); this file carries only the projects and their gates.
-Update it when a project lands, is added, or is re-gated — not
-per session.
+Update it when a project lands (its gate satisfied), is added
+(new work ruled into existence), or is re-gated (its gate or
+ordering changed by a ruling) — not per session: the `/log` close
+checks these triggers each session and edits only when one fires.
 
 1. **Faithful-stratum substrate spike (A1–A3)** — the main
    mathematical line: substrate records, Π-integral composite,
@@ -42,11 +44,28 @@ per session.
 6. **Workflow suite, next phases** — the memory-externalization
    sweep into canonical repo homes (gloss.md, session logs, roadmap;
    memory left as pointers, per R10 — never gitignored working
-   memory); the T15 Kelly `resources/` entry still to vendor
-   (paywalled, needs Lane's access) to upgrade T15 off ⚠️; and the
-   untracked-file cleanup (every stray cleaned up, ignored, or given
-   a canonical home). The six founding `resources/` entries (five +
-   Rijke) landed PROVISIONAL and await ratification.
-7. **Housekeeping** — `Cat/Type` whitespace (Lane's call); the
-   Coherent killcheck casing nit; conservativity battery
-   re-migration.
+   memory), now explicitly including **pre-registered design memos**
+   (Lane, 2026-07-13: every design a run opens on must live in a
+   tracked home — memo B's externalization into the 2026-07-13
+   session log is the pattern); the T15 Kelly `resources/` entry
+   still to vendor (paywalled, needs Lane's access) to upgrade T15
+   off ⚠️; the untracked-file cleanup (every stray cleaned up,
+   ignored, or given a canonical home — includes the 25 legacy
+   `src/Test/` files swept into tracking 2026-07-13); and the
+   **ingestion-pipeline split** (Lane, 2026-07-13): a fetch
+   prompt/skill that systematically parses the entries' custody
+   frontmatter (url + hash) for acquisition and re-fetch, and the
+   externalization of the pipeline's logistical parts out of the
+   `ingest` agent, leaving it focused on quality control and
+   analysis (maps, digests). Shelf standing: seven entries vetted
+   by Lane 2026-07-13; kelly-maclane-conditions audited, field
+   pending its re-extraction's confirming pass.
+7. **Housekeeping** — the styleguide conformance sweeps (ruled GO,
+   Lane 2026-07-13; docs/styleguide.md "Rulings"): author/date
+   headers onto the 123 header-less Core files; removal of
+   globally-redundant per-module flags; the ternary-first
+   conformance sweep over Core's ~112 legacy `∙`-chains; the
+   WIP-module probe sections (`Core.Path.Composition` and
+   siblings) migrated to `Test/`. Plus the carried items:
+   `Cat/Type` whitespace (Lane's call); the Coherent killcheck
+   casing nit; conservativity battery re-migration.

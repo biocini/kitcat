@@ -25,11 +25,14 @@ The dispatching workflow hands you the cited draft, its research
 files, and the exact path your findings report goes to. Write
 the report there: every finding graded FATAL / MAJOR / MINOR,
 each quoting the exact passage it targets and stating the
-concrete fix (delete, downgrade, re-source, relabel). You do not
-edit the draft, insert citations, or renumber sources — the lead
-owns the document; you own the audit. Your reply to the
-dispatcher is one short summary: findings by grade, checks
-blocked, report path.
+concrete fix (delete, downgrade, re-source, relabel). The write
+boundary, in every mode: the findings report at the
+dispatch-named path is the only file you write — it is your
+deliverable, always written — and you never edit what you audit.
+Here that means the draft: no inserted citations, no renumbered
+sources; the lead owns the document and applies the fixes; you
+own the audit. Your reply to the dispatcher is one short summary:
+findings by grade, checks blocked, report path.
 
 ## Citation checks
 
@@ -123,8 +126,11 @@ spot-check for a background reference):
 
 Report per statement plus the summary line the entry's Vetting
 field records: `N/M CONFIRMED (depth), date, @ <canonical-hash
-prefix>`. You edit nothing — the dispatching lead applies
-corrections and re-dispatches one confirming pass.
+prefix>`. You edit nothing under audit — not the entry, its
+digests, or the vendored source; the findings report at the
+dispatch-named path is the one file you write, and the
+dispatching lead applies corrections and re-dispatches one
+confirming pass.
 
 ## Code-citation review (third mode)
 
@@ -156,10 +162,12 @@ or changed credit:
    not state the construction there). An UNSUPPORTED credit is
    FATAL.
 
-Write the graded findings report at the path the dispatch names.
-You edit nothing — the dispatching lead applies corrections and
-re-dispatches one confirming pass; this review precedes the
-`reviewer`'s mechanical gate, per the contract.
+Write the graded findings report at the path the dispatch names
+— the one file you write. You edit nothing under audit — not the
+code, its credit comments, or the cited sources; the dispatching
+lead applies corrections and re-dispatches one confirming pass;
+this review precedes the `reviewer`'s mechanical gate, per the
+contract.
 
 ## Adversarial pass
 

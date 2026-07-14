@@ -13,16 +13,27 @@ at the end — do not invent a rule from a split.
 
 ## Module anatomy
 
-- **Opener**: one plain-prose sentence naming the module's content
-  (not a heading), blank line, first fence, OPTIONS pragma, blank
-  line, `module … where`. (`src/Core/Type.lagda.md:1-6`,
-  `src/Core/Kan.lagda.md:1-6`.)
+- **Opener** (ruled 2026-07-13): author/date header — author name,
+  then month and year, as two plain lines (`src/Core/Path/Base.lagda.md:1-2`
+  is the exemplar) — then a blank line, one plain-prose sentence
+  naming the module's content (not a heading), blank line, first
+  fence, OPTIONS pragma, blank line, `module … where`.
+  (`src/Core/Type.lagda.md:1-6`, `src/Core/Kan.lagda.md:1-6` show
+  the body shape; the 123 header-less Core files are a scheduled
+  sweep, not precedent.) The header rule is uniform across tracked
+  `src/` — library modules, `Gloss.*` certificates, and
+  untimestamped `Test/` regression witnesses alike (ruled
+  2026-07-13, resolving the two-register question in favor of one
+  register).
 - **Pragma tracks the stratum**: default
   `--safe --erased-cubical --no-guardedness`; pure-MLTT foundation
   leaves use `--cubical-compatible`
   (`src/Core/Data/Nat/Base.lagda.md:5`); `--cubical` only where
   Glue is required, with the deviation justified in the opening
-  prose (`src/Core/Univalence.lagda.md:3-8`).
+  prose (`src/Core/Univalence.lagda.md:3-8`). Ruled 2026-07-13: no
+  flag redundant with the global `kitcat.agda-lib` set appears in
+  a per-module pragma (the sporadic `--no-sized-types` lines are a
+  scheduled cleanup).
 - **Imports**: immediately after the header, one `open import` per
   line, `Core.Type`/`Core.Base` first then rough dependency order.
   Plain opens dominate; `using`-lists where the pull is
@@ -72,8 +83,11 @@ at the end — do not invent a rule from a split.
   superclass fields likewise (`Semigroup-Monoid`).
 - **Variables**: `x y z w` elements; `p q r s` paths; `α β` higher
   cells; `i j k l` interval variables (hcom binders take the next
-  free letter); `φ` face formulas; `A B C` types. Levels: see Open
-  rulings.
+  free letter); `φ` face formulas; `A B C` types. Levels (ruled
+  2026-07-13): `u v w` for `Level`; `ℓ` is reserved for
+  interval-indexed levels `ℓ : I → Level`
+  (`src/Core/Base.lagda.md:33-34`). Core's `ℓ ℓ'`-for-`Level`
+  minority sites are baseline, not precedent.
 
 ## Definitions and proofs
 
@@ -172,21 +186,19 @@ at the end — do not invent a rule from a split.
 - `ind` is the canonical name for hand-rolled eliminators, inside
   the type's module scope.
 
-## Open rulings (Core splits — flagged, not legislated)
+## Rulings
 
-1. Author/date headers in the opener: 11 files have them, 123 do
-   not.
-2. `--no-sized-types` in per-module pragmas (redundant with the
-   global flag; present sporadically).
-3. Universe-level names: `u v w` (majority) vs `ℓ ℓ'` (strong
-   minority); candidate refinement — `u v w` for `Level`, `ℓ`
-   reserved for interval-indexed `I → Level` — is currently a
-   minority pattern.
-4. Fixity before vs after the definition (or bless both).
-5. Whether to schedule a ternary-first conformance sweep over
-   Core's legacy `∙`-chains.
-6. The cleanup path for WIP-module probe sections vs Public Module
-   Style.
+Ruled by Lane, 2026-07-13 (now stated as norms above, with their
+conformance sweeps scheduled in docs/roadmap.md Housekeeping):
+author/date headers standard; no globally-redundant per-module
+flags; `u v w` for `Level` with `ℓ` reserved for `I → Level`; the
+ternary-first conformance sweep over Core's legacy `∙`-chains is
+GO; the WIP-module probe sections migrate to `Test/` per Public
+Module Style.
+
+Still open (Core splits — flagged, not legislated):
+
+1. Fixity before vs after the definition (or bless both).
 
 Provenance: distilled from
 `notes/research/2026-07-13-core-styleguide-survey.md` (analyzer

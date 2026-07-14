@@ -23,7 +23,8 @@ exactly two things: the log
 `notes/session-logs/<YYYY-MM-DD>-<slug>.md`, and one dated entry
 appended at the TOP of `CHANGELOG.md` (newest first); the
 process-review stage below adds one working-memory report beside
-them. The division
+them, and the roadmap reconciliation stage edits `docs/roadmap.md`
+only when one of its header's triggers fired. The division
 of labor: the changelog records what happened — what landed, what
 was verified, what failed, what it superseded; the latest session
 log records where things stand — state, open questions, and the
@@ -65,6 +66,22 @@ log anchors it:
   BLOCKED with the manual command a human could run; never simulate
   it or claim its result — log what is actually visible.
 
+## Roadmap reconciliation
+
+With the session gathered, sweep its outcomes against
+`docs/roadmap.md`'s targets and test the roadmap's own update
+triggers — landed, added, re-gated — per its header, which owns
+the trigger list and the not-per-session cadence. Where a trigger
+fired and the update is mechanical — a landed target's status, a
+ruled re-gate whose wording Lane fixed in-session — apply it to
+`docs/roadmap.md` as part of this run. Where it requires judgment
+— a re-ordering, new-target wording Lane has not phrased — apply
+nothing and carry it to the close report for Lane's discretion,
+beside the promotion decision block and the Process review
+proposals. No trigger fired: the log records one line ("roadmap:
+no triggers") and the roadmap is untouched — the check is
+per-session, the edit is trigger-gated.
+
 ## Contents
 
 The log opens with a header block: a title line
@@ -72,54 +89,65 @@ The log opens with a header block: a title line
 matters), a **Date** line, a **Scope** paragraph — the session's
 arc in a few sentences: what was pursued, what was built, where it
 happened — and a bold **Status** line honest to verification (e.g.
-"designed + verified-sound, not built"). Then it records, in this
-order:
+"designed + verified-sound, not built"). Then come the sections:
+the list below is name-keyed and order-canonical — its order IS
+the canonical section order, each section renders in the log as a
+plain named `##` heading (unnumbered), and every cross-reference,
+in this workflow and in the log's own prose, cites a section by
+name, never by number, so inserting a section costs one list line
+(prior logs keep their old numbered headings untouched —
+append-only):
 
-1. **Work completed** — what was done, at the level of modules and
-   results, not keystrokes, presented as the session's arc: each
-   investigation step with its course corrections and declined
-   directions pinned, with reasons; and movement against the
-   previous log entry's next-step preview and `docs/roadmap.md`'s
-   targets.
-2. **Strongest findings and decisions** — each load-bearing claim
-   labeled per the contract's epistemic lexicon (VERIFIED names the
-   module or Gloss certificate). External claims that matter carry
-   direct stable URLs or DOIs.
-3. **Modules touched** — created, edited, renamed, or deleted, with
-   typecheck status where known.
-4. **Spikes** — each `src/Test/` spike created this session, with
-   its fate.
-5. **Theorem ledger** — `docs/gloss.md` entries added or upgraded,
-   with their status markers.
-6. **Failures preserved** — attempts preserved in plan ledgers,
-   each with why the approach failed AND its salvage: the reusable
-   machinery the attempt produced and what the wall points at, so a
-   future session builds on it rather than re-deriving (the θ-core
-   arc's "do not re-derive; build on" heading is the model). A
-   preserved failure that names no salvage is under-recorded.
-7. **Proposals** — candidate `resources/` entries, spikes worth
-   running, ledger entries to pursue. Proposals are recorded here,
-   never executed as a side effect of logging.
-8. **Meta-process notes worth carrying** — lessons about how the
-   work went that a future session should apply: probe patterns
-   that produced superficial verdicts and what fixed them, briefs
-   that misfired, disciplines that paid off. Omit the section when
-   the session genuinely produced none.
-9. **Process review** — the session's friction points from the
-   process-review stage below, each with its file/moment evidence
-   and its mapping: a workflow revision/addition proposal (named
-   surface, named change) or a named weakness in an existing
-   system, every proposal tagged **ratify-now** (with the exact
-   task) or **next-session** (with the open question). Recorded for
-   Lane's discretion, never applied by this run.
-10. **Open questions and risks** — including MAJOR verification
-    findings (below) and anything two consecutive failures forced
-    to a full stop.
-11. **Next steps** — concrete, ordered, resumable by a fresh
-    session.
-12. **Artifacts** — paths to the run artifacts collected above, plus
-    blocked capabilities and degraded delegations from this session,
-    each with what was done instead.
+- **Work completed** — what was done, at the level of modules and
+  results, not keystrokes, presented as the session's arc: each
+  investigation step with its course corrections and declined
+  directions pinned, with reasons; movement against the previous
+  log entry's next-step preview and `docs/roadmap.md`'s targets;
+  and the roadmap reconciliation's outcome — the updates applied,
+  the items carried to Lane, or the one line "roadmap: no
+  triggers".
+- **Strongest findings and decisions** — each load-bearing claim
+  labeled per the contract's epistemic lexicon (VERIFIED names the
+  module or Gloss certificate). External claims that matter carry
+  direct stable URLs or DOIs.
+- **Modules touched** — created, edited, renamed, or deleted, with
+  typecheck status where known.
+- **Spikes** — each `src/Test/` spike created this session, with
+  its fate.
+- **Theorem ledger** — `docs/gloss.md` entries added or upgraded,
+  with their status markers; plus the held list — promotions
+  awaiting Lane's ruling, this session's and any prior one still
+  unruled, carried here until ruled per the contract's promotion
+  decision block.
+- **Failures preserved** — attempts preserved in plan ledgers,
+  each with why the approach failed AND its salvage: the reusable
+  machinery the attempt produced and what the wall points at, so a
+  future session builds on it rather than re-deriving (the θ-core
+  arc's "do not re-derive; build on" heading is the model). A
+  preserved failure that names no salvage is under-recorded.
+- **Proposals** — candidate `resources/` entries, spikes worth
+  running, ledger entries to pursue. Proposals are recorded here,
+  never executed as a side effect of logging.
+- **Meta-process notes worth carrying** — lessons about how the
+  work went that a future session should apply: probe patterns
+  that produced superficial verdicts and what fixed them, briefs
+  that misfired, disciplines that paid off. Omit the section when
+  the session genuinely produced none.
+- **Process review** — the session's friction points from the
+  process-review stage below, each with its file/moment evidence
+  and its mapping: a workflow revision/addition proposal (named
+  surface, named change) or a named weakness in an existing
+  system, every proposal tagged **ratify-now** (with the exact
+  task) or **next-session** (with the open question). Recorded for
+  Lane's discretion, never applied by this run.
+- **Open questions and risks** — including MAJOR verification
+  findings (below) and anything two consecutive failures forced
+  to a full stop.
+- **Next steps** — concrete, ordered, resumable by a fresh
+  session.
+- **Artifacts** — paths to the run artifacts collected above, plus
+  blocked capabilities and degraded delegations from this session,
+  each with what was done instead.
 
 ## Process review
 
@@ -148,7 +176,8 @@ process-review dispatch is this run's only delegation and adds no
 verifier pass). The adversarial sweep for this workflow: claims
 labeled stronger than their evidence, spike fates asserted without
 checking the file, ledger statuses that disagree with
-`docs/gloss.md`, novelty language without a recorded search,
+`docs/gloss.md`, roadmap edits applied without a fired trigger,
+novelty language without a recorded search,
 process-review proposals worded as if already ratified, and
 sections surviving from earlier drafts that the final evidence no
 longer supports.
@@ -159,9 +188,12 @@ held in exact bijection with a frozen `Gloss.*` certificate (per
 `src/Gloss/CLAUDE.md`), or the committed module. A result living
 only in a `src/Test/` spike, a plan ledger, or the chat is
 enshrined NOW, and the log records only the pointer — the T-number
-and the module — never the proof. If you re-derived something this
-session that an earlier session already worked out, that is the
-signal to persist it before logging.
+and the module — never the proof. The one exception is a promotion
+Lane holds: its tracked, committed evidence stands per the
+methodology's P3 held-promotion clause, and the log carries it in
+the held list rather than promoting it unruled. If you re-derived
+something this session that an earlier session already worked out,
+that is the signal to persist it before logging.
 
 Run one memory-hygiene check: flag any ruling or decision that
 exists only in harness-private memory — not yet in a repo home
@@ -182,5 +214,9 @@ live in its body. The close report surfaces the Process review
 proposals to Lane's discretion explicitly — each with its
 ratify-now or next-session tag, each awaiting Lane's ruling as an
 immediate task or as next-session work; none is applied by this
-run. End by verifying on disk that both files exist before
-stopping; never stop at an unsaved draft.
+run. It names the Theorem ledger section's held list beside them —
+every promotion still awaiting Lane's ruling, never silently
+dropped — and the judgment-requiring roadmap items the
+reconciliation stage carried, each awaiting Lane's wording or
+ordering call. End by verifying on disk that both files exist
+before stopping; never stop at an unsaved draft.

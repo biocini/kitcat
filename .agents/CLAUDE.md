@@ -194,6 +194,20 @@ created as a silent side effect (see Ingestion below).
   review, exactly as the ordering rule below states for research
   artifacts. A change that touches no credit comment dispatches no
   citation review.
+- **The promotion decision block** (stated once here; workflows
+  name it and defer): theorem-ledger promotion candidates — a new
+  `docs/gloss.md` entry, a `Gloss.*` certificate freeze, a status
+  upgrade — are surfaced to Lane immediately at the run's close as
+  an explicit decision-request block leading the close report, each
+  candidate carrying its proposed statement, its recommended status
+  marker, and its evidence pointer (module, tracked spike, or
+  certificate). Candidates buried in a run ledger or deferred to a
+  follow-up question leave the close incomplete; a run with no
+  candidates says so in one line. A promotion Lane holds is never
+  silently dropped: its tracked, committed evidence bridges
+  proof-time and the ruling (the methodology's P3 owns that
+  reading), and the held promotion is carried in the session log's
+  held list until ruled.
 - Two consecutive failures on the same goal is a full stop: state
   what is known, what is not, what was tried; wait for direction.
 - Delegation is an ordered sequence, not a set: when a run cites,
@@ -289,8 +303,8 @@ for anything past the digest's statement. A digest-only answer is
 cited "per the entry digest at <anchor>" — SOURCE-CHECKED attaches
 only once the vendored source is read at the anchor (the lexicon
 above owns the labels) — and a missing vendored file is reported
-BLOCKED with the entry's recorded re-fetch command, never
-fabricated. Surfaces that ground in the shelf (the hott workflow,
+BLOCKED with the re-fetch instruction per the entry's frontmatter
+`fetch-url`, never fabricated. Surfaces that ground in the shelf (the hott workflow,
 the roster definitions) name this convention and defer here.
 
 ## Delivery
@@ -334,6 +348,15 @@ reading-and-extracting foundational content — a lookup grounded in
 the vendored Rijke entry's map and digests, whose smallest surface
 is a thin prompt over that entry (the acquisition and explanation
 skills are paper-scoped and heavier). Both pass.
+
+Worked records are **addition-time records** (Lane, 2026-07-13):
+immutable history of why an addition passed the gate, never
+maintained to track a surface's current shape — a reader must not
+assume them current, which is itself the hardening (a record that
+promises freshness misdirects the moment it staleness-drifts; a
+record that declares its date cannot). The same principle governs
+the layer at large: keep the canonical *living* surfaces as few
+and as small as possible; everything else is dated record.
 
 ## Context-layer design decisions
 

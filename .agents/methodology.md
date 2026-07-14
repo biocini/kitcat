@@ -52,6 +52,20 @@ only in a scratch file, a plan ledger, or the harness-private
 memory. Exemplar: T11 (TEL-independence) became the `docs/gloss.md`
 T11 entry and `Gloss.EightFieldWall` in one move.
 
+When Lane holds a promotion rather than ruling it in-session, the
+same-session bar is met by the evidence, not the entry: tracked,
+committed evidence — a tracked `Test/` spike, the typechecked
+module — satisfies the anti-rot intent, and the ledger entry or
+certificate lands on Lane's ruling. The bar itself does not soften:
+nothing load-bearing lives only in untracked scratch, a plan
+ledger, or harness-private memory. A held promotion is never
+silently dropped — it is surfaced at the run's close per the
+contract's promotion decision block (`.agents/CLAUDE.md`,
+Delegation) and carried in the session log's held list until ruled.
+Exemplar: the 2026-07-13 faithful-stratum run, whose three gloss
+candidates were held for Lane with the evidence committed as the
+tracked spike `Test/CodepFaithful-20260713-140913`.
+
 ## P4 — Literature unfolded to serve the construction, at speed
 
 When a proof turns on a source, the vendored copy is opened during

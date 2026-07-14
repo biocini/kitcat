@@ -27,12 +27,22 @@ everything below — follow them, do not restate them.
   record it, naming which artifact the hash is of. For an existing
   entry, verify the recorded hash before citing; a mismatch is
   FATAL — stop and resolve which document the entry describes.
-- **Record the fetch URL** whenever a known URL sourced the artifact
-  — binding for PDFs — plus the explicit re-fetch command when a
-  stable URL exists, or an honest note that none does. A `.pdftext`
-  extraction records its provenance: the exact `pdftotext` command
-  and the poppler version (run inside `nix develop` — the flake pins
-  the extractor, which is what keeps line anchors stable).
+- **Record the fetch URL** in the entry's custody frontmatter
+  (`fetch-url`, or the explicit `none` — the format authority owns
+  the schema; re-fetch is mechanical from it, so no entry records
+  fetch commands) — binding for PDFs, with any host caveats as
+  Source-provenance prose. A `.pdftext`
+  extraction records its provenance: the exact command chain and
+  tool versions (run inside `nix develop` — the flake pins the
+  extractors, which is what keeps line anchors stable). For a PDF
+  lacking a text layer or carrying a broken one, the pinned
+  repair/OCR chain (`qpdf`, then `ocrmypdf`, then `pdftotext`) is
+  MANDATORY per the format authority — never skipped, never an
+  unpinned tool; the OCR-derived extraction is a locator only and
+  the entry says so. Garbled load-bearing content is corrected via
+  the format authority's tracked correction patch: hunks verified
+  against page renders by visual reasoning, itemized, applied
+  mechanically after extraction — never silent hand edits.
 - **Vendored and derived forms stay gitignored** (the tarball, the
   extracted markup, the `.pdftext`); a new unfolded-source extension
   not yet ignored is added to `.gitignore`. Only the entry README —

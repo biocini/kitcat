@@ -1,8 +1,8 @@
 ---
 name: eli5
-description: Explain a theorem, a docs/gloss.md ledger entry, a module, or a paper in type theory, category theory, univalent mathematics, or programming language foundations in plain English — six fixed sections, minimal jargon, one strong analogy, and strict separation of what is machine-checked in this repository from what a source merely claims. Use when asked to ELI5 something, explain a result simply, remove jargon, or say what a dense proof, module, or paper actually means. Delivers the explanation in chat; large-document runs leave checkpointed working notes in notes/research/.
-argument-hint: <theorem|gloss-entry|module|paper-or-url> [--window-size <chars>] [--overlap <chars>] [--tier-threshold <chars>]
-args: <theorem|gloss-entry|module|paper-or-url> [--window-size <chars>] [--overlap <chars>] [--tier-threshold <chars>]
+description: Explain a theorem, a docs/gloss.md ledger entry, a module, or a paper in type theory, category theory, univalent mathematics, or programming language foundations in plain English — six fixed sections, minimal jargon, one strong analogy, and strict separation of what is machine-checked in this repository from what a source merely claims. Use when asked to ELI5 something, explain a result simply, remove jargon, or say what a dense proof, module, or paper — up to book-length — actually means. Delivers the explanation in chat; large documents are read in checkpointed windows or, at genuine document scale, by a parallel fan-out of readers, leaving durable working notes in notes/research/.
+argument-hint: <theorem|gloss-entry|module|paper-or-url> [--window-size <chars>] [--overlap <chars>] [--tier-threshold <chars>] [--fan-out-threshold <chars>] [--chunk-size <chars>]
+args: <theorem|gloss-entry|module|paper-or-url> [--window-size <chars>] [--overlap <chars>] [--tier-threshold <chars>] [--fan-out-threshold <chars>] [--chunk-size <chars>]
 section: Research Workflows
 topLevelCli: true
 ---
@@ -44,17 +44,23 @@ results — the only claims the explanation may mark VERIFIED.
 
 ## Configuration
 
-Three knobs control the windowed reading below; inline flags
+Five knobs control the tiered reading below; inline flags
 override environment variables, defaults apply when neither is set.
 
 - `--window-size <chars>` or `KITCAT_ELI5_WINDOW_CHARS` (default 6000)
 - `--overlap <chars>` or `KITCAT_ELI5_OVERLAP_CHARS` (default 500)
 - `--tier-threshold <chars>` or `KITCAT_ELI5_TIER_THRESHOLD`
   (default 8000)
+- `--fan-out-threshold <chars>` or `KITCAT_ELI5_FANOUT_THRESHOLD`
+  (default 60000)
+- `--chunk-size <chars>` or `KITCAT_ELI5_CHUNK_CHARS`
+  (default 40000)
 
-Validate window-size > overlap; on violation, stop and report a
-configuration error. For an on-disk document, log the resolved
-values once: `[eli5] config window=<w> overlap=<o> tier=<t>`.
+Validate window-size > overlap, chunk-size > overlap, and
+fan-out-threshold > tier-threshold; on violation, stop and report
+a configuration error. For an on-disk document, log the resolved
+values once:
+`[eli5] config window=<w> overlap=<o> tier=<t> fanout=<f> chunk=<c>`.
 
 ## Get the source onto disk
 
@@ -91,23 +97,27 @@ characters would overcount. Log:
 
 ## Choose a tier
 
-Windowing keeps context pressure proportional to the window size,
-not the document size; the table decides which strategy applies.
+Windowing keeps the lead's context pressure proportional to the
+window size, not the document size — but every window still
+transits one context, so at genuine document scale the fan-out
+tier caps the pressure instead by giving each chunk a fresh
+reader. The table decides which strategy applies.
 
 | Decoded chars | Strategy |
 | --- | --- |
 | below tier-threshold | Direct read — read in full and explain |
-| at or above tier-threshold | Windowed, checkpointed read (below) |
+| tier-threshold to fan-out-threshold | Windowed read (below) |
+| at or above fan-out-threshold | Fan-out read (below) |
 
-Log: `[eli5] tier=<direct|windowed> chars=<count>`.
+Log: `[eli5] tier=<direct|windowed|fan-out> chars=<count>`.
 
 ## Windowed reading (checkpointed)
 
 The document stays on disk. Before window 1, open
 `notes/research/<YYYY-MM-DD>-<slug>-summary.md` with the resolved configuration
-as its first line (`[eli5] config window=<w> overlap=<o> tier=<t>`):
-window offsets are a pure function of these values, and the
-recorded line is what realigns a resumed run. Extract windows by
+as its first line (the config log line above): window offsets are
+a pure function of these values, and the recorded line is what
+realigns a resumed run. Extract windows by
 character offset via the shell capability:
 
 ```python
@@ -141,6 +151,61 @@ the same file — a claim appearing in overlapping windows is one
 claim; keep the most complete formulation — then write the
 explanation from the notes, not from memory of the raw text.
 
+## Fan-out reading (parallel, checkpointed)
+
+At fan-out scale even windowed reading pushes every raw window
+through the lead's context; this tier caps that pressure by giving
+each chunk of the document a fresh reader. Only reading at scale
+is delegated — synthesis and the explanation stay lead-owned per
+the contract, and the contract's rule against delegating an
+explainer-scale question stands: this tier is its one sanctioned
+exception, gated by document size alone, never by question
+difficulty.
+
+1. Chunk the document to disk. Split
+   `notes/research/<YYYY-MM-DD>-<slug>-raw.txt` into
+   `notes/research/<YYYY-MM-DD>-<slug>-chunk-<NN>.txt` files by character
+   offset via the shell capability, chunk N starting at
+   `N * (chunk_size - overlap)` — the windowed tier's
+   overlapping-starts guarantee, at chunk scale. Open
+   `notes/research/<YYYY-MM-DD>-<slug>-summary.md` with the resolved
+   configuration as its first line (the config log line above):
+   chunk offsets are a pure function of these values, and the
+   recorded line is what realigns a resumed run.
+   Log: `[eli5] chunks=<total>`.
+2. Dispatch one reader per chunk: the `researcher` agent via the
+   subagent-dispatch capability, in waves of at most four
+   concurrent dispatches, each with a self-contained brief per the
+   contract naming the chunk file to read, the extraction contract
+   of step 1 of the windowed tier (claims, definitions, theorem
+   statements, proof moves, each standing alone; `BOUNDARY
+   PARTIAL` at chunk edges), and the exact output path
+   `notes/research/<YYYY-MM-DD>-<slug>-chunk-<NN>-extract.md`. Brief the
+   readers in capability terms. A failed or stuck reader never
+   stops its wave: record it and continue — a partial read
+   delivered with named gaps beats no read at all.
+3. Chunk-existence check: before synthesis, verify on disk that
+   every chunk has its extract. Re-dispatch a missing extract
+   once; a chunk still uncovered after that is a coverage gap,
+   recorded, never silently skipped.
+   Log: `[eli5] extracts=<found>/<total>`.
+4. Aggregate lead-owned. Read the extracts — never the raw chunks;
+   the lead's context is what this tier protects — dedupe claims
+   appearing in overlapping chunks keeping the most complete
+   formulation, and append the synthesis to
+   `notes/research/<YYYY-MM-DD>-<slug>-summary.md` with a closing
+   **Coverage gaps** section naming every chunk without an extract
+   and the part of the document it covered; when nothing is
+   missing, the section says so in one line. Then write the
+   explanation from the notes, not from memory of the raw text.
+
+On restart, honor the configuration line at the top of
+`notes/research/<YYYY-MM-DD>-<slug>-summary.md` over current flags and
+environment, keep every extract already on disk, and re-dispatch
+only the missing ones. When the `researcher` agent is absent in
+your harness, fall back to the windowed tier and record the
+delegation as degraded per the contract.
+
 ## The explanation
 
 Six sections, always in this order: **One-Sentence Summary**,
@@ -168,13 +233,18 @@ Guidelines, all binding:
 
 ## Verify
 
-Before delivery, run the verify protocol per the contract — this
-run dispatches no agents, so its direct-mode self-review applies.
-The adversarial sweep for this workflow:
+Before delivery, run the verify protocol per the contract. A
+direct or windowed run dispatches no agents, so the contract's
+direct-mode self-review applies; a fan-out run dispatched readers,
+so the exemption lapses — its verify pass is dispatched per the
+contract, and the report the contract names joins the run's
+artifacts. The adversarial sweep for this workflow:
 load-bearing claims without an epistemic label, labels stronger
 than their evidence, an analogy implying properties the source
-never establishes, jargon left undefined, and sections surviving
-from earlier drafts that the final evidence no longer supports.
+never establishes, jargon left undefined, sections surviving
+from earlier drafts that the final evidence no longer supports,
+and — for a fan-out run — claims resting on a chunk the Coverage
+gaps section reports missing.
 MAJOR findings land in a closing "Open questions" line of the
 explanation.
 
@@ -183,17 +253,21 @@ explanation.
 The explanation goes to chat — it is the deliverable, not a file. A
 direct-read run of a repo-internal target writes nothing; a
 direct-read run of an external or local document leaves only
-`notes/research/<YYYY-MM-DD>-<slug>-raw.txt` behind. A windowed run also leaves
-`notes/research/<YYYY-MM-DD>-<slug>-summary.md` as working notes, closing with:
+`notes/research/<YYYY-MM-DD>-<slug>-raw.txt` behind. A windowed or fan-out run
+also leaves `notes/research/<YYYY-MM-DD>-<slug>-summary.md` as working notes —
+the durable record of the read — closing with:
 the source and its vetting status (`resources/` entry,
 SOURCE-CHECKED, or `[unvetted]`), the resolved configuration, the
 verification status (PASS / PASS WITH NOTES / BLOCKED) and the run
 date, and any blocked capability with the manual command a human
-could run instead. Verify on disk that the file exists before
-stopping a windowed run.
+could run instead. A fan-out run additionally leaves its chunk and
+extract files and the verify report the contract names. Verify on
+disk that every file promised above exists before stopping a
+windowed or fan-out run.
 
-This skill writes only `notes/research/<YYYY-MM-DD>-<slug>-raw.txt` and
-`notes/research/<YYYY-MM-DD>-<slug>-summary.md` — nothing else, anywhere. A
+This skill writes only the dated run files named above — the raw
+text, the summary, and a fan-out run's chunks, extracts, and
+verify report — nothing else, anywhere. A
 paper worth permanent vetting, a gloss entry worth pursuing, or a
 mechanization spike the explanation suggests is a proposal, stated
 in chat or in the working notes — never executed as a side effect.
@@ -206,8 +280,8 @@ in chat or in the working notes — never executed as a side effect.
   claim, until it sheds per the contract's epistemic lexicon.
 - A capability with no visible tool is reported BLOCKED with the
   manual command a human could run; never simulate a capability or
-  claim its result. Windowed runs record BLOCKED entries in
-  `notes/research/<YYYY-MM-DD>-<slug>-summary.md`; direct-read runs report them
-  in chat.
+  claim its result. Windowed and fan-out runs record BLOCKED
+  entries in `notes/research/<YYYY-MM-DD>-<slug>-summary.md`; direct-read runs
+  report them in chat.
 - Plain English never earns extra confidence: an explanation
   simplifies the language, never the epistemic status.
