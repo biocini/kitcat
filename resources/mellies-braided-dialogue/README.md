@@ -1,3 +1,11 @@
+---
+artifact: mellies-braided-dialogue.pdf
+sha256: fd7fb96e832cb40ed0b587c24e005a37d43b81812fe05b333f92649a0fb2a6c4
+format: pdf
+fetch-url: https://www.irif.fr/~mellies/tensorial-logic/6-braided-notions-of-dialogue-categories.pdf
+fetched: 2026-07-11
+---
+
 # Melliès — Braided notions of dialogue categories
 
 ## Citation
@@ -50,11 +58,14 @@ anchored). The recorded PDF hash was re-verified
 (`shasum -a 256 mellies-braided-dialogue.pdf`) and matches. The
 publication-status negative was re-checked and recorded above.
 
-PROVISIONAL: agent-vetted; Lane's confirmation of this entry is
+Provisional marker retired 2026-07-13 (Vetted, below); at ingestion the entry was agent-vetted, Lane's confirmation
 pending (the format authority governs what the marker means).
 
 Statements verified: 3/4 CONFIRMED on first pass, 1 CORRECTED
 applied (spot-check), 2026-07-13, by verifier (Claude), @ fd7fb96e; confirming re-pass clean 2026-07-13.
+
+Vetted: 2026-07-13, Lane (ratified at Lane's explicit direction,
+conveyed in-session; full-shelf ratification).
 
 ## Files
 
@@ -64,7 +75,7 @@ this README is tracked.
 
 - `mellies-braided-dialogue.pdf` — the canonical artifact: the
   42-page IRIF manuscript compile dated March 7, 2012. This is the
-  file the hash below is of.
+  file the frontmatter's canonical `sha256` is of.
 - `mellies-braided-dialogue.pdftext` — a `pdftotext` extraction of
   the canonical PDF (greppability fallback; the map's `l.NNN`
   anchors index this file). Regenerate with
@@ -77,33 +88,19 @@ this README is tracked.
 Grep `mellies-braided-dialogue.pdftext` for a definition; jump with
 `sed -n 'A,Bp' mellies-braided-dialogue.pdftext`.
 
-## Source URL and re-fetch
+## Source provenance
 
-Fetched 2026-07-11 from the author's IRIF tensorial-logic page:
-<https://www.irif.fr/~mellies/tensorial-logic/6-braided-notions-of-dialogue-categories.pdf>
-(bit-identity of the vendored copy with this URL verified by sha256
-at fetch time; the URL still served a PDF when HEAD-checked
-2026-07-13). The vendored filename differs from the URL basename;
-re-fetch:
-
-```
-curl -L -o mellies-braided-dialogue.pdf \
-  https://www.irif.fr/~mellies/tensorial-logic/6-braided-notions-of-dialogue-categories.pdf
-```
-
-This is an unpublished manuscript hosted only on the author's page,
-which can recompile or relink it at any time (the sibling entry
-`mellies-micrological-negation` documents exactly such a drift), so
-a re-fetch is not guaranteed to reproduce this vintage. Verify any
-re-fetched copy against the hash below; the hash is the identity.
-
-## Document hash
-
-sha256 of the canonical artifact (the 42-page manuscript PDF):
-
-```
-fd7fb96e832cb40ed0b587c24e005a37d43b81812fe05b333f92649a0fb2a6c4  mellies-braided-dialogue.pdf
-```
+Fetched 2026-07-11 from the author's IRIF tensorial-logic page
+(the frontmatter's fetch URL); bit-identity of the vendored copy
+with that URL was verified by sha256 at fetch time, and the URL
+still served a PDF when HEAD-checked 2026-07-13. The vendored
+filename differs from the URL basename. This is an unpublished
+manuscript hosted only on the author's page, which can recompile
+or relink it at any time (the sibling entry
+`mellies-micrological-negation` documents exactly such a drift),
+so a re-fetch is not guaranteed to reproduce this vintage. Verify
+any re-fetched copy against the frontmatter's `sha256`; the hash
+is the identity.
 
 ## Section map
 

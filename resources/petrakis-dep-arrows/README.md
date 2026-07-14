@@ -1,3 +1,16 @@
+---
+artifact: petrakis-dep-arrows.tar.gz
+sha256: 3cb80488fcee295aed19ff7bed478a8b8b373789f0f7ce7b57ab4f2c557f2317
+format: latex-source
+fetch-url: https://arxiv.org/e-print/2303.14754
+metadata-url: https://arxiv.org/abs/2303.14754
+version: v1
+fetched: 2026-07-12
+sha256-inner: 85ce309afdcf4b01509ebdb84158d9f91c101e58c140f343b5fd27392ae698d6
+secondary-artifact: cat-dep-arrows.pdf
+secondary-sha256: 2298bc0e6878f09146d2c1b3a015fdee6cdb0ec729b98972ea26cf0dc8557983
+---
+
 # Petrakis — Categories with dependent arrows
 
 The source paper for the **categories-with-dependent-arrows**
@@ -19,7 +32,7 @@ of ingestion).
 
 ## Vetting
 
-PROVISIONAL. Re-ingested 2026-07-12 by Claude (Opus 4.8) at Lane's
+Provisional marker retired 2026-07-13 (Vetted, below). Originally ingested: Re-ingested 2026-07-12 by Claude (Opus 4.8) at Lane's
 direction (R11 — the arXiv LaTeX e-print is canonical, superseding
 PDF), via the ingestion protocol: the arXiv LaTeX e-print fetched
 directly (`curl -L https://arxiv.org/e-print/2303.14754`), the
@@ -31,14 +44,14 @@ metadata (title, author, subjects, v1-only submission date 26 Mar
 The theorem/definition numbering was reconciled against the
 source's shared section counter (all numbered environments share
 one per-section counter — see the map) and matches the numbers in
-the prior PDF-based entry. PROVISIONAL: Lane's confirmation pending (the format authority
+the prior PDF-based entry. Provisional marker retired 2026-07-13 (Vetted, below); was: Lane's confirmation pending (the format authority
 governs what the marker means).
 
 Format-conformance update 2026-07-13 (Claude, Fable 5): added the
 Source URL and re-fetch and Content digests sections per the
 updated format authority; the canonical hash was re-verified
 against the vendored tarball and each digest anchor re-checked
-against the vendored `.tex`. Status unchanged: PROVISIONAL.
+against the vendored `.tex`. Status at that re-extraction: provisional (since retired — Vetted, below).
 
 Prior ingestion: opened 2026-07-11 by Claude (Fable 5) from the
 arXiv v1 PDF (title/abstract/subjects checked against the abs page;
@@ -49,6 +62,9 @@ gitignored).
 
 Statements verified: 8/10 CONFIRMED on first pass, 2 CORRECTED
 applied (full), 2026-07-13, by verifier (Claude), @ 3cb80488; confirming re-pass clean 2026-07-13.
+
+Vetted: 2026-07-13, Lane (ratified at Lane's explicit direction,
+conveyed in-session; full-shelf ratification).
 
 ## Source errata
 
@@ -66,9 +82,9 @@ Canonical format: **LaTeX source** (an arXiv e-print). All vendored
 and derived forms are gitignored; only this README is tracked.
 
 - `petrakis-dep-arrows.tar.gz` — the canonical artifact (the arXiv
-  e-print source). This is the file the canonical hash below is of.
-  The e-print is a single gzip-compressed LaTeX file (arXiv's form
-  for a one-file source), not a multi-file tar.
+  e-print source). This is the file the frontmatter's canonical
+  `sha256` is of. The e-print is a single gzip-compressed LaTeX
+  file (arXiv's form for a one-file source), not a multi-file tar.
 - `Arxiv_Dep_CAT.tex` — the extracted LaTeX source (the source's
   own internal filename), 3663 lines. **This is the file the reader
   greps**; regenerate with
@@ -76,49 +92,22 @@ and derived forms are gitignored; only this README is tracked.
   with `sed -n 'A,Bp' Arxiv_Dep_CAT.tex`.
 - `cat-dep-arrows.pdf` — the arXiv v1 PDF compile (20 pp.); a
   secondary derived artifact, superseded as canonical by the
-  e-print. Retained for convenience, gitignored.
+  e-print. Retained for convenience, gitignored; pinned by the
+  frontmatter's `secondary-sha256`.
 
-## Source URL and re-fetch
+## Source provenance
 
-Fetched directly from arXiv by stable identifier; the canonical
-fetch URL is the LaTeX e-print, the metadata page the abs URL:
-
-- E-print (canonical): <https://arxiv.org/e-print/2303.14754>
-- Metadata: <https://arxiv.org/abs/2303.14754>
-
-Re-fetch with
-
-```
-curl -L -o petrakis-dep-arrows.tar.gz https://arxiv.org/e-print/2303.14754
-```
-
-and re-verify against the canonical hash below. Version pin: v1 —
-the only version on arXiv as of 2026-07-13 (`[v1] Sun, 26 Mar 2023
-15:18:02 UTC`), so the unversioned e-print URL currently serves v1;
-should a later version ever appear, pin explicitly with
-`https://arxiv.org/e-print/2303.14754v1`.
-
-## Document hash
-
-sha256 of the **canonical artifact** (the e-print tarball), stable
-across two independent arXiv fetches:
-
-```
-3cb80488fcee295aed19ff7bed478a8b8b373789f0f7ce7b57ab4f2c557f2317  petrakis-dep-arrows.tar.gz
-```
-
-Fallback if the gzip wrapper ever varies — sha256 of the extracted
-(uncompressed) `.tex`, `gunzip -c petrakis-dep-arrows.tar.gz | shasum -a 256`:
-
-```
-85ce309afdcf4b01509ebdb84158d9f91c101e58c140f343b5fd27392ae698d6
-```
-
-Secondary artifact (the v1 PDF, no longer canonical), sha256:
-
-```
-2298bc0e6878f09146d2c1b3a015fdee6cdb0ec729b98972ea26cf0dc8557983  cat-dep-arrows.pdf
-```
+Fetched directly from arXiv by stable identifier (re-ingested
+2026-07-12 under R11 — the e-print canonical, superseding the
+PDF); the frontmatter carries the e-print fetch URL, the abs
+metadata URL, and the identity hashes (canonical, the extracted
+inner-`.tex` fallback, and the retained secondary PDF). The
+canonical hash was checked stable across two independent arXiv
+fetches. Version pin v1 — the only version on arXiv as of
+2026-07-13 (`[v1] Sun, 26 Mar 2023 15:18:02 UTC`), so the
+unversioned e-print URL currently serves v1; should a later
+version ever appear, pin explicitly by appending `v1` to the
+e-print URL.
 
 ## Section map
 
@@ -238,6 +227,13 @@ here, not by label.
   dependency is complicated and Σ-dependent. Stresses that
   `𝔡𝔦`-categories admit dependent arrows *not* generated from
   Sigma-objects (Examples 4.2, 4.4).
+- Cofamily-arrows (`l.3465–3506`) — the dual notion sketched:
+  cofamily-arrows over `a` with the covariant action and its two
+  laws (cf₁/cf₂, the duals of 𝔣₁/𝔣₂), and the announcement that
+  the codependent development is future work. (Addendum
+  2026-07-13, anchor verified fresh by the code-citation review
+  of the same date; the canonical artifact and its statement
+  audit are untouched by this map line.)
 
 **Bibliography** (`l.3528` `\begin{thebibliography}`, 41 items;
 `l.3658` `\end{document}`).

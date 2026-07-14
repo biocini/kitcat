@@ -1,3 +1,12 @@
+---
+artifact: 3-microlocal-study-of-negation.pdf
+sha256: 0b482777192521606253a92264176f077027adbdcf888cb02f2d9d2ec0405a50
+format: pdf
+fetch-url: https://www.irif.fr/~mellies/tensorial-logic/3-microlocal-study-of-negation.pdf
+doi: 10.1016/j.apal.2016.10.008
+fetched: 2026-07-11
+---
+
 # Melliès — A micrological study of negation
 
 ## Citation
@@ -35,11 +44,14 @@ key-item locations promised "by pdftotext line region" actually
 supplied as `l.NNN` anchors into the `.pdftext`. The recorded PDF
 hash was re-verified (`shasum -a 256`) and matches.
 
-PROVISIONAL: agent-vetted; Lane's confirmation of this entry is
+Provisional marker retired 2026-07-13 (Vetted, below); at ingestion the entry was agent-vetted, Lane's confirmation
 pending (the format authority governs what the marker means).
 
 Statements verified: 4/4 CONFIRMED (spot-check), 2026-07-13, by
 verifier (Claude), @ 0b482777.
+
+Vetted: 2026-07-13, Lane (ratified at Lane's explicit direction,
+conveyed in-session; full-shelf ratification).
 
 ## Files
 
@@ -51,7 +63,7 @@ README is tracked.
   the 41-page IRIF manuscript compile (this is **not** the journal
   compile; the published APAL version spans 52 journal pages, and
   all numbering below is pinned to this vendored 41-page vintage).
-  This is the file the hash below is of.
+  This is the file the frontmatter's canonical `sha256` is of.
 - `micrological-negation.pdftext` — a `pdftotext` extraction of the
   canonical PDF (greppability fallback; the map's `l.NNN` anchors
   index this file). Regenerate with
@@ -64,33 +76,18 @@ README is tracked.
 Grep `micrological-negation.pdftext` for a definition; jump with
 `sed -n 'A,Bp' micrological-negation.pdftext`.
 
-## Source URL and re-fetch
+## Source provenance
 
-Fetched 2026-07-11 from the author's IRIF tensorial-logic page:
-<https://www.irif.fr/~mellies/tensorial-logic/3-microlocal-study-of-negation.pdf>
-(bit-identity of the vendored copy with this URL verified by sha256
-at fetch time). Re-fetch attempt:
-
-```
-curl -L -o 3-microlocal-study-of-negation.pdf \
-  https://www.irif.fr/~mellies/tensorial-logic/3-microlocal-study-of-negation.pdf
-```
-
-The recorded URL served this 41-page vintage at fetch time, but the
-vendored manuscript is NOT the compile the author's page currently
-links (`4-micrological-study-of-negation.pdf`, a later compile —
-see the naming note under Citation). A re-fetch may therefore yield
-a different document: the URL still served a PDF when HEAD-checked
+Fetched 2026-07-11 from the author's IRIF tensorial-logic page
+(the frontmatter's fetch URL); bit-identity of the vendored copy
+with that URL was verified by sha256 at fetch time. The recorded
+URL served this 41-page vintage at fetch time, but the vendored
+manuscript is NOT the compile the author's page currently links
+(`4-micrological-study-of-negation.pdf`, a later compile — see
+the naming note under Citation). A re-fetch may therefore yield a
+different document: the URL still served a PDF when HEAD-checked
 2026-07-13, but which compile it now serves was not re-downloaded.
-The hash below is the identity of this vintage.
-
-## Document hash
-
-sha256 of the canonical artifact (the 41-page manuscript PDF):
-
-```
-0b482777192521606253a92264176f077027adbdcf888cb02f2d9d2ec0405a50  3-microlocal-study-of-negation.pdf
-```
+The frontmatter's `sha256` is the identity of this vintage.
 
 ## Section map
 

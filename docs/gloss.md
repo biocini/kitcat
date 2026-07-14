@@ -168,7 +168,7 @@ foreclosed by untruncated homs. Regularity does not pin them:
 faithfulness is a property of `emb` (twist-invariant, h-level 1);
 the cells are twist-variant (h-level 2).
 📐⚠️ (2026-07-11, bimodule memo); the Kelly source-identification is
-CONJECTURED until `resources/kelly-mac-lane-coherence` is vendored.
+CONJECTURED until `resources/kelly-maclane-conditions` is vendored.
 
 **T16 — The Melliès convergence.** kitcat's `op`/`op-invol` is
 Melliès' `(−)op` involution in his "involutive 2-category" reading
@@ -250,5 +250,5 @@ fidelity verified against the source, not merely present on disk;
 an unaudited entry lifts nothing, and a Lane veto of the entry
 re-imposes ⚠️. This is the external mirror of the 🧪↔`Gloss.*`
 bijection. (T15's Kelly identification stays ⚠️/CONJECTURED until
-a `resources/kelly-mac-lane-coherence` entry is vendored and
+a `resources/kelly-maclane-conditions` entry is vendored and
 audited.)

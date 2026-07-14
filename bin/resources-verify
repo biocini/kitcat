@@ -6,24 +6,41 @@ set -euo pipefail
 
 # resources-verify — mechanical custody check for resources/ entries.
 #
-# For every entry README, re-verify each recorded sha256 line
-# ("<64-hex>  <filename>") against the vendored file beside it:
+# For every entry README, read the custody frontmatter (the
+# machine-parseable surface; resources/README.md "Entry format" is
+# the schema authority) and re-verify each recorded artifact hash
+# against the vendored file beside it — the canonical
+# `artifact`/`sha256` pair, plus the `secondary-artifact`/
+# `secondary-sha256` pair when present. `sha256-inner` is a
+# re-fetch fallback with no on-disk target and is not checked.
 #   - a mismatch is FATAL (exit 1) — the entry describes a different
 #     document than the one on disk; resolve before citing anything;
 #   - an absent file is reported MISSING (informational) — vendored
 #     artifacts are gitignored, so a fresh clone legitimately lacks
-#     them; re-fetch per the entry's recorded URL/command.
-# Hash lines without a filename (piped-form fallbacks like the
-# inner-tar hash) are skipped: they carry no on-disk target.
+#     them; re-fetch per the entry's frontmatter `fetch-url`.
 #
 # --remote additionally reports, for each arXiv-identified entry, the
-# latest version on arxiv.org beside what the entry records, so
-# version drift is visible. Informational: the reader judges; an
-# unreachable network is reported, never silently ignored.
+# latest version on arxiv.org beside what the entry records (the
+# frontmatter `version:` pin when the id is the entry's own, else
+# the README's inline citation), so version drift is visible.
+# Informational: the reader judges; an unreachable network is
+# reported, never silently ignored.
 
 # rg exits 1 when nothing matches — an empty set here, not an error.
 # Any other nonzero status is a real failure and must propagate.
 rg_allow_empty() { rg "$@" || [ $? -eq 1 ]; }
+
+# Read one flat scalar key from an entry README's YAML frontmatter
+# (the block between the opening '---' on line 1 and the closing
+# '---'). Prints the value, or nothing when the file has no
+# frontmatter or lacks the key.
+fm_get() { # fm_get <readme> <key>
+    awk -v key="$2" '
+        NR == 1 { if ($0 != "---") exit; next }
+        /^---$/ { exit }
+        index($0, key ": ") == 1 { print substr($0, length(key) + 3); exit }
+    ' "$1"
+}
 
 cd "$(git rev-parse --show-toplevel)"
 
@@ -33,14 +50,42 @@ for arg in "$@"; do
         --remote) remote=true ;;
         -h|--help)
             echo "Usage: resources-verify [--remote]"
-            echo "Verify recorded hashes against vendored artifacts;"
+            echo "Verify frontmatter-recorded hashes against vendored artifacts;"
             echo "--remote also reports latest arXiv versions."
             exit 0 ;;
         *) echo "resources-verify: unknown argument '$arg'" >&2; exit 2 ;;
     esac
 done
 
+# Transition exception (2026-07-13), named — never a blanket
+# fallback: kelly-maclane-conditions is mid re-extraction and its
+# README migrates to frontmatter after that pass lands. Until then
+# it alone is parsed by the legacy Document-hash body scan; any
+# OTHER entry without custody frontmatter is a schema violation and
+# FATAL. Remove this case (and the legacy scan) once the entry is
+# migrated.
+legacy_pending="kelly-maclane-conditions"
+
 entries=0 checked=0 missing=0 fatal=0
+
+check_hash() { # check_hash <entry> <dir> <file> <hash>
+    local entry="$1" dir="$2" file="$3" hash="$4" target actual
+    target="${dir}${file}"
+    if [ ! -f "$target" ]; then
+        echo "  ${entry}: MISSING ${file} — vendored artifact absent; re-fetch per the entry's fetch-url"
+        missing=$((missing + 1))
+        return
+    fi
+    actual="$(shasum -a 256 "$target" | awk '{print $1}')"
+    if [ "$actual" = "$hash" ]; then
+        checked=$((checked + 1))
+    else
+        echo "  ${entry}: FATAL hash mismatch on ${file}"
+        echo "    recorded: ${hash}"
+        echo "    actual:   ${actual}"
+        fatal=$((fatal + 1))
+    fi
+}
 
 for dir in resources/*/; do
     readme="${dir}README.md"
@@ -48,26 +93,35 @@ for dir in resources/*/; do
     entries=$((entries + 1))
     entry="$(basename "$dir")"
 
-    while read -r hash file; do
-        [ -n "${hash:-}" ] || continue
-        target="${dir}${file}"
-        if [ ! -f "$target" ]; then
-            echo "  ${entry}: MISSING ${file} — vendored artifact absent; re-fetch per the entry"
-            missing=$((missing + 1))
-            continue
-        fi
-        actual="$(shasum -a 256 "$target" | awk '{print $1}')"
-        if [ "$actual" = "$hash" ]; then
-            checked=$((checked + 1))
-        else
-            echo "  ${entry}: FATAL hash mismatch on ${file}"
-            echo "    recorded: ${hash}"
-            echo "    actual:   ${actual}"
+    artifact="$(fm_get "$readme" artifact)"
+    hash="$(fm_get "$readme" sha256)"
+    if [ -n "$artifact" ] && [ -n "$hash" ]; then
+        check_hash "$entry" "$dir" "$artifact" "$hash"
+        sec_artifact="$(fm_get "$readme" secondary-artifact)"
+        sec_hash="$(fm_get "$readme" secondary-sha256)"
+        if [ -n "$sec_artifact" ] && [ -n "$sec_hash" ]; then
+            check_hash "$entry" "$dir" "$sec_artifact" "$sec_hash"
+        elif [ -n "$sec_artifact" ] || [ -n "$sec_hash" ]; then
+            echo "  ${entry}: FATAL secondary-artifact/secondary-sha256 must appear as a pair"
             fatal=$((fatal + 1))
         fi
-    done < <(rg_allow_empty -o -N '^([a-f0-9]{64})[[:space:]]+(\S+)[[:space:]]*$' -r '$1 $2' "$readme")
+    elif [ "$entry" = "$legacy_pending" ]; then
+        # Legacy body scan: "<64-hex>  <filename>" lines. Bare-hash
+        # lines (piped-form fallbacks like the inner-tar hash) carry
+        # no on-disk target and are skipped.
+        echo "  ${entry}: pending migration — no custody frontmatter yet (README under re-extraction); legacy body-scan parse"
+        while read -r lhash lfile; do
+            [ -n "${lhash:-}" ] || continue
+            check_hash "$entry" "$dir" "$lfile" "$lhash"
+        done < <(rg_allow_empty -o -N '^([a-f0-9]{64})[[:space:]]+(\S+)[[:space:]]*$' -r '$1 $2' "$readme")
+    else
+        echo "  ${entry}: FATAL no custody frontmatter (artifact + sha256) — migrate per resources/README.md"
+        fatal=$((fatal + 1))
+    fi
 
     if $remote; then
+        fm_meta="$(fm_get "$readme" metadata-url)"
+        fm_version="$(fm_get "$readme" version)"
         while read -r id; do
             [ -n "${id:-}" ] || continue
             abs="$(curl -sfL --max-time 20 "https://arxiv.org/abs/${id}" 2>/dev/null)" || {
@@ -75,7 +129,15 @@ for dir in resources/*/; do
                 continue
             }
             latest="$(printf '%s' "$abs" | rg_allow_empty -o '\[v([0-9]+)\]' -r 'v$1' | tail -1)"
-            recorded="$(rg_allow_empty -o -m1 "arXiv:${id}v?[0-9]*" "$readme" | head -1)"
+            # The frontmatter version pin speaks only for the
+            # entry's own id (the one its metadata-url names); any
+            # other id cited in the README falls back to the inline
+            # citation form.
+            if [ -n "$fm_version" ] && [ "${fm_meta##*/}" = "$id" ]; then
+                recorded="${fm_version} (frontmatter pin)"
+            else
+                recorded="$(rg_allow_empty -o -m1 "arXiv:${id}v?[0-9]*" "$readme" | head -1)"
+            fi
             echo "  ${entry}: arXiv ${id} latest ${latest:-unknown} (entry records: ${recorded:-no version pin})"
         done < <(rg_allow_empty -o -N 'arXiv:\s?([0-9]{4}\.[0-9]{4,5})' -r '$1' "$readme" | sort -u)
     fi

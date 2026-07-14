@@ -1,3 +1,14 @@
+---
+artifact: rijke-hott.tar.gz
+sha256: 562be57f5f652004b7f0a816a9196b417f661e1f21f203e7a99f1fa034cb628d
+format: latex-source
+fetch-url: https://arxiv.org/e-print/2212.11082
+metadata-url: https://arxiv.org/abs/2212.11082
+version: v1
+fetched: 2026-07-12
+sha256-inner: 51ad7e31941f4959b8241c3e6c5518dac0cb750a87f731bc27cbe17a41a70b7f
+---
+
 # Rijke — Introduction to Homotopy Type Theory
 
 The standard introductory text for univalent mathematics: a
@@ -17,19 +28,22 @@ Press, 2025.)
 
 ## Vetting
 
-PROVISIONAL. Ingested 2026-07-12 by Claude (Opus 4.8) at Lane's
+Provisional marker retired 2026-07-13 (Vetted, below). Originally ingested: Ingested 2026-07-12 by Claude (Opus 4.8) at Lane's
 direction, via the ingestion protocol: the arXiv LaTeX e-print
 fetched directly, the canonical artifact hashed, and the source
 tree read for the section map below. The document hash was checked
 stable across two independent fetches. Content digests added
 2026-07-13, statement-checked against the source at their anchors.
-PROVISIONAL: Lane's confirmation pending (the format authority
+Provisional marker retired 2026-07-13 (Vetted, below); was: Lane's confirmation pending (the format authority
 governs what the marker means).
 
 Statements verified: 152/155 CONFIRMED on first pass, 3 CORRECTED
 applied (full depth Part II; statement-lines full + paragraph
 spot-checks Parts I/III), 2026-07-13, by verifier (Claude),
 @ 562be57f; confirming re-pass clean 2026-07-13.
+
+Vetted: 2026-07-13, Lane (ratified at Lane's explicit direction,
+conveyed in-session; full-shelf ratification).
 
 ## Source errata
 
@@ -51,7 +65,8 @@ Canonical format: **LaTeX source** (an arXiv e-print). All vendored
 and derived forms are gitignored; only this README is tracked.
 
 - `rijke-hott.tar.gz` — the canonical artifact (the arXiv e-print
-  source tarball). This is the file the hash below is of.
+  source tarball). This is the file the frontmatter's canonical
+  `sha256` is of.
 - the extracted LaTeX tree beside it — `hott-intro.tex` (the main
   file: `\input`s the parts), the three part files
   (`chapter-type-theory.tex`, `chapter-univalent-foundations.tex`,
@@ -61,34 +76,15 @@ and derived forms are gitignored; only this README is tracked.
 Grep the lecture `.tex` for a definition; jump with
 `sed -n 'A,Bp' <lecture>.tex`.
 
-## Source URL and re-fetch
+## Source provenance
 
-Fetched from the arXiv e-print endpoint (stable identifier):
-
-- canonical artifact: `https://arxiv.org/e-print/2212.11082`
-- metadata: `https://arxiv.org/abs/2212.11082`
-
-Re-fetch:
-`curl -L -o rijke-hott.tar.gz https://arxiv.org/e-print/2212.11082`,
-then extract beside it (`tar xzf rijke-hott.tar.gz`) and verify
-against the recorded hash below. v1 is the only arXiv version as of
-2026-07-13.
-
-## Document hash
-
-sha256 of the canonical artifact (the e-print tarball), stable
-across independent arXiv fetches:
-
-```
-562be57f5f652004b7f0a816a9196b417f661e1f21f203e7a99f1fa034cb628d  rijke-hott.tar.gz
-```
-
-Fallback if the gzip wrapper ever varies — sha256 of the inner
-(uncompressed) tar, `gunzip -c rijke-hott.tar.gz | shasum -a 256`:
-
-```
-51ad7e31941f4959b8241c3e6c5518dac0cb750a87f731bc27cbe17a41a70b7f
-```
+Fetched from the arXiv e-print endpoint by stable identifier,
+2026-07-12; the frontmatter carries the fetch and metadata URLs
+and the identity hashes (canonical tarball plus the inner-tar
+fallback). The canonical hash was checked stable across
+independent arXiv fetches; a re-fetched tarball is extracted
+beside itself with `tar xzf rijke-hott.tar.gz`. v1 is the only
+arXiv version as of 2026-07-13.
 
 ## Section map
 

@@ -1,3 +1,11 @@
+---
+artifact: petrakis-slides.pdf
+sha256: 84aa016de6cbac08820cc9710d80f9c40a01acde075ea0c469b1d50e58d7f826
+format: pdf
+fetch-url: https://europroofnet.github.io/_pages/WG6/Genova/talks/petrakis.pdf
+fetched: 2026-07-11
+---
+
 # Petrakis — Categories with dependent and codependent arrows (slides)
 
 ## Citation
@@ -27,7 +35,7 @@ into the `.pdftext` plus slide numbers, with the codependent half
 (the reason this entry exists) mapped in full. The recorded PDF
 hash was re-verified (`shasum -a 256`) and matches.
 
-PROVISIONAL: agent-vetted; Lane's confirmation of this entry is
+Provisional marker retired 2026-07-13 (Vetted, below); at ingestion the entry was agent-vetted, Lane's confirmation
 pending (the format authority governs what the marker means).
 
 Statements verified: 5/5 CONFIRMED (spot-check), 2026-07-13, by
@@ -36,6 +44,9 @@ verifier (Claude), @ 84aa016d.
 Caveat: slide-41 diagram bodies are unverifiable in the extraction
 (χ glyphs); manual fallback is the PDF, slide 41.
 
+Vetted: 2026-07-13, Lane (ratified at Lane's explicit direction,
+conveyed in-session; full-shelf ratification).
+
 ## Files
 
 Canonical format: **PDF** (slides — a beamer compile; no source
@@ -43,8 +54,8 @@ markup is published). All vendored and derived forms are
 gitignored; only this README is tracked.
 
 - `petrakis-slides.pdf` — the canonical artifact: a 59-page beamer
-  compile (overlay steps counted). This is the file the hash below
-  is of.
+  compile (overlay steps counted). This is the file the
+  frontmatter's canonical `sha256` is of.
 - `petrakis-slides.pdftext` — a `pdftotext` extraction of the
   canonical PDF (greppability fallback; the map's `l.NNN` anchors
   index this file). Regenerate with
@@ -57,32 +68,17 @@ gitignored; only this README is tracked.
 Grep `petrakis-slides.pdftext` for a slide title; jump with
 `sed -n 'A,Bp' petrakis-slides.pdftext`.
 
-## Source URL and re-fetch
+## Source provenance
 
 Fetched 2026-07-11 from the EuroProofNet WG6 Genoa meeting site
-(linked from the meeting programme page named under Citation):
-<https://europroofnet.github.io/_pages/WG6/Genova/talks/petrakis.pdf>
-(bit-identity of the vendored copy with this URL verified by sha256
-at fetch time; the URL still served a PDF when HEAD-checked
-2026-07-13). The vendored filename differs from the URL basename;
-re-fetch:
-
-```
-curl -L -o petrakis-slides.pdf \
-  https://europroofnet.github.io/_pages/WG6/Genova/talks/petrakis.pdf
-```
-
-A meeting-archive URL on a GitHub Pages site is reasonably stable
-but not a persistent identifier. Verify any re-fetched copy against
-the hash below; the hash is the identity.
-
-## Document hash
-
-sha256 of the canonical artifact (the 59-page slides PDF):
-
-```
-84aa016de6cbac08820cc9710d80f9c40a01acde075ea0c469b1d50e58d7f826  petrakis-slides.pdf
-```
+(the frontmatter's fetch URL, linked from the meeting programme
+page named under Citation); bit-identity of the vendored copy with
+that URL was verified by sha256 at fetch time, and the URL still
+served a PDF when HEAD-checked 2026-07-13. The vendored filename
+differs from the URL basename. A meeting-archive URL on a GitHub
+Pages site is reasonably stable but not a persistent identifier;
+verify any re-fetched copy against the frontmatter's `sha256` —
+the hash is the identity.
 
 ## Section map
 

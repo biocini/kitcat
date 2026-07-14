@@ -1,3 +1,15 @@
+---
+artifact: bentzen-naive-cubical.tar.gz
+sha256: 95621e6e1a3cb378d8a0b3ab6ce247ace410a32fd1ab0f1f4442d3a613a9b067
+format: latex-source
+fetch-url: https://arxiv.org/e-print/1911.05844
+metadata-url: https://arxiv.org/abs/1911.05844
+doi: 10.1017/S096012952200007X
+version: v2
+fetched: 2026-07-13
+sha256-inner: 658dffb6119c3c27df284a53268a6001ce21d5a4f54ff6003dbc4caf4fcbd2fe
+---
+
 # Bentzen — Naive cubical type theory
 
 An informal but rigorous ("naive") presentation of cartesian cubical
@@ -55,6 +67,9 @@ passes); the audit and re-pass records are session artifacts of
 2026-07-13. Lane's discretion (ratify / spot-audit / veto) is
 open, self-initiated per the contract.
 
+Vetted: 2026-07-13, Lane (ratified at Lane's explicit direction,
+conveyed in-session; full-shelf ratification).
+
 ## Source notes
 
 Small source blemishes recorded so extraction does not trip on
@@ -94,7 +109,7 @@ and derived forms are gitignored; only this README is tracked.
 
 - `bentzen-naive-cubical.tar.gz` — the canonical artifact (the
   arXiv e-print tarball, a gzip-compressed tar with two members).
-  This is the file the canonical hash below is of.
+  This is the file the frontmatter's canonical `sha256` is of.
 - `ictt.tex` — the extracted LaTeX source (the source's own
   internal filename), 1546 lines. **This is the file the reader
   greps**; jump with `sed -n 'A,Bp' ictt.tex`. Re-extract with
@@ -106,43 +121,18 @@ and derived forms are gitignored; only this README is tracked.
   [bch14], [blm21], [ch], [chm], [angiuli2019computational],
   [hottbook], [lumsdaine2010weak], …).
 
-## Source URL and re-fetch
+## Source provenance
 
-Fetched directly from arXiv by stable identifier; the canonical
-fetch URL is the LaTeX e-print, the metadata page the abs URL:
-
-- E-print (canonical): <https://arxiv.org/e-print/1911.05844>
-- Metadata: <https://arxiv.org/abs/1911.05844>
-
-Re-fetch with
-
-```
-curl -L -o bentzen-naive-cubical.tar.gz https://arxiv.org/e-print/1911.05844
-```
-
-then extract beside it (`tar xzf bentzen-naive-cubical.tar.gz`) and
-verify against the recorded hash below. Version pin: **v2** — the
-latest arXiv version as of 2026-07-13 (submission history:
+Fetched directly from arXiv by stable identifier, 2026-07-13; the
+frontmatter carries the e-print fetch URL, the abs metadata URL,
+and the identity hashes (canonical tarball plus the inner-tar
+fallback). The canonical hash was checked stable across two
+independent arXiv fetches. Version pin **v2** — the latest arXiv
+version as of 2026-07-13 (submission history:
 `[v1] Wed, 13 Nov 2019 22:31:35 UTC`,
 `[v2] Sun, 9 May 2021 21:58:26 UTC`), so the unversioned e-print
 URL currently serves v2; should a later version ever appear, pin
-explicitly with `https://arxiv.org/e-print/1911.05844v2`.
-
-## Document hash
-
-sha256 of the canonical artifact (the e-print tarball), stable
-across two independent arXiv fetches:
-
-```
-95621e6e1a3cb378d8a0b3ab6ce247ace410a32fd1ab0f1f4442d3a613a9b067  bentzen-naive-cubical.tar.gz
-```
-
-Fallback if the gzip wrapper ever varies — sha256 of the inner
-(uncompressed) tar, `gunzip -c bentzen-naive-cubical.tar.gz | shasum -a 256`:
-
-```
-658dffb6119c3c27df284a53268a6001ce21d5a4f54ff6003dbc4caf4fcbd2fe
-```
+explicitly by appending `v2` to the e-print URL.
 
 ## Section map
 

@@ -1,3 +1,12 @@
+---
+artifact: 2-dialogue-categories-and-chiralities.pdf
+sha256: 3e74e139035f46434651d34649dce168e68c68224cea67a996efe2a3dfb5c071
+format: pdf
+fetch-url: https://www.irif.fr/~mellies/tensorial-logic/2-dialogue-categories-and-chiralities.pdf
+doi: 10.4171/PRIMS/185
+fetched: 2026-07-11
+---
+
 # Melliès — Dialogue categories and chiralities
 
 ## Citation
@@ -30,11 +39,14 @@ copy (`Dialogue_Categories_and_Chiralities.pdf`, ResearchGate slug,
 hash `f685daec…`) was removed on Lane's ruling; only the citation
 copy is vendored now.
 
-PROVISIONAL: agent-vetted; Lane's confirmation of this entry is
+Provisional marker retired 2026-07-13 (Vetted, below); at ingestion the entry was agent-vetted, Lane's confirmation
 pending (the format authority governs what the marker means).
 
 Statements verified: 3/5 CONFIRMED on first pass, 2 CORRECTED
 applied (spot-check), 2026-07-13, by verifier (Claude), @ 3e74e139; confirming re-pass clean 2026-07-13.
+
+Vetted: 2026-07-13, Lane (ratified at Lane's explicit direction,
+conveyed in-session; full-shelf ratification).
 
 ## Files
 
@@ -47,7 +59,8 @@ README is tracked.
   the IRIF URL above, a 59-page compile carrying the journal record
   line "Communicated by M. Hasegawa. Received December 2, 2012.
   Revised August 6, 2014". Bit-identity with the IRIF URL verified
-  by sha256 on 2026-07-11. This is the file the hash below is of.
+  by sha256 on 2026-07-11. This is the file the frontmatter's
+  canonical `sha256` is of.
 - `dialogue-chiralities.pdftext` — a `pdftotext` extraction of the
   canonical PDF (greppability fallback; the map's `l.NNN` anchors
   index this file). Regenerate with
@@ -63,32 +76,16 @@ README is tracked.
 Grep `dialogue-chiralities.pdftext` for a definition; jump with
 `sed -n 'A,Bp' dialogue-chiralities.pdftext`.
 
-## Source URL and re-fetch
+## Source provenance
 
-Fetched 2026-07-11 from the author's IRIF tensorial-logic page:
-<https://www.irif.fr/~mellies/tensorial-logic/2-dialogue-categories-and-chiralities.pdf>
-(bit-identity of the vendored copy with this URL verified by sha256
-at fetch time; the URL still served a PDF when HEAD-checked
-2026-07-13). Re-fetch:
-
-```
-curl -L -o 2-dialogue-categories-and-chiralities.pdf \
-  https://www.irif.fr/~mellies/tensorial-logic/2-dialogue-categories-and-chiralities.pdf
-```
-
-An author-page URL is not a stable identifier — the page can be
-recompiled or relinked (the sibling entry
-`mellies-micrological-negation` documents exactly such a drift).
-Verify any re-fetched copy against the hash below; the hash is the
-identity.
-
-## Document hash
-
-sha256 of the canonical artifact (the citation-copy PDF):
-
-```
-3e74e139035f46434651d34649dce168e68c68224cea67a996efe2a3dfb5c071  2-dialogue-categories-and-chiralities.pdf
-```
+Fetched 2026-07-11 from the author's IRIF tensorial-logic page
+(the frontmatter's fetch URL); bit-identity of the vendored copy
+with that URL was verified by sha256 at fetch time, and the URL
+still served a PDF when HEAD-checked 2026-07-13. An author-page
+URL is not a stable identifier — the page can be recompiled or
+relinked (the sibling entry `mellies-micrological-negation`
+documents exactly such a drift). Verify any re-fetched copy
+against the frontmatter's `sha256`; the hash is the identity.
 
 ## Section map
 

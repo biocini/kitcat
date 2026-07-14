@@ -36,15 +36,82 @@ House the source's own markup when it exists. The format hierarchy:
 2. **PDF** — when no source markup is available.
 3. **Transcribed text** (`.pdftext`) — a `pdftotext` extraction, the
    lowest form: a greppability fallback beside a PDF when the source
-   markup is absent.
+   markup is absent. For a PDF lacking a text layer (a pure scan) or
+   carrying a broken one, the pinned repair/OCR chain is
+   **mandatory**, in order: `qpdf` to repair damaged structure when
+   present, `ocrmypdf` to produce the text layer, then `pdftotext`
+   over the result — never a hand transcription, never skipped, and
+   never an unpinned OCR tool. An OCR-derived `.pdftext` is a
+   locator only (grep targets and line anchors); digests and audits
+   read the PDF pages directly (page renders), and the entry's
+   Files section says so explicitly. Where any extraction — OCR or
+   native — garbles load-bearing content (diagrams, glyphs,
+   interleaved statements), the chain's final step is a **tracked
+   correction patch**: each hunk verified against a page render by
+   visual reasoning and itemized in the entry, applied mechanically
+   after `pdftotext`, so the corrected `.pdftext` stays regenerable
+   byte-identically (PDF + pinned chain + patch) and every
+   editorial intervention is on the record. A correction never
+   writes content a render does not show; applying or changing the
+   patch is a re-extraction and voids the statement-audit field
+   until the audit is re-run.
 
-Each entry records its canonical format (LaTeX-source / PDF / scan).
+Each entry records its canonical format in its frontmatter
+(`format: latex-source | pdf | scan` — the schema is below).
 All vendored and derived forms are gitignored — the source tarball,
 the extracted markup, the `.pdftext` — so only tracked, regenerable
 metadata leaves the machine. A new unfolded-source file extension not
 yet ignored is added to `.gitignore` as encountered.
 
 ## Entry format — `resources/<slug>/README.md`
+
+Every entry README opens with **YAML frontmatter** — the
+machine-parseable custody surface, the one home of the canonical
+artifact's filename, its identity hashes, and its fetch URL. A
+fetch or verify tool parses the frontmatter and nothing else
+(`just resources-verify` reads it mechanically); the body sections
+below carry the prose. The schema is deliberately flat — scalar
+keys only, no nesting. Required keys, on every entry:
+
+```yaml
+---
+artifact: <filename of the canonical artifact, in the entry dir>
+sha256: <64-hex sha256 of the canonical artifact>
+format: latex-source   # or: pdf | scan
+fetch-url: <URL that retrieves the canonical artifact, or none>
+---
+```
+
+`fetch-url: none` is the explicit record that no public URL exists
+(a user-supplied file, a paywalled source with no verified public
+copy) — the field is never omitted. Optional keys, recorded only
+when the entry actually has the datum (a field the source lacks is
+omitted, never invented):
+
+- `metadata-url:` — the source's metadata page (an arXiv abs URL).
+- `doi:` — the DOI, bare (no resolver prefix).
+- `version:` — the version pin: the version the fetch URL served
+  at fetch time (an arXiv `v2`).
+- `fetched:` — the date the vendored artifact was obtained,
+  `YYYY-MM-DD`.
+- `sha256-inner:` — sha256 of the gunzip-decompressed inner form
+  of the canonical artifact
+  (`gunzip -c <artifact> | shasum -a 256`), the fallback identity
+  should the gzip wrapper ever vary; it names no on-disk file and
+  is not checked against disk.
+- `secondary-artifact:` + `secondary-sha256:` — one additional
+  vendored file worth pinning by hash (e.g. a
+  superseded-but-retained compile); always a pair, verified
+  against disk exactly like the canonical pair.
+
+Re-fetching is mechanical from the frontmatter — retrieve
+`fetch-url`, name the result `artifact`, verify `sha256` — so no
+entry records fetch commands. A re-fetch that changes `sha256` is
+a re-ingestion: it voids the entry's `Statements verified:` field
+until the audit is re-run, and a mismatch against the recorded
+identity is FATAL (see Acquiring documents).
+
+The body sections:
 
 - **Citation** — full bibliographic record: authors, title, venue,
   year, DOI or arXiv id, URL.
@@ -75,27 +142,24 @@ yet ignored is added to `.gitignore` as encountered.
 - **Files** — an inventory of the vendored artifacts (the source
   tarball, the extracted markup or `.pdftext`), naming the canonical
   format and which file the reader greps. A `.pdftext` extraction
-  records its **provenance**: the exact `pdftotext` command and the
-  poppler version that produced it (run inside `nix develop`, whose
-  flake pins poppler — line anchors into an extraction are only as
-  stable as the extractor), so the extraction is regenerable
-  byte-identically.
-- **Source URL and re-fetch** — where the document was actually
-  obtained: the fetch URL kept for record whenever a known URL
-  sourced the artifact (binding for PDFs — an arXiv id is already a
-  stable identifier, a bare PDF is not), plus the explicit re-fetch
-  command when a stable URL exists (`curl -L -o <file> <url>`), or an
-  honest note that no stable re-fetch exists (a user-supplied file, a
-  moved page). Backups of irreplaceable artifacts are handled outside
-  the repository; the entry's job is to record identity (hash) and
-  origin (URL) so any copy can be authenticated.
-- **Document hash** — sha256 of the **canonical artifact** (the
-  e-print tarball for a LaTeX source; the PDF for a PDF-only source)
-  plus its filename (`shasum -a 256 <file>`). The canonical-format
-  record disambiguates which artifact the hash is of. The hash and
-  publication data are tracked; any copy re-verifies against them.
-  `just resources-verify` re-checks every entry's recorded hashes
-  against the vendored files mechanically.
+  records its **provenance**: the exact command chain and tool
+  versions that produced it — `pdftotext` and its poppler always;
+  for a scan, the mandatory `qpdf`/`ocrmypdf` repair/OCR steps and
+  their versions too (all pinned by the flake; run inside
+  `nix develop` — line anchors into an extraction are only as
+  stable as the extractor chain), so the extraction is regenerable
+  byte-identically, and an OCR-derived extraction is marked as
+  such.
+- **Source provenance** — where the document was actually obtained,
+  as prose: who fetched it and when, from what kind of host, and
+  every honesty caveat a re-fetcher needs — paywall status, a
+  third-party host's non-persistence, an author page that has
+  drifted to a different compile since the fetch. The fetch URL
+  itself and the identity hashes live in the frontmatter (bind-once
+  — this section narrates, never restates them, and carries no
+  fetch commands). Backups of irreplaceable artifacts are handled
+  outside the repository; the entry's job is to record identity
+  (hash) and origin (URL) so any copy can be authenticated.
 - **Section map** — a location→content map anchored to lines in the
   vendored readable copy (`l.NNN` into the `.tex`/`.pdftext`), with a
   jump note (`sed -n 'A,Bp' <file>`). Map **depth tracks the
@@ -131,13 +195,15 @@ https://arxiv.org/e-print/<id>` for the canonical LaTeX-source
 tarball and `https://arxiv.org/abs/<id>` for metadata (the
 paper-search capability maps this; feynman alpha is not relied on);
 otherwise the source's stable URL or a user-supplied file. **Record
-the fetch URL in the entry** whenever a known URL sourced the
+the fetch URL in the frontmatter** (`fetch-url:`; an explicit
+`none` when no public URL exists) whenever a known URL sourced the
 artifact — binding for PDFs, whose only stable identity otherwise is
 the hash. Compute the sha256 of the canonical artifact and record
-it; for an existing entry, check it against the recorded hash before
-citing from the local copy (`just resources-verify` runs this check
-over the whole tree). A hash mismatch is a FATAL finding: stop and
-resolve which document the entry describes before citing anything.
+it as the frontmatter `sha256:`; for an existing entry, check it
+against the recorded hash before citing from the local copy
+(`just resources-verify` runs this check over the whole tree). A
+hash mismatch is a FATAL finding: stop and resolve which document
+the entry describes before citing anything.
 
 An agent may ask to vendor a source at any time, especially when a
 construction under development draws on it. Workflows also propose
