@@ -7,7 +7,6 @@ module All where
 import Cat.Base
 import Cat.Coherence
 import Cat.Covariant
-import Cat.Dep
 import Cat.Groupoid
 import Cat.Iso
 import Cat.Monoidal
