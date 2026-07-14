@@ -18,13 +18,13 @@ in your harness.
 
 Derive a run slug from the watch topic per the contract. The run
 artifact for this skill is the watch file
-`notes/watches/<slug>.md`; blocked capabilities and degraded
+`notes/watches/<YYYY-MM-DD>-<slug>.md`; blocked capabilities and degraded
 delegations are recorded there.
 
 This is an execution request, not a request to explain the workflow.
 Begin with the watch file, not with prose about the protocol.
 
-If `notes/watches/<slug>.md` already exists, this is a re-run: go to
+If a watch file for this slug already exists under `notes/watches/` (locate by slug — the date prefix is its creation date), this is a re-run: go to
 the re-run workflow below. Otherwise proceed as a new watch.
 
 ## What a watch covers
@@ -42,7 +42,7 @@ generic topic noise.
 
 ## Workflow — new watch
 
-1. **Plan** — Write the monitoring plan to `notes/watches/<slug>.md`:
+1. **Plan** — Write the monitoring plan to `notes/watches/<YYYY-MM-DD>-<slug>.md`:
    the topic; the exact sources to monitor, each with its URL; which
    signals matter (new preprints, page revisions, new or changed
    modules, changed theorem statements); what counts as a meaningful
@@ -54,7 +54,7 @@ generic topic noise.
    paper-search, web-search, and url-fetch capabilities. For a front
    wide enough to benefit from delegated triage, dispatch the
    `researcher` agent with a self-contained brief — its
-   evidence notes go to `notes/watches/<slug>-research-*.md`, never
+   evidence notes go to `notes/watches/<YYYY-MM-DD>-<slug>-research-*.md`, never
    inline; when it is absent in your harness, sweep lead-owned and
    record the delegation as degraded in the watch file. Capture
    each source's current state: the latest relevant arXiv postings
@@ -64,7 +64,7 @@ generic topic noise.
    `done`, `blocked`, or `superseded` in the task ledger — never
    silently skip one.
 3. **Baseline artifact** — Save exactly one baseline to
-   `notes/watches/<slug>-baseline.md`: the swept state of each
+   `notes/watches/<YYYY-MM-DD>-<slug>-baseline.md`: the swept state of each
    source, dated; anything worth the user's attention now, labeled
    per the contract lexicon (`docs/provenance.md` binding); a
    Provenance section recording what the contract's sidecar spec
@@ -89,21 +89,21 @@ generic topic noise.
    invoke this skill again with the same topic to refresh the watch.
    Never claim a schedule that was not created, and never schedule
    before the baseline exists.
-6. Verify on disk that both `notes/watches/<slug>.md` and
-   `notes/watches/<slug>-baseline.md` exist before stopping.
+6. Verify on disk that both `notes/watches/<YYYY-MM-DD>-<slug>.md` and
+   `notes/watches/<YYYY-MM-DD>-<slug>-baseline.md` exist before stopping.
 
 ## Workflow — re-run
 
 1. Read the watch file, the baseline, and any prior delta entries.
    Re-sweep every monitored source with the same capabilities as the
    baseline sweep; a re-sweep's evidence notes go to dated files
-   `notes/watches/<slug>-research-<YYYY-MM-DD>-*.md`, never
+   `notes/watches/<YYYY-MM-DD>-<slug>-research-<YYYY-MM-DD>-*.md`, never
    overwriting the baseline's evidence notes.
 2. Diff the fresh sweep against the baseline and the most recent
    deltas: new postings, revised pages, added or changed modules,
    dead sources (an unreachable URL is itself a delta, recorded as
    blocked, not summarized from memory).
-3. Append a dated delta entry to `notes/watches/<slug>.md`: what
+3. Append a dated delta entry to `notes/watches/<YYYY-MM-DD>-<slug>.md`: what
    changed, what did not, changes flagged as meaningful against the
    plan's own definition, the same epistemic labels as the baseline,
    and a direct URL for everything cited. No change is a valid,

@@ -106,13 +106,19 @@ by the lead; they are not returned inline.
 
 Every workflow that produces artifacts derives a short slug from
 its topic: lowercase, hyphens, no filler words, at most 5 words.
-All files in one run use that slug:
+**Every `notes/` artifact of every kind is date-prefixed**
+(`<YYYY-MM-DD>-<slug>…`, the date of the run or the artifact's
+creation) — uniformly, for provenance analysis; there are no
+undated classes (Lane, 2026-07-13; methodology P6). All files in
+one run use that slug:
 
 - Plan: `notes/plans/<YYYY-MM-DD>-<slug>.md`
 - Evidence: `notes/research/<YYYY-MM-DD>-<slug>-research-<angle>.md`
 - Final: `notes/research/<YYYY-MM-DD>-<slug>.md`
 - Sidecar: `notes/research/<YYYY-MM-DD>-<slug>.provenance.md`
-- Watch state: `notes/watches/<slug>.md`
+- Watch state: `notes/watches/<YYYY-MM-DD>-<slug>.md` (date = the
+  watch's creation; a re-run locates the file by slug and appends
+  its dated deltas there)
 
 Never use generic names (`research.md`, `draft.md`, `notes.md`);
 concurrent runs must not collide. Never overwrite a final artifact
@@ -164,6 +170,15 @@ created as a silent side effect (see Ingestion below).
   the exact output path; do not spawn them for trivial or narrow
   work — scale the fleet to the task, and never delegate an
   explainer-scale question.
+- **File ownership under dispatch**: every dispatch brief names
+  its file scope — write targets and the read baselines whose
+  anchors must not be invalidated — and while the agent is in
+  flight those files are owned by it: neither the lead nor a
+  concurrent dispatch touches them until it reports. A mutation
+  that cannot wait is the sanctioned degraded path, not an
+  exemption: record a drift note in the run ledger at mutation
+  time, and every downstream consumer of the stale anchors
+  re-verifies them before use.
 - File-based handoffs: subagents write evidence to disk and reply
   with a short completion report; the lead reads the file, never
   the dump.
@@ -193,7 +208,11 @@ created as a silent side effect (see Ingestion below).
   the diff BEFORE the `reviewer`'s mechanical gate — verify before
   review, exactly as the ordering rule below states for research
   artifacts. A change that touches no credit comment dispatches no
-  citation review.
+  citation review. The confirming check after CORRECTED findings:
+  when the lead applies each corrected credit verbatim, the
+  mechanical gate's byte-match against the review's exact supplied
+  text suffices; a confirming `verifier` pass is required exactly
+  when the lead rewords beyond the supplied text.
 - **The promotion decision block** (stated once here; workflows
   name it and defer): theorem-ledger promotion candidates — a new
   `docs/gloss.md` entry, a `Gloss.*` certificate freeze, a status
@@ -405,8 +424,23 @@ local working memory. The full deliberation is in the session logs
   the foundational shelf; the operative convention — the entry list
   and the map-and-digest grounding — is "Foundational references"
   above.
-- **Memory is pointers.** Rulings and design live in tracked repo
-  homes (this file, the session logs, `docs/gloss.md`, `docs/roadmap.md`);
-  harness memory holds short-term state and pointers into them, never
-  the canonical store. `/log` flags any ruling that exists only in
-  memory so it is promoted here.
+- **Memory is links, enforced at every session exit** (Lane,
+  2026-07-13, superseding the weaker flag-only form): the `/log`
+  close EXTERNALIZES all memory contents to their stipulated
+  canonical homes — theorems and results to `docs/gloss.md` (with
+  `Gloss.*` certificates), session history and rulings to the
+  session logs, standing targets to `docs/roadmap.md`, conventions
+  to this file, style to `docs/styleguide.md` — and everything
+  else BY ITS SEMANTIC KIND in the kitcat-native idiom (Lane,
+  2026-07-13): plan-shaped content becomes a `notes/plans/` run
+  plan, research-topic content becomes a
+  `notes/research/<YYYY-MM-DD>-<slug>.md` topic file, decision
+  history becomes a session-log timeline —
+  one artifact per item, never a monolith, never an invented
+  surface — and rewrites memory to hold ONLY links into the
+  context layer. Retroactive externalization is CURATED, never
+  archival (Lane, 2026-07-13): only content relevant to current
+  and future repository context is retained; stale substance is
+  dropped, not re-housed.
+  A content paragraph in memory at session exit is a hygiene
+  defect, not a convenience; memory is never a shadow store.

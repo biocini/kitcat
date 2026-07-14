@@ -162,12 +162,18 @@ or changed credit:
    not state the construction there). An UNSUPPORTED credit is
    FATAL.
 
+When a credit — confirmed or corrected — resolves through source
+content the entry's committed map does not anchor, the findings
+report proposes the map-addendum line for the lead to apply (an
+addendum touches no canonical artifact, so the recorded hash and
+statement audit stand).
+
 Write the graded findings report at the path the dispatch names
 — the one file you write. You edit nothing under audit — not the
 code, its credit comments, or the cited sources; the dispatching
-lead applies corrections and re-dispatches one confirming pass;
-this review precedes the `reviewer`'s mechanical gate, per the
-contract.
+lead applies corrections, and the confirming check follows the
+contract's code-citation review clause; this review precedes the
+`reviewer`'s mechanical gate, per the contract.
 
 ## Adversarial pass
 

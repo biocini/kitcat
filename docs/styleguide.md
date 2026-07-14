@@ -124,6 +124,36 @@ at the end — do not invent a rule from a split.
   composition** per root CLAUDE.md. Core's older text carries ~112
   binary `∙`-chain sites predating the ruling: those are baseline,
   NOT precedent — do not imitate them in new work.
+- **Cubical-native proofs as a rule** (Lane, 2026-07-13): for path
+  lemmas and path algebra — in `Core.*` especially, and ideally in
+  any proof — prefer cubical-native proofs over J-based ones
+  whenever feasible: the `Core.Kan` hcom/com infrastructure, an
+  interval filler, a connection, or a definitional boundary fact
+  (e.g. `sym (sym p) ≡ p` holds by `refl` cubically) beats a
+  `J`-induction stating the same thing. Cubical-native proofs have
+  strictly better computational behavior in cubical type theory —
+  they compute where J-transports stick — and read closer to the
+  geometry. The cubical-reasoning reference is the Bentzen entry
+  (`resources/bentzen-naive-cubical/`), vendored for exactly this;
+  `J` remains legitimate where no native route exists or the
+  native route is materially worse.
+- **Generic lemmas are extracted, never re-derived in place**
+  (Lane, 2026-07-13, sharpening the Import and Placement
+  Discipline for the proof pipeline): a generally-applicable lemma
+  discovered mid-proof — path algebra, transport facts, reusable
+  helpers — is landed in its matching `Core.*` module and imported,
+  never left as a local re-derivation in the consuming module, a
+  spike, or a Gloss certificate. The coder owns the extraction;
+  the accuracy and mechanical reviews own catching a missed one.
+  **Every Core addition passes a redundancy check first** (Lane,
+  2026-07-13): search `Core.*` for an existing form — by type
+  shape and by the naming grammar — before landing anything; a
+  candidate that is beta-eta equal to an existing function is the
+  wrapper defect (Hard Rules), and a candidate that holds
+  DEFINITIONALLY in cubical (e.g. `sym (sym p) ≡ p` is `refl`)
+  earns no lemma at all — use sites write the definitional form.
+  Core is the stable API; additions are deliberate, deduplicated,
+  and named per the grammar, never accreted.
 - **Signature layout**: short signatures inline; long ones break
   with the colon opening the continuation and `→` starting
   continuation lines, indented 2.

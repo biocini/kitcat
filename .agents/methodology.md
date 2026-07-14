@@ -100,6 +100,27 @@ imported by `All`, so a reduction that silently stops firing fails
 the next `just check-all`. The gate lives in the tree and runs
 every build; it is not a trusted claim.
 
+## P6 — Uniform conventions over special cases
+
+A convention is stated once over the widest category it truly
+governs, and applied to every member of that category — because
+uniformity is what lets protocol be described succinctly: each
+special case a convention tolerates is an edge case every
+description, every brief, and every check must thereafter account
+for. The discipline has two halves: applying a category-wide
+ruling begins by enumerating the category's members and sweeping
+all of them (root CLAUDE.md, Agent Discipline), and an exception
+that seems warranted is proposed to Lane with its reasoning, never
+self-granted — an unproposed exception is not flexibility, it is a
+fork in the protocol that someone else will pay to rediscover.
+Exemplar: the dated-artifact convention (2026-07-13) — "every
+notes artifact is date-prefixed" is one rule, one canary row per
+pattern, and one sentence in any brief; the evening it was applied
+non-uniformly (topic files excepted ad hoc, watches missed
+entirely) each gap surfaced as a separate correction, and the
+path-pattern canary caught the last stale site in the very
+doctrine edit that fixed the previous one.
+
 ## The Agda pipeline (the symmetric bracket)
 
 The library's most-run flow: `analyzer` prepares (structural

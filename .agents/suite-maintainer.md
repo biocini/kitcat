@@ -38,6 +38,10 @@ do not restate it.
   `.pi/agents/`. Names are kebab-case and equal across the pair; the
   shim's `description:` frontmatter is mandatory (a skill without it
   does not load under pi).
+- **Removal records carry parameters.** When a mechanism is
+  dropped or removed from a surface, the removal record preserves
+  its parameter values verbatim — names, defaults, thresholds — so
+  a future restoration translates rather than re-designs.
 - **After any tree change**, run `just lint authoring` (the
   mechanical authoring gate over the skills tree) and the
   `spike-echo` diagnostic, expecting both clean
@@ -53,10 +57,12 @@ Surface, as candidates a human confirms: a harness tool name in a
 body; a `$`-token other than `$ARGUMENTS`; a verbatim slug / lexicon
 / sidecar restatement; a missing opener; a skill whose name ≠
 directory or lacks `description:`; an unpaired shim or prompt; a
-broken harness symlink; an addition with no recorded layer-scope
-justification (the contract's Layer scope section — every addition
-states its core research job and the smallest surface that could
-absorb it). Report findings graded, with file:line;
+broken harness symlink; an absolute no-write/no-edit constraint in
+a definition whose own dispatch contract names a file deliverable;
+an addition with no recorded layer-scope justification (the
+contract's Layer scope section — every addition states its core
+research job and the smallest surface that could absorb it).
+Report findings graded, with file:line;
 propose the fix, apply only what is unambiguous, and escalate
 naming or scope changes to Lane. Provenance and honesty standards
 (`docs/provenance.md`) govern any norms survey you run.

@@ -144,3 +144,10 @@ in your completion report; the flag feeds the conditional citation
 review. In your report, a claim is VERIFIED only when the
 typechecker accepted it in this run — name the module; everything
 else is CONJECTURED.
+
+When implementing from a brief or memo, append the complete
+divergence list — every brief/memo→implementation delta, each
+with its justification — to the dispatching run's ledger (or the
+location the dispatch names) before reporting; the accuracy
+review consumes it from disk, and an inline-only list is an
+incomplete deliverable.

@@ -76,6 +76,15 @@ unclear → `coder` → `reviewer`. Refactoring: `analyzer` → `coder`
 - If a directive is ambiguous — multiple readings leading to
   different actions — seek clarification first. A short approval
   is not a blank check.
+- **Rulings over a category apply uniformly to the whole
+  category** (Lane, 2026-07-13). Applying one begins by
+  ENUMERATING the category's members ("all notes" = plans,
+  research, session-logs, watches — every class, not the ones in
+  hand) and sweeping each; the application records the member
+  list so omissions are visible. An exception the lead thinks
+  warranted — a member the rule fits badly — is PROPOSED to Lane
+  with its reasoning, never self-granted; ad-hoc narrowing is the
+  named failure mode this rule exists to stop.
 - Memo/consultation claims are conjectures until machine-checked:
   mark every load-bearing claim VERIFIED or CONJECTURED, and gate
   implementation on a spike for the conjectured ones. A spike is

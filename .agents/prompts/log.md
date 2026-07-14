@@ -195,11 +195,14 @@ the held list rather than promoting it unruled. If you re-derived
 something this session that an earlier session already worked out,
 that is the signal to persist it before logging.
 
-Run one memory-hygiene check: flag any ruling or decision that
-exists only in harness-private memory — not yet in a repo home
-(`docs/gloss.md`, a session log, `docs/roadmap.md`) — so it is
-promoted into its canonical home rather than left to rot in the
-private layer.
+Run the memory-hygiene sweep per the contract's memory-is-links
+convention: EXTERNALIZE every memory content that is not yet in
+its stipulated canonical home (the contract names the home per
+content kind), then rewrite the memory layer so it holds only
+links into the context layer — never content paragraphs, never a
+shadow store. A ruling, design, or state summary surviving in
+memory as content at session exit is a hygiene defect the sweep
+must clear, not merely flag.
 
 Save the log to `notes/session-logs/<YYYY-MM-DD>-<slug>.md`. Then
 append the changelog entry at the TOP of `CHANGELOG.md` (creating

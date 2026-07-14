@@ -17,9 +17,11 @@ Read `.agents/CLAUDE.md` (the cross-agent contract),
 existing roster by dispatch; it invents no capability. It is the
 symmetric bracket of the methodology: **analyzer prepares → coder
 implements → analyzer reviews for accuracy + reviewer runs the
-mechanical gate.** Every dispatch is a self-contained brief; when a
-named agent is absent in the harness, run that stage lead-owned and
-record the delegation as degraded.
+mechanical gate.** Every dispatch is a self-contained brief naming
+its file scope, and the brief's files are owned by the in-flight
+agent until it reports, per the contract's file-ownership bullet;
+when a named agent is absent in the harness, run that stage
+lead-owned and record the delegation as degraded.
 
 Derive a run slug per the contract and open `notes/plans/<YYYY-MM-DD>-<slug>.md`
 as the run ledger: failed proof attempts are preserved there before
@@ -60,7 +62,10 @@ checks decide is a full stop.
 
 Dispatch the `coder` with a self-contained brief built from the
 analyzer's output (placement, the annotated sketch, the target
-file). The coder pins any open fork with a spike first — the spike
+file). The brief names the run ledger as the home of the coder's
+divergence list — every memo→implementation delta with its
+justification, appended there before the coder reports. The coder
+pins any open fork with a spike first — the spike
 typechecks the fork against the real foundation, returning a verdict
 in {DERIVED, STUCK, PARTIAL}; the typecheck is the pin, prose is
 not. Definitional reductions the proof leans on are re-asserted as
