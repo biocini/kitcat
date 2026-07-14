@@ -1,11 +1,11 @@
-The Yoneda lemma for virtual categories: natural transformations
+The Yoneda lemma for categories: natural transformations
 from the representable `hom(a, -)` to a covariant family `P` are
 equivalent to `P.Fib a`.
 
 The forward map (evaluation at `idn`) and backward map (extension
 by the covariant action) form a quasi-inverse at the component
 level. The forward-backward round-trip uses `act-id`; the
-backward-forward round-trip uses `naturality` and `yon-eval`.
+backward-forward round-trip uses `naturality` and `post-eval`.
 
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness --no-sized-types #-}
@@ -14,7 +14,7 @@ open import Cat.Type
 
 module Cat.Yoneda {o h} (C : category o h) where
 
-open Virtual C
+open category C
 open import Cat.Covariant C
 
 open import Core.Type
@@ -58,7 +58,7 @@ identity morphism.
 yoneda-fwd
   : (P : covariant o') (a : ob)
   → nat-trans (hom-cov a) P → P .covariant.Fib a
-yoneda-fwd P a η = η .component a idn
+yoneda-fwd P a η = η .component a (idn a)
 ```
 
 Extension: transport the element along each morphism. The
@@ -92,7 +92,7 @@ yoneda-eval P a pa = P .covariant.act-id pa
 
 The backward-forward composite on the component level:
 `P.act f (η.component a idn) ≡ η.component x f` follows
-from naturality at `(f, idn)` and `yon-eval`.
+from naturality at `(f, idn)` and `post-eval`.
 
 ```agda
 yoneda-ext
@@ -102,6 +102,6 @@ yoneda-ext
   → yoneda-bwd P a (yoneda-fwd P a η) .component x f
     ≡ η .component x f
 yoneda-ext P a η x f =
-  sym (η .naturality f idn)
-  ∙ ap (η .component x) (yon-eval f)
+  sym (η .naturality f (idn a))
+  ∙ ap (η .component x) (post-eval f)
 ```

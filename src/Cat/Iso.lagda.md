@@ -19,10 +19,10 @@ open import Core.Base
 open import Core.Kan using (_∙_)
 
 open import Cat.Base using (module Cat)
-open import Cat.Type using (category; module Virtual)
+open import Cat.Type using (category)
 
 module _ {o h} (C : category o h) where
-  open Virtual C
+  open category C
   open Cat C
 
 ```
@@ -43,7 +43,7 @@ explicitly for later rewriting.
   idtoiso-refl : ∀ {x} → idtoiso {x} {x} refl ≡ iso-refl
   idtoiso-refl {x} = J-refl (λ y _ → x ≅ y) iso-refl
 
-  idtoiso-refl-hom : ∀ {x} → idtoiso {x} {x} refl .fst ≡ idn
+  idtoiso-refl-hom : ∀ {x} → idtoiso {x} {x} refl .fst ≡ idn x
   idtoiso-refl-hom {x} = ap fst (idtoiso-refl {x})
 
 ```

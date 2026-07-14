@@ -5,16 +5,16 @@
 module All where
 
 import Cat.Base
--- import Cat.Covariant  -- WIP: THE REFACTOR — re-founding (P6/P7)
+import Cat.Covariant
 -- import Cat.Groupoid  -- WIP: THE REFACTOR — re-founding (P6/P7)
--- import Cat.Iso  -- WIP: THE REFACTOR — re-founding (P6/P7)
+import Cat.Iso
 -- import Cat.Monoidal  -- WIP: THE REFACTOR — re-founding (P6/P7)
 -- import Cat.Monoidal.Bifunctor  -- WIP: THE REFACTOR — re-founding (P6/P7)
 -- import Cat.Monoidal.Coherence  -- WIP: THE REFACTOR — re-founding (P6/P7)
 -- import Cat.Monoidal.Iso  -- WIP: THE REFACTOR — re-founding (P6/P7)
 -- import Cat.Virtual  -- WIP: THE REFACTOR — re-founding (P6/P7)
 -- import Cat.Virtual.Product  -- WIP: THE REFACTOR — re-founding (P6/P7)
--- import Cat.Yoneda  -- WIP: THE REFACTOR — re-founding (P6/P7)
+import Cat.Yoneda
 
 import Core.Data.Bool
 import Core.Data.Empty
