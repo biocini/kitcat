@@ -6,7 +6,7 @@ hom type, so it is discharged from `hom-contr` alone.
 
 The object-tier data — the ternary tensor `te`, its unit `tu`,
 the composition fiber `tcc`, the interchange law `tint`, and
-the yon-evaluation `tye` — are passed straight through to the
+the post-evaluation `tye` — are passed straight through to the
 corresponding `monoidal` fields. The six morphism-tier fields
 (`htensor-*`) are filled uniformly: `htensor-emb` is the unique
 inhabitant of its hom type, the coherence laws are paths and
@@ -42,7 +42,7 @@ open import Cat.Monoidal
 
 ```agda
 module _ {o h} {C : category o h} where
-  private module C = Virtual C
+  private module C = category C
 
   indiscrete-monoidal
     : (hom-contr : ∀ {a b} → is-contr (C.hom a b))
@@ -63,7 +63,7 @@ module _ {o h} {C : category o h} where
     mono .monoidal.tensor-unit = tu
     mono .monoidal.tensor-compose-contr = tcc
     mono .monoidal.tensor-interchange = tint
-    mono .monoidal.tensor-yon-eval = tye
+    mono .monoidal.tensor-post-eval = tye
     mono .monoidal.htensor-emb φ ψ χ = hom-contr .center
     mono .monoidal.htensor-unit =
       (λ {m} {m'} → contr→contr→is-equiv hom-contr hom-contr _)
@@ -76,7 +76,7 @@ module _ {o h} {C : category o h} where
             PathP-is-contr hom-contr _ _ .paths (p α β) j)
     mono .monoidal.htensor-interchange φ ψ α β =
       PathP-is-contr hom-contr _ _ .center
-    mono .monoidal.htensor-yon-eval φ =
+    mono .monoidal.htensor-post-eval φ =
       PathP-is-contr hom-contr _ _ .center
     mono .monoidal.htensor-bifunctor φ₁ φ₂ α₁ α₂ β₁ β₂ =
       is-contr→is-prop hom-contr _ _

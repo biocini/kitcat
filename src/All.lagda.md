@@ -8,10 +8,10 @@ import Cat.Base
 import Cat.Covariant
 -- import Cat.Groupoid  -- WIP: THE REFACTOR — re-founding (P6/P7)
 import Cat.Iso
--- import Cat.Monoidal  -- WIP: THE REFACTOR — re-founding (P6/P7)
--- import Cat.Monoidal.Bifunctor  -- WIP: THE REFACTOR — re-founding (P6/P7)
--- import Cat.Monoidal.Coherence  -- WIP: THE REFACTOR — re-founding (P6/P7)
--- import Cat.Monoidal.Iso  -- WIP: THE REFACTOR — re-founding (P6/P7)
+import Cat.Monoidal
+import Cat.Monoidal.Bifunctor
+import Cat.Monoidal.Coherence
+import Cat.Monoidal.Iso
 -- import Cat.Virtual  -- WIP: THE REFACTOR — re-founding (P6/P7)
 -- import Cat.Virtual.Product  -- WIP: THE REFACTOR — re-founding (P6/P7)
 import Cat.Yoneda
@@ -89,7 +89,7 @@ import Test.CodepCoherentKillchecks
 -- import Cat.Displayed  -- WIP: open holes in compose-contr contraction
 -- import Cat.Product  -- WIP: mid-edit, MetaCannotDependOn at L237
 -- import HData.Rack  -- WIP: pre-existing unsolved metas at L31-34
--- import Cat.Monoidal.Indiscrete  -- WIP: THE REFACTOR — re-founding (P6/P7)
+import Cat.Monoidal.Indiscrete
 -- import Cat.Monoidal.Twist  -- WIP: THE REFACTOR — re-founding (P6/P7)
 -- import Cat.Monoidal.Braid  -- WIP: THE REFACTOR — re-founding (P6/P7)
 -- import Cat.Monoidal.Hexagon  -- WIP: THE REFACTOR — re-founding (P6/P7)

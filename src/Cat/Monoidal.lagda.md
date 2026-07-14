@@ -8,8 +8,8 @@ The proofs follow the same shapes as the ternary-composition
 presentation of categories in `Cat.Type`, but stated directly
 for the tensor rather than routed through any delooping.
 
-The tensor unit `I`, the two representable actions `noy` and
-`yon`, and the binary tensor `_⊗_` are all definable from
+The tensor unit `I`, the two representable actions `pre` and
+`post`, and the binary tensor `_⊗_` are all definable from
 `tensor-emb`. The associator and unitors are projected from
 contractible composition fibers exactly as `Cat.Type` derives
 `assoc`, `unitl`, and `unitr`.
@@ -46,15 +46,19 @@ open import Cat.Type
 
 The object-level structure is the ternary tensor `tensor-emb`
 with its unit and the two composition axioms. The unit slot
-gives `noy m r = tensor-emb m I r` (left factor at the unit)
-and `yon m l = tensor-emb m l I` (right factor at the unit).
+gives `pre m r = tensor-emb m I r` (left factor at the unit)
+and `post m l = tensor-emb m l I` (right factor at the unit).
+The application `_·_` reindexes a two-argument tensor family
+through `pre` in its family slot — `(F · y) l r = F l (pre y r)`
+— mirroring the base `Cat.Type._·_`; the tensor composite
+`tensor-emb (x ⊗ y)` is the fiber of `tensor-emb x · y`.
 
 ```agda
 record monoidal {o h} (C : category o h) : Type₊ (o ⊔ h) where
   -- h is headroom for the C.hom-level fields of the
   -- morphism-level tensor (a later milestone).
   no-eta-equality
-  private module C = Virtual C
+  private module C = category C
 
   field
     tensor-emb : C.ob → C.ob → C.ob → C.ob
@@ -66,31 +70,34 @@ record monoidal {o h} (C : category o h) : Type₊ (o ⊔ h) where
   I : C.ob
   I = tensor-unit .fst
 
-  noy : C.ob → C.ob → C.ob
-  noy m r = tensor-emb m I r
+  pre : C.ob → C.ob → C.ob
+  pre m r = tensor-emb m I r
 
-  yon : C.ob → C.ob → C.ob
-  yon m l = tensor-emb m l I
+  post : C.ob → C.ob → C.ob
+  post m l = tensor-emb m l I
+
+  _·_ : (C.ob → C.ob → C.ob) → C.ob → (C.ob → C.ob → C.ob)
+  (F · y) l r = F l (pre y r)
+  infixl 30 _·_
 
   field
     tensor-compose-contr
       : (x y : C.ob)
-      → is-contr
-          (fiber tensor-emb (λ l r → tensor-emb x l (noy y r)))
+      → is-contr (fiber tensor-emb (tensor-emb x · y))
     tensor-interchange
       : (x y l r : C.ob)
-      → tensor-emb x l (noy y r) ≡ tensor-emb y (yon x l) r
-    tensor-yon-eval
-      : (x : C.ob) → yon x I ≡ x
+      → tensor-emb x l (pre y r) ≡ tensor-emb y (post x l) r
+    tensor-post-eval
+      : (x : C.ob) → post x I ≡ x
 
-  tensor-unit-eqvl : is-equiv (λ (r : C.ob) → noy I r)
+  tensor-unit-eqvl : is-equiv (λ (r : C.ob) → pre I r)
   tensor-unit-eqvl = tensor-unit .snd .fst
 
-  tensor-unit-eqvr : is-equiv (λ (l : C.ob) → yon I l)
+  tensor-unit-eqvr : is-equiv (λ (l : C.ob) → post I l)
   tensor-unit-eqvr = tensor-unit .snd .snd
 
-  tensor-yon-idpt : yon I I ≡ I
-  tensor-yon-idpt = tensor-yon-eval I
+  tensor-post-idpt : post I I ≡ I
+  tensor-post-idpt = tensor-post-eval I
 
   _⊗_ : C.ob → C.ob → C.ob
   x ⊗ y = tensor-compose-contr x y .center .fst
@@ -98,7 +105,7 @@ record monoidal {o h} (C : category o h) : Type₊ (o ⊔ h) where
 
   tensor-emb-composite
     : (x y : C.ob)
-    → tensor-emb (x ⊗ y) ≡ (λ l r → tensor-emb x l (noy y r))
+    → tensor-emb (x ⊗ y) ≡ tensor-emb x · y
   tensor-emb-composite x y =
     tensor-compose-contr x y .center .snd
 ```
@@ -114,57 +121,57 @@ record monoidal {o h} (C : category o h) : Type₊ (o ⊔ h) where
 
   tensor-emb-comp-pt
     : (x y l r : C.ob)
-    → tensor-emb (x ⊗ y) l r ≡ tensor-emb x l (noy y r)
+    → tensor-emb (x ⊗ y) l r ≡ tensor-emb x l (pre y r)
   tensor-emb-comp-pt x y l r i =
     tensor-emb-composite x y i l r
 
-  tensor-emb-yon-composite
+  tensor-emb-post-composite
     : (x y : C.ob)
-    → tensor-emb (x ⊗ y) ≡ (λ l r → tensor-emb y (yon x l) r)
-  tensor-emb-yon-composite x y =
+    → tensor-emb (x ⊗ y) ≡ (λ l r → tensor-emb y (post x l) r)
+  tensor-emb-post-composite x y =
     tensor-emb-composite x y
     ∙ tensor-emb-ext λ l r → tensor-interchange x y l r
 
-  tensor-emb-yon-comp-pt
+  tensor-emb-post-comp-pt
     : (x y l r : C.ob)
-    → tensor-emb (x ⊗ y) l r ≡ tensor-emb y (yon x l) r
-  tensor-emb-yon-comp-pt x y l r =
+    → tensor-emb (x ⊗ y) l r ≡ tensor-emb y (post x l) r
+  tensor-emb-post-comp-pt x y l r =
     tensor-emb-comp-pt x y l r ∙ tensor-interchange x y l r
 
-  tensor-noy-composite
+  tensor-pre-composite
     : (y z r : C.ob)
-    → noy (y ⊗ z) r ≡ noy y (noy z r)
-  tensor-noy-composite y z r = tensor-emb-comp-pt y z I r
+    → pre (y ⊗ z) r ≡ pre y (pre z r)
+  tensor-pre-composite y z r = tensor-emb-comp-pt y z I r
 
-  tensor-yon-composite
+  tensor-post-composite
     : (x y l : C.ob)
-    → yon (x ⊗ y) l ≡ yon y (yon x l)
-  tensor-yon-composite x y l =
+    → post (x ⊗ y) l ≡ post y (post x l)
+  tensor-post-composite x y l =
     tensor-emb-comp-pt x y l I ∙ tensor-interchange x y l I
 
   tensor-emb-nest
     : (x y z l r : C.ob)
     → tensor-emb ((x ⊗ y) ⊗ z) l r
-    ≡ tensor-emb x l (noy y (noy z r))
+    ≡ tensor-emb x l (pre y (pre z r))
   tensor-emb-nest x y z l r =
     tensor-emb-comp-pt (x ⊗ y) z l r
-    ∙ tensor-emb-comp-pt x y l (noy z r)
+    ∙ tensor-emb-comp-pt x y l (pre z r)
 
   tensor-emb-nest-ext
     : (x y z : C.ob)
     → tensor-emb ((x ⊗ y) ⊗ z)
-    ≡ (λ l r → tensor-emb x l (noy y (noy z r)))
+    ≡ (λ l r → tensor-emb x l (pre y (pre z r)))
   tensor-emb-nest-ext x y z =
     tensor-emb-ext (tensor-emb-nest x y z)
 
-  ⊗-comp-eq : (x y : C.ob) → x ⊗ y ≡ yon y x
+  ⊗-comp-eq : (x y : C.ob) → x ⊗ y ≡ post y x
   ⊗-comp-eq x y =
-    sym (tensor-yon-eval (x ⊗ y))
-    ∙ tensor-yon-composite x y I
-    ∙ ap (yon y) (tensor-yon-eval x)
+    sym (tensor-post-eval (x ⊗ y))
+    ∙ tensor-post-composite x y I
+    ∙ ap (post y) (tensor-post-eval x)
 
   ⊗-idem : I ⊗ I ≡ I
-  ⊗-idem = ⊗-comp-eq I I ∙ tensor-yon-idpt
+  ⊗-idem = ⊗-comp-eq I I ∙ tensor-post-idpt
 ```
 
 ## Morphism-level tensor
@@ -173,10 +180,10 @@ The tensor acts on 2-cells (morphisms of `C`) in exact
 parallel with the object level. `htensor-emb` is the
 trifunctor action: three parallel 2-cells give a 2-cell
 between the corresponding tensor objects. The unit-slot
-specializations `hnoy` and `hyon` mirror `noy` and `yon`.
+specializations `hpre` and `hpost` mirror `pre` and `post`.
 The three composition axioms are the object-level equations
 `tensor-emb-comp-pt`, `tensor-interchange`, and
-`tensor-yon-eval` displaced to `PathP`s over 2-cells, and
+`tensor-post-eval` displaced to `PathP`s over 2-cells, and
 `htensor-bifunctor` links the horizontal tensor to the
 vertical composite `C.⨾`.
 
@@ -192,22 +199,22 @@ its last field.
           {r r'} (χ : C.hom r r')
       → C.hom (tensor-emb m l r) (tensor-emb m' l' r')
 
-  hnoy
+  hpre
     : ∀ {m m'} → C.hom m m'
     → ∀ {r r'} → C.hom r r'
-    → C.hom (noy m r) (noy m' r')
-  hnoy φ χ = htensor-emb φ (C.idn {I}) χ
+    → C.hom (pre m r) (pre m' r')
+  hpre φ χ = htensor-emb φ (C.idn I) χ
 
-  hyon
+  hpost
     : ∀ {m m'} → C.hom m m'
     → ∀ {l l'} → C.hom l l'
-    → C.hom (yon m l) (yon m' l')
-  hyon φ ψ = htensor-emb φ ψ (C.idn {I})
+    → C.hom (post m l) (post m' l')
+  hpost φ ψ = htensor-emb φ ψ (C.idn I)
 
   field
     htensor-unit
-      : (∀ {m m'} → is-equiv (λ (χ : C.hom m m') → hnoy (C.idn {I}) χ))
-      × (∀ {l l'} → is-equiv (λ (ψ : C.hom l l') → hyon (C.idn {I}) ψ))
+      : (∀ {m m'} → is-equiv (λ (χ : C.hom m m') → hpre (C.idn I) χ))
+      × (∀ {l l'} → is-equiv (λ (ψ : C.hom l l') → hpost (C.idn I) ψ))
 
     htensor-compose-contr
       : ∀ {x x'} (φ : C.hom x x') {y y'} (ψ : C.hom y y')
@@ -217,20 +224,20 @@ its last field.
               → PathP (λ i → C.hom (tensor-emb-comp-pt x  y  l  r  i)
                                    (tensor-emb-comp-pt x' y' l' r' i))
                       (htensor-emb σ α β)
-                      (htensor-emb φ α (hnoy ψ β)) ) )
+                      (htensor-emb φ α (hpre ψ β)) ) )
 
     htensor-interchange
       : ∀ {x x'} (φ : C.hom x x') {y y'} (ψ : C.hom y y')
           {l l'} (α : C.hom l l') {r r'} (β : C.hom r r')
       → PathP (λ i → C.hom (tensor-interchange x  y  l  r  i)
                            (tensor-interchange x' y' l' r' i))
-              (htensor-emb φ α (hnoy ψ β))
-              (htensor-emb ψ (hyon φ α) β)
+              (htensor-emb φ α (hpre ψ β))
+              (htensor-emb ψ (hpost φ α) β)
 
-    htensor-yon-eval
+    htensor-post-eval
       : ∀ {x x'} (φ : C.hom x x')
-      → PathP (λ i → C.hom (tensor-yon-eval x i) (tensor-yon-eval x' i))
-              (hyon φ (C.idn {I}))
+      → PathP (λ i → C.hom (tensor-post-eval x i) (tensor-post-eval x' i))
+              (hpost φ (C.idn I))
               φ
 
   _⊗ₕ_
@@ -246,7 +253,7 @@ its last field.
     → PathP (λ i → C.hom (tensor-emb-comp-pt x  y  l  r  i)
                          (tensor-emb-comp-pt x' y' l' r' i))
             (htensor-emb (φ ⊗ₕ ψ) α β)
-            (htensor-emb φ α (hnoy ψ β))
+            (htensor-emb φ α (hpre ψ β))
   ⊗ₕ-comp-pt φ ψ = htensor-compose-contr φ ψ .center .snd
 
   field
@@ -265,21 +272,21 @@ absorbed. These lemmas use `where`, so they follow the last
 field.
 
 ```agda
-  noy-I-idem : (m : C.ob) → noy I (noy I m) ≡ noy I m
-  noy-I-idem m =
-    sym (subst (λ t → noy t m ≡ noy I (noy I m))
-      ⊗-idem (tensor-noy-composite I I m))
+  pre-I-idem : (m : C.ob) → pre I (pre I m) ≡ pre I m
+  pre-I-idem m =
+    sym (subst (λ t → pre t m ≡ pre I (pre I m))
+      ⊗-idem (tensor-pre-composite I I m))
 
-  yon-I-idem : (l : C.ob) → yon I (yon I l) ≡ yon I l
-  yon-I-idem l =
-    sym (subst (λ t → yon t l ≡ yon I (yon I l))
-      ⊗-idem (tensor-yon-composite I I l))
+  post-I-idem : (l : C.ob) → post I (post I l) ≡ post I l
+  post-I-idem l =
+    sym (subst (λ t → post t l ≡ post I (post I l))
+      ⊗-idem (tensor-post-composite I I l))
 
-  absorb-l : (r : C.ob) → noy I r ≡ r
-  absorb-l r = equiv→lc tensor-unit-eqvl (noy-I-idem r)
+  absorb-l : (r : C.ob) → pre I r ≡ r
+  absorb-l r = equiv→lc tensor-unit-eqvl (pre-I-idem r)
 
-  absorb-r : (l : C.ob) → yon I l ≡ l
-  absorb-r l = equiv→lc tensor-unit-eqvr (yon-I-idem l)
+  absorb-r : (l : C.ob) → post I l ≡ l
+  absorb-r l = equiv→lc tensor-unit-eqvr (post-I-idem l)
 ```
 
 ## Composable fiber and its eliminators
@@ -293,7 +300,7 @@ with a pointwise equation. `tensor-emb-ind` eliminates any
     : (x y : C.ob)
     → is-contr
         (Σ s ∶ C.ob
-        , ∀ l r → tensor-emb s l r ≡ tensor-emb x l (noy y r))
+        , ∀ l r → tensor-emb s l r ≡ tensor-emb x l (pre y r))
   tensor-composable-contr x y .center =
     x ⊗ y , tensor-emb-comp-pt x y
   tensor-composable-contr x y .paths (s , p) i =
@@ -303,7 +310,7 @@ with a pointwise equation. `tensor-emb-ind` eliminates any
   tensor-emb-ind
     : ∀ {u} (x y : C.ob)
     → (P : (s : C.ob)
-         → (∀ l r → tensor-emb s l r ≡ tensor-emb x l (noy y r))
+         → (∀ l r → tensor-emb s l r ≡ tensor-emb x l (pre y r))
          → Type u)
     → P (x ⊗ y) (tensor-emb-comp-pt x y)
     → ∀ s q → P s q
@@ -315,7 +322,7 @@ with a pointwise equation. `tensor-emb-ind` eliminates any
   ⊗-η
     : (x y : C.ob)
     → (s : C.ob)
-    → (∀ l r → tensor-emb s l r ≡ tensor-emb x l (noy y r))
+    → (∀ l r → tensor-emb s l r ≡ tensor-emb x l (pre y r))
     → x ⊗ y ≡ s
   ⊗-η x y = tensor-emb-ind x y (λ s _ → x ⊗ y ≡ s) refl
 ```
@@ -335,11 +342,11 @@ contractible, via interchange and absorption.
     where
       c : is-contr
         (Σ s ∶ C.ob
-        , ∀ l r → tensor-emb s l r ≡ tensor-emb I l (noy x r))
+        , ∀ l r → tensor-emb s l r ≡ tensor-emb I l (pre x r))
       c = tensor-composable-contr I x
 
       path
-        : (λ l r → tensor-emb I l (noy x r))
+        : (λ l r → tensor-emb I l (pre x r))
         ≡ (λ l r → tensor-emb x l r)
       path = funext λ l → funext λ r →
         tensor-interchange I x l r
@@ -372,20 +379,20 @@ contractible, via interchange and absorption.
     tensor-emb-inj λ l r i → p i l r
 ```
 
-## Yon and noy decomposition
+## Post and pre decomposition
 
 ```agda
-  tensor-emb-yon
+  tensor-emb-post
     : (x l r : C.ob)
-    → tensor-emb x l r ≡ tensor-emb I (yon x l) r
-  tensor-emb-yon x l r =
+    → tensor-emb x l r ≡ tensor-emb I (post x l) r
+  tensor-emb-post x l r =
     ap (tensor-emb x l) (sym (absorb-l r))
     ∙ tensor-interchange x I l r
 
-  tensor-emb-noy
+  tensor-emb-pre
     : (x l r : C.ob)
-    → tensor-emb x l r ≡ tensor-emb I l (noy x r)
-  tensor-emb-noy x l r =
+    → tensor-emb x l r ≡ tensor-emb I l (pre x r)
+  tensor-emb-pre x l r =
     ap (λ t → tensor-emb x t r) (sym (absorb-r l))
     ∙ sym (tensor-interchange I x l r)
 ```
@@ -393,40 +400,40 @@ contractible, via interchange and absorption.
 ## Unit uniqueness
 
 Any object that acts like a right tensor unit and is
-idempotent under `yon` is uniquely the chosen unit `I`. The
-argument is the Kraus chain: `yon e` squares to itself and is
+idempotent under `post` is uniquely the chosen unit `I`. The
+argument is the Kraus chain: `post e` squares to itself and is
 idempotent, so it absorbs, forcing `e ≡ I`.
 
 ```agda
   tensor-unit-is-prop
     : (e : C.ob)
     → is-equiv (λ (l : C.ob) → tensor-emb e l e)
-    → yon e e ≡ e
+    → post e e ≡ e
     → e ≡ I
   tensor-unit-is-prop e re idpt =
-    sym (tensor-yon-eval e) ∙ yon-e-absorb I
+    sym (tensor-post-eval e) ∙ post-e-absorb I
     where
       e-idem : e ⊗ e ≡ e
       e-idem = ⊗-comp-eq e e ∙ idpt
 
-      yon-e-idpt : (l : C.ob) → yon e (yon e l) ≡ yon e l
-      yon-e-idpt l =
-        sym (sym (ap (λ t → yon t l) e-idem)
-          ∙ tensor-yon-composite e e l)
+      post-e-idpt : (l : C.ob) → post e (post e l) ≡ post e l
+      post-e-idpt l =
+        sym (sym (ap (λ t → post t l) e-idem)
+          ∙ tensor-post-composite e e l)
 
-      yon-e-squared
-        : (l : C.ob) → tensor-emb e l e ≡ yon e (yon e l)
-      yon-e-squared l =
-        tensor-emb-yon e l e
-        ∙ sym (ap (tensor-emb I (yon e l)) (tensor-yon-eval e))
-        ∙ tensor-interchange I e (yon e l) I
-        ∙ ap (yon e) (absorb-r (yon e l))
+      post-e-squared
+        : (l : C.ob) → tensor-emb e l e ≡ post e (post e l)
+      post-e-squared l =
+        tensor-emb-post e l e
+        ∙ sym (ap (tensor-emb I (post e l)) (tensor-post-eval e))
+        ∙ tensor-interchange I e (post e l) I
+        ∙ ap (post e) (absorb-r (post e l))
 
-      yon-e-absorb : (l : C.ob) → yon e l ≡ l
-      yon-e-absorb l = equiv→lc re
-        (yon-e-squared (yon e l)
-        ∙ yon-e-idpt (yon e l)
-        ∙ sym (yon-e-squared l))
+      post-e-absorb : (l : C.ob) → post e l ≡ l
+      post-e-absorb l = equiv→lc re
+        (post-e-squared (post e l)
+        ∙ post-e-idpt (post e l)
+        ∙ sym (post-e-squared l))
 ```
 
 ## Coherent unit laws and associativity
@@ -458,12 +465,12 @@ contractible fibers.
         lhs rhs)
     where
       lhs : Σ s ∶ C.ob
-          , ∀ l r → tensor-emb s l r ≡ tensor-emb I l (noy x r)
+          , ∀ l r → tensor-emb s l r ≡ tensor-emb I l (pre x r)
       lhs = I ⊗ x , tensor-emb-comp-pt I x
 
       rhs : Σ s ∶ C.ob
-          , ∀ l r → tensor-emb s l r ≡ tensor-emb I l (noy x r)
-      rhs = x , tensor-emb-noy x
+          , ∀ l r → tensor-emb s l r ≡ tensor-emb I l (pre x r)
+      rhs = x , tensor-emb-pre x
 ```
 
 ## Triple composite fiber and associativity
@@ -473,7 +480,7 @@ contractibility give the associator.
 
 ```agda
   tensor-E₃ : (x y z : C.ob) → C.ob → C.ob → C.ob
-  tensor-E₃ x y z l r = tensor-emb x l (noy y (noy z r))
+  tensor-E₃ x y z l r = tensor-emb x l (pre y (pre z r))
 
   tensor-E₃-contr
     : (x y z : C.ob)
@@ -491,10 +498,10 @@ contractibility give the associator.
         (tensor-composable-contr (x ⊗ y) z)) _
     where
       path
-        : (λ l r → tensor-emb (x ⊗ y) l (noy z r))
+        : (λ l r → tensor-emb (x ⊗ y) l (pre z r))
         ≡ tensor-E₃ x y z
       path = funext λ l → funext λ r →
-        tensor-emb-comp-pt x y l (noy z r)
+        tensor-emb-comp-pt x y l (pre z r)
 
   ⊗-assoc : (x y z : C.ob) → (x ⊗ y) ⊗ z ≡ x ⊗ (y ⊗ z)
   ⊗-assoc x y z =
@@ -507,7 +514,7 @@ contractibility give the associator.
       rhs = x ⊗ (y ⊗ z)
           , λ l r →
               tensor-emb-comp-pt x (y ⊗ z) l r
-              ∙ ap (tensor-emb x l) (tensor-noy-composite y z r)
+              ∙ ap (tensor-emb x l) (tensor-pre-composite y z r)
 ```
 
 ## Extended composite fibers
@@ -546,7 +553,7 @@ extended triple fiber.
     ≡ ( x ⊗ (y ⊗ z)
       , tensor-emb-composite x (y ⊗ z)
       ∙ tensor-emb-ext λ l r →
-          ap (tensor-emb x l) (tensor-noy-composite y z r))
+          ap (tensor-emb x l) (tensor-pre-composite y z r))
   assoc-σ x y z =
     is-contr→is-prop (tensor-E₃-contr-ext x y z) _ _
 
@@ -576,15 +583,15 @@ for later milestones:
 
 - **Embedding-property extras**: `emb-is-embedding`,
   `emb-section`, `emb-retraction`,
-  `composable-yon`, `emb-yon-ind`, `composable-swap`,
-  `yon-inj`, `noy-inj`, and the opposite tensor `op`. These
+  `composable-post`, `emb-post-ind`, `composable-swap`,
+  `post-inj`, `pre-inj`, and the opposite tensor `op`. These
   support braiding and duality, not the headline associator.
 - **Pentagon and triangle**: to be derived natively for the
   tensor in a new `Cat.Monoidal.Coherence` submodule.
 - **Morphism-level derived lemmas**: the fields
   (`htensor-emb`, `htensor-unit`, `htensor-compose-contr`,
-  `htensor-interchange`, `htensor-yon-eval`,
-  `htensor-bifunctor`) and the projections `hnoy`, `hyon`,
+  `htensor-interchange`, `htensor-post-eval`,
+  `htensor-bifunctor`) and the projections `hpre`, `hpost`,
   `_⊗ₕ_`, `⊗ₕ-comp-pt` are in place. Still to derive:
   bifunctoriality of `_⊗ₕ_` (`⊗ₕ-preserves-⨾`),
   `htensor-preserves-idn`, unitor and associator naturality,

@@ -25,7 +25,7 @@ open import Cat.Type
 
 module _ {o h} {C : category o h} (M : monoidal C) where
   open monoidal M
-  private module C = Virtual C
+  private module C = category C
   open Cat C using (_≅_)
 ```
 
@@ -63,13 +63,13 @@ isomorphisms above.
 
   ⊗-unitor-l-natural
     : ∀ {x x'} (φ : C.hom x x')
-    → ((C.idn {I}) ⊗ₕ φ) C.⨾ ⊗-unitor-l x' .fst ≡ ⊗-unitor-l x .fst C.⨾ φ
+    → ((C.idn I) ⊗ₕ φ) C.⨾ ⊗-unitor-l x' .fst ≡ ⊗-unitor-l x .fst C.⨾ φ
   ⊗-unitor-l-natural {x}{x'} φ =
     hom-PathP→square C (⊗-unitl x) (⊗-unitl x') (unitl-nat M φ)
 
   ⊗-unitor-r-natural
     : ∀ {x x'} (φ : C.hom x x')
-    → (φ ⊗ₕ (C.idn {I})) C.⨾ ⊗-unitor-r x' .fst ≡ ⊗-unitor-r x .fst C.⨾ φ
+    → (φ ⊗ₕ (C.idn I)) C.⨾ ⊗-unitor-r x' .fst ≡ ⊗-unitor-r x .fst C.⨾ φ
   ⊗-unitor-r-natural {x}{x'} φ =
     hom-PathP→square C (⊗-unitr x) (⊗-unitr x') (unitr-nat M φ)
 ```

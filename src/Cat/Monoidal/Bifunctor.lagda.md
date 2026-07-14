@@ -14,8 +14,8 @@ characterization by gluing three links: two homogeneous
 rewrites through `htensor-bifunctor` (the horizontal/vertical
 interchange) sandwich one `PathP` whisker, obtained by pasting
 the two `⊗ₕ-comp-pt` displacement paths side by side. The
-`hnoy-comp` lemma collapses a vertical composite of
-`hnoy`-actions into a single one; it recurs in the later
+`hpre-comp` lemma collapses a vertical composite of
+`hpre`-actions into a single one; it recurs in the later
 naturality work.
 
 The `PathP` link is threaded through `to-pathp`/`from-pathp`
@@ -42,7 +42,7 @@ open import Cat.Monoidal
 ```agda
 module _ {o h} {C : category o h} (M : monoidal C) where
   open monoidal M
-  private module C = Virtual C
+  private module C = category C
 ```
 
 `compHomP` concatenates two `C.hom`-valued `PathP`s displaced
@@ -73,18 +73,18 @@ for promotion to `Core.Path` should the need recur.
         fb j i = cat.fill pb qb i j
 ```
 
-`hnoy-comp` witnesses that stacking two `hnoy`-actions
-vertically is a single `hnoy` of the composite. The two
+`hpre-comp` witnesses that stacking two `hpre`-actions
+vertically is a single `hpre` of the composite. The two
 injected splits cancelled are the unit slot `idn ⨾ idn` (via
 `C.idem`) and the right slot `β ⨾ idn` (via `C.unitr`).
 
 ```agda
-  hnoy-comp
+  hpre-comp
     : ∀ {y y'} (ψ : C.hom y y') {y''} (ψ' : C.hom y' y'')
         {r r'} (β : C.hom r r')
-    → (hnoy ψ β) C.⨾ (hnoy ψ' (C.idn {r'})) ≡ hnoy (ψ C.⨾ ψ') β
-  hnoy-comp {y} {y'} ψ {y''} ψ' {r} {r'} β =
-      sym (htensor-bifunctor ψ ψ' (C.idn {I}) (C.idn {I}) β (C.idn {r'}))
+    → (hpre ψ β) C.⨾ (hpre ψ' (C.idn r')) ≡ hpre (ψ C.⨾ ψ') β
+  hpre-comp {y} {y'} ψ {y''} ψ' {r} {r'} β =
+      sym (htensor-bifunctor ψ ψ' (C.idn I) (C.idn I) β (C.idn r'))
     ∙ (λ i → htensor-emb (ψ C.⨾ ψ') (C.idem {I} i) (C.unitr β i))
 ```
 
@@ -110,141 +110,141 @@ fiber's `PathP` characterization at every pair of slots.
         → PathP (λ i → C.hom (tensor-emb-comp-pt x  y  l  r  i)
                              (tensor-emb-comp-pt x'' y'' l' r' i))
                 (htensor-emb ((φ ⊗ₕ ψ) C.⨾ (φ' ⊗ₕ ψ')) α β)
-                (htensor-emb (φ C.⨾ φ') α (hnoy (ψ C.⨾ ψ') β))
+                (htensor-emb (φ C.⨾ φ') α (hpre (ψ C.⨾ ψ') β))
       rhs-charac {l} {l'} α {r} {r'} β =
         Path-over.to-pathp
-          ( ap (transport disp₂) pre
+          ( ap (transport disp₂) link-pre
           ∙ Path-over.from-pathp mid
           ∙ suf )
         where
           disp₂ : C.hom (tensor-emb (x ⊗ y) l r)
                         (tensor-emb (x'' ⊗ y'') l' r')
-                ≡ C.hom (tensor-emb x l (noy y r))
-                        (tensor-emb x'' l' (noy y'' r'))
+                ≡ C.hom (tensor-emb x l (pre y r))
+                        (tensor-emb x'' l' (pre y'' r'))
           disp₂ i = C.hom (tensor-emb-comp-pt x  y  l  r  i)
                           (tensor-emb-comp-pt x'' y'' l' r' i)
 
-          pre : htensor-emb ((φ ⊗ₕ ψ) C.⨾ (φ' ⊗ₕ ψ')) α β
+          link-pre : htensor-emb ((φ ⊗ₕ ψ) C.⨾ (φ' ⊗ₕ ψ')) α β
               ≡ htensor-emb (φ ⊗ₕ ψ) α β
-                C.⨾ htensor-emb (φ' ⊗ₕ ψ') (C.idn {l'}) (C.idn {r'})
-          pre =
+                C.⨾ htensor-emb (φ' ⊗ₕ ψ') (C.idn l') (C.idn r')
+          link-pre =
               (λ i → htensor-emb ((φ ⊗ₕ ψ) C.⨾ (φ' ⊗ₕ ψ'))
                        (C.unitr α (~ i)) (C.unitr β (~ i)))
             ∙ htensor-bifunctor (φ ⊗ₕ ψ) (φ' ⊗ₕ ψ')
-                α (C.idn {l'}) β (C.idn {r'})
+                α (C.idn l') β (C.idn r')
 
           mid : PathP (λ i → disp₂ i)
                   ( htensor-emb (φ ⊗ₕ ψ) α β
-                    C.⨾ htensor-emb (φ' ⊗ₕ ψ') (C.idn {l'}) (C.idn {r'}) )
-                  ( htensor-emb φ α (hnoy ψ β)
-                    C.⨾ htensor-emb φ' (C.idn {l'}) (hnoy ψ' (C.idn {r'})) )
+                    C.⨾ htensor-emb (φ' ⊗ₕ ψ') (C.idn l') (C.idn r') )
+                  ( htensor-emb φ α (hpre ψ β)
+                    C.⨾ htensor-emb φ' (C.idn l') (hpre ψ' (C.idn r')) )
           mid i = ⊗ₕ-comp-pt φ ψ α β i
-                  C.⨾ ⊗ₕ-comp-pt φ' ψ' (C.idn {l'}) (C.idn {r'}) i
+                  C.⨾ ⊗ₕ-comp-pt φ' ψ' (C.idn l') (C.idn r') i
 
-          suf : htensor-emb φ α (hnoy ψ β)
-                C.⨾ htensor-emb φ' (C.idn {l'}) (hnoy ψ' (C.idn {r'}))
-              ≡ htensor-emb (φ C.⨾ φ') α (hnoy (ψ C.⨾ ψ') β)
+          suf : htensor-emb φ α (hpre ψ β)
+                C.⨾ htensor-emb φ' (C.idn l') (hpre ψ' (C.idn r'))
+              ≡ htensor-emb (φ C.⨾ φ') α (hpre (ψ C.⨾ ψ') β)
           suf =
               sym (htensor-bifunctor φ φ'
-                     α (C.idn {l'}) (hnoy ψ β) (hnoy ψ' (C.idn {r'})))
+                     α (C.idn l') (hpre ψ β) (hpre ψ' (C.idn r')))
             ∙ (λ i → htensor-emb (φ C.⨾ φ')
-                       (C.unitr α i) (hnoy-comp ψ ψ' β i))
+                       (C.unitr α i) (hpre-comp ψ ψ' β i))
 ```
 
 ## Morphism-level identity and absorption
 
 Each lemma below is the `PathP`-displacement of an object-level
 tensor identity, over the *same* object path. The base axioms
-`⊗ₕ-comp-pt`, `htensor-interchange`, and `htensor-yon-eval`
+`⊗ₕ-comp-pt`, `htensor-interchange`, and `htensor-post-eval`
 supply the displaced pieces; `compHomP` glues them over
 concatenated object paths.
 
-`hnoy-composite` mirrors `tensor-noy-composite`: it is
-`⊗ₕ-comp-pt` in the noy slot (`l = I`, `α = idn`). Both
-endpoints reduce definitionally to `hnoy` actions.
+`hpre-composite` mirrors `tensor-pre-composite`: it is
+`⊗ₕ-comp-pt` in the pre slot (`l = I`, `α = idn`). Both
+endpoints reduce definitionally to `hpre` actions.
 
 ```agda
-  hnoy-composite
+  hpre-composite
     : ∀ {y y'} (ψ : C.hom y y') {z z'} (ψ' : C.hom z z')
         {r r'} (β : C.hom r r')
-    → PathP (λ i → C.hom (tensor-noy-composite y z r i)
-                         (tensor-noy-composite y' z' r' i))
-            (hnoy (ψ ⊗ₕ ψ') β)
-            (hnoy ψ (hnoy ψ' β))
-  hnoy-composite ψ ψ' β = ⊗ₕ-comp-pt ψ ψ' (C.idn {I}) β
+    → PathP (λ i → C.hom (tensor-pre-composite y z r i)
+                         (tensor-pre-composite y' z' r' i))
+            (hpre (ψ ⊗ₕ ψ') β)
+            (hpre ψ (hpre ψ' β))
+  hpre-composite ψ ψ' β = ⊗ₕ-comp-pt ψ ψ' (C.idn I) β
 ```
 
-`htensor-yon-composite` mirrors `tensor-yon-composite`: the
-comp-pt displacement in the yon slot (`r = I`, `β = idn`)
+`htensor-post-composite` mirrors `tensor-post-composite`: the
+comp-pt displacement in the post slot (`r = I`, `β = idn`)
 followed by the interchange displacement, glued over
 `tensor-emb-comp-pt _ _ _ I ∙ tensor-interchange _ _ _ I`.
 
 ```agda
-  htensor-yon-composite
+  htensor-post-composite
     : ∀ {x x'} (φ : C.hom x x') {y y'} (φ' : C.hom y y')
         {l l'} (α : C.hom l l')
-    → PathP (λ i → C.hom (tensor-yon-composite x y l i)
-                         (tensor-yon-composite x' y' l' i))
-            (hyon (φ ⊗ₕ φ') α)
-            (hyon φ' (hyon φ α))
-  htensor-yon-composite {x} {x'} φ {y} {y'} φ' {l} {l'} α =
+    → PathP (λ i → C.hom (tensor-post-composite x y l i)
+                         (tensor-post-composite x' y' l' i))
+            (hpost (φ ⊗ₕ φ') α)
+            (hpost φ' (hpost φ α))
+  htensor-post-composite {x} {x'} φ {y} {y'} φ' {l} {l'} α =
     compHomP
       (tensor-emb-comp-pt x  y  l  I) (tensor-interchange x  y  l  I)
       (tensor-emb-comp-pt x' y' l' I) (tensor-interchange x' y' l' I)
-      (⊗ₕ-comp-pt φ φ' α (C.idn {I}))
-      (htensor-interchange φ φ' α (C.idn {I}))
+      (⊗ₕ-comp-pt φ φ' α (C.idn I))
+      (htensor-interchange φ φ' α (C.idn I))
 ```
 
 `⊗ₕ-comp-eq` mirrors `⊗-comp-eq`: three displaced pieces over
-`sym (tensor-yon-eval _)`, `tensor-yon-composite _ _ I`, and
-`ap (yon _) (tensor-yon-eval _)`, glued with nested `compHomP`.
+`sym (tensor-post-eval _)`, `tensor-post-composite _ _ I`, and
+`ap (post _) (tensor-post-eval _)`, glued with nested `compHomP`.
 
 ```agda
   ⊗ₕ-comp-eq
     : ∀ {x x'} (φ : C.hom x x') {y y'} (ψ : C.hom y y')
     → PathP (λ i → C.hom (⊗-comp-eq x y i) (⊗-comp-eq x' y' i))
             (φ ⊗ₕ ψ)
-            (hyon ψ φ)
+            (hpost ψ φ)
   ⊗ₕ-comp-eq {x} {x'} φ {y} {y'} ψ =
     compHomP
-      (sym (tensor-yon-eval (x ⊗ y)))
-      (tensor-yon-composite x y I ∙ ap (yon y) (tensor-yon-eval x))
-      (sym (tensor-yon-eval (x' ⊗ y')))
-      (tensor-yon-composite x' y' I ∙ ap (yon y') (tensor-yon-eval x'))
-      (sym (htensor-yon-eval (φ ⊗ₕ ψ)))
+      (sym (tensor-post-eval (x ⊗ y)))
+      (tensor-post-composite x y I ∙ ap (post y) (tensor-post-eval x))
+      (sym (tensor-post-eval (x' ⊗ y')))
+      (tensor-post-composite x' y' I ∙ ap (post y') (tensor-post-eval x'))
+      (sym (htensor-post-eval (φ ⊗ₕ ψ)))
       (compHomP
-        (tensor-yon-composite x y I) (ap (yon y) (tensor-yon-eval x))
-        (tensor-yon-composite x' y' I) (ap (yon y') (tensor-yon-eval x'))
-        (htensor-yon-composite φ ψ (C.idn {I}))
-        (λ i → hyon ψ (htensor-yon-eval φ i)))
+        (tensor-post-composite x y I) (ap (post y) (tensor-post-eval x))
+        (tensor-post-composite x' y' I) (ap (post y') (tensor-post-eval x'))
+        (htensor-post-composite φ ψ (C.idn I))
+        (λ i → hpost ψ (htensor-post-eval φ i)))
 ```
 
-`htensor-yon-idpt` is `htensor-yon-eval` at the unit identity,
-displacing `tensor-yon-idpt`.
+`htensor-post-idpt` is `htensor-post-eval` at the unit identity,
+displacing `tensor-post-idpt`.
 
 ```agda
-  htensor-yon-idpt
-    : PathP (λ i → C.hom (tensor-yon-idpt i) (tensor-yon-idpt i))
-            (hyon (C.idn {I}) (C.idn {I}))
-            (C.idn {I})
-  htensor-yon-idpt = htensor-yon-eval (C.idn {I})
+  htensor-post-idpt
+    : PathP (λ i → C.hom (tensor-post-idpt i) (tensor-post-idpt i))
+            (hpost (C.idn I) (C.idn I))
+            (C.idn I)
+  htensor-post-idpt = htensor-post-eval (C.idn I)
 ```
 
 `⊗ₕ-idem` mirrors `⊗-idem`: the unit `⊗ₕ-comp-eq` glued with
-`htensor-yon-idpt` over `⊗-comp-eq I I ∙ tensor-yon-idpt`. It
+`htensor-post-idpt` over `⊗-comp-eq I I ∙ tensor-post-idpt`. It
 proves `idn ⊗ₕ idn ≡ idn` at the unit is field-free.
 
 ```agda
   ⊗ₕ-idem
     : PathP (λ i → C.hom (⊗-idem i) (⊗-idem i))
-            ((C.idn {I}) ⊗ₕ (C.idn {I}))
-            (C.idn {I})
+            ((C.idn I) ⊗ₕ (C.idn I))
+            (C.idn I)
   ⊗ₕ-idem =
     compHomP
-      (⊗-comp-eq I I) tensor-yon-idpt
-      (⊗-comp-eq I I) tensor-yon-idpt
-      (⊗ₕ-comp-eq (C.idn {I}) (C.idn {I}))
-      htensor-yon-idpt
+      (⊗-comp-eq I I) tensor-post-idpt
+      (⊗-comp-eq I I) tensor-post-idpt
+      (⊗ₕ-comp-eq (C.idn I) (C.idn I))
+      htensor-post-idpt
 ```
 
 ## Associator naturality
@@ -253,7 +253,7 @@ proves `idn ⊗ₕ idn ≡ idn` at the unit is field-free.
 `tensor-emb-nest`: two `⊗ₕ-comp-pt` displacements glued over the
 concatenated object nest path. The first expands the outer
 composite `(φ ⊗ₕ ψ) ⊗ₕ θ`; the second the inner `φ ⊗ₕ ψ`, with
-`θ`'s action carried in the noy slot as `hnoy θ β`.
+`θ`'s action carried in the pre slot as `hpre θ β`.
 
 ```agda
   htensor-emb-nest
@@ -263,16 +263,16 @@ composite `(φ ⊗ₕ ψ) ⊗ₕ θ`; the second the inner `φ ⊗ₕ ψ`, with
     → PathP (λ i → C.hom (tensor-emb-nest x  y  z  l  r  i)
                          (tensor-emb-nest x' y' z' l' r' i))
             (htensor-emb ((φ ⊗ₕ ψ) ⊗ₕ θ) α β)
-            (htensor-emb φ α (hnoy ψ (hnoy θ β)))
+            (htensor-emb φ α (hpre ψ (hpre θ β)))
   htensor-emb-nest {x} {x'} φ {y} {y'} ψ {z} {z'} θ
                    {l} {l'} α {r} {r'} β =
     compHomP
       (tensor-emb-comp-pt (x ⊗ y) z l r)
-      (tensor-emb-comp-pt x y l (noy z r))
+      (tensor-emb-comp-pt x y l (pre z r))
       (tensor-emb-comp-pt (x' ⊗ y') z' l' r')
-      (tensor-emb-comp-pt x' y' l' (noy z' r'))
+      (tensor-emb-comp-pt x' y' l' (pre z' r'))
       (⊗ₕ-comp-pt (φ ⊗ₕ ψ) θ α β)
-      (⊗ₕ-comp-pt φ ψ α (hnoy θ β))
+      (⊗ₕ-comp-pt φ ψ α (hpre θ β))
 ```
 
 `htensor-E₃-contr` is the displaced image of `tensor-E₃-contr`.
@@ -284,7 +284,7 @@ mirroring `tensor-E₃-contr`'s `((x⊗y)⊗z , tensor-emb-nest)`.
 
 Contractibility transports `htensor-compose-contr (φ ⊗ₕ ψ) θ`
 along the family `Cell`, which appends the fixed
-`⊗ₕ-comp-pt φ ψ α (hnoy θ β)` link to each fiber `PathP`. `Cell`
+`⊗ₕ-comp-pt φ ψ α (hpre θ β)` link to each fiber `PathP`. `Cell`
 is built from the object-level `cat.fill` filler exactly as
 `tensor-E₃-contr` substs `tensor-composable-contr (x⊗y) z` along
 its pointwise `tensor-emb-comp-pt`.
@@ -299,7 +299,7 @@ its pointwise `tensor-emb-comp-pt`.
            → PathP (λ i → C.hom (tensor-emb-nest x  y  z  l  r  i)
                                 (tensor-emb-nest x' y' z' l' r' i))
                    (htensor-emb σ α β)
-                   (htensor-emb φ α (hnoy ψ (hnoy θ β))))
+                   (htensor-emb φ α (hpre ψ (hpre θ β))))
   htensor-E₃-contr {x} {x'} φ {y} {y'} ψ {z} {z'} θ .center .fst =
     (φ ⊗ₕ ψ) ⊗ₕ θ
   htensor-E₃-contr {x} {x'} φ {y} {y'} ψ {z} {z'} θ .center .snd =
@@ -320,24 +320,24 @@ its pointwise `tensor-emb-comp-pt`.
         → ( PathP (λ j → C.hom (tensor-emb-comp-pt (x ⊗ y) z l r j)
                                (tensor-emb-comp-pt (x' ⊗ y') z' l' r' j))
                   (htensor-emb σ α β)
-                  (htensor-emb (φ ⊗ₕ ψ) α (hnoy θ β)) )
+                  (htensor-emb (φ ⊗ₕ ψ) α (hpre θ β)) )
         ≡ ( PathP (λ j → C.hom (tensor-emb-nest x  y  z  l  r  j)
                                (tensor-emb-nest x' y' z' l' r' j))
                   (htensor-emb σ α β)
-                  (htensor-emb φ α (hnoy ψ (hnoy θ β))) )
+                  (htensor-emb φ α (hpre ψ (hpre θ β))) )
       Cell σ {l} {l'} α {r} {r'} β i =
         PathP (λ j → C.hom (av i j) (bv i j))
               (htensor-emb σ α β)
-              (⊗ₕ-comp-pt φ ψ α (hnoy θ β) i)
+              (⊗ₕ-comp-pt φ ψ α (hpre θ β) i)
         where
           av : (i j : _) → C.ob
           av i j =
             cat.fill (tensor-emb-comp-pt (x ⊗ y) z l r)
-                     (tensor-emb-comp-pt x y l (noy z r)) j i
+                     (tensor-emb-comp-pt x y l (pre z r)) j i
           bv : (i j : _) → C.ob
           bv i j =
             cat.fill (tensor-emb-comp-pt (x' ⊗ y') z' l' r')
-                     (tensor-emb-comp-pt x' y' l' (noy z' r')) j i
+                     (tensor-emb-comp-pt x' y' l' (pre z' r')) j i
 ```
 
 `assoc-nat` is the morphism-level image of `⊗-assoc`,
@@ -349,7 +349,7 @@ so the right-nested cell is transported back along `⊗-assoc` by
 reconstructs `⊗-assoc`'s own `is-contr→is-prop` witness; its
 `snd` component `ofibπ i .snd` is the object square joining
 `tensor-emb-nest` to the right-nested `tensor-emb-comp-pt`/
-`tensor-noy-composite` path over `⊗-assoc`, which the `com`
+`tensor-pre-composite` path over `⊗-assoc`, which the `com`
 below rides to displace `natChar` onto `tensor-emb-nest`.
 
 ```agda
@@ -372,44 +372,44 @@ below rides to displace `natChar` onto `tensor-emb-nest`.
         (tensor-E₃-contr x y z .center)
         ( (x ⊗ (y ⊗ z))
         , (λ l r → tensor-emb-comp-pt x (y ⊗ z) l r
-                   ∙ ap (tensor-emb x l) (tensor-noy-composite y z r)) )
+                   ∙ ap (tensor-emb x l) (tensor-pre-composite y z r)) )
 
       ofibπ' = is-contr→is-prop (tensor-E₃-contr x' y' z')
         (tensor-E₃-contr x' y' z' .center)
         ( (x' ⊗ (y' ⊗ z'))
         , (λ l r → tensor-emb-comp-pt x' (y' ⊗ z') l r
-                   ∙ ap (tensor-emb x' l) (tensor-noy-composite y' z' r)) )
+                   ∙ ap (tensor-emb x' l) (tensor-pre-composite y' z' r)) )
 
       natChar
         : ∀ {l l'} (α : C.hom l l') {r r'} (β : C.hom r r')
         → PathP (λ i → C.hom
                   ((tensor-emb-comp-pt x (y ⊗ z) l r
-                    ∙ ap (tensor-emb x l) (tensor-noy-composite y z r)) i)
+                    ∙ ap (tensor-emb x l) (tensor-pre-composite y z r)) i)
                   ((tensor-emb-comp-pt x' (y' ⊗ z') l' r'
-                    ∙ ap (tensor-emb x' l') (tensor-noy-composite y' z' r'))
+                    ∙ ap (tensor-emb x' l') (tensor-pre-composite y' z' r'))
                    i))
                 (htensor-emb v α β)
-                (htensor-emb φ α (hnoy ψ (hnoy θ β)))
+                (htensor-emb φ α (hpre ψ (hpre θ β)))
       natChar {l} {l'} α {r} {r'} β =
         compHomP
           (tensor-emb-comp-pt x (y ⊗ z) l r)
-          (ap (tensor-emb x l) (tensor-noy-composite y z r))
+          (ap (tensor-emb x l) (tensor-pre-composite y z r))
           (tensor-emb-comp-pt x' (y' ⊗ z') l' r')
-          (ap (tensor-emb x' l') (tensor-noy-composite y' z' r'))
+          (ap (tensor-emb x' l') (tensor-pre-composite y' z' r'))
           (⊗ₕ-comp-pt φ (ψ ⊗ₕ θ) α β)
-          (λ i → htensor-emb φ α (hnoy-composite ψ θ β i))
+          (λ i → htensor-emb φ α (hpre-composite ψ θ β i))
 
       rhsSnd
         : ∀ {l l'} (α : C.hom l l') {r r'} (β : C.hom r r')
         → PathP (λ i → C.hom (tensor-emb-nest x  y  z  l  r  i)
                              (tensor-emb-nest x' y' z' l' r' i))
                 (htensor-emb (filler i0) α β)
-                (htensor-emb φ α (hnoy ψ (hnoy θ β)))
+                (htensor-emb φ α (hpre ψ (hpre θ β)))
       rhsSnd {l} {l'} α {r} {r'} β i =
         com (λ k → C.hom (ofibπ  (~ k) .snd l  r  i)
                          (ofibπ' (~ k) .snd l' r' i)) (∂ i) λ where
           k (i = i0) → htensor-emb (filler (~ k)) α β
-          k (i = i1) → htensor-emb φ α (hnoy ψ (hnoy θ β))
+          k (i = i1) → htensor-emb φ α (hpre ψ (hpre θ β))
           k (k = i0) → natChar α β i
 
       mfibπ = is-contr→is-prop (htensor-E₃-contr φ ψ θ)
@@ -444,156 +444,156 @@ the result along `(ap g p , ap g q)`. A double `J` reduces it to
 ```
 
 `habsorb-l` is the morphism-level image of `absorb-l`: the unit
-action `hnoy (idn) χ` is displaced to `χ` over `absorb-l`. Since
-`hnoy (idn)` is an equivalence on 2-cells (`htensor-unit .fst`),
+action `hpre (idn) χ` is displaced to `χ` over `absorb-l`. Since
+`hpre (idn)` is an equivalence on 2-cells (`htensor-unit .fst`),
 `to-pathp` reduces the goal to a homogeneous equation in
-`C.hom (noy I m)(noy I m')`, then `equiv→lc` cancels the outer
-`hnoy (idn)`. The remaining equation glues three links: transport
+`C.hom (pre I m)(pre I m')`, then `equiv→lc` cancels the outer
+`hpre (idn)`. The remaining equation glues three links: transport
 naturality (`fiber-map-transport-nat`), the rewrite of
-`ap (noy I)(absorb-l)` to `noy-I-idem` via `equiv→lc-section`, and
-`morphism-noy-idn-idpt`, the PathP transcribing the object
-`noy-I-idem` with `hnoy-composite` displaced along `⊗ₕ-idem`.
+`ap (pre I)(absorb-l)` to `pre-I-idem` via `equiv→lc-section`, and
+`morphism-pre-idn-idpt`, the PathP transcribing the object
+`pre-I-idem` with `hpre-composite` displaced along `⊗ₕ-idem`.
 
 ```agda
   habsorb-l
     : ∀ {m m'} (χ : C.hom m m')
     → PathP (λ i → C.hom (absorb-l m i) (absorb-l m' i))
-            (hnoy (C.idn {I}) χ) χ
+            (hpre (C.idn I) χ) χ
   habsorb-l {m} {m'} χ =
     Path-over.to-pathp (equiv→lc (htensor-unit .fst) F·Gχ≡Fχ)
     where
-      nc  = tensor-noy-composite I I m
-      nc' = tensor-noy-composite I I m'
+      nc  = tensor-pre-composite I I m
+      nc' = tensor-pre-composite I I m'
 
-      morphism-noy-idn-idpt
-        : PathP (λ i → C.hom (noy-I-idem m i) (noy-I-idem m' i))
-                (hnoy (C.idn {I}) (hnoy (C.idn {I}) χ))
-                (hnoy (C.idn {I}) χ)
-      morphism-noy-idn-idpt = sym sub-mor
+      morphism-pre-idn-idpt
+        : PathP (λ i → C.hom (pre-I-idem m i) (pre-I-idem m' i))
+                (hpre (C.idn I) (hpre (C.idn I) χ))
+                (hpre (C.idn I) χ)
+      morphism-pre-idn-idpt = sym sub-mor
         where
           tf = transport-filler
-                 (ap (λ t → noy t m ≡ noy I (noy I m)) ⊗-idem) nc
+                 (ap (λ t → pre t m ≡ pre I (pre I m)) ⊗-idem) nc
           tf' = transport-filler
-                  (ap (λ t → noy t m' ≡ noy I (noy I m')) ⊗-idem) nc'
+                  (ap (λ t → pre t m' ≡ pre I (pre I m')) ⊗-idem) nc'
 
           sub-mor
             : PathP (λ j → C.hom (tf i1 j) (tf' i1 j))
-                    (hnoy (C.idn {I}) χ)
-                    (hnoy (C.idn {I}) (hnoy (C.idn {I}) χ))
+                    (hpre (C.idn I) χ)
+                    (hpre (C.idn I) (hpre (C.idn I) χ))
           sub-mor j = com (λ i → C.hom (tf i j) (tf' i j)) (∂ j) λ where
-            i (j = i0) → hnoy (⊗ₕ-idem i) χ
-            i (j = i1) → hnoy (C.idn {I}) (hnoy (C.idn {I}) χ)
-            i (i = i0) → hnoy-composite (C.idn {I}) (C.idn {I}) χ j
+            i (j = i0) → hpre (⊗ₕ-idem i) χ
+            i (j = i1) → hpre (C.idn I) (hpre (C.idn I) χ)
+            i (i = i0) → hpre-composite (C.idn I) (C.idn I) χ j
 
       F·Gχ≡Fχ
-        : hnoy (C.idn {I})
+        : hpre (C.idn I)
             (transport (λ i → C.hom (absorb-l m i) (absorb-l m' i))
-              (hnoy (C.idn {I}) χ))
-        ≡ hnoy (C.idn {I}) χ
+              (hpre (C.idn I) χ))
+        ≡ hpre (C.idn I) χ
       F·Gχ≡Fχ =
-          fiber-map-transport-nat (hnoy (C.idn {I}))
-            (absorb-l m) (absorb-l m') (hnoy (C.idn {I}) χ)
+          fiber-map-transport-nat (hpre (C.idn I))
+            (absorb-l m) (absorb-l m') (hpre (C.idn I) χ)
         ∙ (λ k → transport
                    (λ i → C.hom
-                     (equiv→lc-section tensor-unit-eqvl (noy-I-idem m) k i)
-                     (equiv→lc-section tensor-unit-eqvl (noy-I-idem m') k i))
-                   (hnoy (C.idn {I}) (hnoy (C.idn {I}) χ)))
-        ∙ Path-over.from-pathp morphism-noy-idn-idpt
+                     (equiv→lc-section tensor-unit-eqvl (pre-I-idem m) k i)
+                     (equiv→lc-section tensor-unit-eqvl (pre-I-idem m') k i))
+                   (hpre (C.idn I) (hpre (C.idn I) χ)))
+        ∙ Path-over.from-pathp morphism-pre-idn-idpt
 ```
 
-`habsorb-r` is the `yon`/`hyon`/`tensor-unit-eqvr`/`yon-I-idem`
-mirror of `habsorb-l`, displacing `hyon (idn) χ` to `χ` over
-`absorb-r`. It transcribes `htensor-yon-composite` along the same
+`habsorb-r` is the `post`/`hpost`/`tensor-unit-eqvr`/`post-I-idem`
+mirror of `habsorb-l`, displacing `hpost (idn) χ` to `χ` over
+`absorb-r`. It transcribes `htensor-post-composite` along the same
 `⊗ₕ-idem`.
 
 ```agda
   habsorb-r
     : ∀ {l l'} (χ : C.hom l l')
     → PathP (λ i → C.hom (absorb-r l i) (absorb-r l' i))
-            (hyon (C.idn {I}) χ) χ
+            (hpost (C.idn I) χ) χ
   habsorb-r {l} {l'} χ =
     Path-over.to-pathp (equiv→lc (htensor-unit .snd) F·Gχ≡Fχ)
     where
-      yc  = tensor-yon-composite I I l
-      yc' = tensor-yon-composite I I l'
+      yc  = tensor-post-composite I I l
+      yc' = tensor-post-composite I I l'
 
-      morphism-yon-idn-idpt
-        : PathP (λ i → C.hom (yon-I-idem l i) (yon-I-idem l' i))
-                (hyon (C.idn {I}) (hyon (C.idn {I}) χ))
-                (hyon (C.idn {I}) χ)
-      morphism-yon-idn-idpt = sym sub-mor
+      morphism-post-idn-idpt
+        : PathP (λ i → C.hom (post-I-idem l i) (post-I-idem l' i))
+                (hpost (C.idn I) (hpost (C.idn I) χ))
+                (hpost (C.idn I) χ)
+      morphism-post-idn-idpt = sym sub-mor
         where
           tf = transport-filler
-                 (ap (λ t → yon t l ≡ yon I (yon I l)) ⊗-idem) yc
+                 (ap (λ t → post t l ≡ post I (post I l)) ⊗-idem) yc
           tf' = transport-filler
-                  (ap (λ t → yon t l' ≡ yon I (yon I l')) ⊗-idem) yc'
+                  (ap (λ t → post t l' ≡ post I (post I l')) ⊗-idem) yc'
 
           sub-mor
             : PathP (λ j → C.hom (tf i1 j) (tf' i1 j))
-                    (hyon (C.idn {I}) χ)
-                    (hyon (C.idn {I}) (hyon (C.idn {I}) χ))
+                    (hpost (C.idn I) χ)
+                    (hpost (C.idn I) (hpost (C.idn I) χ))
           sub-mor j = com (λ i → C.hom (tf i j) (tf' i j)) (∂ j) λ where
-            i (j = i0) → hyon (⊗ₕ-idem i) χ
-            i (j = i1) → hyon (C.idn {I}) (hyon (C.idn {I}) χ)
-            i (i = i0) → htensor-yon-composite (C.idn {I}) (C.idn {I}) χ j
+            i (j = i0) → hpost (⊗ₕ-idem i) χ
+            i (j = i1) → hpost (C.idn I) (hpost (C.idn I) χ)
+            i (i = i0) → htensor-post-composite (C.idn I) (C.idn I) χ j
 
       F·Gχ≡Fχ
-        : hyon (C.idn {I})
+        : hpost (C.idn I)
             (transport (λ i → C.hom (absorb-r l i) (absorb-r l' i))
-              (hyon (C.idn {I}) χ))
-        ≡ hyon (C.idn {I}) χ
+              (hpost (C.idn I) χ))
+        ≡ hpost (C.idn I) χ
       F·Gχ≡Fχ =
-          fiber-map-transport-nat (hyon (C.idn {I}))
-            (absorb-r l) (absorb-r l') (hyon (C.idn {I}) χ)
+          fiber-map-transport-nat (hpost (C.idn I))
+            (absorb-r l) (absorb-r l') (hpost (C.idn I) χ)
         ∙ (λ k → transport
                    (λ i → C.hom
-                     (equiv→lc-section tensor-unit-eqvr (yon-I-idem l) k i)
-                     (equiv→lc-section tensor-unit-eqvr (yon-I-idem l') k i))
-                   (hyon (C.idn {I}) (hyon (C.idn {I}) χ)))
-        ∙ Path-over.from-pathp morphism-yon-idn-idpt
+                     (equiv→lc-section tensor-unit-eqvr (post-I-idem l) k i)
+                     (equiv→lc-section tensor-unit-eqvr (post-I-idem l') k i))
+                   (hpost (C.idn I) (hpost (C.idn I) χ)))
+        ∙ Path-over.from-pathp morphism-post-idn-idpt
 ```
 
-## Yon and noy morphism decomposition
+## Post and pre morphism decomposition
 
-`htensor-emb-noy` and `htensor-emb-yon` are the morphism-level
-images of `tensor-emb-noy` and `tensor-emb-yon`. Each glues two
+`htensor-emb-pre` and `htensor-emb-post` are the morphism-level
+images of `tensor-emb-pre` and `tensor-emb-post`. Each glues two
 displaced links over the object nest: an absorption whisker in the
-untouched slot (`habsorb-r` for noy, `habsorb-l` for yon) followed
-by `htensor-interchange`. `htensor-emb-noy` supplies the second
+untouched slot (`habsorb-r` for pre, `habsorb-l` for post) followed
+by `htensor-interchange`. `htensor-emb-pre` supplies the second
 inhabitant characterization for `unitl-nat`.
 
 ```agda
-  htensor-emb-noy
+  htensor-emb-pre
     : ∀ {x x'} (φ : C.hom x x') {l l'} (α : C.hom l l')
         {r r'} (β : C.hom r r')
-    → PathP (λ i → C.hom (tensor-emb-noy x  l  r  i)
-                         (tensor-emb-noy x' l' r' i))
+    → PathP (λ i → C.hom (tensor-emb-pre x  l  r  i)
+                         (tensor-emb-pre x' l' r' i))
             (htensor-emb φ α β)
-            (htensor-emb (C.idn {I}) α (hnoy φ β))
-  htensor-emb-noy {x} {x'} φ {l} {l'} α {r} {r'} β =
+            (htensor-emb (C.idn I) α (hpre φ β))
+  htensor-emb-pre {x} {x'} φ {l} {l'} α {r} {r'} β =
     compHomP
       (ap (λ t → tensor-emb x  t r ) (sym (absorb-r l )))
       (sym (tensor-interchange I x  l  r ))
       (ap (λ t → tensor-emb x' t r') (sym (absorb-r l')))
       (sym (tensor-interchange I x' l' r'))
       (λ i → htensor-emb φ (habsorb-r α (~ i)) β)
-      (λ i → htensor-interchange (C.idn {I}) φ α β (~ i))
+      (λ i → htensor-interchange (C.idn I) φ α β (~ i))
 
-  htensor-emb-yon
+  htensor-emb-post
     : ∀ {x x'} (φ : C.hom x x') {l l'} (α : C.hom l l')
         {r r'} (β : C.hom r r')
-    → PathP (λ i → C.hom (tensor-emb-yon x  l  r  i)
-                         (tensor-emb-yon x' l' r' i))
+    → PathP (λ i → C.hom (tensor-emb-post x  l  r  i)
+                         (tensor-emb-post x' l' r' i))
             (htensor-emb φ α β)
-            (htensor-emb (C.idn {I}) (hyon φ α) β)
-  htensor-emb-yon {x} {x'} φ {l} {l'} α {r} {r'} β =
+            (htensor-emb (C.idn I) (hpost φ α) β)
+  htensor-emb-post {x} {x'} φ {l} {l'} α {r} {r'} β =
     compHomP
       (ap (tensor-emb x  l ) (sym (absorb-l r )))
       (tensor-interchange x  I l  r )
       (ap (tensor-emb x' l') (sym (absorb-l r')))
       (tensor-interchange x' I l' r')
       (λ i → htensor-emb φ α (habsorb-l β (~ i)))
-      (htensor-interchange φ (C.idn {I}) α β)
+      (htensor-interchange φ (C.idn I) α β)
 ```
 
 ## Right-unit image fiber
@@ -621,14 +621,14 @@ fiber object family matches `⊗-unitr`'s `lhs` characterization.
                         ∙ ap (tensor-emb x' l') (absorb-l r') ) i))
                    (htensor-emb σ α β)
                    (htensor-emb φ α β))
-  htensor-emb-image-contr {x} {x'} φ .center .fst = φ ⊗ₕ (C.idn {I})
+  htensor-emb-image-contr {x} {x'} φ .center .fst = φ ⊗ₕ (C.idn I)
   htensor-emb-image-contr {x} {x'} φ .center .snd {l} {l'} α {r} {r'} β =
     compHomP
       (tensor-emb-comp-pt x  I l  r )
       (ap (tensor-emb x  l ) (absorb-l r ))
       (tensor-emb-comp-pt x' I l' r')
       (ap (tensor-emb x' l') (absorb-l r'))
-      (⊗ₕ-comp-pt φ (C.idn {I}) α β)
+      (⊗ₕ-comp-pt φ (C.idn I) α β)
       (λ i → htensor-emb φ α (habsorb-l β i))
   htensor-emb-image-contr {x} {x'} φ .paths =
     is-contr→is-prop
@@ -637,7 +637,7 @@ fiber object family matches `⊗-unitr`'s `lhs` characterization.
           (Σ λ (σ : C.hom (x ⊗ I) (x' ⊗ I))
              → ∀ {l l'} (α : C.hom l l') {r r'} (β : C.hom r r')
              → Cell σ α β i))
-        (htensor-compose-contr φ (C.idn {I})))
+        (htensor-compose-contr φ (C.idn I)))
       _
     where
       Cell
@@ -646,7 +646,7 @@ fiber object family matches `⊗-unitr`'s `lhs` characterization.
         → ( PathP (λ j → C.hom (tensor-emb-comp-pt x  I l  r  j)
                                (tensor-emb-comp-pt x' I l' r' j))
                   (htensor-emb σ α β)
-                  (htensor-emb φ α (hnoy (C.idn {I}) β)) )
+                  (htensor-emb φ α (hpre (C.idn I) β)) )
         ≡ ( PathP (λ j → C.hom
                     (( tensor-emb-comp-pt x  I l  r
                        ∙ ap (tensor-emb x  l ) (absorb-l r ) ) j)
@@ -683,7 +683,7 @@ the base of the displacing `com` is `htensor-emb φ α β` itself.
   unitr-nat
     : ∀ {x x'} (φ : C.hom x x')
     → PathP (λ i → C.hom (⊗-unitr x i) (⊗-unitr x' i))
-            (φ ⊗ₕ (C.idn {I}))
+            (φ ⊗ₕ (C.idn I))
             φ
   unitr-nat {x} {x'} φ =
     pcom (sym (ap fst mfibπ)) filler refl
@@ -727,14 +727,14 @@ the base of the displacing `com` is `htensor-emb φ α β` itself.
 `unitl-nat` is the morphism-level image of `⊗-unitl`. It reuses
 the `htensor-compose-contr (idn) φ` field directly, whose center
 is `idn ⊗ₕ φ`. The base of the displacing `com` is
-`htensor-emb-noy φ α β`, the morphism transcription of `⊗-unitl`'s
-`rhs = x , tensor-emb-noy x`.
+`htensor-emb-pre φ α β`, the morphism transcription of `⊗-unitl`'s
+`rhs = x , tensor-emb-pre x`.
 
 ```agda
   unitl-nat
     : ∀ {x x'} (φ : C.hom x x')
     → PathP (λ i → C.hom (⊗-unitl x i) (⊗-unitl x' i))
-            ((C.idn {I}) ⊗ₕ φ)
+            ((C.idn I) ⊗ₕ φ)
             φ
   unitl-nat {x} {x'} φ =
     pcom (sym (ap fst mfibπ)) filler refl
@@ -744,26 +744,26 @@ is `idn ⊗ₕ φ`. The base of the displacing `com` is
 
       ofibπ = is-contr→is-prop (tensor-composable-contr I x)
         ( I ⊗ x , tensor-emb-comp-pt I x )
-        ( x , tensor-emb-noy x )
+        ( x , tensor-emb-pre x )
 
       ofibπ' = is-contr→is-prop (tensor-composable-contr I x')
         ( I ⊗ x' , tensor-emb-comp-pt I x' )
-        ( x' , tensor-emb-noy x' )
+        ( x' , tensor-emb-pre x' )
 
       rhsSnd
         : ∀ {l l'} (α : C.hom l l') {r r'} (β : C.hom r r')
         → PathP (λ i → C.hom (tensor-emb-comp-pt I x  l  r  i)
                              (tensor-emb-comp-pt I x' l' r' i))
                 (htensor-emb (filler i0) α β)
-                (htensor-emb (C.idn {I}) α (hnoy φ β))
+                (htensor-emb (C.idn I) α (hpre φ β))
       rhsSnd {l} {l'} α {r} {r'} β i =
         com (λ k → C.hom (ofibπ  (~ k) .snd l  r  i)
                          (ofibπ' (~ k) .snd l' r' i)) (∂ i) λ where
           k (i = i0) → htensor-emb (filler (~ k)) α β
-          k (i = i1) → htensor-emb (C.idn {I}) α (hnoy φ β)
-          k (k = i0) → htensor-emb-noy φ α β i
+          k (i = i1) → htensor-emb (C.idn I) α (hpre φ β)
+          k (k = i0) → htensor-emb-pre φ α β i
 
-      mfibπ = is-contr→is-prop (htensor-compose-contr (C.idn {I}) φ)
-        (htensor-compose-contr (C.idn {I}) φ .center)
+      mfibπ = is-contr→is-prop (htensor-compose-contr (C.idn I) φ)
+        (htensor-compose-contr (C.idn I) φ .center)
         (filler i0 , rhsSnd)
 ```

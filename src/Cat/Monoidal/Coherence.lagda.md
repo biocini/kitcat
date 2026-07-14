@@ -39,7 +39,7 @@ module _ {o h} {C : category o h} (M : monoidal C) where
   private
     tensor-E₄ : (w x y z : ob) → ob → ob → ob
     tensor-E₄ w x y z l r =
-      tensor-emb w l (noy x (noy y (noy z r)))
+      tensor-emb w l (pre x (pre y (pre z r)))
 
   tensor-E₄-contr
     : (w x y z : ob)
@@ -48,19 +48,19 @@ module _ {o h} {C : category o h} (M : monoidal C) where
   tensor-E₄-contr w x y z .center .snd =
     tensor-emb-composite ((w ⊗ x) ⊗ y) z
     ∙ tensor-emb-ext λ l r →
-        tensor-emb-comp-pt (w ⊗ x) y l (noy z r)
-      ∙ tensor-emb-comp-pt w x l (noy y (noy z r))
+        tensor-emb-comp-pt (w ⊗ x) y l (pre z r)
+      ∙ tensor-emb-comp-pt w x l (pre y (pre z r))
   tensor-E₄-contr w x y z .paths =
     is-contr→is-prop
       (subst (is-contr ∘ fiber tensor-emb) path
         (tensor-compose-contr ((w ⊗ x) ⊗ y) z)) _
     where
       path
-        : (λ l r → tensor-emb ((w ⊗ x) ⊗ y) l (noy z r))
+        : (λ l r → tensor-emb ((w ⊗ x) ⊗ y) l (pre z r))
         ≡ tensor-E₄ w x y z
       path = tensor-emb-ext λ l r →
-          tensor-emb-comp-pt (w ⊗ x) y l (noy z r)
-        ∙ tensor-emb-comp-pt w x l (noy y (noy z r))
+          tensor-emb-comp-pt (w ⊗ x) y l (pre z r)
+        ∙ tensor-emb-comp-pt w x l (pre y (pre z r))
 
   tensor-E₄-ind
     : ∀ {u} (w x y z : ob)
@@ -97,35 +97,35 @@ in scope here through `open monoidal M`.
       pt₂ = (w ⊗ (x ⊗ y)) ⊗ z
           , tensor-emb-composite (w ⊗ (x ⊗ y)) z
           ∙ tensor-emb-ext λ l r →
-              tensor-emb-comp-pt w (x ⊗ y) l (noy z r)
+              tensor-emb-comp-pt w (x ⊗ y) l (pre z r)
             ∙ ap (tensor-emb w l)
-                (tensor-noy-composite x y (noy z r))
+                (tensor-pre-composite x y (pre z r))
 
       pt₃ : fiber tensor-emb (tensor-E₄ w x y z)
       pt₃ = w ⊗ ((x ⊗ y) ⊗ z)
           , tensor-emb-composite w ((x ⊗ y) ⊗ z)
           ∙ tensor-emb-ext λ l r →
               ap (tensor-emb w l)
-                (tensor-noy-composite (x ⊗ y) z r)
+                (tensor-pre-composite (x ⊗ y) z r)
             ∙ ap (tensor-emb w l)
-                (tensor-noy-composite x y (noy z r))
+                (tensor-pre-composite x y (pre z r))
 
       pt₄ : fiber tensor-emb (tensor-E₄ w x y z)
       pt₄ = (w ⊗ x) ⊗ (y ⊗ z)
           , tensor-emb-composite (w ⊗ x) (y ⊗ z)
           ∙ tensor-emb-ext λ l r →
-              tensor-emb-comp-pt w x l (noy (y ⊗ z) r)
-            ∙ ap (λ t → tensor-emb w l (noy x t))
-                  (tensor-noy-composite y z r)
+              tensor-emb-comp-pt w x l (pre (y ⊗ z) r)
+            ∙ ap (λ t → tensor-emb w l (pre x t))
+                  (tensor-pre-composite y z r)
 
       pt₅ : fiber tensor-emb (tensor-E₄ w x y z)
       pt₅ = w ⊗ (x ⊗ (y ⊗ z))
           , tensor-emb-composite w (x ⊗ (y ⊗ z))
           ∙ tensor-emb-ext λ l r →
               ap (tensor-emb w l)
-                (tensor-noy-composite x (y ⊗ z) r)
-            ∙ ap (λ t → tensor-emb w l (noy x t))
-                  (tensor-noy-composite y z r)
+                (tensor-pre-composite x (y ⊗ z) r)
+            ∙ ap (λ t → tensor-emb w l (pre x t))
+                  (tensor-pre-composite y z r)
 
     σ₁₄ : pt₁ ≡ pt₄
     σ₁₄ = is-contr→is-prop E₄c pt₁ pt₄
@@ -163,7 +163,7 @@ in scope here through `open monoidal M`.
         ⊗-assoc w x y i ⊗ z
         , tensor-emb-composite (⊗-assoc w x y i) z
         ∙ (λ j l r →
-            assoc-σ w x y i .snd j l (noy z r))
+            assoc-σ w x y i .snd j l (pre z r))
 
       γ₃₅-pt : ∀ i → fiber tensor-emb (tensor-E₄ w x y z)
       γ₃₅-pt i =
@@ -178,18 +178,18 @@ in scope here through `open monoidal M`.
         , tensor-emb-composite w ((x ⊗ y) ⊗ z)
         ∙ tensor-emb-ext λ l r →
             sym (ap-comp (tensor-emb w l)
-              (tensor-noy-composite (x ⊗ y) z r)
-              (tensor-noy-composite x y
-                (noy z r))) i
+              (tensor-pre-composite (x ⊗ y) z r)
+              (tensor-pre-composite x y
+                (pre z r))) i
 
       v₅ : γ₃₅-pt i1 ≡ pt₅
       v₅ i = _
         , tensor-emb-composite w (x ⊗ (y ⊗ z))
         ∙ tensor-emb-ext λ l r →
             ap-comp (tensor-emb w l)
-              (tensor-noy-composite x (y ⊗ z) r)
-              (ap (noy x)
-                (tensor-noy-composite y z r)) i
+              (tensor-pre-composite x (y ⊗ z) r)
+              (ap (pre x)
+                (tensor-pre-composite y z r)) i
 
       γ₂₃-pt : ∀ i → fiber tensor-emb (tensor-E₄ w x y z)
       γ₂₃-pt i =
@@ -197,17 +197,17 @@ in scope here through `open monoidal M`.
         , assoc-σ w (x ⊗ y) z i .snd
         ∙ tensor-emb-ext λ l r →
             ap (tensor-emb w l)
-              (tensor-noy-composite x y (noy z r))
+              (tensor-pre-composite x y (pre z r))
 
       w₂ : pt₂ ≡ γ₂₃-pt i0
       w₂ i = _
         , Path.assoc
             (tensor-emb-composite (w ⊗ (x ⊗ y)) z)
             (tensor-emb-ext λ l r →
-                tensor-emb-comp-pt w (x ⊗ y) l (noy z r))
+                tensor-emb-comp-pt w (x ⊗ y) l (pre z r))
             (tensor-emb-ext λ l r →
                 ap (tensor-emb w l)
-                  (tensor-noy-composite x y (noy z r))) i
+                  (tensor-pre-composite x y (pre z r))) i
 
       w₃ : γ₂₃-pt i1 ≡ pt₃
       w₃ i = _
@@ -215,28 +215,28 @@ in scope here through `open monoidal M`.
             (tensor-emb-composite w ((x ⊗ y) ⊗ z))
             (tensor-emb-ext λ l r →
                 ap (tensor-emb w l)
-                  (tensor-noy-composite (x ⊗ y) z r))
+                  (tensor-pre-composite (x ⊗ y) z r))
             (tensor-emb-ext λ l r →
                 ap (tensor-emb w l)
-                  (tensor-noy-composite x y (noy z r)))) i
+                  (tensor-pre-composite x y (pre z r)))) i
 
       γ₄₅-pt : ∀ i → fiber tensor-emb (tensor-E₄ w x y z)
       γ₄₅-pt i =
         ⊗-assoc w x (y ⊗ z) i
         , assoc-σ w x (y ⊗ z) i .snd
         ∙ tensor-emb-ext λ l r →
-            ap (λ t → tensor-emb w l (noy x t))
-              (tensor-noy-composite y z r)
+            ap (λ t → tensor-emb w l (pre x t))
+              (tensor-pre-composite y z r)
 
       w₄ : pt₄ ≡ γ₄₅-pt i0
       w₄ i = _
         , Path.assoc
             (tensor-emb-composite (w ⊗ x) (y ⊗ z))
             (tensor-emb-ext λ l r →
-                tensor-emb-comp-pt w x l (noy (y ⊗ z) r))
+                tensor-emb-comp-pt w x l (pre (y ⊗ z) r))
             (tensor-emb-ext λ l r →
-                ap (λ t → tensor-emb w l (noy x t))
-                  (tensor-noy-composite y z r)) i
+                ap (λ t → tensor-emb w l (pre x t))
+                  (tensor-pre-composite y z r)) i
 
       w₅ : γ₄₅-pt i1 ≡ pt₅
       w₅ i = _
@@ -244,45 +244,45 @@ in scope here through `open monoidal M`.
             (tensor-emb-composite w (x ⊗ (y ⊗ z)))
             (tensor-emb-ext λ l r →
                 ap (tensor-emb w l)
-                  (tensor-noy-composite x (y ⊗ z) r))
+                  (tensor-pre-composite x (y ⊗ z) r))
             (tensor-emb-ext λ l r →
-                ap (λ t → tensor-emb w l (noy x t))
-                  (tensor-noy-composite y z r))) i
+                ap (λ t → tensor-emb w l (pre x t))
+                  (tensor-pre-composite y z r))) i
 
       γ₁₄-pt : ∀ i → fiber tensor-emb (tensor-E₄ w x y z)
       γ₁₄-pt i =
         ⊗-assoc (w ⊗ x) y z i
         , assoc-σ (w ⊗ x) y z i .snd
         ∙ tensor-emb-ext λ l r →
-            tensor-emb-comp-pt w x l (noy y (noy z r))
+            tensor-emb-comp-pt w x l (pre y (pre z r))
 
       w₁ : pt₁ ≡ γ₁₄-pt i0
       w₁ i = _
         , Path.assoc
             (tensor-emb-composite ((w ⊗ x) ⊗ y) z)
             (tensor-emb-ext λ l r →
-                tensor-emb-comp-pt (w ⊗ x) y l (noy z r))
+                tensor-emb-comp-pt (w ⊗ x) y l (pre z r))
             (tensor-emb-ext λ l r →
                 tensor-emb-comp-pt w x l
-                  (noy y (noy z r))) i
+                  (pre y (pre z r))) i
 
       w₁₄-nat
         : (l r : ob)
         → ap (tensor-emb (w ⊗ x) l)
-              (tensor-noy-composite y z r)
-          ∙ tensor-emb-comp-pt w x l (noy y (noy z r))
-        ≡ tensor-emb-comp-pt w x l (noy (y ⊗ z) r)
-          ∙ ap (λ t → tensor-emb w l (noy x t))
-              (tensor-noy-composite y z r)
+              (tensor-pre-composite y z r)
+          ∙ tensor-emb-comp-pt w x l (pre y (pre z r))
+        ≡ tensor-emb-comp-pt w x l (pre (y ⊗ z) r)
+          ∙ ap (λ t → tensor-emb w l (pre x t))
+              (tensor-pre-composite y z r)
       w₁₄-nat l r = sym (Path.commutes
-        (tensor-emb-comp-pt w x l (noy (y ⊗ z) r))
-        (ap (λ t → tensor-emb w l (noy x t))
-          (tensor-noy-composite y z r))
+        (tensor-emb-comp-pt w x l (pre (y ⊗ z) r))
+        (ap (λ t → tensor-emb w l (pre x t))
+          (tensor-pre-composite y z r))
         (ap (tensor-emb (w ⊗ x) l)
-          (tensor-noy-composite y z r))
-        (tensor-emb-comp-pt w x l (noy y (noy z r)))
+          (tensor-pre-composite y z r))
+        (tensor-emb-comp-pt w x l (pre y (pre z r)))
         (λ i j → tensor-emb-comp-pt w x l
-          (tensor-noy-composite y z r i) j))
+          (tensor-pre-composite y z r i) j))
 
       w₁₄ : γ₁₄-pt i1 ≡ pt₄
       w₁₄ i = _
@@ -292,14 +292,14 @@ in scope here through `open monoidal M`.
           A₁₄ = tensor-emb-composite (w ⊗ x) (y ⊗ z)
           B₁₄ = tensor-emb-ext λ l r →
               ap (tensor-emb (w ⊗ x) l)
-                (tensor-noy-composite y z r)
+                (tensor-pre-composite y z r)
           C₁₄ = tensor-emb-ext λ l r →
-              tensor-emb-comp-pt w x l (noy y (noy z r))
+              tensor-emb-comp-pt w x l (pre y (pre z r))
           N₁₄ : B₁₄ ∙ C₁₄
               ≡ tensor-emb-ext λ l r →
-                    tensor-emb-comp-pt w x l (noy (y ⊗ z) r)
-                  ∙ ap (λ t → tensor-emb w l (noy x t))
-                      (tensor-noy-composite y z r)
+                    tensor-emb-comp-pt w x l (pre (y ⊗ z) r)
+                  ∙ ap (λ t → tensor-emb w l (pre x t))
+                      (tensor-pre-composite y z r)
           N₁₄ j = tensor-emb-ext λ l r → w₁₄-nat l r j
 
     face₁₂ : α₁₂ ≡ ap (_⊗ z) (⊗-assoc w x y)
@@ -374,26 +374,26 @@ The weak triangle uses only `absorb-l` from the unit, not
       cc = tensor-compose-contr x z
 
       pt₁ : fiber tensor-emb
-        (λ l r → tensor-emb x l (noy z r))
+        (λ l r → tensor-emb x l (pre z r))
       pt₁ = (x ⊗ I) ⊗ z
           , tensor-emb-composite (x ⊗ I) z
           ∙ tensor-emb-ext λ l r →
-              tensor-emb-comp-pt x I l (noy z r)
+              tensor-emb-comp-pt x I l (pre z r)
             ∙ ap (tensor-emb x l)
-                (absorb-l (noy z r))
+                (absorb-l (pre z r))
 
       pt₂ : fiber tensor-emb
-        (λ l r → tensor-emb x l (noy z r))
+        (λ l r → tensor-emb x l (pre z r))
       pt₂ = x ⊗ (I ⊗ z)
           , tensor-emb-composite x (I ⊗ z)
           ∙ tensor-emb-ext λ l r →
               ap (tensor-emb x l)
-                (tensor-noy-composite I z r)
+                (tensor-pre-composite I z r)
             ∙ ap (tensor-emb x l)
-                (absorb-l (noy z r))
+                (absorb-l (pre z r))
 
       pt₃ : fiber tensor-emb
-        (λ l r → tensor-emb x l (noy z r))
+        (λ l r → tensor-emb x l (pre z r))
       pt₃ = x ⊗ z , tensor-emb-composite x z
 
     σ₁₃ : pt₁ ≡ pt₃
@@ -426,34 +426,34 @@ The weak triangle uses only `absorb-l` from the unit, not
           (tensor-emb-image-contr-ext x) _ _
 
       γ₁₃-pt : ∀ i → fiber tensor-emb
-        (λ l r → tensor-emb x l (noy z r))
+        (λ l r → tensor-emb x l (pre z r))
       γ₁₃-pt i =
         ⊗-unitr x i ⊗ z
         , tensor-emb-composite (⊗-unitr x i) z
         ∙ (λ j l r →
-            unitr-σ i .snd j l (noy z r))
+            unitr-σ i .snd j l (pre z r))
 
       v₃ : γ₁₃-pt i1 ≡ pt₃
       v₃ i = _ , Path.unitr (tensor-emb-composite x z) i
 
       γ₁₂-pt : ∀ i → fiber tensor-emb
-        (λ l r → tensor-emb x l (noy z r))
+        (λ l r → tensor-emb x l (pre z r))
       γ₁₂-pt i =
         ⊗-assoc x I z i
         , assoc-σ x I z i .snd
         ∙ tensor-emb-ext λ l r →
             ap (tensor-emb x l)
-              (absorb-l (noy z r))
+              (absorb-l (pre z r))
 
       w₁ : pt₁ ≡ γ₁₂-pt i0
       w₁ i = _
         , Path.assoc
             (tensor-emb-composite (x ⊗ I) z)
             (tensor-emb-ext λ l r →
-                tensor-emb-comp-pt x I l (noy z r))
+                tensor-emb-comp-pt x I l (pre z r))
             (tensor-emb-ext λ l r →
                 ap (tensor-emb x l)
-                  (absorb-l (noy z r))) i
+                  (absorb-l (pre z r))) i
 
       w₂ : γ₁₂-pt i1 ≡ pt₂
       w₂ i = _
@@ -461,10 +461,10 @@ The weak triangle uses only `absorb-l` from the unit, not
             (tensor-emb-composite x (I ⊗ z))
             (tensor-emb-ext λ l r →
                 ap (tensor-emb x l)
-                  (tensor-noy-composite I z r))
+                  (tensor-pre-composite I z r))
             (tensor-emb-ext λ l r →
                 ap (tensor-emb x l)
-                  (absorb-l (noy z r)))) i
+                  (absorb-l (pre z r)))) i
 
     face₁₃ : α₁₃ ≡ ap (_⊗ z) (⊗-unitr x)
     face₁₃ =
@@ -512,7 +512,7 @@ record monoidal-2-coherent {o h}
   field
     absorb-coh
       : (x r : ob)
-      → absorb-l (noy x r)
+      → absorb-l (pre x r)
       ≡ tensor-interchange I x I r
         ∙ ap (λ t → tensor-emb x t r)
             (absorb-r I)
@@ -535,12 +535,12 @@ module ⊗-2-Cat
   open monoidal-2-coherent coh public
   open category C using (ob)
 
-  absorb-l-noy-retract
+  absorb-l-pre-retract
     : (x r : ob)
-    → tensor-emb-noy x I r ∙ absorb-l (noy x r)
+    → tensor-emb-pre x I r ∙ absorb-l (pre x r)
     ≡ refl
-  absorb-l-noy-retract x r =
-    ap (tensor-emb-noy x I r ∙_)
+  absorb-l-pre-retract x r =
+    ap (tensor-emb-pre x I r ∙_)
       (absorb-coh x r)
     ∙ Path.grp-cancel
         (ap (λ t → tensor-emb x t r)
@@ -550,7 +550,7 @@ module ⊗-2-Cat
 
 ### Full triangle face₂₃
 
-The `face₂₃` identification requires `absorb-l-noy-retract`,
+The `face₂₃` identification requires `absorb-l-pre-retract`,
 which in turn requires `absorb-coh`. This is what separates
 the full Mac Lane triangle from the weak version.
 
@@ -564,18 +564,18 @@ the full Mac Lane triangle from the weak version.
 
         pt₂ : fiber tensor-emb
           (λ l r →
-            tensor-emb x l (noy z r))
+            tensor-emb x l (pre z r))
         pt₂ = x ⊗ (I ⊗ z)
             , tensor-emb-composite x (I ⊗ z)
             ∙ tensor-emb-ext λ l r →
                 ap (tensor-emb x l)
-                  (tensor-noy-composite I z r)
+                  (tensor-pre-composite I z r)
               ∙ ap (tensor-emb x l)
-                  (absorb-l (noy z r))
+                  (absorb-l (pre z r))
 
         pt₃ : fiber tensor-emb
           (λ l r →
-            tensor-emb x l (noy z r))
+            tensor-emb x l (pre z r))
         pt₃ = x ⊗ z , tensor-emb-composite x z
 
         unitl-σ
@@ -583,14 +583,14 @@ the full Mac Lane triangle from the weak version.
               , tensor-emb-composite I z)
           ≡ (   z
               , tensor-emb-ext λ l r →
-                  tensor-emb-noy z l r)
+                  tensor-emb-pre z l r)
         unitl-σ =
           is-contr→is-prop
             (tensor-compose-contr I z) _ _
 
         γ₂₃-pt : ∀ i → fiber tensor-emb
           (λ l r →
-            tensor-emb x l (noy z r))
+            tensor-emb x l (pre z r))
         γ₂₃-pt i =
           x ⊗ (⊗-unitl z i)
           , tensor-emb-composite x (⊗-unitl z i)
@@ -598,15 +598,15 @@ the full Mac Lane triangle from the weak version.
               ap (tensor-emb x l)
                 ((λ j →
                     unitl-σ i .snd j I r)
-                ∙ absorb-l (noy z r))
+                ∙ absorb-l (pre z r))
 
         w₀ : pt₂ ≡ γ₂₃-pt i0
         w₀ i = _
           , tensor-emb-composite x (I ⊗ z)
           ∙ tensor-emb-ext λ l r →
               sym (ap-comp (tensor-emb x l)
-                (tensor-noy-composite I z r)
-                (absorb-l (noy z r))) i
+                (tensor-pre-composite I z r)
+                (absorb-l (pre z r))) i
 
         v₁ : γ₂₃-pt i1
           ≡ (x ⊗ z
@@ -615,7 +615,7 @@ the full Mac Lane triangle from the weak version.
           , tensor-emb-composite x z
           ∙ tensor-emb-ext λ l r →
               ap (ap (tensor-emb x l))
-                (absorb-l-noy-retract z r) i
+                (absorb-l-pre-retract z r) i
 
         v₂
           : (x ⊗ z
