@@ -97,4 +97,5 @@ import Cat.Monoidal.Hexagon
 import Core.Coherence.Base
 import Cat.Codep
 import Cat.Codep.Instances
+import Gloss.ExtractAgreeIndependence
 ```

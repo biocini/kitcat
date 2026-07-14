@@ -1,66 +1,49 @@
 Lane Biocini
 July 2026
 
-Extract-agree bridge spike (arms 1-3): is Layer C's
-`extract-agree` derivable from weaker structure, or irreducible at
-Petrakis generality? Run ledger:
-`notes/plans/2026-07-13-extract-agree-bridge.md`; spec: the
-analyzer memo
-`notes/research/2026-07-13-extract-agree-bridge-design.md`
-(§-references are to it). The three stratum records are restated
-verbatim from the green stratum spike
-`src/Test/CodepFaithful-20260713-140913.lagda.md` :71-194 (as of
-the 2026-07-13 credit-prose edits; line anchors into that spike
-drift with its prose — the load-bearing fact is block identity,
-re-verified by the mechanical gate's diff, not the line numbers).
-No import of that spike and no import of Cat.Codep.Base:
-self-contained modulo Core, for the later Gloss freeze.
+Gloss: machine-checked evidence for T21 in docs/gloss.md.
+Self-contained modulo Core.* — no Cat.* import. Every frozen block
+below is marked `Frozen from Test.CodepExtractAgree-20260713-171000
+@ dde1f57`: the stratum records' first committed home is the Test
+tier, so the markers carry tracked-Test provenance (ruled
+2026-07-13).
 
-Kill criteria (pre-registered, memo §3/§4/§5-C3):
+Independence of the extract-agree bridge: over the three-layer
+faithful stratum — the Petrakis fam/cofam substrate (Layer A), the
+Π-integral codep-structure (Layer B), the representability overlay
+(Layer C) — the `extract-agree` field
+(`compose-contr f g .center .fst ≡ f ⨾ᵇ g`) is not derivable from
+the remaining fields, nor from any representability, orbit, or
+pointed-fam strengthening the collapsed countermodel satisfies.
+"Memo §n" references below are to the run's design memo
+(2026-07-13, the extract-agree bridge run). The pre-registered kill
+criteria, restated:
 
 - Arm 1 (C4, bridge-forms): {EA, EH, EE} inter-derivable over the
   compose-contr hypothesis. Expected DERIVED; consequence: one
   countermodel refutes the whole class.
 - Arm 2 (C0, collapsed): the countermodel typechecks including the
   ★ killcheck-center and no-extract-agree ⇒ irreducibility PINNED
-  (kills C1, C2(i), pointed-fam). A Layer A/B refl rejected ⇒
-  transcribe both normal forms, FULL STOP (design revelation). ★
-  rejected alone ⇒ hand-built is-contr fallback (memo §3), record
-  the attempt; the refutation needs only `center .fst ≐ f`.
+  (kills C1, C2(i), pointed-fam).
 - Arm 3 (C3, honest): routes (a)/(b) forced-refl probes over
   {FS, CS, emb, cc} alone; expected STUCK ×2, residues
-  transcribed. ⊥-detector, pre-registered: if either route closes
-  while arm 2 is green, instantiate the derivation in the
-  collapsed model against no-extract-agree, derive ⊥, and
-  ESCALATE — a stratum-record discrepancy, not mathematics.
+  transcribed, with the ⊥-detector restated at the arm.
 
-Verdict summary (this run, 2026-07-13; per-arm detail at each
-`-- VERDICT` block below; the typecheck is the pin — the file is
-green at zero warnings):
-
-- Arm 1 DERIVED — EA ⟺ EH ⟺ EE over compose-contr, all four
-  maps first-try; ·-comp-base pins the one-link corollary (the
-  ⨾ᵇ-level composition law is extract-agree-free).
-- Arm 2 DERIVED — the collapsed countermodel typechecks whole,
-  both memo hinges held (emb₀-equiv's refl legs; the ★ center
-  reduction), and extract-agree is REFUTED at (false, true): the
-  field is independent of the remaining stratum fields and of
-  every representability/orbit/pointed strengthening the model
-  satisfies.
-- Arm 3 STUCK ×2 — both pre-registered routes wall at the bridge
-  (route a: EH's normal-form gap; route b: the naked
-  center-vs-⨾ᵇ residue); walls transcribed verbatim (fenced).
-  The pre-registered ⊥-detector did not fire.
-
-Enshrined 2026-07-13: this result is T21 in docs/gloss.md, frozen
-as `Gloss.ExtractAgreeIndependence` @ dde1f57.
-
-Scratch file — not in All.
+Verdicts (2026-07-13; per-arm detail at each `-- VERDICT` block):
+Arm 1 DERIVED; Arm 2 DERIVED — extract-agree REFUTED at
+(false, true), the irreducibility pin; Arm 3 STUCK ×2, both walls
+transcribed verbatim (the Gloss.EightFieldWall precedent: walls
+are certificate content). `killcheck-center` is the Mechanization
+Discipline's pinned reduction: if a Core change stops the
+qinv-center reduction, this certificate fails the next check. The
+freeze adds, beyond the spike (accuracy review MINOR 1/2, same
+run): the ▹-side orbit twin and the class refutation as terms
+(`no-EH`/`no-EE`).
 
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
 
-module Test.CodepExtractAgree-20260713-171000 where
+module Gloss.ExtractAgreeIndependence where
 
 open import Core.Type
 open import Core.Base
@@ -73,16 +56,16 @@ open import Core.Equiv.Base using (iso→equiv; _≃_; eqv-fibers)
 open import Core.Transport.J using (subst)
 ```
 
-## The stratum records (restated)
+## The stratum records
 
-Verbatim from the green spike :69-190 (self-containment for the
-freeze; Test never imports Test), with the green spike's level
-binders `fℓ rℓ`. Layer A is the Petrakis substrate; Layer B the
-Π-integral composite with function-valued res-invariance; Layer C
-the representability overlay whose `extract-agree` field is this
-spike's subject.
+Layer A is the Petrakis substrate; Layer B the Π-integral
+composite with function-valued res-invariance; Layer C the
+representability overlay whose `extract-agree` field is this
+certificate's subject.
 
 ```agda
+-- Frozen from Test.CodepExtractAgree-20260713-171000 @ dde1f57
+-- (tracked-Test provenance; the spike may drift — this may not).
 -- Following Petrakis (arXiv:2303.14754), Def 2.1 (families:
 -- ◃, 𝔣₁/𝔣₂) and §6 (cofamily-arrows: ▹, cf₁/cf₂);
 -- entry resources/petrakis-dep-arrows/.
@@ -115,6 +98,8 @@ record fam-structure {o h fℓ} (ob : Type o)
 ```
 
 ```agda
+-- Frozen from Test.CodepExtractAgree-20260713-171000 @ dde1f57
+-- (tracked-Test provenance; the spike may drift — this may not).
 -- Following Petrakis (arXiv:2303.14754), Def 4.1 (dependent
 -- application at the Π-integral: ·, 𝔡𝔦₁/𝔡𝔦₂); the codependent
 -- duals (⟩, codep-l laws) follow Petrakis's WG6 2025 slides
@@ -174,6 +159,8 @@ native to kitcat (memo §5-C5 — Petrakis's composition is primitive,
 so the agreement question cannot arise in the source).
 
 ```agda
+-- Frozen from Test.CodepExtractAgree-20260713-171000 @ dde1f57
+-- (tracked-Test provenance; the spike may drift — this may not).
 record codep-representable {o h fℓ rℓ} {ob : Type o}
   {FS : fam-structure {o} {h} {fℓ} ob}
   (CS : codep-structure {o} {h} {fℓ} {rℓ} FS)
@@ -206,9 +193,12 @@ Over the abstract stratum with hypothesis-explicit {emb, cc} (the
 one contractible fiber, so agreement among them is free (the
 T4-side of the free/paid boundary): EA (the current field form),
 EH (emb-hom), EE (agreement under emb) are inter-derivable.
-Consequence: one countermodel refutes the whole class.
+Consequence: one countermodel refutes the whole class (pinned as
+terms at `no-EH`/`no-EE` below).
 
 ```agda
+-- Frozen from Test.CodepExtractAgree-20260713-171000 @ dde1f57
+-- (tracked-Test provenance; the spike may drift — this may not).
 module bridge-forms {o h fℓ rℓ} {ob : Type o}
   {FS : fam-structure {o} {h} {fℓ} ob}
   {CS : codep-structure {o} {h} {fℓ} {rℓ} FS}
@@ -259,11 +249,12 @@ module bridge-forms {o h fℓ rℓ} {ob : Type o}
 ```
 
 The §2 corollary: the bridge is exactly one link wide — the
-⨾ᵇ-level composition law is extract-agree-free (the green spike's
-`·-comp` link₂ alone, emb never mentioned); only ⨾-functoriality
-costs the bridge.
+⨾ᵇ-level composition law is extract-agree-free (emb never
+mentioned); only ⨾-functoriality costs the bridge.
 
 ```agda
+-- Frozen from Test.CodepExtractAgree-20260713-171000 @ dde1f57
+-- (tracked-Test provenance; the spike may drift — this may not).
 module one-link {o h fℓ rℓ} {ob : Type o}
   {FS : fam-structure {o} {h} {fℓ} ob}
   {CS : codep-structure {o} {h} {fℓ} {rℓ} FS}
@@ -302,6 +293,8 @@ level-polymorphic derivation would specialize here, so the
 refutation kills derivations at all levels.
 
 ```agda
+-- Frozen from Test.CodepExtractAgree-20260713-171000 @ dde1f57
+-- (tracked-Test provenance; the spike may drift — this may not).
 module collapsed where
 
   FS : fam-structure {0ℓ} {0ℓ} {0ℓ} ⊤
@@ -353,6 +346,8 @@ inverse's value, `Core.Equiv.Base:150-152` — and
 `res-inv-r g tt tt (emb₀ f (tt , g ◃ tt)) = (λ s → s) f = f`.
 
 ```agda
+  -- Frozen from Test.CodepExtractAgree-20260713-171000 @ dde1f57
+  -- (tracked-Test provenance; the spike may drift — this may not).
   -- ★ the pin (fallback if rejected: hand-built is-contr with
   -- center (f , refl); the refutation needs only center .fst ≐ f).
   killcheck-center : (f g : Bool) → cc₀ f g .center .fst ≡ f
@@ -380,6 +375,8 @@ strengthening in the candidate space holds in this model while
 extract-agree fails, so none can entail it.
 
 ```agda
+  -- Frozen from Test.CodepExtractAgree-20260713-171000 @ dde1f57
+  -- (tracked-Test provenance; the spike may drift — this may not).
   -- C1 killer: EVERY emb₀-fiber is contractible, so any
   -- representability-shaped axiom (idn-repr included, at any
   -- target in the §2 inventory) holds here.
@@ -403,6 +400,26 @@ extract-agree fails, so none can entail it.
   orbit-surj φ ψ = false , refl
 ```
 
+Added at freeze (2026-07-13; accuracy review MINOR 1/2 — not in
+the spike @ dde1f57): the ▹-side orbit twin, mirroring
+`orbit-surj` on the cofam side, and the class refutation as terms
+— `bridge-forms` instantiated at the collapsed model, so "one
+countermodel refutes the whole class" is itself machine-checked.
+
+```agda
+  orbit-surj-cofam : ∀ {x y} (c : cofam x) (c' : cofam y)
+                   → Σ g ∶ hom x y , (c ▹ g) ≡ c'
+  orbit-surj-cofam c c' = false , refl
+
+  module BF = bridge-forms {FS = FS} {CS = CS} emb₀ cc₀
+
+  no-EH : ¬ BF.EH-stmt
+  no-EH eh = no-extract-agree-field (BF.hom→ea eh)
+
+  no-EE : ¬ BF.EE-stmt
+  no-EE ee = no-extract-agree-field (BF.ee→ea ee)
+```
+
 -- VERDICT ARM 2: DERIVED — irreducibility PINNED. The full
 -- stratum-minus-extract-agree is inhabited over trivial families
 -- (every Layer A/B refl accepted first-try), emb₀ is an
@@ -420,10 +437,11 @@ Pure derivability of EA over the abstract stratum hypotheses
 {FS, CS, emb, cc} alone — the two pre-registered routes, forced at
 the annotated goal types from memo §5-C3 and run to their walls
 inside the bridge-forms telescope. Both probes were run live in
-this file (2026-07-13, this run) and reverted per the failure
+the source spike (2026-07-13) and reverted per the failure
 protocol; each fenced block below is the raw typechecker error
-verbatim from `The terms` onward — the leading file:position line
-is omitted, since it names the transient probe site.
+verbatim from `The terms` onward — the leading location/error-tag
+line (`<file>:<pos>: error: [UnequalTerms]`) is omitted, since it
+names the transient probe site.
 
 -- STUCK (route a — the fiber route): inject (f ⨾ᵇ g , ?) into
 -- cc f g's contractible fiber and project with ap fst.

@@ -218,6 +218,43 @@ hcom terms). The tower's witnesses are born by iterated lifting;
 ternary-first governs born-ternary compositions.
 🧪 `Gloss.PcomConservation` (2026-07-10).
 
+**T21 — extract-agree is independent of the faithful stratum.**
+Over the three-layer faithful stratum (Petrakis fam/cofam
+substrate; Π-integral codep-structure; representability overlay),
+the `extract-agree` field
+(`compose-contr f g .center .fst ≡ f ⨾ᵇ g`) is not derivable from
+the remaining fields: the collapsed-context countermodel
+(`ob = ⊤`, `hom = Bool`, `⨾ᵇ = xor`, `fam = cofam = ⊤`,
+`res = Bool`, `emb = const`) fills every other field while
+extract-agree fails at `(false, true)`. The refutation survives
+any future base unit/associativity laws for `⨾ᵇ` ((Bool, xor,
+false) is a group) and kills derivations at all levels (everything
+at `0ℓ`, so a polymorphic derivation would specialize). The
+⨾ᵇ-level composition law `F · (g ⨾ᵇ h) ≡ (F · g) · h` is
+derivable extract-agree-free and emb-free (`·-comp-base`); only
+⨾-functoriality costs the bridge. The honest boundary, in three
+clauses: (i) the machine-checked kill covers the admissible weaker
+space — in the model `emb` is an equivalence, so every
+fiber-representability strengthening holds (`all-repr`,
+`idn-repr-holds`), the fam side is pointed (`fam-pt`), and
+untruncated ◃/▹ orbit surjectivity holds (`orbit-surj`,
+`orbit-surj-cofam`) — and the weakening class {extract-agree;
+emb-hom `emb (f ⨾ᵇ g) ≡ emb f · g`; extract-agree-emb
+`emb (f ⨾ g) ≡ emb (f ⨾ᵇ g)`} is equivalent over `compose-contr`,
+so the one countermodel refutes all three (`no-EH`/`no-EE`).
+(ii) Base-style DECODING structures — a `ctr` with its evaluation
+equations — are outside the refuted space BY DESIGN: they derive
+the bridge because they ARE the bridge in a different wrapper;
+that is `Cat.Codep.Base`'s own route (`pre-comp`), not a gap in
+the kill. (iii) The bimodule-faithfulness /
+two-sided-representability candidate class (action-faithfulness;
+the itc2/ccL two-sidedness imports) fails in the model and is
+excluded only by argument plus the two walled derivation routes —
+its countermodel-grade upgrade is registered, designed, unbuilt.
+Consequence: the faithful stratum's abstract propositional-strata
+count is three BY THEOREM.
+🧪 `Gloss.ExtractAgreeIndependence` (2026-07-13).
+
 ## Standing results from earlier strata (pre-2026-07-10)
 
 - **Squaring effect** (ternary idempotency ⇒ `e² = 1`;
