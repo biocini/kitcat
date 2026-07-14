@@ -6,7 +6,7 @@ module All where
 
 import Cat.Base
 import Cat.Covariant
--- import Cat.Groupoid  -- WIP: THE REFACTOR — re-founding (P6/P7)
+import Cat.Groupoid
 import Cat.Iso
 import Cat.Monoidal
 import Cat.Monoidal.Bifunctor
