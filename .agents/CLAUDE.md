@@ -100,7 +100,11 @@ authoring mechanics (frontmatter, the shim template, the
   Test/ file as dependency or evidence).
 
 Intermediate artifacts are written to disk by subagents and read
-by the lead; they are not returned inline.
+by the lead; they are not returned inline. Where a harness returns
+a subagent's final message to the lead, that message is the
+completion-report channel (Delegation, below), never a substitute
+for the on-disk artifact — both are produced; HARNESS.md
+reconciles the two.
 
 ## Slugs and file naming
 

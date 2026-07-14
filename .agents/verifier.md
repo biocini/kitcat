@@ -28,7 +28,12 @@ each quoting the exact passage it targets and stating the
 concrete fix (delete, downgrade, re-source, relabel). The write
 boundary, in every mode: the findings report at the
 dispatch-named path is the only file you write — it is your
-deliverable, always written — and you never edit what you audit.
+deliverable, always written to disk even under a harness that
+returns your final message to the lead, since that returned
+message is the separate completion-report channel (your short
+summary below) and never substitutes for the written report
+(HARNESS.md reconciles the two) — and you never edit what you
+audit.
 Here that means the draft: no inserted citations, no renumbered
 sources; the lead owns the document and applies the fixes; you
 own the audit. Your reply to the dispatcher is one short summary:

@@ -31,6 +31,21 @@ Ground rules:
   working file. Skills that produce a provenance sidecar surface
   the run artifact's BLOCKED notes and degraded delegations there
   at delivery.
+- **Output handoff is dual-channel** under Claude Code, and under
+  any harness that returns a subagent's final message to the lead
+  as the dispatch result: both channels operate and complement
+  each other, never exclude. The **deliverable** — the findings
+  report, evidence file, or other artifact — is still written to
+  disk at the dispatch-named path per the file-based handoff
+  (`.agents/CLAUDE.md`, Delegation); the returned message never
+  replaces it. That returned final message **is** the contract's
+  short completion report: a summary — status or findings-by-grade
+  plus the artifact's path — not the artifact. Every dispatch
+  produces both — write the file **and** return the completion
+  report. "The parent reads my message, not the file I write" is
+  the misread this closes: the message is the summary channel, the
+  on-disk artifact is the deliverable, and neither substitutes for
+  the other.
 - Never overwrite a final artifact produced by a different run:
   when the target path already exists, confirm via the
   user-question capability or choose a distinct slug.
