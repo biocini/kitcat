@@ -31,9 +31,14 @@ checks these triggers each session and edits only when one fires.
    substrate spikes and the coherence program earned it — T1–T24
    built the `hcategory` record, every unit/assoc law, the full
    coherence tower, and strict self-duality, all Chir-free — so
-   `hcategory` becomes the library's canonical category record. Plan
-   and required-items inventory (phases P0–P8): the analyzer memo
-   `notes/research/2026-07-14-refactor-required-items.md`.
+   `hcategory` becomes the library's canonical category record —
+   **renamed `category` at its new `Cat.Type` home (Lane,
+   2026-07-14)**, moved up from `Cat.Codep.Base`. P1 compat spike
+   DONE 2026-07-14 (all three bridges DERIVED; the `emb`
+   curry/uncurry round-trip is definitional). Branch:
+   `refactor-cat-core`. Plan (phases P0–P8) across three analyzer
+   memos: `notes/research/2026-07-14-refactor-required-items.md`,
+   `…-refactor-stage1-2-plan.md`, `…-cat-tree-triage.md`.
    - **Core phase (Chir-independent, in progress).** The
      pre-refactor records rebase onto `hcategory` or retire:
      `Cat.Type`/`Cat.Base` TRANSPLANT (their 1-categorical API —
@@ -48,9 +53,13 @@ checks these triggers each session and edits only when one fires.
    - **Downstream, Chir-independent (after the core):** the
      polarity-agnostic tree — `Iso`, `Yoneda`, `Covariant`, the base
      `Cat.Monoidal` record, `Groupoid`, and the currently-WIP
-     `Product`, `Slice`, `Displayed`, `Rezk`, `Data.Thin.Category`
-     (re-expressing them over `hcategory` is also their un-WIP path).
-     **`Cat.Bimodule` is added new here** — the
+     `Product`, `Slice`, `Displayed`, `Data.Thin.Category`
+     (re-expressing them over the new record is also their un-WIP
+     path). **`Cat.Rezk` is pulled out** for a from-scratch
+     re-approach with fresh research (Lane, 2026-07-14): its
+     `decode-gen` holes are a genuine HIT path-characterization wall,
+     to be re-planned given the new apparatus, not folded into the
+     mechanical rebuild. **`Cat.Bimodule` is added new here** — the
      regular-representation bimodule hom (spiked green 2026-07-13 as
      `Test.CodepBimodule-20260713-234309`, all DERIVED over β; Lane
      ruled 2026-07-14 it graduates to this `Cat.*` home, NOT gloss).
