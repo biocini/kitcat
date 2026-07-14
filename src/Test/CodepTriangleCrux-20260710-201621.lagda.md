@@ -25,7 +25,7 @@ open import Core.Function.Embedding
 open import Core.Path.Base using (ap-comp)
 open import Core.Transport.Base using (transport-refl)
 
-open import Cat.Codep.Base
+open import Cat.Type
 ```
 
 ## Generic helper: subst in a "left-varying endpoint" path family

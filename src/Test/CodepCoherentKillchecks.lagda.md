@@ -20,12 +20,12 @@ module Test.CodepCoherentKillchecks where
 open import Core.Base using (_≡_; ap; refl)
 open import Core.Data.Sigma.Type using (_,_)
 
-open import Cat.Codep.Base using (hcategory)
+open import Cat.Type using (category)
 ```
 
 ```agda
-module _ {o h} (C : hcategory o h) where
-  open hcategory C
+module _ {o h} (C : category o h) where
+  open category C
 
   killcheck-apPost
     : ∀ {x}

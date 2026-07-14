@@ -30,7 +30,7 @@ open import Core.Base
 open import Core.Data.Sigma
 open import Core.Equiv.Base using (is-equiv; id-equiv; _≃_; module Equiv)
 
-open import Cat.Codep.Base using (hcategory)
+open import Cat.Type using (hcategory)
 
 open import Test.CodepFaithful-20260713-140913
 ```

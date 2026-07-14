@@ -1,7 +1,7 @@
 Lane Biocini
 July 2026
 
-The coherence overlay over the `hcategory` bundle. Three 2-cells that
+The coherence overlay over the `category` bundle. Three 2-cells that
 the five base axioms leave undetermined: `absorb-lcoh` and
 `absorb-rcoh` pin the identity-flanked absorptions (`absorb-l`/
 `absorb-r` at an argument that is itself a representable action of the
@@ -16,7 +16,7 @@ The cells are independent of the five axioms: the twist is genuine
 `interchange`/`post-eval`/the unit equivalences (`interchange` is only
 supplied pointwise, so no natural comparison of its members exists at
 the base). They live in an *overlay* record over the bundle, not in
-`hcategory-axioms`: the base five-field category and its strict
+`category-axioms`: the base five-field category and its strict
 `op-invol` stay untouched as the self-dual core, and the overlay is
 built or dualized on top.
 
@@ -69,13 +69,13 @@ open import Core.Transport.J using (subst)
 open import Core.Transport.Properties using (is-prop→is-set)
 open import Core.Function.Embedding using (equiv→lc)
 
-open import Cat.Codep.Base
+open import Cat.Type
 open import Cat.Codep.Op using (op)
 ```
 
 ## The coherence overlay
 
-`hcategory-2-coherent` sits over a bundle: it opens `hcategory C` for
+`category-2-coherent` sits over a bundle: it opens `category C` for
 the whole derived API and posits only the three cells. Everything the
 cell types mention — `absorb-l`/`absorb-r`, `pre`/`post`, `interchange`,
 `post-eval`, `emb`/`idn` — is a base-derived name of the bundle. No
@@ -83,9 +83,9 @@ field interleaving, so no inline-square gymnastics: the cells come
 first, and the θ-core is derived after.
 
 ```agda
-record hcategory-2-coherent {o h} (C : hcategory o h) : Type (o ⊔ h) where
+record category-2-coherent {o h} (C : category o h) : Type (o ⊔ h) where
   no-eta-equality
-  open hcategory C
+  open category C
 
   field
     absorb-lcoh
@@ -228,8 +228,8 @@ constructor.
 
 ```agda
 assemble
-  : ∀ {o h} (C : hcategory o h)
-    (open hcategory C)
+  : ∀ {o h} (C : category o h)
+    (open category C)
     (coh-l : ∀ {y z} (g : hom y z) {v} (b : hom z v)
            → absorb-l (pre g b)
            ≡ interchange (idn y) g (idn y) b
@@ -242,10 +242,10 @@ assemble
            → absorb-l (post (idn x) (idn x))
            ∙ sym (absorb-r (post (idn x) (idn x)))
            ≡ interchange (idn x) (idn x) (idn x) (idn x))
-  → hcategory-2-coherent C
-assemble C coh-l coh-r coh-θ .hcategory-2-coherent.absorb-lcoh = coh-l
-assemble C coh-l coh-r coh-θ .hcategory-2-coherent.absorb-rcoh = coh-r
-assemble C coh-l coh-r coh-θ .hcategory-2-coherent.couple-D₀   = coh-θ
+  → category-2-coherent C
+assemble C coh-l coh-r coh-θ .category-2-coherent.absorb-lcoh = coh-l
+assemble C coh-l coh-r coh-θ .category-2-coherent.absorb-rcoh = coh-r
+assemble C coh-l coh-r coh-θ .category-2-coherent.couple-D₀   = coh-θ
 ```
 
 ## Prop-homs instance
@@ -255,18 +255,18 @@ proposition (`is-prop→is-set`), so each 2-cell is inhabited on the
 nose and the three cells are one-liners.
 
 ```agda
-module prop-homs {o h} (C : hcategory o h)
-  (hom-prop : ∀ {x y} → is-prop (hcategory.hom C x y))
+module prop-homs {o h} (C : category o h)
+  (hom-prop : ∀ {x y} → is-prop (category.hom C x y))
   where
-  open hcategory C
+  open category C
 
   hom-set : ∀ {x y} → is-set (hom x y)
   hom-set = is-prop→is-set hom-prop
 
-  coherent : hcategory-2-coherent C
-  coherent .hcategory-2-coherent.absorb-lcoh g b = hom-set _ _ _ _
-  coherent .hcategory-2-coherent.absorb-rcoh f a = hom-set _ _ _ _
-  coherent .hcategory-2-coherent.couple-D₀       = hom-set _ _ _ _
+  coherent : category-2-coherent C
+  coherent .category-2-coherent.absorb-lcoh g b = hom-set _ _ _ _
+  coherent .category-2-coherent.absorb-rcoh f a = hom-set _ _ _ _
+  coherent .category-2-coherent.couple-D₀       = hom-set _ _ _ _
 ```
 
 ## Covariant dualization
@@ -282,11 +282,11 @@ op-involution of the cells is independent of the fields (the S²/π₃
 countermodel of the header).
 
 ```agda
-module _ {o h} {C : hcategory o h} (A2 : hcategory-2-coherent C) where
+module _ {o h} {C : category o h} (A2 : category-2-coherent C) where
   private
-    module A  = hcategory C
-    module Aᵒ = hcategory (op C)
-    module A2 = hcategory-2-coherent A2
+    module A  = category C
+    module Aᵒ = category (op C)
+    module A2 = category-2-coherent A2
 
   private
     pre-compᵒ-is-post-comp
@@ -382,10 +382,10 @@ module _ {o h} {C : hcategory o h} (A2 : hcategory-2-coherent C) where
             sym (sym-distr (A.absorb-l D₀) (sym (A.absorb-r D₀)))
           ∙ ap sym (A2.couple-D₀ {x})
 
-  op-coherent : hcategory-2-coherent (op C)
-  op-coherent .hcategory-2-coherent.absorb-lcoh g b =
+  op-coherent : category-2-coherent (op C)
+  op-coherent .category-2-coherent.absorb-lcoh g b =
     bridge-l (A.post g b) ∙ A2.absorb-rcoh g b
-  op-coherent .hcategory-2-coherent.absorb-rcoh f a =
+  op-coherent .category-2-coherent.absorb-rcoh f a =
     bridge-r (A.pre f a) ∙ A2.absorb-lcoh f a
-  op-coherent .hcategory-2-coherent.couple-D₀ = couple-D₀ᵒ
+  op-coherent .category-2-coherent.couple-D₀ = couple-D₀ᵒ
 ```

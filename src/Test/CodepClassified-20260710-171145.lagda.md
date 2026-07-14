@@ -28,7 +28,7 @@ open import Core.Equiv.Base using (is-equiv)
 open import Core.Function.Embedding using (equiv→lc)
 open import Core.HLevel.Base using (⊤-is-prop)
 
-open import Cat.Codep.Base
+open import Cat.Type
 ```
 
 ## Step 1 — the classified axiom record

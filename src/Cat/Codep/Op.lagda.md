@@ -1,11 +1,11 @@
 Lane Biocini
 July 2026
 
-The opposite of a representable hcategory — the polarity mirror of
+The opposite of a representable category — the polarity mirror of
 the post-biased presentation. `op` reverses `hom`, swaps the two
 context halves (`cofam ↔ fam`), and thereby swaps `pre ↔ post`
 *definitionally*. Every mirror axiom is derivable from the base five
-fields: the post-bias of `hcategory-axioms` is chirality, not
+fields: the post-bias of `category-axioms` is chirality, not
 asymmetry.
 
 The eval axiom is self-mirror. `pre f (idn y)` and `post f (idn x)`
@@ -25,7 +25,7 @@ witnesses `op (op C) ≡ C`, definitional on `hom`/`idn`/`emb` and
 
 module Cat.Codep.Op where
 
-open import Cat.Codep.Base
+open import Cat.Type
 
 open import Core.Data.Nat.Type using (Z)
 open import Core.Data.Sigma.Base using (swap)
@@ -48,10 +48,10 @@ and `res (swap γ) = resᵒ γ` holds definitionally.
 
 ```agda
 module _ {o h} {ob : Type o} where
-  open hcategory-structure
+  open category-structure
 
   op-structure
-    : hcategory-structure h ob → hcategory-structure h ob
+    : category-structure h ob → category-structure h ob
   op-structure S .hom x y = S .hom y x
   op-structure S .idn     = S .idn
   op-structure S .emb f γ = S .emb f (swap γ)
@@ -66,10 +66,10 @@ carry composites across the reversal; both roundtrips are the identity
 by Σ- and function-eta, and `embᵒ f = swap· (emb f)` definitionally.
 
 ```agda
-module _ {o h} {ob : Type o} (S : hcategory-structure h ob) where
+module _ {o h} {ob : Type o} (S : category-structure h ob) where
   private
-    module S  = hcategory-structure S
-    module Sᵒ = hcategory-structure (op-structure S)
+    module S  = category-structure S
+    module Sᵒ = category-structure (op-structure S)
 
   preᵒ-is-post
     : ∀ {y z v} (g : S.hom z y) (b : S.hom v z)
@@ -103,12 +103,12 @@ reversed arguments under `sym`; `post-eval`, `unit-eqvl`, and
 `unit-eqvr` are base fields verbatim (the last two swapped).
 
 ```agda
-module _ {o h} {ob : Type o} {S : hcategory-structure h ob}
-  (A : hcategory-axioms S) where
+module _ {o h} {ob : Type o} {S : category-structure h ob}
+  (A : category-axioms S) where
   private
-    module S  = hcategory-structure S
-    module Sᵒ = hcategory-structure (op-structure S)
-    module A  = hcategory-axioms A
+    module S  = category-structure S
+    module Sᵒ = category-structure (op-structure S)
+    module A  = category-axioms A
 
   op-comp-path
     : ∀ {x y z} (f : S.hom y x) (g : S.hom z y)
@@ -116,15 +116,15 @@ module _ {o h} {ob : Type o} {S : hcategory-structure h ob}
   op-comp-path f g = funext λ γ →
     A.interchange g f (γ .fst .snd) (γ .snd .snd)
 
-  op-axioms : hcategory-axioms (op-structure S)
-  op-axioms .hcategory-axioms.compose-contr f g .center =
+  op-axioms : category-axioms (op-structure S)
+  op-axioms .category-axioms.compose-contr f g .center =
     A._⨾_ g f , ap (swap· S) (A.emb-comp g f ∙ op-comp-path f g)
-  op-axioms .hcategory-axioms.compose-contr f g .paths =
+  op-axioms .category-axioms.compose-contr f g .paths =
     is-contr→is-prop
       (retract→is-hlevel Z to fro (λ _ → refl)
         (subst (λ T → is-contr (fiber S.emb T))
           (op-comp-path f g) (A.compose-contr g f)))
-      (op-axioms .hcategory-axioms.compose-contr f g .center)
+      (op-axioms .category-axioms.compose-contr f g .center)
     where
       to : fiber S.emb (swap·' S (Sᵒ.emb f Sᵒ.· g))
          → fiber Sᵒ.emb (Sᵒ.emb f Sᵒ.· g)
@@ -133,14 +133,14 @@ module _ {o h} {ob : Type o} {S : hcategory-structure h ob}
       fro : fiber Sᵒ.emb (Sᵒ.emb f Sᵒ.· g)
           → fiber S.emb (swap·' S (Sᵒ.emb f Sᵒ.· g))
       fro (m , q) = m , ap (swap·' S) q
-  op-axioms .hcategory-axioms.interchange f g a b =
+  op-axioms .category-axioms.interchange f g a b =
     sym (A.interchange g f b a)
-  op-axioms .hcategory-axioms.post-eval f = A.post-eval f
-  op-axioms .hcategory-axioms.unit-eqvl   = A.unit-eqvr
-  op-axioms .hcategory-axioms.unit-eqvr   = A.unit-eqvl
+  op-axioms .category-axioms.post-eval f = A.post-eval f
+  op-axioms .category-axioms.unit-eqvl   = A.unit-eqvr
+  op-axioms .category-axioms.unit-eqvr   = A.unit-eqvl
 
   private
-    module Aᵒ = hcategory-axioms op-axioms
+    module Aᵒ = category-axioms op-axioms
 
   -- Route-B regression witness: the op extraction is the base
   -- extraction swapped, now `refl` since the fiber center is
@@ -161,46 +161,46 @@ eta); the axioms involution is definitional on every field but
 
 ```agda
 module _ {o h} {ob : Type o} where
-  open hcategory-structure
+  open category-structure
 
   op-structure-invol
-    : (S : hcategory-structure h ob)
+    : (S : category-structure h ob)
     → op-structure (op-structure S) ≡ S
   op-structure-invol S i .hom = S .hom
   op-structure-invol S i .idn = S .idn
   op-structure-invol S i .emb = S .emb
 
-module _ {o h} {ob : Type o} {S : hcategory-structure h ob} where
-  private module S = hcategory-structure S
+module _ {o h} {ob : Type o} {S : category-structure h ob} where
+  private module S = category-structure S
 
   op-axioms-invol
-    : (A : hcategory-axioms S)
-    → PathP (λ i → hcategory-axioms (op-structure-invol S i))
+    : (A : category-axioms S)
+    → PathP (λ i → category-axioms (op-structure-invol S i))
         (op-axioms (op-axioms A)) A
-  op-axioms-invol A i .hcategory-axioms.compose-contr f g =
+  op-axioms-invol A i .category-axioms.compose-contr f g =
     is-prop→PathP
       {A = λ _ → is-contr (fiber S.emb (S.emb f S.· g))}
       (λ _ → is-contr-is-prop _)
-      (op-axioms (op-axioms A) .hcategory-axioms.compose-contr f g)
-      (A .hcategory-axioms.compose-contr f g) i
-  op-axioms-invol A i .hcategory-axioms.interchange f g a b =
-    A .hcategory-axioms.interchange f g a b
-  op-axioms-invol A i .hcategory-axioms.post-eval f =
-    A .hcategory-axioms.post-eval f
-  op-axioms-invol A i .hcategory-axioms.unit-eqvl =
-    A .hcategory-axioms.unit-eqvl
-  op-axioms-invol A i .hcategory-axioms.unit-eqvr =
-    A .hcategory-axioms.unit-eqvr
+      (op-axioms (op-axioms A) .category-axioms.compose-contr f g)
+      (A .category-axioms.compose-contr f g) i
+  op-axioms-invol A i .category-axioms.interchange f g a b =
+    A .category-axioms.interchange f g a b
+  op-axioms-invol A i .category-axioms.post-eval f =
+    A .category-axioms.post-eval f
+  op-axioms-invol A i .category-axioms.unit-eqvl =
+    A .category-axioms.unit-eqvl
+  op-axioms-invol A i .category-axioms.unit-eqvr =
+    A .category-axioms.unit-eqvr
 
 module _ {o h} where
-  open hcategory using (ob; structure; axioms)
+  open category using (ob; structure; axioms)
 
-  op : hcategory o h → hcategory o h
+  op : category o h → category o h
   op C .ob        = C .ob
   op C .structure = op-structure (C .structure)
   op C .axioms    = op-axioms (C .axioms)
 
-  op-invol : (C : hcategory o h) → op (op C) ≡ C
+  op-invol : (C : category o h) → op (op C) ≡ C
   op-invol C i .ob        = C .ob
   op-invol C i .structure = op-structure-invol (C .structure) i
   op-invol C i .axioms    = op-axioms-invol (C .axioms) i

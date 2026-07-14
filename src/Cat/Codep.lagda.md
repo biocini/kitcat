@@ -1,9 +1,9 @@
 Representable codependent categories: the trilayer presentation
-(`hcategory-structure` / `hcategory-axioms` / `hcategory` bundle)
+(`category-structure` / `category-axioms` / `category` bundle)
 and its associativity/pentagon coherence. The coupling and unit
-fragments are consolidated into `hcategory-axioms` (`Cat.Codep.Base`)
+fragments are consolidated into `category-axioms` (`Cat.Type`)
 — the former `Cat.Codep.Coupling`/`Cat.Codep.Unit` modules are
-absorbed there. `Cat.Codep.Op` builds the opposite hcategory as the
+absorbed there. `Cat.Codep.Op` builds the opposite category as the
 polarity mirror — reversing `hom` and swapping `pre ↔ post` — and
 certifies `op (op C) ≡ C`. `Cat.Codep.Coherent` overlays the three
 wild-categorical coherence cells on the bundle and dualizes them
@@ -19,7 +19,7 @@ imported on demand.
 
 module Cat.Codep where
 
-open import Cat.Codep.Base public
+open import Cat.Type public
 open import Cat.Codep.Coherence public
 open import Cat.Codep.Coherent public
 open import Cat.Codep.Op public

@@ -14,27 +14,27 @@ entry: statement, where it is proven, status, date. Statuses:
 Keep entries precise and dated. When a 📐 entry gets mechanized,
 upgrade it and cite the module. When a ⚠️ boundary moves, say so.
 
-## 1. The representable core (hcategory)
+## 1. The representable core (category)
 
 **T1 — Representability presents a category.** The five axioms
 (`compose-contr`, `interchange`, `post-eval`, `unit-eqvl`,
-`unit-eqvr`) over `hcategory-structure` derive every unit and
+`unit-eqvr`) over `category-structure` derive every unit and
 associativity law: `_⨾_`, `unitl`, `unitr`, `absorb-l/r`, `idem`,
 `emb-idn-absorb`, `emb-image-contr`, `unit-is-prop`,
 `is-representable-prop`.
-✅ `Cat.Codep.Base` (2026-07-09/10).
+✅ `Cat.Type` (2026-07-09/10).
 
 **T2 — Coupling provenance.** Idempotency and composition
 extraction are derivable from `compose-contr` + `interchange` +
 `post-eval` alone, never touching the unit equivalences
 (hypothesis-explicit lemmas `*-from-coupling`; the signatures are
 the minimality theorems).
-✅ `Cat.Codep.Base` (2026-07-09).
+✅ `Cat.Type` (2026-07-09).
 
 **T3 — The eval axiom is self-mirror.** `pre f (idn y)` and
 `post f (idn x)` are the same doubly-centered term; the eval field
 is its own mirror (bias = chirality, not asymmetry).
-✅ `Cat.Codep.Base` (regression witness), `Cat.Codep.Op`
+✅ `Cat.Type` (regression witness), `Cat.Codep.Op`
 (2026-07-10).
 
 ## 2. The coherence tower
@@ -94,7 +94,7 @@ from the base fields. With the Route-B center,
 
 **T10 — Strict self-duality of the category core.**
 `op-invol : op (op C) ≡ C` as a record path for the 5-field
-`hcategory` (copattern components; `is-prop→PathP` only on
+`category` (copattern components; `is-prop→PathP` only on
 `compose-contr`).
 ✅ `Cat.Codep.Op` (2026-07-10).
 
@@ -132,7 +132,7 @@ statement in this record-level wild form — citation research
 pending before any novelty claim in prose.
 
 **T13 — The prop-pinning trichotomy.** No prop-valued predicate on
-`hcategory-axioms` derives the coherence cells: every candidate is
+`category-axioms` derives the coherence cells: every candidate is
 (i) τ-blind (all representability props — `emb` is an equivalence
 in path-groupoid carriers, so every `fiber emb T` is contractible
 in honest and twisted structures alike), (ii)
@@ -252,7 +252,7 @@ so the one countermodel refutes all three (`no-EH`/`no-EE`).
 (ii) Base-style DECODING structures — a `ctr` with its evaluation
 equations — are outside the refuted space BY DESIGN: they derive
 the bridge because they ARE the bridge in a different wrapper;
-that is `Cat.Codep.Base`'s own route (`pre-comp`), not a gap in
+that is `Cat.Type`'s own route (`pre-comp`), not a gap in
 the kill. (iii) The bimodule-faithfulness /
 two-sided-representability candidate class (action-faithfulness;
 the itc2/ccL two-sidedness imports) fails in the model and is
@@ -270,7 +270,7 @@ faithful-stratum arc. Prior entries: T14/T17 (identifications),
 T21 (extract-agree independence, with the records' definition).
 
 **T22 — The tautological filling recovers the representable core
-definitionally.** Every hcategory tautologically fills the
+definitionally.** Every category tautologically fills the
 three-layer faithful stratum (T21's records):
 `fam y = Σ v , hom y v`, `cofam x = Σ w , hom w x`, actions by
 `pre`/`post`, `⨾ᵇ := ⨾` (the extracted center — no raw data

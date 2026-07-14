@@ -17,7 +17,7 @@ open import Core.Kan using (_∙_; module Path; pcom)
 open import Core.Path.Base using (cancell)
 open import Core.Homotopy using (homotopy-natural)
 
-open import Cat.Codep.Base
+open import Cat.Type
 open import Cat.Codep.Coherent
 
 module _ {o h} (C : hcategory o h) (A2 : hcategory-2-coherent C) where

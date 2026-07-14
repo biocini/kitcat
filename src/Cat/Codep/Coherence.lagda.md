@@ -2,7 +2,7 @@ Lane Biocini
 July 2026
 
 Associativity and the Mac Lane pentagon for representable hcategories.
-The tower gates on the bundle `(C : hcategory o h)` and is purely
+The tower gates on the bundle `(C : category o h)` and is purely
 associativity: it consumes only `compose-contr`, `emb-comp`, and
 `·-comp` — no unit axiom, no `interchange`. `assoc-tower` derives
 `assoc` from the contractible triple-composite fiber; `pentagon-tower`
@@ -47,7 +47,7 @@ open import Core.Path.Base using (ap-comp)
 open import Core.Homotopy using (homotopy-natural)
 open import Core.Coherence.Base using (coh-project)
 
-open import Cat.Codep.Base
+open import Cat.Type
 ```
 
 ## Triple composite, assoc-σ, assoc
@@ -58,8 +58,8 @@ their witnesses right-nested binary `∙`-chains. `E₃-contr` transports
 the projection of the fiber path.
 
 ```agda
-module assoc-tower {o h} (C : hcategory o h) where
-  open hcategory C
+module assoc-tower {o h} (C : category o h) where
+  open category C
 
   E₃ : ∀ {x y z w} (f : hom x y) (g : hom y z) (h : hom z w) → composite x w
   E₃ f g h = emb f · g · h
@@ -111,8 +111,8 @@ that caller-supplied bridge (it resists `reindex-face`'s fixed
 `Path.assoc` tail, not `whisker-face`).
 
 ```agda
-module pentagon-tower {o h} (C : hcategory o h) where
-  open hcategory C
+module pentagon-tower {o h} (C : category o h) where
+  open category C
   open assoc-tower C
 
   module pentagon-fibers {x y z w v}

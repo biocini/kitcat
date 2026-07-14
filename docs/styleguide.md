@@ -203,8 +203,8 @@ at the end — do not invent a rule from a split.
   already practices this: `hMap (u : Level) {v} (X : Type v)`
   makes the field-only `u` explicit and infers `v` from `X`
   (`src/Core/Function/Partial/Fiber.lagda.md:39`). The ruling's
-  exemplar is `hcategory-structure {o} (h : Level) (ob : Type o)`
-  (`src/Cat/Codep/Base.lagda.md`), corrected from an implicit `h`
+  exemplar is `category-structure {o} (h : Level) (ob : Type o)`
+  (`src/Cat/Type.lagda.md`), corrected from an implicit `h`
   every use site had to brace-feed. A definition body that
   happens to solve the meta (a copattern clause pinning the
   field's level) is not inference — the signature must stand
@@ -265,7 +265,7 @@ globally-redundant per-module flags; `u v w` for `Level` with `ℓ`
 reserved for `I → Level`; the ternary-first conformance sweep over
 Core's legacy `∙`-chains is GO; the WIP-module probe sections
 migrate to `Test/` per Public Module Style; implicit universe
-parameters are earned by inference (the hcategory-structure
+parameters are earned by inference (the category-structure
 correction).
 
 Still open (Core splits — flagged, not legislated):

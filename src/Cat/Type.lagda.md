@@ -1,13 +1,97 @@
 Lane Biocini
-March 2026
+July 2026
 
-Categories via ternary composition. The `compose-contr`
-field bundles the composite morphism and its characterizing
-equation into a contractible `fiber emb target`. The
-`interchange` field links the noy and yon views pointwise.
-The `yon-eval` field establishes `yon f x idn ≡ f`.
-All standard categorical structure (unit laws, associativity)
-follows from these. The identity is unique (`unit-is-prop`).
+A formulation of category presented through a representable
+embedding `emb` into two-sided *composite* operators. A category
+is `hom` + identities `idn` + `emb`, together with five axioms;
+every unit and associativity law is derived. This
+is one presentation of a category among several, not "the codependent
+theory": codependence names the *shape* of the carrier the embedding
+lands in, not a different notion of category.
+
+The records take the name `category` — they are what they present:
+wild (homotopy) categories, homs never truncated to a set. They are
+one *instance* of the (co)dependent theory, not that theory itself,
+which is a planned separate stratum. This record now lives at
+`Cat.Type` — the library's canonical category record — moved up from
+its `Cat.Codep.Base` origin; the `Cat.Codep` namespace retains the
+coherence tower and re-exports this record.
+
+The presentation is a trilayer. The operations — `hom`, `idn`, the
+embedding `emb`, and the two representable actions `pre`/`post` —
+together with every axiom-free derived notion live in
+`category-structure`. The five axioms (contractible composition fibers,
+the coupling `interchange`/`post-eval`, and the two unit
+equivalences), the extraction `_⨾_`, and *all* derived laws live in
+`category-axioms`, stated over a `category-structure` value. The
+universe-ranging `category` bundles `ob`, `structure`, `axioms`
+and re-exports the other two — so the bundle IS the category.
+
+Splitting the axioms off from the operations is what makes naive
+multi-object instances termination-safe: `category-axioms` states its
+axioms over an *external* `category-structure` value, so a direct
+instance's proof only projects that closed value — a `hom`/`idn` that
+cases on the object no longer leaves a stuck `idn y` self-call.
+
+`category-axioms` is now the single gate for every derived law. The
+former `Cat.Codep.Coupling` and `Cat.Codep.Unit` modules — the
+coupling idempotency block and the whole unit fragment — are absorbed
+here: with the axioms record complete, there is nothing left to gate
+downstream. What stays standalone are the three provenance lemmas
+`post-comp-from-coupling`/`comp-eq-from-coupling`/`idem-from-coupling`
+above the record: their explicit hypothesis lists are machine-checked
+minimality theorems (idempotency never touches the unit axioms), so
+they must be stated where those hypotheses can be listed one by one,
+not as record members with the whole field-set in scope.
+
+## Carrier vocabulary
+
+The carrier is canonical, built from `hom` + `idn`, and its names
+carry the Petrakis paper-trail — "Categories with dependent arrows"
+(arXiv:2303.14754) for the family/dependent side; the codependent
+side follows Petrakis's WG6 2025 talk ("Categories with dependent
+and codependent arrows"), which builds on Y. Ehrhardt's 2024 LMU
+thesis. `cofam x = Σ w , hom w x` is a
+*cofamily-arrow* into `x` (Petrakis: cofHom; an object of the slice
+over `x`). `fam y = Σ v , hom y v` is a *family-arrow* out of `y`
+(Petrakis: fHom; an object of the coslice under `y`). A context
+`ctx x y = cofam x × fam y` pairs the two; `res γ` is the *result
+family* over a context — the hom from the cofamily's source to the
+family's target — the slot that a future general fam-parametric
+stratum abstracts as a field.
+
+`ctr y = (y , idn y)` is the identity cofamily-arrow — the *center*:
+in the path instance `cofam x` is the singleton `Σ w , w ≡ x` and
+`ctr` is its center of contraction; wild categories posit the center
+without the contractibility. It is the universal element the
+representable actions read at.
+
+This record *inlines* Petrakis's (co)dependent substrate at
+its tautological instance: fHom is the literal coslice, cofHom the
+literal slice, and the (co)dependent arrows are the plain two-sided
+`composite`. The general theory over *abstract* families is a
+separate, planned stratum; here everything is pinned to the concrete
+hom carrier.
+
+`pre g` is the family-arrow action (contravariant, Petrakis (fam):
+λ ↦ λ∘g); `post f` is the cofamily-arrow action (covariant, (cofam):
+ρ ↦ f∘ρ). `composite x y` is the Π-model of the two-sided
+codependent arrows; `emb` is the two-sided Yoneda/CPS embedding
+f ↦ λ(a,b). b∘f∘a.
+
+The six-law dictionary, in Petrakis numbering:
+
+| Petrakis | Kitcat                  |
+|----------|-------------------------|
+| (fam₁)   | `unit-eqvl` / `absorb-l` |
+| (fam₂)   | `pre-comp`               |
+| (cofam₁) | `unit-eqvr` / `absorb-r` |
+| (cofam₂) | `post-comp`              |
+| (codep₁) | `·-idn`                  |
+| (codep₂) | `·-comp`                 |
+
+The polarity is asymmetric: `pre-comp` is free (a `happly` of
+`emb-comp`), while `post-comp` costs `interchange`.
 
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
@@ -17,718 +101,375 @@ module Cat.Type where
 open import Core.Type
 open import Core.Base
 open import Core.Data.Sigma
-open import Core.Kan
-open import Core.Transport
-open import Core.Function.Base
-open import Core.Path.Base
-open import Core.Groupoid.Virtual
-open import Core.Equiv.Base using (is-equiv; eqv-fibers; iso→equiv; Equiv)
+open import Core.Kan using (is-contr→is-prop; _∙_)
+open import Core.Transport.J using (J; subst)
+open import Core.Equiv.Base using (iso→equiv; _≃_; is-equiv)
 open import Core.Function.Embedding
-  using (equiv→lc; is-embedding; is-embedding→ap-equiv)
+  using (equiv→lc; image-fibers-contr→is-embedding)
 ```
 
-## The category record
+## The structure record
 
-The `compose-contr` fiber is `Σ s, emb s ≡ target`
-— a single function-level path characterizing the
-composite.
+`category-structure` holds the operations `hom`/`idn`/`emb`, the
+canonical carrier (`cofam`/`fam`/`ctr`/`ctx`/`res`), the two
+representable actions `pre`/`post` (the axiom field types
+`interchange`/`post-eval`/the unit equivalences reference them, so
+they live here), the lax substitution `sub` and application `_·_`, and
+the unconditional total-space equivalence `hom≃representable`.
 
 ```agda
-record category o h : Type₊ (o ⊔ h) where
+record category-structure {o} (h : Level) (ob : Type o)
+  : Type (o ⊔ h ₊) where
   no-eta-equality
   field
-    ob  : Type o
     hom : ob → ob → Type h
-    emb : ∀ {x y} → hom x y
-        → ∀ w → hom w x → ∀ z → hom y z → hom w z
-    unit : ∀ {x} →
-      Σ e ∶ hom x x
-      , (∀ {z} → is-equiv (λ (h : hom x z) → emb e x e z h))
-      × (∀ {w} → is-equiv (λ (g : hom w x) → emb e w g x e))
+    idn : (x : ob) → hom x x
 
-  idn : ∀ {x} → hom x x
-  idn = unit .fst
+  cofam : ob → Type (o ⊔ h)
+  cofam x = Σ w ∶ ob , hom w x
 
-  noy : ∀ {x y} → hom x y → ∀ z → hom y z → hom x z
-  noy f z h = emb f _ idn z h
+  fam : ob → Type (o ⊔ h)
+  fam y = Σ v ∶ ob , hom y v
 
-  yon : ∀ {x y} → hom x y → ∀ w → hom w x → hom w y
-  yon f w g = emb f w g _ idn
+  ctr : (y : ob) → cofam y
+  ctr y = y , idn y
 
-  unit-eqvl : ∀ {x} {z : ob}
-    → is-equiv (λ (h : hom x z) → noy idn z h)
-  unit-eqvl = unit .snd .fst
+  ctx : ob → ob → Type (o ⊔ h)
+  ctx x y = cofam x × fam y
 
-  unit-eqvr : ∀ {x} {w : ob}
-    → is-equiv (λ (g : hom w x) → yon idn w g)
-  unit-eqvr = unit .snd .snd
+  res : ∀ {x y} → ctx x y → Type h
+  res γ = hom (γ .fst .fst) (γ .snd .fst)
+
+  composite : ob → ob → Type (o ⊔ h)
+  composite x y = (γ : ctx x y) → res γ
+
+  field
+    emb : ∀ {x y} → hom x y → composite x y
+
+  -- The tightness predicate: a composite is representable when an
+  -- `emb`-image.
+  is-representable : ∀ {x y} → composite x y → Type (o ⊔ h)
+  is-representable F = fiber emb F
+
+  -- `pre g b` reads `emb g` with `b` in the family slot — the
+  -- composite idn ; g ; b, `g` in the pre position: the action of
+  -- `g` precomposing on `b`. `post f a` reads `emb f` with `a` in
+  -- the cofamily slot — a ; f ; idn, `f` in the post position: the
+  -- action of `f` postcomposing on `a`.
+  pre : ∀ {y z} (g : hom y z) {v} → hom z v → hom y v
+  pre {y} g {v} b = emb g (ctr y , (v , b))
+
+  post : ∀ {x y} (f : hom x y) {w} → hom w x → hom w y
+  post {x} {y} f {w} a = emb f ((w , a) , (y , idn y))
+
+  sub : ∀ {x y z} → hom y z → ctx x z → ctx x y
+  sub g (c , (v , b)) = c , (v , pre g b)
+
+  _·_ : ∀ {x y z} → composite x y → hom y z → composite x z
+  (F · g) γ = F (sub g γ)
+  infixl 30 _·_
+
+  -- `hom` ≃ the total space of the `emb`-fibers, unconditionally (the
+  -- subtype reading needs `is-representable-prop`).
+  hom≃representable
+    : ∀ {x y} → hom x y ≃ (Σ F ∶ composite x y , is-representable F)
+  hom≃representable {x} {y} = iso→equiv fwd bwd hom-ret rep-sec
+    where
+      fwd : hom x y → Σ F ∶ composite x y , is-representable F
+      fwd f = emb f , (f , refl)
+
+      bwd : (Σ F ∶ composite x y , is-representable F) → hom x y
+      bwd (F , a , p) = a
+
+      hom-ret : ∀ f → bwd (fwd f) ≡ f
+      hom-ret f = refl
+
+      rep-sec : ∀ s → fwd (bwd s) ≡ s
+      rep-sec (F , a , p) = J (λ F' p' → fwd a ≡ (F' , a , p')) refl p
+```
+
+## Coupling provenance lemmas (hypothesis-explicit)
+
+Each of these stays standalone: its explicit hypothesis list IS the
+minimality theorem. `idem-from-coupling`'s signature machine-checks
+that idempotency is derivable from `compose-contr`/`interchange`/
+`post-eval` alone — never touching `unit-eqvl`/`unit-eqvr` or
+`absorb`. The `category-axioms` record below instantiates each at
+its own fields. The `⨾` in the statements is the extraction
+`cc f g .center .fst`.
+
+```agda
+post-comp-from-coupling
+  : ∀ {o h} {ob : Type o} (S : category-structure h ob)
+    (open category-structure S)
+    (cc : ∀ {x y z} (f : hom x y) (g : hom y z)
+        → is-contr (is-representable (emb f · g)))
+    (ic : ∀ {x y z} (f : hom x y) (g : hom y z)
+          {w} (a : hom w x) {v} (b : hom z v)
+        → emb f ((w , a) , (v , pre g b)) ≡ emb g ((w , post f a) , (v , b)))
+  → ∀ {x y z} (f : hom x y) (g : hom y z) {w} (a : hom w x)
+  → post (cc f g .center .fst) a ≡ post g (post f a)
+post-comp-from-coupling S cc ic {x} {y} {z} f g {w} a =
+  happly (cc f g .center .snd) ((w , a) , (z , idn z))
+  ∙ ic f g a (idn z)
+  where open category-structure S
+
+comp-eq-from-coupling
+  : ∀ {o h} {ob : Type o} (S : category-structure h ob)
+    (open category-structure S)
+    (cc : ∀ {x y z} (f : hom x y) (g : hom y z)
+        → is-contr (is-representable (emb f · g)))
+    (ic : ∀ {x y z} (f : hom x y) (g : hom y z)
+          {w} (a : hom w x) {v} (b : hom z v)
+        → emb f ((w , a) , (v , pre g b)) ≡ emb g ((w , post f a) , (v , b)))
+    (pe : ∀ {x y} (f : hom x y) → post f (idn x) ≡ f)
+  → ∀ {x y z} (f : hom x y) (g : hom y z)
+  → cc f g .center .fst ≡ post g f
+comp-eq-from-coupling S cc ic pe f g =
+  sym (pe (cc f g .center .fst))
+  ∙ post-comp-from-coupling S cc ic f g (idn _)
+  ∙ ap (λ t → post g t) (pe f)
+  where open category-structure S
+
+idem-from-coupling
+  : ∀ {o h} {ob : Type o} (S : category-structure h ob)
+    (open category-structure S)
+    (cc : ∀ {x y z} (f : hom x y) (g : hom y z)
+        → is-contr (is-representable (emb f · g)))
+    (ic : ∀ {x y z} (f : hom x y) (g : hom y z)
+          {w} (a : hom w x) {v} (b : hom z v)
+        → emb f ((w , a) , (v , pre g b)) ≡ emb g ((w , post f a) , (v , b)))
+    (pe : ∀ {x y} (f : hom x y) → post f (idn x) ≡ f)
+  → ∀ {x} → cc (idn x) (idn x) .center .fst ≡ idn x
+idem-from-coupling S cc ic pe {x} =
+  comp-eq-from-coupling S cc ic pe (idn x) (idn x) ∙ pe (idn x)
+  where open category-structure S
+```
+
+## The axioms record
+
+`category-axioms` gates every derived law on the five fields —
+`compose-contr`, the coupling `interchange`/`post-eval`, and the two
+unit equivalences — over a `category-structure` value. The hom
+universe `h` is an explicit parameter of `category-structure` (it
+occurs only in field types, so no argument's type determines it),
+and the annotation supplies it directly: `category-structure h ob`.
+
+The internal order matters: the extraction `_⨾_`, `emb-comp`,
+`pre-comp` (the old `act-comp`, now read at the center), `sub-comp`,
+`·-comp` come first; then the coupling derivations (`post-comp`,
+`comp-eq`, `idem`, instantiating the provenance lemmas); then the unit
+fragment — `absorb-l` (consuming `idem`/`pre-comp`) and `absorb-r`
+(consuming `idem`/`post-comp`),
+`·-idn`, `emb-idn-absorb`, `emb-image-contr`, `unitl`/`unitr`, and
+finally `emb-post` before `unit-is-prop` and `is-representable-prop`.
+
+```agda
+record category-axioms {o h} {ob : Type o}
+  (S : category-structure h ob) : Type (o ⊔ h) where
+  no-eta-equality
+  open category-structure S
 
   field
     compose-contr
       : ∀ {x y z} (f : hom x y) (g : hom y z)
-      → is-contr
-          (fiber (emb {x} {z})
-            (λ w a v b → emb f w a v (noy g v b)))
-
+      → is-contr (is-representable (emb f · g))
     interchange
       : ∀ {x y z} (f : hom x y) (g : hom y z)
-        w (a : hom w x) v (b : hom z v)
-      → emb f w a v (noy g v b)
-      ≡ emb g w (yon f w a) v b
-
-    yon-eval
-      : ∀ {x y} (f : hom x y) → yon f x idn ≡ f
-
-  yon-idpt : ∀ {x} → yon (idn {x}) x idn ≡ idn
-  yon-idpt = yon-eval idn
+        {w} (a : hom w x) {v} (b : hom z v)
+      → emb f ((w , a) , (v , pre g b))
+      ≡ emb g ((w , post f a) , (v , b))
+    post-eval
+      : ∀ {x y} (f : hom x y) → post f (idn x) ≡ f
+    unit-eqvl : ∀ {x} {v} → is-equiv (pre (idn x) {v})
+    unit-eqvr : ∀ {x} {w} → is-equiv (post (idn x) {w})
 
   _⨾_ : ∀ {x y z} → hom x y → hom y z → hom x z
   f ⨾ g = compose-contr f g .center .fst
   infixr 40 _⨾_
 
-  emb-composite
-    : ∀ {x y z} (f : hom x y) (g : hom y z)
-    → emb (f ⨾ g)
-    ≡ (λ w a v b → emb f w a v (noy g v b))
-  emb-composite f g =
-    compose-contr f g .center .snd
+  emb-comp : ∀ {x y z} (f : hom x y) (g : hom y z)
+           → emb (f ⨾ g) ≡ emb f · g
+  emb-comp f g = compose-contr f g .center .snd
 
-  {-# INLINE emb #-}
-  {-# INLINE _⨾_ #-}
+  -- pre-comp is emb-comp read at the center — free (a happly), (fam₂).
+  pre-comp : ∀ {y z w} (g : hom y z) (h : hom z w) {v} (b : hom w v)
+           → pre (g ⨾ h) b ≡ pre g (pre h b)
+  pre-comp {y} g h {v} b = happly (emb-comp g h) (ctr y , (v , b))
 
-```
+  sub-comp : ∀ {x y z w} (g : hom y z) (h : hom z w)
+           → sub {x} (g ⨾ h) ≡ sub g ∘ sub h
+  sub-comp g h = funext λ γ →
+    ap (γ .fst ,_) (ap (γ .snd .fst ,_) (pre-comp g h (γ .snd .snd)))
 
+  ·-comp : ∀ {x y z w} (F : composite x y) (g : hom y z) (h : hom z w)
+         → F · (g ⨾ h) ≡ F · g · h
+  ·-comp F g h = funext λ γ → ap F (happly (sub-comp g h) γ)
 
-## Derived operations
+  -- Coupling derivations: the provenance lemmas at this record's fields.
+  post-comp
+    : ∀ {x y z} (f : hom x y) (g : hom y z) {w} (a : hom w x)
+    → post (f ⨾ g) a ≡ post g (post f a)
+  post-comp f g = post-comp-from-coupling S compose-contr interchange f g
 
-```agda
-module Virtual {o} {h} (C : category o h) where
-  open category C public
-
-  emb-ext
-    : ∀ {x y} {F G : ∀ w → hom w x → ∀ v → hom y v → hom w v}
-    → (∀ w (a : hom w x) v (b : hom y v) → F w a v b ≡ G w a v b)
-    → F ≡ G
-  emb-ext h =
-    funext λ w → funext λ a → funext λ v → funext λ b → h w a v b
-
-  emb-composite-pt
-    : ∀ {x y z} (f : hom x y) (g : hom y z)
-      w (a : hom w x) v (b : hom z v)
-    → emb (f ⨾ g) w a v b
-    ≡ emb f w a v (noy g v b)
-  emb-composite-pt f g w a v b i =
-    emb-composite f g i w a v b
-
-  emb-composite-ext
-    : ∀ {x y z} (f : hom x y) (g : hom y z)
-    → emb (f ⨾ g)
-    ≡ (λ w a v b → emb f w a v (noy g v b))
-  emb-composite-ext = emb-composite
-
-  emb-yon-composite
-    : ∀ {x y z} (f : hom x y) (g : hom y z)
-    → emb (f ⨾ g)
-    ≡ (λ w a v b → emb g w (yon f w a) v b)
-  emb-yon-composite f g =
-    emb-composite-ext f g
-    ∙ emb-ext λ w a v b → interchange f g w a v b
-
-  emb-yon-composite-pt
-    : ∀ {x y z} (f : hom x y) (g : hom y z)
-      w (a : hom w x) v (b : hom z v)
-    → emb (f ⨾ g) w a v b
-    ≡ emb g w (yon f w a) v b
-  emb-yon-composite-pt f g w a v b =
-    emb-composite-pt f g w a v b
-    ∙ interchange f g w a v b
-
-  noy-composite
-    : ∀ {x y z} (g : hom x y) (h : hom y z)
-      {v : ob} (b : hom z v)
-    → noy (g ⨾ h) v b ≡ noy g v (noy h v b)
-  noy-composite g h {v} b =
-    emb-composite-pt g h _ idn v b
-
-  yon-composite
-    : ∀ {x y z} (f : hom x y) (g : hom y z)
-      w (a : hom w x)
-    → yon (f ⨾ g) w a ≡ yon g w (yon f w a)
-  yon-composite f g w a =
-    emb-composite-pt f g w a _ idn
-    ∙ interchange f g w a _ idn
-
-  -- Two-step expansion of a left-nested composite
-  -- ((f ⨾ g) ⨾ h) into the E₃ target, pointwise.
-  emb-nest
-    : ∀ {x y z w} (f : hom x y) (g : hom y z)
-      (h : hom z w)
-      w' (a : hom w' x) v (b : hom w v)
-    → emb ((f ⨾ g) ⨾ h) w' a v b
-    ≡ emb f w' a v (noy g v (noy h v b))
-  emb-nest f g h w' a v b =
-    emb-composite-pt (f ⨾ g) h w' a v b
-    ∙ emb-composite-pt f g w' a v (noy h v b)
-
-  emb-nest-ext
-    : ∀ {x y z w} (f : hom x y) (g : hom y z)
-      (h : hom z w)
-    → emb ((f ⨾ g) ⨾ h)
-    ≡ (λ w' a v b →
-        emb f w' a v (noy g v (noy h v b)))
-  emb-nest-ext f g h =
-    emb-ext (emb-nest f g h)
-
-  comp-eq
-    : ∀ {x y z} (f : hom x y) (g : hom y z)
-    → f ⨾ g ≡ yon g _ f
+  comp-eq : ∀ {x y z} (f : hom x y) (g : hom y z) → f ⨾ g ≡ post g f
   comp-eq f g =
-    sym (yon-eval (f ⨾ g))
-    ∙ yon-composite f g _ idn
-    ∙ ap (yon g _) (yon-eval f)
+    comp-eq-from-coupling S compose-contr interchange post-eval f g
 
-  idem : ∀ {x} → idn {x} ⨾ idn ≡ idn
-  idem = comp-eq idn idn ∙ yon-idpt
+  idem : ∀ {x} → idn x ⨾ idn x ≡ idn x
+  idem = idem-from-coupling S compose-contr interchange post-eval
 
-  absorb-l : ∀ {x} {z : ob} (h : hom x z)
-    → noy idn z h ≡ h
-  absorb-l {x} h = equiv→lc unit-eqvl noy-idn-idpt
+  -- The eval axiom is self-mirror: pre f (idn y) and post f (idn x)
+  -- both read emb f at the doubly-centered context.
+  pre-eval : ∀ {x y} (f : hom x y) → pre f (idn y) ≡ f
+  pre-eval f = post-eval f
+
+  -- Unit fragment: the two unit equivalences cancel the identity's
+  -- actions, and the identity absorbs on the left of `emb`.
+  absorb-l : ∀ {x v} (b : hom x v) → pre (idn x) b ≡ b
+  absorb-l {x} b = equiv→lc unit-eqvl pre-idn-idpt
     where
-      noy-idn-idpt : noy idn _ (noy idn _ h) ≡ noy idn _ h
-      noy-idn-idpt =
-        sym (subst (λ t → noy t _ h ≡ noy idn _ (noy idn _ h))
-          idem (noy-composite idn idn h))
+      pre-idn-idpt : pre (idn x) (pre (idn x) b) ≡ pre (idn x) b
+      pre-idn-idpt =
+        sym (subst (λ t → pre t b ≡ pre (idn x) (pre (idn x) b))
+          idem (pre-comp (idn x) (idn x) b))
 
-  absorb-r : ∀ {x} {w : ob} (g : hom w x)
-    → yon idn w g ≡ g
-  absorb-r {x} g = equiv→lc unit-eqvr yon-idn-idpt
+  absorb-r : ∀ {w x} (a : hom w x) → post (idn x) a ≡ a
+  absorb-r {w} {x} a = equiv→lc unit-eqvr post-idn-idpt
     where
-      yon-idn-idpt : yon idn _ (yon idn _ g) ≡ yon idn _ g
-      yon-idn-idpt =
-        sym (subst (λ t → yon t _ g ≡ yon idn _ (yon idn _ g))
-          idem (yon-composite idn idn _ g))
-```
+      post-idn-idpt : post (idn x) (post (idn x) a) ≡ post (idn x) a
+      post-idn-idpt =
+        sym (subst (λ t → post t a ≡ post (idn x) (post (idn x) a))
+          idem (post-comp (idn x) (idn x) a))
 
-### Composable fiber and its eliminators
+  ·-idn : ∀ {x y} (F : composite x y) → F · idn y ≡ F
+  ·-idn F = funext λ γ →
+    ap (λ β → F (γ .fst , β)) (ap (γ .snd .fst ,_) (absorb-l (γ .snd .snd)))
 
-`composable-contr` restates `compose-contr` with a pointwise
-equation. `emb-ind` eliminates any `(s, q)` in the fiber
-back to the canonical center.
+  emb-idn-absorb : ∀ {x y} (f : hom x y) → emb (idn x) · f ≡ emb f
+  emb-idn-absorb f = funext λ γ →
+    interchange (idn _) f (γ .fst .snd) (γ .snd .snd)
+    ∙ ap (λ a' → emb f ((γ .fst .fst , a') , γ .snd))
+        (absorb-r (γ .fst .snd))
 
-```agda
-  composable-contr
-    : ∀ {x y z} (f : hom x y) (g : hom y z)
-    → is-contr
-        (Σ s ∶ hom x z
-        , ∀ w (a : hom w x) v (b : hom z v)
-          → emb s w a v b
-          ≡ emb f w a v (noy g v b))
-  composable-contr f g .center =
-    f ⨾ g , emb-composite-pt f g
-  composable-contr f g .paths (s , p) i =
-    let ep = compose-contr f g .paths
-              (s , emb-ext p)
-    in ep i .fst
-     , λ w a v b j → ep i .snd j w a v b
+  emb-image-contr : ∀ {x y} (f : hom x y) → is-contr (fiber emb (emb f))
+  emb-image-contr f =
+    subst (λ T → is-contr (fiber emb T))
+      (emb-idn-absorb f) (compose-contr (idn _) f)
 
-  emb-ind
-    : ∀ {u} {x y z} (f : hom x y) (g : hom y z)
-    → (P : (s : hom x z)
-         → (∀ w (a : hom w x) v (b : hom z v)
-             → emb s w a v b
-             ≡ emb f w a v (noy g v b))
-         → Type u)
-    → P (f ⨾ g) (emb-composite-pt f g)
-    → ∀ s q → P s q
-  emb-ind f g P base s q =
-    contr-ind (composable-contr f g)
-      (λ where (s , q) → P s q)
-      base (s , q)
-
-  ⨾-η
-    : ∀ {x y z} (f : hom x y) (g : hom y z)
-    → (s : hom x z)
-    → (∀ w (a : hom w x) v (b : hom z v)
-        → emb s w a v b
-        ≡ emb f w a v (noy g v b))
-    → f ⨾ g ≡ s
-  ⨾-η f g = emb-ind f g (λ s _ → f ⨾ g ≡ s) refl
-```
-
-### Embedding property
-
-`emb-image-contr` shows the emb-fiber at any morphism is
-contractible, via interchange and absorption.
-
-```agda
-  emb-image-contr
-    : ∀ {x y} (f : hom x y)
-    → is-contr
-        (Σ s ∶ hom x y
-        , ∀ w (a : hom w x) v (b : hom y v)
-          → emb s w a v b ≡ emb f w a v b)
-  emb-image-contr {x} {y} f = c'
+  unitr : ∀ {x y} (f : hom x y) → f ⨾ idn y ≡ f
+  unitr f = ap fst (is-contr→is-prop (emb-image-contr f) lhs rhs)
     where
-      c : is-contr
-        (Σ s ∶ hom x y
-        , ∀ w (a : hom w x) v (b : hom y v)
-          → emb s w a v b
-          ≡ emb idn w a v (noy f v b))
-      c = composable-contr idn f
+      lhs : fiber emb (emb f)
+      lhs = (f ⨾ idn _) , (emb-comp f (idn _) ∙ ·-idn (emb f))
+      rhs : fiber emb (emb f)
+      rhs = f , refl
 
-      path
-        : (λ w (a : hom w x) v (b : hom y v)
-            → emb idn w a v (noy f v b))
-        ≡ (λ w (a : hom w x) v (b : hom y v)
-            → emb f w a v b)
-      path = funext λ w → funext λ a →
-        funext λ v → funext λ b →
-          interchange idn f w a v b
-          ∙ ap (λ t → emb f w t v b) (absorb-r a)
-
-      c' : is-contr
-        (Σ s ∶ hom x y
-        , ∀ w (a : hom w x) v (b : hom y v)
-          → emb s w a v b ≡ emb f w a v b)
-      c' = subst (λ T → is-contr
-        (Σ s ∶ hom _ _
-        , ∀ w a v b → emb s w a v b ≡ T w a v b))
-        path c
-
-  emb-inj
-    : ∀ {x y} {f g : hom x y}
-    → (∀ w (a : hom w x) v (b : hom y v)
-        → emb f w a v b ≡ emb g w a v b)
-    → f ≡ g
-  emb-inj {f = f} {g} pw =
-    ap fst (sym p₁ ∙ p₂)
+  unitl : ∀ {x y} (f : hom x y) → idn x ⨾ f ≡ f
+  unitl f = ap fst (is-contr→is-prop (emb-image-contr f) lhs rhs)
     where
-      p₁ = emb-image-contr f .paths
-        (f , λ _ _ _ _ → refl)
-      p₂ = emb-image-contr f .paths
-        (g , λ w a v b → sym (pw w a v b))
+      lhs : fiber emb (emb f)
+      lhs = (idn _ ⨾ f) , (emb-comp (idn _) f ∙ emb-idn-absorb f)
+      rhs : fiber emb (emb f)
+      rhs = f , refl
 
-  emb-inj-ext
-    : ∀ {x y} {f g : hom x y}
-    → emb f ≡ emb g → f ≡ g
-  emb-inj-ext {f = f} {g} p =
-    emb-inj λ w a v b i → p i w a v b
-```
+  emb-post
+    : ∀ {x y} (f : hom x y) {w} (a : hom w x) {v} (b : hom y v)
+    → emb f ((w , a) , (v , b)) ≡ emb (idn y) ((w , post f a) , (v , b))
+  emb-post {x} {y} f {w} a {v} b =
+    ap (λ b' → emb f ((w , a) , (v , b'))) (sym (absorb-l b))
+    ∙ interchange f (idn y) a b
 
-### Yon and noy decomposition
-
-```agda
-  emb-yon
-    : ∀ {x y} (f : hom x y)
-      w (a : hom w x) v (b : hom y v)
-    → emb f w a v b ≡ emb idn w (yon f w a) v b
-  emb-yon f w a v b =
-    ap (emb f w a v) (sym (absorb-l b))
-    ∙ interchange f idn w a v b
-
-  emb-noy
-    : ∀ {x y} (f : hom x y)
-      w (a : hom w x) v (b : hom y v)
-    → emb f w a v b ≡ emb idn w a v (noy f v b)
-  emb-noy f w a v b =
-    ap (λ t → emb f w t v b) (sym (absorb-r a))
-    ∙ sym (interchange idn f w a v b)
-```
-
-### Identity uniqueness
-
-```agda
   unit-is-prop
     : ∀ {x} (e : hom x x)
-    → (∀ {z} → is-equiv (λ (h : hom x z) → emb e x e z h))
-    → (∀ {w} → is-equiv (λ (g : hom w x) → emb e w g x e))
-    → yon e x e ≡ e
-    → e ≡ idn
-  unit-is-prop {x} e le re idpt =
-    sym (yon-eval e) ∙ yon-e-absorb idn
+    → (∀ {w} → is-equiv (λ (a : hom w x) → emb e ((w , a) , (x , e))))
+    → post e e ≡ e
+    → e ≡ idn x
+  unit-is-prop {x} e re idpt = sym (post-eval e) ∙ post-e-absorb (idn x)
     where
       e-idem : e ⨾ e ≡ e
       e-idem = comp-eq e e ∙ idpt
 
-      yon-e-idpt : ∀ w (g : hom w x)
-        → yon e w (yon e w g) ≡ yon e w g
-      yon-e-idpt w g =
-        sym (sym (ap (λ t → yon t w g) e-idem)
-          ∙ yon-composite e e w g)
+      post-e-idpt : ∀ {w} (g : hom w x) → post e (post e g) ≡ post e g
+      post-e-idpt g =
+        sym (sym (ap (λ t → post t g) e-idem) ∙ post-comp e e g)
 
-      yon-e-squared : ∀ {w} (g : hom w x)
-        → emb e w g x e ≡ yon e w (yon e w g)
-      yon-e-squared {w} g =
-        emb-yon e w g x e
-        ∙ sym (ap (emb idn w (yon e w g) x) (yon-eval e))
-        ∙ interchange idn e w (yon e w g) x idn
-        ∙ ap (yon e w) (absorb-r (yon e w g))
+      post-e-squared
+        : ∀ {w} (g : hom w x)
+        → emb e ((w , g) , (x , e)) ≡ post e (post e g)
+      post-e-squared {w} g =
+        emb-post e g e
+        ∙ sym (ap (λ b' → emb (idn x) ((w , post e g) , (x , b')))
+            (post-eval e))
+        ∙ interchange (idn x) e (post e g) (idn x)
+        ∙ ap (λ t → post e t) (absorb-r (post e g))
 
-      yon-e-absorb : ∀ {w} (g : hom w x) → yon e w g ≡ g
-      yon-e-absorb {w} g = equiv→lc re
-        (yon-e-squared (yon e w g)
-        ∙ yon-e-idpt w (yon e w g)
-        ∙ sym (yon-e-squared g))
+      post-e-absorb : ∀ {w} (g : hom w x) → post e g ≡ g
+      post-e-absorb g = equiv→lc re
+        (post-e-squared (post e g)
+         ∙ post-e-idpt (post e g)
+         ∙ sym (post-e-squared g))
+
+  -- `emb` is an embedding: `is-representable F` is a proposition. This
+  -- upgrades `hom≃representable` to a subtype inclusion.
+  is-representable-prop
+    : ∀ {x y} (F : composite x y) → is-prop (is-representable F)
+  is-representable-prop = image-fibers-contr→is-embedding emb-image-contr
 ```
 
-### Coherent unit laws and associativity
+## The bundle
 
-The unit laws and associativity are projections from
-contractible fibers.
+`category` bundles `ob`, `structure`, `axioms` and re-exports
+the latter two, so a single `open category C` recovers the
+entire API. The axioms record is complete, so the bundle IS the
+category.
 
 ```agda
-  unitr : ∀ {x y} (f : hom x y) → f ⨾ idn ≡ f
-  unitr f =
-    ap fst
-      (is-contr→is-prop (emb-image-contr f) lhs rhs)
-    where
-      lhs : Σ s ∶ hom _ _
-          , ∀ w a v b → emb s w a v b ≡ emb f w a v b
-      lhs = f ⨾ idn
-          , λ w a v b →
-              emb-composite-pt f idn w a v b
-              ∙ ap (emb f w a v) (absorb-l b)
-
-      rhs : Σ s ∶ hom _ _
-          , ∀ w a v b → emb s w a v b ≡ emb f w a v b
-      rhs = f , λ _ _ _ _ → refl
-
-  unitl : ∀ {x y} (f : hom x y) → idn ⨾ f ≡ f
-  unitl f =
-    ap fst
-      (is-contr→is-prop (composable-contr idn f)
-        lhs rhs)
-    where
-      lhs : Σ s ∶ hom _ _
-          , ∀ w a v b
-            → emb s w a v b
-            ≡ emb idn w a v (noy f v b)
-      lhs = idn ⨾ f , emb-composite-pt idn f
-
-      rhs : Σ s ∶ hom _ _
-          , ∀ w a v b
-            → emb s w a v b
-            ≡ emb idn w a v (noy f v b)
-      rhs = f , emb-noy f
+record category (o h : Level) : Type ((o ⊔ h) ₊) where
+  no-eta-equality
+  field
+    ob        : Type o
+    structure : category-structure h ob
+    axioms    : category-axioms structure
+  open category-structure structure public
+  open category-axioms axioms public
 ```
 
-### Triple composite fiber (E₃-contr)
+## Definitional regression witnesses
 
-The ternary composite fiber E₃ and its contractibility.
-
-```agda
-  E₃ : ∀ {x y z w} (f : hom x y) (g : hom y z)
-      (h : hom z w)
-    → ∀ w' → hom w' x → ∀ v → hom w v → hom w' v
-  E₃ f g h =
-    λ w a v b →
-      emb f w a v (noy g v (noy h v b))
-
-  E₃-contr
-    : ∀ {x y z w} (f : hom x y) (g : hom y z)
-      (h : hom z w)
-    → is-contr
-        (Σ s ∶ hom x w
-        , ∀ w' (a : hom w' x) v (b : hom w v)
-          → emb s w' a v b ≡ E₃ f g h w' a v b)
-  E₃-contr f g h .center .fst = (f ⨾ g) ⨾ h
-  E₃-contr f g h .center .snd = emb-nest f g h
-  E₃-contr f g h .paths =
-    is-contr→is-prop
-      (subst (λ T → is-contr
-        (Σ s ∶ hom _ _
-        , ∀ w' a v b → emb s w' a v b ≡ T w' a v b))
-        path
-        (composable-contr (f ⨾ g) h)) _
-    where
-      path
-        : (λ w' a v b →
-            emb (f ⨾ g) w' a v (noy h v b))
-        ≡ E₃ f g h
-      path = funext λ w' → funext λ a →
-        funext λ v → funext λ b →
-          emb-composite-pt f g w' a v (noy h v b)
-
-  assoc
-    : ∀ {x y z w} (f : hom x y) (g : hom y z)
-      (h : hom z w)
-    → (f ⨾ g) ⨾ h ≡ f ⨾ (g ⨾ h)
-  assoc f g h =
-    ap fst
-      (is-contr→is-prop (E₃-contr f g h)
-        (E₃-contr f g h .center) rhs)
-    where
-      rhs : Σ s ∶ hom _ _
-          , ∀ w' a v b
-            → emb s w' a v b ≡ E₃ f g h w' a v b
-      rhs = f ⨾ (g ⨾ h)
-          , λ w' a v b →
-              emb-composite-pt f (g ⨾ h) w' a v b
-              ∙ ap (emb f w' a v)
-                  (noy-composite g h b)
-
-  E₃-contr-ext
-    : ∀ {x y z w} (f : hom x y) (g : hom y z)
-      (h : hom z w)
-    → is-contr (fiber emb (E₃ f g h))
-  E₃-contr-ext {x} {w = w} f g h = c'
-    where
-      PW = Σ s ∶ hom x w
-         , ∀ w' (a : hom w' x) v (b : hom w v)
-           → emb s w' a v b
-           ≡ E₃ f g h w' a v b
-
-      to-ext : PW → fiber emb (E₃ f g h)
-      to-ext (s , q) = s , emb-ext q
-
-      c = E₃-contr f g h
-
-      c' : is-contr (fiber emb (E₃ f g h))
-      c' .center = to-ext (c .center)
-      c' .paths (s , p) =
-        ap to-ext
-          (c .paths
-            (s , λ w' a v b i → p i w' a v b))
-
-  E₃-ind
-    : ∀ {u} {x y z w} (f : hom x y) (g : hom y z)
-      (h : hom z w)
-    → (P : (s : hom x w)
-         → emb s ≡ E₃ f g h
-         → Type u)
-    → P (E₃-contr-ext f g h .center .fst)
-        (E₃-contr-ext f g h .center .snd)
-    → ∀ s q → P s q
-  E₃-ind f g h P base s q =
-    contr-ind (E₃-contr-ext f g h)
-      (λ where (s , q) → P s q)
-      base (s , q)
-
-  emb-image-contr-ext
-    : ∀ {x y} (f : hom x y)
-    → is-contr (fiber emb (emb f))
-  emb-image-contr-ext {x} {y} f = c'
-    where
-      PW = Σ s ∶ hom x y
-         , ∀ w (a : hom w x) v (b : hom y v)
-           → emb s w a v b ≡ emb f w a v b
-
-      to-ext : PW → fiber emb (emb f)
-      to-ext (s , q) = s , emb-ext q
-
-      c = emb-image-contr f
-
-      c' : is-contr (fiber emb (emb f))
-      c' .center = to-ext (c .center)
-      c' .paths (s , p) =
-        ap to-ext
-          (c .paths
-            (s , λ w a v b i → p i w a v b))
-
-  emb-is-embedding
-    : ∀ {x y} → is-embedding (emb {x} {y})
-  emb-is-embedding t (f , p) (g , q) =
-    is-contr→is-prop
-      (subst (is-contr ∘ fiber emb) p
-        (emb-image-contr-ext f))
-      (f , p) (g , q)
-
-  emb-section
-    : ∀ {x y} {f g : hom x y}
-    → (p : f ≡ g) → emb-inj-ext (ap emb p) ≡ p
-  emb-section {f = f} =
-    J (λ g p → emb-inj-ext (ap emb p) ≡ p)
-      emb-inj-ext-refl
-    where
-      pw-center = emb-image-contr f .paths
-        (f , λ _ _ _ _ → refl)
-
-      loop
-        : Path (Σ s ∶ hom _ _
-              , ∀ w a v b
-                → emb s w a v b ≡ emb f w a v b)
-            (f , λ _ _ _ _ → refl)
-            (f , λ _ _ _ _ → refl)
-      loop = sym pw-center ∙ pw-center
-
-      loop≡refl : loop ≡ refl
-      loop≡refl =
-        is-contr→is-set (emb-image-contr f)
-          _ _ loop refl
-
-      emb-inj-ext-refl
-        : emb-inj-ext {f = f} refl ≡ refl
-      emb-inj-ext-refl =
-        ap (ap fst) loop≡refl
-
-  emb-retraction
-    : ∀ {x y} {f g : hom x y}
-    → (q : emb f ≡ emb g)
-    → ap emb (emb-inj-ext q) ≡ q
-  emb-retraction {f = f} {g} q =
-    ap (ap emb) emb-inj-ext≡inv ∙ counit q
-    where
-      ap-emb-equiv
-        : is-equiv (ap emb {x = f} {y = g})
-      ap-emb-equiv =
-        is-embedding→ap-equiv emb-is-embedding
-
-      module E = Equiv (ap emb , ap-emb-equiv)
-
-      counit
-        : (q : emb f ≡ emb g)
-        → ap emb (E.inv q) ≡ q
-      counit = E.counit
-
-      emb-inj-ext≡inv : emb-inj-ext q ≡ E.inv q
-      emb-inj-ext≡inv =
-        ap emb-inj-ext (sym (counit q))
-        ∙ emb-section (E.inv q)
-
-  composable-yon
-    : ∀ {x y z} (f : hom x y) (g : hom y z)
-    → is-contr
-        (fiber emb
-          (λ w a v b → emb g w (yon f w a) v b))
-  composable-yon f g =
-    subst (is-contr ∘ fiber emb) path
-      (compose-contr f g)
-    where
-      path
-        : (λ w a v b →
-            emb f w a v (noy g v b))
-        ≡ (λ w a v b →
-            emb g w (yon f w a) v b)
-      path = emb-ext λ w a v b →
-        interchange f g w a v b
-
-  emb-yon-ind
-    : ∀ {u} {x y z} (f : hom x y) (g : hom y z)
-    → (P : (s : hom x z)
-         → emb s
-           ≡ (λ w a v b →
-                emb g w (yon f w a) v b)
-         → Type u)
-    → P (f ⨾ g) (emb-yon-composite f g)
-    → ∀ s q → P s q
-  emb-yon-ind f g P base s q =
-    coe01 (λ i → P (path i .fst) (path i .snd))
-      base
-    where
-      path
-        : (f ⨾ g , emb-yon-composite f g)
-        ≡ (s , q)
-      path =
-        sym (composable-yon f g .paths _)
-        ∙ composable-yon f g .paths (s , q)
-
-  composable-swap
-    : ∀ {x y}
-      {target : ∀ w → hom w x → ∀ v → hom y v
-        → hom w v}
-    → is-contr (fiber emb target)
-    → is-contr
-        (Σ s ∶ hom x y
-        , (λ w (a : hom y w) v (b : hom v x)
-            → emb s v b w a)
-        ≡ (λ w a v b → target v b w a))
-  composable-swap {target = target} c = c'
-    where
-      swap-path
-        : ∀ {s : hom _ _}
-        → emb s ≡ target
-        → (λ w a v b → emb s v b w a)
-        ≡ (λ w a v b → target v b w a)
-      swap-path p = funext λ w → funext λ a →
-        funext λ v → funext λ b →
-          happly (happly (happly (happly p v) b) w) a
-
-      unswap-path
-        : ∀ {s : hom _ _}
-        → (λ w a v b → emb s v b w a)
-        ≡ (λ w a v b → target v b w a)
-        → emb s ≡ target
-      unswap-path q = funext λ w → funext λ a →
-        funext λ v → funext λ b →
-          happly (happly (happly (happly q v) b) w) a
-
-      c' : is-contr _
-      c' .center =
-        c .center .fst , swap-path (c .center .snd)
-      c' .paths (s' , q') i =
-        let ep = c .paths
-              (s' , unswap-path q') i
-        in ep .fst , swap-path (ep .snd)
-
-  yon-inj
-    : ∀ {x y} {f g : hom x y}
-    → yon f ≡ yon g → f ≡ g
-  yon-inj {f = f} {g} p = emb-inj λ w a v b →
-    ap (emb f w a v) (sym (absorb-l b))
-    ∙ interchange f idn w a v b
-    ∙ ap (λ t → emb idn w t v b)
-        (λ i → p i w a)
-    ∙ sym (interchange g idn w a v b)
-    ∙ ap (emb g w a v) (absorb-l b)
-
-  noy-inj
-    : ∀ {x y} {f g : hom x y}
-    → noy f ≡ noy g → f ≡ g
-  noy-inj {f = f} {g} p = emb-inj λ w a v b →
-    ap (λ t → emb f w t v b) (sym (absorb-r a))
-    ∙ sym (interchange idn f w a v b)
-    ∙ ap (λ t → emb idn w a v t)
-        (λ i → p i v b)
-    ∙ interchange idn g w a v b
-    ∙ ap (λ t → emb g w t v b) (absorb-r a)
-```
-
-## Opposite category
-
-Swapping the two `(object, morphism)` pairs in `emb`
-reverses the direction of all hom-types.
+`composite` is a genuine Π (application computes — the funext-merge
+substrate), and `pre-comp` is definitionally `happly` of `emb-comp`
+read at the center. The bundle re-export recovers both structure-level
+and axioms-level names from one `open`.
 
 ```agda
+module _ {o h} {ob : Type o} (S : category-structure h ob) where
+  open category-structure S
+
+  composite-is-Π : ∀ {x y} (F : composite x y) (γ : ctx x y) → res γ
+  composite-is-Π F γ = F γ
+
+  pre-eval-is-post-eval
+    : ∀ {x y} (f : hom x y) → pre f (idn y) ≡ post f (idn x)
+  pre-eval-is-post-eval f = refl
+
+module _ {o h} {ob : Type o} {S : category-structure h ob}
+  (A : category-axioms S) where
+  open category-structure S
+  open category-axioms A
+
+  pre-comp-is-happly
+    : ∀ {y z w} (g : hom y z) (hh : hom z w) {v} (b : hom w v)
+    → pre-comp g hh b ≡ happly (emb-comp g hh) (ctr y , (v , b))
+  pre-comp-is-happly g hh b = refl
+
 module _ {o h} (C : category o h) where
-  private module C = Virtual C
+  open category C
 
-  op : category o h
-  op .category.ob = C.ob
-  op .category.hom x y = C.hom y x
-  op .category.emb f w a v b = C.emb f v b w a
-  op .category.unit =
-    C.idn
-    , C.unit .snd .snd
-    , C.unit .snd .fst
-  op .category.compose-contr f g =
-    C.composable-swap (C.composable-yon g f)
-  op .category.interchange f g w a v b =
-    sym (C.interchange g f v b w a)
-  op .category.yon-eval f = C.yon-eval f
-```
+  -- structure-level and axioms-level names, from a single open.
+  _ : ∀ {x y} → hom x y → composite x y
+  _ = emb
 
-### Opposite involution
-
-```agda
-module _ {o h} (C : category o h) where
-  private module C = Virtual C
-
-  op-invol : op (op C) ≡ C
-  op-invol i .category.ob = C.ob
-  op-invol i .category.hom = C.hom
-  op-invol i .category.emb = C.emb
-  op-invol i .category.unit {x} = C.unit {x}
-  op-invol i .category.compose-contr
-    {x} {y} {z} f g =
-    is-prop→PathP
-      {A = λ _ → is-contr
-        (fiber (C.emb {x} {z})
-          (λ w a v b →
-            C.emb f w a v (C.noy g v b)))}
-      (λ _ → is-contr-is-prop _)
-      (category.compose-contr (op (op C)) f g)
-      (C.compose-contr f g) i
-  op-invol i .category.interchange f g w a v b =
-    C.interchange f g w a v b
-  op-invol i .category.yon-eval f = C.yon-eval f
+  _ : ∀ {x y z} → hom x y → hom y z → hom x z
+  _ = _⨾_
 ```

@@ -13,7 +13,7 @@ verbatim from the green stratum spike
 the 2026-07-13 credit-prose edits; line anchors into that spike
 drift with its prose — the load-bearing fact is block identity,
 re-verified by the mechanical gate's diff, not the line numbers).
-No import of that spike and no import of Cat.Codep.Base:
+No import of that spike and no import of Cat.Type:
 self-contained modulo Core, for the later Gloss freeze.
 
 Kill criteria (pre-registered, memo §3/§4/§5-C3):

@@ -4,19 +4,17 @@
 
 module All where
 
-import Cat.Base
-import Cat.Coherence
-import Cat.Covariant
-import Cat.Groupoid
-import Cat.Iso
-import Cat.Monoidal
-import Cat.Monoidal.Bifunctor
-import Cat.Monoidal.Coherence
-import Cat.Monoidal.Iso
-import Cat.Type
-import Cat.Virtual
-import Cat.Virtual.Product
-import Cat.Yoneda
+-- import Cat.Base  -- WIP: THE REFACTOR — re-founding (P6/P7)
+-- import Cat.Covariant  -- WIP: THE REFACTOR — re-founding (P6/P7)
+-- import Cat.Groupoid  -- WIP: THE REFACTOR — re-founding (P6/P7)
+-- import Cat.Iso  -- WIP: THE REFACTOR — re-founding (P6/P7)
+-- import Cat.Monoidal  -- WIP: THE REFACTOR — re-founding (P6/P7)
+-- import Cat.Monoidal.Bifunctor  -- WIP: THE REFACTOR — re-founding (P6/P7)
+-- import Cat.Monoidal.Coherence  -- WIP: THE REFACTOR — re-founding (P6/P7)
+-- import Cat.Monoidal.Iso  -- WIP: THE REFACTOR — re-founding (P6/P7)
+-- import Cat.Virtual  -- WIP: THE REFACTOR — re-founding (P6/P7)
+-- import Cat.Virtual.Product  -- WIP: THE REFACTOR — re-founding (P6/P7)
+-- import Cat.Yoneda  -- WIP: THE REFACTOR — re-founding (P6/P7)
 
 import Core.Data.Bool
 import Core.Data.Empty
@@ -89,14 +87,13 @@ import Test.CodepCoherentKillchecks
 -- import Data.Thin.Cover  -- WIP: copU hole at L96
 -- import Data.Thin.Properties  -- WIP: law holes at L32/35/39
 -- import Cat.Displayed  -- WIP: open holes in compose-contr contraction
--- import Cat.Units  -- WIP: proof error at line 382
 -- import Cat.Product  -- WIP: mid-edit, MetaCannotDependOn at L237
 -- import HData.Rack  -- WIP: pre-existing unsolved metas at L31-34
-import Cat.Monoidal.Indiscrete
-import Cat.Monoidal.Twist
-import Cat.Monoidal.Braid
-import Cat.Monoidal.Hexagon
+-- import Cat.Monoidal.Indiscrete  -- WIP: THE REFACTOR — re-founding (P6/P7)
+-- import Cat.Monoidal.Twist  -- WIP: THE REFACTOR — re-founding (P6/P7)
+-- import Cat.Monoidal.Braid  -- WIP: THE REFACTOR — re-founding (P6/P7)
+-- import Cat.Monoidal.Hexagon  -- WIP: THE REFACTOR — re-founding (P6/P7)
 import Core.Coherence.Base
 import Cat.Codep
-import Cat.Codep.Instances
+-- import Cat.Codep.Instances  -- WIP: THE REFACTOR — re-founding (P6/P7)
 ```

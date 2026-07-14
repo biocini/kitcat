@@ -2,7 +2,7 @@ Lane Biocini
 July 2026
 
 The Mac Lane triangle for representable hcategories. Over a bundle
-`(C : hcategory o h)` the *weak* triangle
+`(C : category o h)` the *weak* triangle
 `ap (_⨾ g) (unitr f) ≡ assoc f (idn y) g ∙ α₂₃` holds with the middle
 edge `α₂₃` abstract — no coherence overlay, only the base axioms and
 `assoc-tower`.
@@ -21,10 +21,10 @@ carrier, reusing `assoc-tower` (from `Cat.Codep.Coherence`) for
 
 The *full* triangle identifies `α₂₃` with the left-whiskered `unitl g`
 (`face₂₃`, the paid unitl face). It closes against the `Cat.Codep`
-stack once the coherence overlay `A2 : hcategory-2-coherent C` is in
+stack once the coherence overlay `A2 : category-2-coherent C` is in
 scope — it needs no fourth cell. The mechanism:
 
-  * The library `unitl g` (`Cat.Codep.Base`) is `ap fst` of a path in
+  * The library `unitl g` (`Cat.Type`) is `ap fst` of a path in
     `emb-image-contr g`, whose left endpoint witness is
     `emb-comp (idn y) g ∙ emb-idn-absorb g`. The fiber `compose-contr
     f g` is contractible, hence a set, so any fiber path realising
@@ -66,9 +66,9 @@ open import Core.Kan using
 open import Core.Path.Base using (ap-comp)
 open import Core.Coherence.Base using (coh-project)
 
-open import Cat.Codep.Base
+open import Cat.Type
 open import Cat.Codep.Coherence using (module assoc-tower)
-open import Cat.Codep.Coherent using (hcategory-2-coherent; op-coherent)
+open import Cat.Codep.Coherent using (category-2-coherent; op-coherent)
 open import Cat.Codep.Op using (op)
 ```
 
@@ -79,8 +79,8 @@ The weak tower gates on the bundle alone. `triangle-fibers` fixes
 free faces `face₁₃`/`face₁₂`. The middle edge `α₂₃` stays abstract.
 
 ```agda
-module triangle-weak-tower {o h} (C : hcategory o h) where
-  open hcategory C
+module triangle-weak-tower {o h} (C : category o h) where
+  open category C
   open assoc-tower C
 
   module triangle-fibers {x y z} (f : hom x y) (g : hom y z) where
@@ -185,10 +185,10 @@ center context and bridged through `gauge-r`, it collapses the paid
 `contr-face` endpoint witnesses `w23`/`v23` are then routine.
 
 ```agda
-module triangle-full-tower {o h} (C : hcategory o h)
-  (A2 : hcategory-2-coherent C) where
-  open hcategory C
-  open hcategory-2-coherent A2
+module triangle-full-tower {o h} (C : category o h)
+  (A2 : category-2-coherent C) where
+  open category C
+  open category-2-coherent A2
   open assoc-tower C
   open triangle-weak-tower C
 
@@ -284,7 +284,7 @@ module triangle-full-tower {o h} (C : hcategory o h)
 
 ## Mirror (op-dual) triangle
 
-The full triangle is uniform over any coherent hcategory, and
+The full triangle is uniform over any coherent category, and
 `op-coherent` transports the overlay to `op C`. So the op-dual Mac Lane
 triangle needs no separate post-side proof: it is the instantiation of
 `triangle-full-tower` at `(op C , op-coherent A2)`. In `op C` the
@@ -294,7 +294,7 @@ and paid faces exchanged, and `gauge-l` (rather than `gauge-r`) closing
 the paid face inside `op-coherent`'s transported cells.
 
 ```agda
-module mirror-triangle {o h} {C : hcategory o h}
-  (A2 : hcategory-2-coherent C) where
+module mirror-triangle {o h} {C : category o h}
+  (A2 : category-2-coherent C) where
   open triangle-full-tower (op C) (op-coherent A2) public
 ```
