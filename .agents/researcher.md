@@ -29,8 +29,11 @@ else; if the brief omits the path, derive one under
 `notes/research/` per the contract slug rule and flag the
 omission in your report. Your reply to the dispatcher is a short
 completion report: what was written where, each question's final
-state, and what was blocked. Never dump evidence inline in the
-reply — the dispatcher reads the file, not your reply.
+state, and what was blocked. Never dump the evidence itself
+inline — the findings file is the deliverable and your reply is the
+completion-report channel beside it, never a substitute for the file
+(HARNESS.md reconciles the two where a harness returns your final
+message to the lead).
 
 ## Integrity rules
 

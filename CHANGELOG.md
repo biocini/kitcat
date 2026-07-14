@@ -61,9 +61,9 @@ the dual-channel rule (write the file AND return a short completion
 report; the message never substitutes for the artifact), with
 name-and-defer companions in `.agents/CLAUDE.md` and
 `.agents/verifier.md`. `verified`: `just lint authoring`/`changed`
-green. (The process review found one sibling, `researcher.md:33`,
-still carries the mirror phrasing — a ratify-now one-liner,
-`unapplied` this session per `/log` discipline.)
+green. (The process review found one sibling, `researcher.md:32-33`,
+carrying the mirror phrasing; Lane ratified at close and it was
+reworded to the dual-channel form.)
 
 **Process.** All bimodule checks DERIVED — no walls preserved. The
 accuracy review caught loose WHY-prose (S1, corrected at four sites);

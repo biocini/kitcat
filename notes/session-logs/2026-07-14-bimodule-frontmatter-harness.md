@@ -248,16 +248,18 @@ sketch-hygiene pass, mid-run ruling reconciliation, encode-at-ruling-
 time), the layered bracket caught disjoint defects again, and both
 mid-run amendments worked.
 
-Ratify-now:
+Ratify-now — **RATIFIED + APPLIED 2026-07-14**:
 - **F1 — align `researcher.md` to the landed output-handoff
-  reconciliation.** The HARNESS.md fix is complete for the verifier,
+  reconciliation.** The HARNESS.md fix was complete for the verifier,
   but the suite-maintainer's rationale for leaving the siblings ("none
-  phrases its write boundary as absolutely") is wrong for one:
-  `researcher.md:33` ("the dispatcher reads the file, not your reply")
-  is the grammatical mirror of the exact misread the fix closes. A
-  one-line reword names the completion-report channel and defers to
-  HARNESS.md. (`ingest.md`/`writer.md` carry no exclusion phrasing —
-  the rationale holds for them.)
+  phrases its write boundary as absolutely") was wrong for one:
+  `researcher.md:32-33` ("the dispatcher reads the file, not your
+  reply") was the grammatical mirror of the exact misread the fix
+  closes. Lane ratified at close; `researcher.md:32-36` reworded to the
+  dual-channel form (the findings file is the deliverable, the reply is
+  the completion-report channel beside it, defer to HARNESS.md).
+  (`ingest.md`/`writer.md` carry no exclusion phrasing — the rationale
+  holds for them; a pre-emptive clause is the next-session question.)
 
 Next-session:
 - **F1 (siblings)** — whether `ingest`/`writer` should carry the
@@ -303,16 +305,20 @@ standing check.
 
 ## Next steps
 
-1. **The mathematics is Lane-gated.** With target 1 done, the queue head
-   for new mathematics is a Lane ruling: Chir's five rulings (target 3),
-   or THE REFACTOR's word (target 2, which opens `Cat.Bimodule`).
-2. **Ungated work available now**: the target-6 frontmatter bulk sweep
-   (well-scoped — the 29-file old-header set + the header-less set, two
-   input classes, needs the date-sourcing policy) and the
-   ingestion-pipeline split (target 5).
-3. **Carried process items** (see Process review): the ratify-now set,
-   if any, and the next-session items.
-4. `Cat.Bimodule` graduation rides THE REFACTOR (target 2).
+1. **Process items first** (Lane, 2026-07-14: take up F2–F4 next session
+   BEFORE the next roadmap items). F1 ratified + applied this session;
+   remaining, from Process review: **F2** (enumeration self-tracking —
+   corroborates the open F5b), **F3** (an `analyzer.md` sketch-vs-summary
+   consistency check — parallels the open F6), **F4** (standardize the
+   repo-tooling dispatch brief). Resolve or triage these before opening
+   new roadmap work.
+2. **Then the roadmap.** New mathematics is Lane-gated: Chir's five
+   rulings (target 3), or THE REFACTOR's word (target 2, which opens
+   `Cat.Bimodule`). Ungated meanwhile: the target-6 frontmatter bulk
+   sweep (the 29-file old-header set + the header-less set, two input
+   classes, needs a date-sourcing policy) and the ingestion-pipeline
+   split (target 5).
+3. `Cat.Bimodule` graduation rides THE REFACTOR (target 2).
 
 ## Artifacts
 
