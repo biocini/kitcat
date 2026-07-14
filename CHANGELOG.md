@@ -16,6 +16,64 @@ concise, and honest about verification status (`verified` /
 
 ---
 
+## 2026-07-13 (fourth session) — T21 independence, the Kelly lift, the shelf's machine surface
+
+Object: the evening cascade after the shakedown close — the
+extract-agree question settled by theorem, the Kelly gap closed
+end-to-end, and the workflow rulings Lane made in-session landed
+as they were made.
+
+**Landed.** **T21 — extract-agree is irreducible** (verified:
+`Gloss.ExtractAgreeIndependence` @ `09f7155`, frozen from the
+three-arm spike @ `dde1f57`, the first tracked-Test provenance):
+the equivalence class over compose-contr, the Bool/xor
+countermodel killing the whole admissible candidate space, both
+honest walls fenced verbatim; boundary in three clauses; three
+abstract propositional strata BY THEOREM; bijection 6↔6. The full
+chain ran at certificate grade — accuracy PASS, the
+code-citation review's first live run (verified: caught
+under-scoped Petrakis credits four upstream layers missed;
+corrections applied + mirrored + a dep-arrows map addendum),
+mechanical gate PASS 0-Blocking. Function-valued res-inv adopted;
+the `codep-invariance` optional overlay landed (verified: green).
+**The Kelly arc** (verified end-to-end): the paywalled 1964
+source vendored (public re-fetch URL found by Lane, verified
+byte-identical), audited 46/46 at full depth with all 21
+countermodel tables at 300 dpi, the OCR mandate's first exercise
+(evaluate-and-reject — the honest branch), the tracked 21-hunk
+render-verified correction patch with byte-identical
+regeneration, confirming pass all-PASS — **T15's ⚠️ lifts**
+(audit-keyed; no ⚠️ source-identifications remain), with Kelly's
+three-distinct-proof-moves correction feeding the bimodule
+spike's planning. **The shelf**: full ratification (seven Vetted
+lines), custody frontmatter on all eight entries with
+`resources-verify` reading it mechanically, the
+OCR/correction-patch custody mandates, and the
+fetch-skill/ingester-split direction recorded. **The workflow
+cascade** (all Lane-ruled in-session): the promotion decision
+block + P3's held-promotion clause; the /log
+roadmap-reconciliation stage (exercised live at this close:
+target 1 LANDED, the bimodule spike now leads the roadmap);
+name-keyed log Contents; the eli5 fan-out tier restored; the
+verifier write-boundary scoping; uniform author/date headers;
+five of six styleguide splits ruled with sweeps scheduled.
+
+**Failed / preserved.** Arm 3's two walls — now superseded by
+their own theorem (the strongest "do not re-derive"); the
+`--redo-ocr` rejection record (dual-layer duplication) as the
+standing reason the OCR chain evaluates rather than assumes.
+
+**Superseded.** T15's ⚠️ and the "engine of every derivation"
+reading of Kelly; the entries' body-prose hash/fetch records (the
+frontmatter is the machine surface); memo A's "exactly two
+strata" (three, by theorem); roadmap target 1 (landed — the
+bimodule spike leads).
+
+Session log:
+[`notes/session-logs/2026-07-13-independence-kelly-shelf.md`](notes/session-logs/2026-07-13-independence-kelly-shelf.md)
+(the held list — the three stratum ledger entries — and the
+process review's eight ratify-now proposals await Lane).
+
 ## 2026-07-13 (third session) — the /prove shakedown: faithful-stratum spike + the rulings cascade
 
 Object: the first real end-to-end `/prove` run (roadmap target 1,

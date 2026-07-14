@@ -14,13 +14,16 @@ Update it when a project lands (its gate satisfied), is added
 ordering changed by a ruling) — not per session: the `/log` close
 checks these triggers each session and edits only when one fires.
 
-1. **Faithful-stratum substrate spike (A1–A3)** — the main
-   mathematical line: substrate records, Π-integral composite,
-   res-invariance. Kill criteria are pre-registered in the spike
-   design (memory: memo A in the ontology log).
-2. **Bimodule record spike (B1–B3)** — the record, regular
-   filling, emb-parity (B4 struck — refuted).
-3. **THE REFACTOR** — the conditional promotion of `Cat.Codep`:
+1. **Bimodule record spike (B1–B3)** — the record, regular
+   filling, emb-parity (B4 struck — refuted). Opens on the
+   pre-registered design block in the 2026-07-13 prove-shakedown
+   session log; the Kelly entry (audited) grounds its
+   unit-coherence framing. (Its predecessor, the faithful-stratum
+   substrate spike A1–A3, LANDED 2026-07-13: all three checks
+   green, extract-agree's irreducibility enshrined as T21 /
+   `Gloss.ExtractAgreeIndependence`; the A1/A2/A3 ledger-entry
+   promotions ride the session log's held list.)
+2. **THE REFACTOR** — the conditional promotion of `Cat.Codep`:
    if the hcategory line keeps earning it (the substrate spikes
    and the coherence program keep landing), `hcategory` becomes
    the library's canonical category record and the `Cat.*` tree
@@ -36,20 +39,19 @@ checks these triggers each session and edits only when one fires.
    layer, the monoidal side of the chirality convergence theorem,
    and the post-refactor standardization arc — opened only on
    Lane's word.
-4. **Chir.*** — single-carrier polarity-as-representability;
+3. **Chir.*** — single-carrier polarity-as-representability;
    parked pending Lane's five rulings; Spikes A/B/C specced with
    kill criteria (memory: chirality record).
-5. **Framed syntax instance** — the syntax instance targeting the
+4. **Framed syntax instance** — the syntax instance targeting the
    plain record; the braid/twist layer follows.
-6. **Workflow suite, next phases** — the memory-externalization
+5. **Workflow suite, next phases** — the memory-externalization
    sweep into canonical repo homes (gloss.md, session logs, roadmap;
    memory left as pointers, per R10 — never gitignored working
    memory), now explicitly including **pre-registered design memos**
    (Lane, 2026-07-13: every design a run opens on must live in a
    tracked home — memo B's externalization into the 2026-07-13
-   session log is the pattern); the T15 Kelly `resources/` entry
-   still to vendor (paywalled, needs Lane's access) to upgrade T15
-   off ⚠️; the untracked-file cleanup (every stray cleaned up,
+   session log is the pattern); the untracked-file cleanup (every
+   stray cleaned up,
    ignored, or given a canonical home — includes the 25 legacy
    `src/Test/` files swept into tracking 2026-07-13); and the
    **ingestion-pipeline split** (Lane, 2026-07-13): a fetch
@@ -57,10 +59,12 @@ checks these triggers each session and edits only when one fires.
    frontmatter (url + hash) for acquisition and re-fetch, and the
    externalization of the pipeline's logistical parts out of the
    `ingest` agent, leaving it focused on quality control and
-   analysis (maps, digests). Shelf standing: seven entries vetted
-   by Lane 2026-07-13; kelly-maclane-conditions audited, field
-   pending its re-extraction's confirming pass.
-7. **Housekeeping** — the styleguide conformance sweeps (ruled GO,
+   analysis (maps, digests). Shelf standing: eight entries, all on
+   the custody frontmatter, all statement-audited; seven vetted by
+   Lane 2026-07-13, kelly's discretion open; T16 and T15 both
+   lifted under the audit-keyed rule — no ⚠️
+   source-identifications remain.
+6. **Housekeeping** — the styleguide conformance sweeps (ruled GO,
    Lane 2026-07-13; docs/styleguide.md "Rulings"): author/date
    headers onto the 123 header-less Core files; removal of
    globally-redundant per-module flags; the ternary-first
