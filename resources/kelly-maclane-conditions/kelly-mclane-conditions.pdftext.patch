@@ -1,0 +1,576 @@
+--- kelly-mclane-conditions.pdftext.orig
++++ kelly-mclane-conditions.pdftext
+@@ -1,10 +1,8 @@
+-On MacLane’s
+-Conditions
+-for
+-of Natural
+-Associativities,
+-Commutativities,
+-
+-Coherence
+-
+-etc.
++[patch: title block restored from the p.397 render]
++JOURNAL OF ALGEBRA, 1, 397-402 (1964)
++On MacLane’s Conditions for
++Coherence of Natural Associativities, Commutativities, etc.
++G. M. KELLY
++Department of Mathematics, University of Illinois, Urbana, Illinois
++Communicated by Saunders MacLane
++Received July 13, 1964
+@@ -57,53 +55,30 @@
+-(1)
+-
+-A[B(CL))J-5 (AB)(CD)-s [(AB)C]D
+-la
+-
+-<,I
+-
+-i
+-A[(RC)I)]
+-
+-T
+-
+---) [A(BC)]D
+-
+---y------
+-
+-39’7
+-
+-commutes.
+-
+-3%
+-(2)
+-
+-(3)
+-
+-(4)
+-(5)
+-
+-(KB)C
+-(6)
+-
+-(7)
+-
+-IZ(BK)
+-\
+-1
+-lf
+-
+-11
+-
+---I
+-
+-1:
+-
+-Ir
+-
+-/‘I
+-
+-(4B)K’
+-
+-AK
+-
+-commutes.
++[patch: diagram (1) transcribed from the p.397 render]
++(1)   A[B(CD)] --a--> (AB)(CD) --a--> [(AB)C]D
++      A[B(CD)] --1a--> A[(BC)D] --a--> [A(BC)]D --a1--> [(AB)C]D
++      commutes.
++397
++
++398 KELLY
++[patch: diagrams (2)-(8) transcribed from the p.398 render]
++(2)   AB --c--> BA --c--> AB
++      AB --1--> AB
++      commutes.
++(3)   A(BC) --a--> (AB)C --c--> C(AB) --a--> (CA)B
++      A(BC) --1c--> A(CB) --a--> (AC)B --c1--> (CA)B
++      commutes.
++(4)   e = f : KK --> K.
++(5)   K(BC) --a--> (KB)C --e1--> BC
++      K(BC) --e--> BC
++      commutes.
++(6)   A(KC) --a--> (AK)C --f1--> AC
++      A(KC) --1e--> AC
++      commutes.
++(7)   A(BK) --a--> (AB)K --f--> AB
++      A(BK) --1f--> AB
++      commutes.
++(8)   AK --c--> KA --e--> A
++      AK --f--> A
++      commutes.
++      (edge labels faint in the scan; the remark after (10) on
++      p.399 pins the reading: f is defined in terms of e and c
++      by (8))
+@@ -112,12 +87,7 @@
+-(9)
+-
+-(10)
+-
+-A(KC)
+-a
+-1
+-(AK)C
+-
+-L--+
+-
+-399
++[patch: diagrams (9) and (10) transcribed from the p.399 render]
++(9)   A(KC) --a--> (AK)C --c1--> (KA)C --e1--> AC
++      A(KC) --1e--> AC
++      commutes.
++(10)  KK --c--> KK --e--> K
++      KK --e--> K
++      commutes.
+@@ -125,17 +95 @@
+-AC
+-81
+-
+-cl
+-
+-7‘
+-r (KA)C
+-
+-commutes.
+-
+-K-K
+-
+-KK
+-
+-commutes.
+-
+-Kate that (9) and (10) are what (6) and (4), respectively, become iff is not
++Note that (9) and (10) are what (6) and (4), respectively, become if f is not
+@@ -144,52 +98,12 @@
+-(3’)
+-
+-A(X)
+-lc
+-1
+-A(CB)
+-
+-0,
+-
+-(AB)C
+-
+---S
+-
+-7
+-
+-WV
+-
+-‘cl
+-
+-C(AB)
+-a
+-1
+-(CAP
+-
+-commutes,
+-
+-bIacLane’s
+-
+-results in [2] can now be stated as:
+-
+-THEOREM
+-
+-I.
+-
+-a is coherent e ( 1) .
+-
+-THEOREM 2.
+-
+-a and c are coheretzt -
+-
+-THEOREM
+-
+-u, e, andfare
+-
+-3.
+-
+-(I), (2), and (3).
+-
+-coherent u (l), (4), (5), (6), rind (7).
+-
+-THEOREM 4. a, c, and e are coherent o (l), (2), (3) (5) (9) and (10).
+-The case where a, c, e andfare all given is not considered in [2], but clearly
++[patch: diagram (3′) transcribed from the p.399 render]
++(3′)  A(CB) --a--> (AC)B
++      A(CB) --1c--> A(BC) --a--> (AB)C --c--> C(AB) --a--> (CA)B --c1--> (AC)B
++      commutes.
++
++[patch: Theorems 1-5 statements corrected against the p.399 render]
++MacLane’s results in [2] can now be stated as:
++THEOREM 1. a is coherent ⇔ (1).
++THEOREM 2. a and c are coherent ⇔ (1), (2), and (3).
++THEOREM 3. a, e, and f are coherent ⇔ (1), (4), (5), (6), and (7).
++THEOREM 4. a, c, and e are coherent ⇔ (1), (2), (3), (5), (9), and (10).
++The case where a, c, e and f are all given is not considered in [2], but clearly
+@@ -197,3 +111,3 @@
+-THEOREM 5. a, c, e, andf are coherent G (I), (2), (3), (4), (5), (6), and (8).
+-Kow Theorems
+-1 and 2 are best possible, as we shall see below. But
++THEOREM 5. a, c, e, and f are coherent ⇔ (1), (2), (3), (4), (5), (6), and (8).
++[patch: Theorems 3′, 6, 7 statements corrected against the p.399 render]
++Now Theorems 1 and 2 are best possible, as we shall see below. But
+@@ -201,18 +115,5 @@
+-THEOREM
+-
+-3’.
+-
+-a, e, and f are coherent e (1) and (6); because
+-
+-THEOREM
+-
+-6.
+-
+-(5) and (6) -
+-
+-(4); whence by symmetry (6) and (7) a (4); and
+-
+-THEOREM 7. (1) and (6) S- (5); w Ilence by symmetry (I) arzd (6) => (7).
+-(Note that (1) is symmetric in the sense that it remains unchanged
+-if a is
+-replaced by u-l and AB by BA).
++THEOREM 3′. a, e, and f are coherent ⇔ (1) and (6); because
++THEOREM 6. (5) and (6) ⇒ (4); whence by symmetry (6) and (7) ⇒ (4); and
++THEOREM 7. (1) and (6) ⇒ (5); whence by symmetry (1) and (6) ⇒ (7).
++(Note that (1) is symmetric in the sense that it remains unchanged if a is
++replaced by a⁻¹ and AB by BA).
+@@ -224,2 +125,3 @@
+-It follows that Theorem
+-5 can also be improved
++[patch: Theorems 5′, 8, 4′, 4″, 9, 4‴, 10 statements and the
++Theorem 6 naturality square corrected/transcribed against the p.400 render]
++It follows that Theorem 5 can also be improved by dropping (4) and (5)
+@@ -227,25 +129,4 @@
+-THEOREM
+-THEOREM
+-
+-Theorem
+-THEOREM
+-
+-5’. u, c, e, arid .f UYB colzererrt -zf- (I),
+-
+-by dropping
+-
+-(2), (3)
+-
+-(4) and (5)
+-
+-and (6), because
+-
+-8.
+-(2) (3), (6), ad (7) * (8)
+-5’ now gives, a fortiori,
+-4'.
+-
+-a, c, and e aye coherent
+-
+-c3- (l), (2), (3), and (9)
+-
++THEOREM 5′. a, c, e, and f are coherent ⇔ (1), (2), (3), and (6), because
++THEOREM 8. (2), (3), (6), and (7) ⇒ (8).
++Theorem 5′ now gives, a fortiori,
++THEOREM 4′. a, c, and e are coherent ⇔ (1), (2), (3), and (9).
+@@ -253,31 +134,5 @@
+-THEOREM
+-
+-4”.
+-
+-a, c, and e arc coherent 0
+-
+-(I),
+-
+-9. (2), (3), (5) and (8) :a (6).
+-if we replace (3) by (3’), we can do a little
+-
+-(2)
+-
+-(3), and (5), because
+-
+-THEOREM
+-
+-Finally,
+-
+-THEOREM
+-
+-4”‘.
+-
+-6.
+-
+-4’:
+-
+-a, c, and e are coherent o (1), (3’), and (9), because
+-
+-THEOREM
+-10. (3’), (6), (7), and (8) *
++THEOREM 4″. a, c, and e are coherent ⇔ (1), (2), (3), and (5), because
++THEOREM 9. (2), (3), (5) and (8) ⇒ (6).
++Finally, if we replace (3) by (3′), we can do a little better than Theorem 4′:
++THEOREM 4‴. a, c, and e are coherent ⇔ (1), (3′), and (9), because
++THEOREM 10. (3′), (6), (7), and (8) ⇒ (2).
+@@ -285,5 +140,3 @@
+-THEOREM
+-
+-better than Theorem
+-
+-The naturality
++THEOREM 6. The naturality of e gives the commutativity of
++      K(KK) --e--> KK --e--> K
++      K(KK) --1e--> KK --e--> K ,
+@@ -291,21 +144 @@
+-(2).
+-
+-of e gives the commutativity
+-K(KK)
+-le
+-i
+-KK
+-
+-of
+-
+-“-KK
+-e
+--p
+-
+-1
+-K,
+-
+-whence
+-le = e : K(KK)
+-+ KK, since e is an isomorphism.
+-If we put
++whence 1e = e : K(KK) → KK, since e is an isomorphism. If we put
+@@ -313,14 +146,13 @@
+-el =fl
+-: (KK)K
+-+ KK. The naturality
+-of f now allows us to conclude
+-e =f:
+-KK+
+-K.
+-THEOREM
+-
+-7.
+-
+-Consider
+-
+-the diagram
++e1 = f1 : (KK)K → KK. The naturality of f now allows us to conclude
++e = f : KK → K.
++THEOREM 7. Consider the diagram
++[patch: Theorem 7 five-region diagram transcribed from the p.400 render]
++      outer:  A[K(CD)] --a--> (AK)(CD) --a--> [(AK)C]D
++              A[K(CD)] --1a--> A[(KC)D] --a--> [A(KC)]D --a1--> [(AK)C]D
++      inner:  A(CD) --a--> (AC)D
++      spokes: A[K(CD)] --1e--> A(CD) ; (AK)(CD) --f1--> A(CD)
++              [(AK)C]D --(f1)1--> (AC)D
++              A[(KC)D] --1(e1)--> A(CD) ; [A(KC)]D --(1e)1--> (AC)D
++      regions: I (1a, 1e, 1(e1)) ; II (top-left a, 1e, f1)
++               III (top-right a, f1, (f1)1) ; IV (a1, (f1)1, (1e)1)
++               V (bottom a, 1(e1), inner a, (1e)1)
+@@ -340,7 +172,4 @@
+-The outside commutes by (I), regions II and IL’ by (6), and regions III and 1
+-by the naturality of a. It follows that region I commutes. Putting A = Kwe
+-get (5), because, e being both natural and an isomorphism,
+-we can conclude
+-h : k : P+Q
+-from lh = Ik : KP+
+-h-0.
++The outside commutes by (1), regions II and IV by (6), and regions III and V
++by the naturality of a. It follows that region I commutes. Putting A = K we
++get (5), because, e being both natural and an isomorphism, we can conclude
++h = k : P → Q from 1h = 1k : KP → KQ.
+@@ -348,4 +177,2 @@
+-we put B = K in (3), use (6) (7) and the naturality
+-of c, and infer the
+-commutativity
+-of a diagram differing from (8) in that the sense oft is reversed;
++we put B = K in (3), use (6), (7), and the naturality of c, and infer the
++commutativity of a diagram differing from (8) in that the sense of c is reversed;
+@@ -353,3 +180,2 @@
+-THEOREM
+-
+--which
++THEOREM 9. Put A = K in (3); using (5), (8) with the sense of c reversed
++—which is a consequence of (8) and (2)—and the naturality of c, we get (6).
+@@ -357,6 +183 @@
+-9. Put A = Kin (3); using (5), (8) with the sense of c reversed
+-is a consequence of (8) and (2)-and
+-tl le naturality of c, we get (6).
+-
+-TmoREnl
+-10. Put B = Kin (3’); using (6), (7) (8) and the naturality of
++THEOREM 10. Put B = K in (3′); using (6), (7), (8), and the naturality of
+@@ -374,17 +195,6 @@
+-n(.x @(y
+-
+-@ 2)) = (-l)or(~~q”Y
+-
+-c(x 6 y) = (- ])-I)y
+-e(1 @x)
+-
+-@y)
+-
+-@ 2,
+-
+-@ s,
+-
+-= (-l)f(fJx,
+-
+-f(x @ 1) = (-l)m%;
+-where t, 7, c are the degrees of X, y, z respectively, and 01,y, E, 4 are functions
++[patch: sign-function definitions transcribed from the p.401 render]
++      a(x ⊗ (y ⊗ z)) = (−1)^α(ξ,η,ζ) (x ⊗ y) ⊗ z,
++      c(x ⊗ y) = (−1)^γ(ξ,η) y ⊗ x,
++      e(1 ⊗ x) = (−1)^ε(ξ) x,
++      f(x ⊗ 1) = (−1)^φ(ξ) x;
++where ξ, η, ζ are the degrees of x, y, z respectively, and α, γ, ε, φ are functions
+@@ -392,2 +202,2 @@
+-OL= 1, y = t, etc., to mean a([, 7, 5) = I for all E, 77, i, y(t, 7) = E
+-for all .$, 3, etc. We shall also write (1) T, (2) F, to denote respectively the truth
++α = 1, γ = ξ, etc., to mean α(ξ, η, ζ) = 1 for all ξ, η, ζ, γ(ξ, η) = ξ
++for all ξ, η, etc. We shall also write (1) T, (2) F, to denote respectively the truth
+@@ -395,4 +205,2 @@
+-Theorem
+-
+-I is best possible. Take 01 = 1; then (1)F.
+-
++[patch: best-possible tables for Theorems 1, 2, 3′ transcribed from the p.401 render]
++Theorem 1 is best possible. Take α = 1; then (1)F.
+@@ -400,98 +208,35 @@
+-(i) N = 1, y = 1; (l)F,
+-(ii) iy = 0, y = 5; (l)T,
+-(iii) ti = 0, y = 1; (l)T,
+-
+-(2)T, (3)T.
+-(2)F, (3)T.
+-(2)T, (3)F.
+-
+-Theorem 3’ is best possible.
+-(i) 01 = 1, E = 1, + = 0; (l)F,
+-(ii) OL= 0, E = 0, 4 = I; (l)T,
+-
+-(6)T.
+-(6)F.
+-
+-402
+-
+-RELLI
+-
+-Theorem
+-(9
+-(ii)
+-(iii)
+-(iv)
+-
+-4’ is best possible.
+-a
+-a =
+-a =
+-a: =
+-
+-1, E == 0; (f)F, (2)7’, (3)T, (9)T.
+-1, Y
+-0, y = @(+ -- q), E 7= 0; (l)l’, (2)F, (3)1’, (9)1’.
+-0, y := $&j([
+-: q), E = 0; (l)T, (2)7’, (3)F, (9)7’
+-0, y = 0, E == [; (f)?‘, (2)7’, (3)T, (9)F.
+-
+-Theorem 4” is best possible.
+-(i) a(l, 2,7) = a(2,7, 1) = a(7,2, 1) =- a(l, 7,2) = 1, a([, 7, [) = 0 for
+-all other triples (t, 7, <); y
+-0, C = 0; (f)F (apply to x @I [y @ (z @ t)]
+-where .\I,y, z, t have degrees I, 2, 3, 4 respectively), (2)T, (3)T, (5)T.
+-(ii) 01 == 0, y = t, E = 0; (l)T, (2)F, (3)T, (5)T.
+-(iii) N = [, y = 0, E = 0; (I)T, (2)1’, (3)F, (5)T.
+-(iv) pi --: 0, y = 0, E = [; (l)T, (2)7’, (3)T, (5)F.
+-Theorem 4”’ is best possible.
+-(i) m = 1, y = 1, c == 0; (I)F, (3’)7’, (9)T.
+-(ii) o( = 0, y -= 7, E = 0; (l)Z’, (3’)F, (9)T.
+-(iii) CY= 0, y --= 0, E = 4; (l)T, (3’)T, (9)F.
+-Theorem
+-(if
+-(ii)
+-(iii)
+-(iv)
+-
+-I.
+-
+-5’ is best possible.
+-01 = 1, y = 1, E = O,+ = 1; (l)F,
+-01 = 0, y = [, E = 0, 4 = 0; (l)T,
+-c1 = 0, y y 1, E == 0, 4 = 0; (l)T,
+-N == 0, y = 0, E = 0, 4 = 1; (l)T,
+-
+-M.K!l..~~e,
+-
+-2. ZIACI,QTE,
+-28-46.
+-
+-(2)1’,
+-(2)F,
+-(2)1’,
+-(2)T,
+-
+-(3)7’,
+-(3)T,
+-(3)F,
+-(3)T,
+-
+-(6)T.
+-(6)T.
+-(6)T.
+-(6)F.
+-
+-“Categorical
+-.Algehm.”
+-Ihuldrr
+-Colloquium
+-s.,
+-S., Natural
+-associativity
+-and commutativity.
+-Rice.
+-
+-I.ecturcs,
+-1963.
+-Uniu. S’tud. 49 (1963),
+-
++      (i) α = 1, γ = 1; (1)F, (2)T, (3)T.
++      (ii) α = 0, γ = ξ; (1)T, (2)F, (3)T.
++      (iii) α = 0, γ = 1; (1)T, (2)T, (3)F.
++Theorem 3′ is best possible.
++      (i) α = 1, ε = 1, φ = 0; (1)F, (6)T.
++      (ii) α = 0, ε = 0, φ = 1; (1)T, (6)F.
++
++402 KELLY
++[patch: best-possible tables for Theorems 4′, 4″, 4‴, 5′ transcribed from the p.402 render]
++Theorem 4′ is best possible.
++      (i) α = 1, γ = 1, ε = 0; (1)F, (2)T, (3)T, (9)T.
++      (ii) α = 0, γ = ½ξ(η² − η), ε = 0; (1)T, (2)F, (3)T, (9)T.
++      (iii) α = 0, γ = ½ξη(ξ + η), ε = 0; (1)T, (2)T, (3)F, (9)T.
++      (iv) α = 0, γ = 0, ε = ξ; (1)T, (2)T, (3)T, (9)F.
++Theorem 4″ is best possible.
++      (i) α(1, 2, 7) = α(2, 7, 1) = α(7, 2, 1) = α(1, 7, 2) = 1, α(ξ, η, ζ) = 0 for
++all other triples (ξ, η, ζ); γ = 0, ε = 0; (1)F (apply to x ⊗ [y ⊗ (z ⊗ t)]
++where x, y, z, t have degrees 1, 2, 3, 4 respectively), (2)T, (3)T, (5)T.
++      (ii) α = 0, γ = ξ, ε = 0; (1)T, (2)F, (3)T, (5)T.
++      (iii) α = ξ, γ = 0, ε = 0; (1)T, (2)T, (3)F, (5)T.
++      (iv) α = 0, γ = 0, ε = ξ; (1)T, (2)T, (3)T, (5)F.
++Theorem 4‴ is best possible.
++      (i) α = 1, γ = 1, ε = 0; (1)F, (3′)T, (9)T.
++      (ii) α = 0, γ = η, ε = 0; (1)T, (3′)F, (9)T.
++      (iii) α = 0, γ = 0, ε = ξ; (1)T, (3′)T, (9)F.
++Theorem 5′ is best possible.
++      (i) α = 1, γ = 1, ε = 0, φ = 1; (1)F, (2)T, (3)T, (6)T.
++      (ii) α = 0, γ = ξ, ε = 0, φ = 0; (1)T, (2)F, (3)T, (6)T.
++      (iii) α = 0, γ = 1, ε = 0, φ = 0; (1)T, (2)T, (3)F, (6)T.
++      (iv) α = 0, γ = 0, ε = 0, φ = 1; (1)T, (2)T, (3)T, (6)F.
++[patch: references transcribed from the p.402 render]
++REFERENCES
++1. MacLane, S., “Categorical Algebra.” Boulder Colloquium Lectures, 1963.
++2. MacLane, S., Natural associativity and commutativity. Rice. Univ. Stud. 49 (1963),
++      28-46.

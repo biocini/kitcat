@@ -163,12 +163,18 @@ stratum memo).
 wild-categorical residue of Kelly's unit-coherence theorem: the
 left/right action-unit triangles and the centre `λ_I = ρ_I` cell
 of a bimodule (couple-D₀ is the op-fixed centre cell — hence
-self-dual). Kelly's derivation is a cancellation argument
-foreclosed by untruncated homs. Regularity does not pin them:
-faithfulness is a property of `emb` (twist-invariant, h-level 1);
-the cells are twist-variant (h-level 2).
-📐⚠️ (2026-07-11, bimodule memo); the Kelly source-identification is
-CONJECTURED until `resources/kelly-maclane-conditions` is vendored.
+self-dual). Kelly's derivations are naturality-plus-cancellation
+arguments — three distinct moves, per the audited source: the
+K-stripping principle (Thm 7 only), direct iso-cancellation
+(Thm 6), and the naturality of c (Thms 8–10) — foreclosed by
+untruncated homs. Regularity does not pin them: faithfulness is a
+property of `emb` (twist-invariant, h-level 1); the cells are
+twist-variant (h-level 2).
+📐 (2026-07-11, bimodule memo; ⚠️ lifted 2026-07-13 under the
+audit-keyed rule — `resources/kelly-maclane-conditions` vendored
+and statement-audited 46/46, the source-identification now
+SOURCE-CHECKED at its anchors; the wild-foreclosure claim remains
+📐, kitcat's own argument).
 
 **T16 — The Melliès convergence.** kitcat's `op`/`op-invol` is
 Melliès' `(−)op` involution in his "involutive 2-category" reading
@@ -286,6 +292,6 @@ entry's **statement audit covers the cited identification** —
 fidelity verified against the source, not merely present on disk;
 an unaudited entry lifts nothing, and a Lane veto of the entry
 re-imposes ⚠️. This is the external mirror of the 🧪↔`Gloss.*`
-bijection. (T15's Kelly identification stays ⚠️/CONJECTURED until
-a `resources/kelly-maclane-conditions` entry is vendored and
-audited.)
+bijection. (Both lifts to date ran under this rule: T16 on the
+chiralities audit, 2026-07-13 morning; T15 on the Kelly audit,
+2026-07-13 evening — no ⚠️ source-identifications remain.)

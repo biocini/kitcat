@@ -57,15 +57,6 @@ for arg in "$@"; do
     esac
 done
 
-# Transition exception (2026-07-13), named — never a blanket
-# fallback: kelly-maclane-conditions is mid re-extraction and its
-# README migrates to frontmatter after that pass lands. Until then
-# it alone is parsed by the legacy Document-hash body scan; any
-# OTHER entry without custody frontmatter is a schema violation and
-# FATAL. Remove this case (and the legacy scan) once the entry is
-# migrated.
-legacy_pending="kelly-maclane-conditions"
-
 entries=0 checked=0 missing=0 fatal=0
 
 check_hash() { # check_hash <entry> <dir> <file> <hash>
@@ -105,15 +96,6 @@ for dir in resources/*/; do
             echo "  ${entry}: FATAL secondary-artifact/secondary-sha256 must appear as a pair"
             fatal=$((fatal + 1))
         fi
-    elif [ "$entry" = "$legacy_pending" ]; then
-        # Legacy body scan: "<64-hex>  <filename>" lines. Bare-hash
-        # lines (piped-form fallbacks like the inner-tar hash) carry
-        # no on-disk target and are skipped.
-        echo "  ${entry}: pending migration — no custody frontmatter yet (README under re-extraction); legacy body-scan parse"
-        while read -r lhash lfile; do
-            [ -n "${lhash:-}" ] || continue
-            check_hash "$entry" "$dir" "$lfile" "$lhash"
-        done < <(rg_allow_empty -o -N '^([a-f0-9]{64})[[:space:]]+(\S+)[[:space:]]*$' -r '$1 $2' "$readme")
     else
         echo "  ${entry}: FATAL no custody frontmatter (artifact + sha256) — migrate per resources/README.md"
         fatal=$((fatal + 1))
