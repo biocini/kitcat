@@ -121,6 +121,38 @@ entirely) each gap surfaced as a separate correction, and the
 path-pattern canary caught the last stale site in the very
 doctrine edit that fixed the previous one.
 
+## P7 — Redundancy is a probe; the workflow layer stays content-blind
+
+The single-source-of-truth law (`.agents/CLAUDE.md`) splits the system
+in two — content-agnostic mechanics in the workflow layer, repository
+content in the knowledge base, each fact in exactly one home. The
+working discipline that law demands: an agent reads the content it
+needs live from the knowledge base and holds it as *current state*,
+never baking a copy into its charter — because a copy is read as
+settled, and a fact that is settled cannot raise the question its own
+change demands (a canon named as fixed cannot notice it is being
+retired), whereas a fact read live stays provisional, so its change is
+discovered in the course of the work. This is P6's uniformity read
+across homes rather than within a category: stated once, deferred to
+everywhere.
+
+Redundancy is therefore a defect AND a probe. A thing is stated twice
+only because the natural discovery path is missing, so every
+restatement pins a workflow gap; the fix is never to delete the copy —
+that re-opens the gap — but to build the discovery path it stood in
+for, after which the copy is genuinely unnecessary. Exemplar: THE
+REFACTOR (2026-07-14) planned to RETAIN `Cat.Codep` because the
+`analyzer` charter baked in "the `Cat.*` canon is `Cat.Codep`" —
+repository content living in the workflow layer, read as settled — so
+the first talk of replacing the `Cat.*` tree with `Cat.Codep`'s
+contents could not raise "is this a retirement?", and the analyzer,
+faithful to its charter, planned the opposite of the standing intent;
+the tell that should have fired (a consolidation refactor asserting a
+deprecated namespace is "retained") was itself an uncaught
+restatement. The resolution was not to delete the claim but to make
+the pipeline agents read the canon live from the knowledge base, so
+nothing about the repository is ever settled in a charter.
+
 ## The Agda pipeline (the symmetric bracket)
 
 The library's most-run flow: `analyzer` prepares (structural

@@ -16,6 +16,42 @@ concise, and honest about verification status (`verified` /
 
 ---
 
+## 2026-07-14 (tenth session) — THE REFACTOR downstream committed (5 stages); a context-layer process failure surfaced, hardening opened and handed to Lane
+
+**THE REFACTOR core downstream — five stages, all `verified` (each
+reviewer-PASS + analyzer-FAITHFUL, `just check-all` exit 0):**
+Stage 1 `95cc0ef` (record moved `Cat.Codep.Base`→`Cat.Type`, renamed
+`hcategory`→`category`; `Cat.Coherence` retired; Gloss excluded,
+byte-identical); Stage 2 `d1202b8` (`Cat.Base` redesigned — named
+`emb f · g` composite relation, `cast-path⁻¹`, η-idn one-liner, the old
+`emb-ext`/`emb-noy` plumbing gone); P6 `30222d6` (Iso/Covariant/Yoneda
+re-pointed); Monoidal `ff481d0` (tensor alignment — a named tensor
+`_·_`, full `noy/yon`→`pre/post` sweep; Spike 1 DERIVED); Groupoid
+`cda12a8` (`∞-groupoid` re-assembled over the structure+axioms bundle).
+
+**A context-layer process failure surfaced — the session's pivotal
+outcome.** The `Cat.Codep` NAMESPACE RETIREMENT — Lane's standing
+intention across several prior sessions — was never in the plan of
+record; the planning charter (`analyzer.md:151` "the `Cat.*` canon is
+`Cat.Codep`") drove the new tree to RETAIN and thread through
+`Cat.Codep`. Diagnosis: the Agda-pipeline agents (analyzer/coder/
+reviewer) are overfit with repo content that belongs in the knowledge
+base, read as settled so it forecloses inquiry. Drafted (uncommitted): a
+**single-source-of-truth law** (`.agents/CLAUDE.md`) + **methodology
+P7** — content-agnostic workflow layer, agents coordinate with the
+knowledge base, redundancy is a gap-probe. A methodology review found
+methodology itself violates P7. **Superseded:** the plan-of-record
+assumption that `Cat.Codep` is retained; `docs/roadmap.md` re-gated
+(uncommitted) — `Cat.Codep` retires (a core deliverable),
+Braid/Twist/Hexagon are refactor-gated not Chir.
+
+**Handed to Lane** (session closed to Lane's direction to take control):
+the methodology revision + the `.agents/` corpus audit against it.
+Uncommitted, awaiting Lane: `.agents/CLAUDE.md`, `.agents/methodology.md`,
+`docs/roadmap.md`. No commit after `cda12a8`; `master` is the clean
+fallback. Session log:
+[`notes/session-logs/2026-07-14-1729-refactor-downstream-workflow-gap.md`](notes/session-logs/2026-07-14-1729-refactor-downstream-workflow-gap.md).
+
 ## 2026-07-14 (eighth session) — process-revision backlog (F2–F5) cleared; the session-log HHMM filename convention
 
 Object: a process/context-layer session, no mathematics. Ratified and

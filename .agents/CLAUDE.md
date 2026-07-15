@@ -24,18 +24,31 @@ principles and their exemplars) in `.agents/methodology.md`; honesty
 and citation standards in `docs/provenance.md`, which is binding; the
 design decisions in the last section below.
 
-This file is the source of truth — the only place the cross-agent
-conventions (output locations, the slug rule, the epistemic lexicon,
-provenance-sidecar contents, delegation and degraded-delegation
-handling, delivery, ingestion, and the foundational-reference
-grounding) are stated with authority. Root `CLAUDE.md`
-may summarize one for the repo user, but defers here. Every prompt
-body, agent definition, and workflow NAMES a convention and defers
-here ("derive a run slug per the contract", "write the sidecar per
-the contract"), never restating its content; a slug/lexicon/sidecar
-spec appearing verbatim in a prompt body (`.agents/prompts/`) or an
-agent definition is an authoring defect a human confirms — exactly
-as `HARNESS.md` is the sole home of tool names.
+**The single-source-of-truth law — operational instruction is
+stated once.** The two-audiences division above is, operationally, a
+law: the **workflow layer** (`.agents/` — this file, `methodology.md`,
+the agent definitions, the prompts and shims) carries content-agnostic
+operational *mechanics*, HOW work is done and how agents coordinate,
+and says nothing about WHAT this repository contains; the **knowledge
+base** carries the *content* — root `CLAUDE.md` (build, style,
+namespaces, hard rules, the flag regime, the mathematics),
+`docs/roadmap.md` (targets and gates), `docs/gloss.md` (what is
+proven), the modules' own prose (local idiom), `notes/` (run state).
+An agent definition or workflow that could not be dropped into another
+univalent-mathematics Agda library and stay correct has repo content
+baked in — a defect.
+
+Every operational instruction and every fact has exactly ONE canonical
+home and is NAMED-and-DEFERRED-to everywhere else, never restated:
+cross-agent conventions (output locations, the slug rule, the epistemic
+lexicon, the provenance sidecar, delegation and degraded-delegation
+handling, delivery, ingestion, foundational grounding) live here; tool
+names in `HARNESS.md`; repo content in its knowledge-base home. A
+restatement — a spec, rule, or fact appearing verbatim in a prompt body
+or agent definition, or copied from the knowledge base — is an
+authoring defect a human confirms. Why that redundancy is
+load-bearing, and how it is resolved, is methodology P7, which this
+rule enforces.
 
 ## Workflow surface topology
 

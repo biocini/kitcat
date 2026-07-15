@@ -39,6 +39,18 @@ checks these triggers each session and edits only when one fires.
    `refactor-cat-core`. Plan (phases P0–P8) across three analyzer
    memos: `notes/research/2026-07-14-refactor-required-items.md`,
    `…-refactor-stage1-2-plan.md`, `…-cat-tree-triage.md`.
+   - **THE `Cat.Codep` NAMESPACE RETIRES — a core deliverable, not
+     optional** (Lane, standing intention across multiple sessions;
+     encoded here 2026-07-14 after a process failure that had the plan
+     RETAIN it). The whole namespace is deprecated and pruned out:
+     every member relocates to `Cat.*` proper — `Cat.Codep.Coherence`,
+     `.Coherent`, `.Op`, `.Triangle`, `.Instances` move up, the
+     `Cat.Codep` aggregator is deleted — and NOTHING in the new tree
+     threads through `Cat.Codep` (the one current offender is
+     `Cat.Base`'s `import Cat.Codep.Coherence` for `assoc-tower`). This
+     gates the rest of the downstream: do not re-found or thread new
+     work through `Cat.Codep`. `Cat.Codep.Base → Cat.Type` (Stage 1)
+     was the first step; the remaining relocations complete it.
    - **Core phase (Chir-independent, in progress).** The
      pre-refactor records rebase onto `hcategory` or retire:
      `Cat.Type`/`Cat.Base` TRANSPLANT (their 1-categorical API —
@@ -63,11 +75,15 @@ checks these triggers each session and edits only when one fires.
      regular-representation bimodule hom (spiked green 2026-07-13 as
      `Test.CodepBimodule-20260713-234309`, all DERIVED over β; Lane
      ruled 2026-07-14 it graduates to this `Cat.*` home, NOT gloss).
-   - **Chir-GATED slice (the only part still behind targets 3–4):**
-     the braid/ribbon monoidal downstream — `Cat.Monoidal.Braid`,
-     `.Hexagon`, `.Twist` — plus the T16 monoidal-side mechanization
-     if ruled a deliverable. This is what the earlier "opened only on
-     Lane's word" gate actually governs; the core does not wait on it.
+   - **Braid/ribbon monoidal subtree — REFACTOR-gated, not Chir**
+     (Lane, 2026-07-14, corrects the earlier attribution):
+     `Cat.Monoidal.Braid`, `.Hexagon`, `.Twist` are gated on THIS
+     `Cat.*` replacement, not on Chir — they receive the same
+     tensor-level alignment as the rest of the Monoidal subtree
+     (pre/post, tensor-`·`, `Virtual`→`category`) as part of finishing
+     the refactor, and do NOT wait for targets 3–4.
+   - **Chir-GATED remainder (still behind targets 3–4):** the T16
+     monoidal-side mechanization, if ruled a deliverable.
 3. **Chir.*** — single-carrier polarity-as-representability;
    parked pending Lane's five rulings; Spikes A/B/C specced with
    kill criteria (memory: chirality record).
