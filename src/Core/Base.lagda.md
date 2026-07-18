@@ -180,7 +180,6 @@ fiber : {A : Type u} {B : Type v} → (A → B) → B → Type (u ⊔ v)
 fiber f y = Σ (λ x → f x ≡ y)
 
 record is-contr (A : Type u) : Type u where
-  no-eta-equality
   constructor Contr
   field
     center : A

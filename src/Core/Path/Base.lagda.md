@@ -37,6 +37,13 @@ ap-∘ : ∀ {u v w} {A : Type u} {B : Type v} {C : Type w}
      → ap (λ a → g (f a)) p ≡ ap g (ap f p)
 ap-∘ g f p = refl
 
+ap-merge
+  : ∀ {u v} {A : Type u} {B : Type v} (G : A → B) {a a' a'' : A} {w : B}
+    (X : w ≡ G a) (p : a ≡ a') (e : a' ≡ a'')
+  → (X ∙ ap G p) ∙ ap G e ≡ X ∙ ap G (p ∙ e)
+ap-merge G X p e =
+  sym (Path.assoc X (ap G p) (ap G e)) ∙ ap (X ∙_) (sym (ap-comp G p e))
+
 Ω : ∀ {u} → Type* u → Type u
 Ω (_ , a) = a ≡ a
 {-# INLINE Ω #-}

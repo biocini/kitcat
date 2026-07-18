@@ -727,6 +727,10 @@ module Path {A : Type u} where
           (unitr (sym p))))
       (invl p)
 
+slide : {a b c : A} (p : a ≡ b) (q : b ≡ c)
+      → PathP (λ i → a ≡ q i) p (p ∙ q)
+slide p q = transpose (cat.fill p q)
+
 cone : {x y z : A} (q : y ≡ z) (r : x ≡ z)
      → Square q (q ∙ sym r) r (λ _ → z)
 cone q r i j = hcom (∂ i ∨ j) λ where

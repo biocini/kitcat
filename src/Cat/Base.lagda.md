@@ -35,6 +35,7 @@ contractible composition fiber `compose-contr`.
 ```agda
 module Cat {o h} (C : category o h) where
   open category C
+  open representable C
   open assoc-tower C
 
   _⨾_=>_ : ∀ {x y z} → hom x y → hom y z → hom x z → Type (o ⊔ h)

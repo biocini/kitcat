@@ -1,1 +1,0 @@
-../../.agents/writer.md

@@ -15,6 +15,8 @@ and its equivalence are from `Core.Groupoid.Virtual`. The
 instance bridges the two, so it lives in its own module and keeps
 `Cat.Type` free of the groupoid dependency.
 
+kept at the top of this file to stay self-contained.
+
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
 
@@ -23,18 +25,46 @@ module Cat.Groupoid where
 open import Core.Type
 open import Core.Base
 open import Core.Data.Sigma
+open import Core.Sub
 open import Core.Kan
+open import Core.Path.Base
+open import Core.Transport.J using (J)
 open import Core.Equiv.Base using (is-equiv; eqv-fibers; iso→equiv)
 open import Core.Equiv.Properties using (comp-equiv)
+open import Core.Function.Embedding
 open import Core.Groupoid.Virtual
 open import Cat.Type
 ```
 
+## The contractible spine tail
+
+Fixing `p : x ≡ y` and `ι : y ≡ z`, a path `q : x ≡ z` together with a
+square `PathP (λ i → x ≡ ι i) p q` is contractible data: the center is
+`(p ∙ ι , slide p ι)`, and the contraction is one cube whose faces are
+`slide p ι` (`k = i0`), `θ` (`k = i1`), the constant `x` (`j = i0`),
+and `ι` itself (`j = i1`), over the base `p`. All edge overlaps agree
+definitionally.
+
+```agda
+spine-tail : ∀ {u} {H : Type u} {x y z : H}
+             (p : x ≡ y) (ι : y ≡ z)
+           → is-contr (Σ q ∶ (x ≡ z) , PathP (λ i → x ≡ ι i) p q)
+spine-tail {x = x} p ι .center = (p ∙ ι) , slide p ι
+spine-tail {x = x} p ι .paths (q , θ) k =
+  (λ j → κ k i1 j) , λ i j → κ k i j
+  where
+    κ : I → I → I → _
+    κ k i j = hfil (∂ k ∨ ∂ j) i λ where
+      l (l = i0) → p j
+      l (k = i0) → slide p ι l j
+      l (k = i1) → θ l j
+      l (j = i0) → x
+      l (j = i1) → ι l
+```
+
 ## The path groupoid
 
-`E` is `yon-unbiased.emb` specialized to the constant
-type family. Since `PathP (λ _ → A) x y` is
-definitionally `x ≡ y`, the types align without coercion.
+`E`, its equivalence, and the currying glue are unchanged from March.
 
 ```agda
 module _ {u} (A : Type u) where
@@ -45,18 +75,7 @@ module _ {u} (A : Type u) where
 
     E-equiv : {x y : A} → is-equiv (E {x} {y})
     E-equiv = yon-unbiased.emb-equiv {A = λ _ → A}
-```
 
-### The composite view
-
-`category-structure`'s `emb` lands in the uncurried composite
-`(γ : ctx x y) → res γ`, a Π over `ctx x y = cofam x × fam y`.
-`uncurryE` glues the curried `E` into that view and `curryE`
-inverts it; both round-trips hold definitionally (function eta one
-way, `Σ` eta the other), so `uncurryE` is an equivalence. The
-structure's `emb f = uncurryE (E f)` then inherits `E`'s.
-
-```agda
     uncurryE : {x y : A}
       → (∀ w → w ≡ x → ∀ v → y ≡ v → w ≡ v)
       → (γ : (Σ w ∶ A , w ≡ x) × (Σ v ∶ A , y ≡ v))
@@ -73,78 +92,11 @@ structure's `emb f = uncurryE (E f)` then inherits `E`'s.
     uncurryE-equiv : {x y : A} → is-equiv (uncurryE {x} {y})
     uncurryE-equiv =
       iso→equiv uncurryE curryE (λ _ → refl) (λ _ → refl) .snd
-```
 
-### Unit
-
-The identity is `refl`. The left action
-`λ h → E refl x refl z h` equals
-`λ h → pcom refl refl h`, which is `λ h → refl ∙ h`.
-This is an equivalence via `Path.unitl`. The right action
-`λ g → E refl w g x refl` equals
-`λ g → pcom (sym g) refl refl`. By `pcom.lr` this equals
-`pcom refl g refl = g ∙ refl`, so the equivalence follows
-from `Path.unitr`. As `category-structure` operations,
-`pre (idn x)` and `post (idn x)` reduce to these two actions, so
-`left-eqv` and `right-eqv` are exactly `unit-eqvl` and
-`unit-eqvr`.
-
-```agda
-    left-act : {x z : A} (h : x ≡ z)
-      → E refl x refl z h ≡ h
-    left-act = Path.unitl
-
-    right-act : {x w : A} (g : w ≡ x)
-      → E refl w g x refl ≡ g
-    right-act g =
-      sym (pcom.lr g refl) ∙ Path.unitr g
-
-    left-eqv : {x : A} {z : A}
-      → is-equiv
-          (λ (h : x ≡ z) → E refl x refl z h)
-    left-eqv = iso→equiv
-      (λ h → pcom refl refl h)
-      id left-act left-act .snd
-
-    right-eqv : {x : A} {w : A}
-      → is-equiv
-          (λ (g : w ≡ x) → E refl w g x refl)
-    right-eqv {x} {w} =
-      iso→equiv fwd id right-act right-act .snd
-      where
-        fwd : w ≡ x → w ≡ x
-        fwd g = E refl w g x refl
-```
-
-### Compose contractibility
-
-`emb f = uncurryE (E f)` is `E` followed by the currying
-equivalence, hence itself an equivalence, so every fibre
-`fiber emb T` is contractible (`eqv-fibers`). The `compose-contr`
-axiom is that at `T = emb f · g`.
-
-```agda
     emb-equiv : {x y : A}
       → is-equiv (λ (f : x ≡ y) → uncurryE (E f))
     emb-equiv = comp-equiv E-equiv uncurryE-equiv
-```
 
-### Interchange
-
-The interchange equation
-`E f w a v (E g _ refl v b)
-  ≡ E g w (E f w a _ refl) v b`
-expands to
-`pcom (sym a) f (pcom refl g b)
-  ≡ pcom (sym (pcom (sym a) f refl)) g b`.
-
-The proof chains `pcom.lsplit`, `pcom.lr`, and
-`sym pcom.rsplit`. Through the composite view,
-`emb f ((w , a) , (v , pre g b))` is the left-hand side and
-`emb g ((w , post f a) , (v , b))` the right, so this is the
-`interchange` axiom verbatim.
-
-```agda
     gpd-interchange
       : {x y z : A} (f : x ≡ y) (g : y ≡ z)
         (w : A) (a : w ≡ x) (v : A) (b : z ≡ v)
@@ -156,45 +108,104 @@ The proof chains `pcom.lsplit`, `pcom.lr`, and
           (pcom (sym a) f refl) (pcom refl g b)
       ∙ sym (pcom.rsplit
               (pcom (sym a) f refl) g b)
-```
 
-### Post-eval
-
-`post f (idn x) = E f x refl y refl
-  = pcom refl f refl ≡ f` by `pcom.unit`.
-
-```agda
     gpd-post-eval
       : {x y : A} (f : x ≡ y)
       → E f x refl y refl ≡ f
     gpd-post-eval f = pcom.unit f
-```
 
-### Assembly
+  path-Rx : Rx u u
+  path-Rx .Rx.ob = A
+  path-Rx .Rx.edge = _≡_
+  path-Rx .Rx.rx x = refl
 
-The structure fixes `hom = _≡_`, `idn = refl`, and the composite
-embedding `emb f = uncurryE (E f)`. The five axioms read off the
-pieces above: `compose-contr` from `emb-equiv`, `interchange` and
-`post-eval` from the `E`-level lemmas, and the two unit
-equivalences from `left-eqv`/`right-eqv`.
+  open virtual-structure path-Rx
 
-```agda
-    gpd-structure : category-structure u A
-    gpd-structure .category-structure.hom = _≡_
-    gpd-structure .category-structure.idn x = refl
-    gpd-structure .category-structure.emb f = uncurryE (E f)
+  private
+    gpd-emb : ∀ {x y : A} → x ≡ y → composite x y
+    gpd-emb f = uncurryE (E f)
 
-    gpd-axioms : category-axioms gpd-structure
-    gpd-axioms .category-axioms.compose-contr f g =
-      eqv-fibers emb-equiv _
-    gpd-axioms .category-axioms.interchange f g {w} a {v} b =
-      gpd-interchange f g w a v b
-    gpd-axioms .category-axioms.post-eval f = gpd-post-eval f
-    gpd-axioms .category-axioms.unit-eqvl = left-eqv
-    gpd-axioms .category-axioms.unit-eqvr = right-eqv
+    pre : ∀ {y z : A} (g : y ≡ z) {v} → z ≡ v → y ≡ v
+    pre {y} g {v} b = gpd-emb g (ov-idn y , un-ctr b)
+
+    post : ∀ {x y : A} (f : x ≡ y) {w} → w ≡ x → w ≡ y
+    post {y = y} f {w} a = gpd-emb f (ov-ctr a , un-idn y)
+
+    sub : ∀ {x y z : A} → y ≡ z → ctx x z → ctx x y
+    sub g (c , (v , b)) = c , (v , pre g b)
+
+    cosub : ∀ {x y z : A} → x ≡ y → ctx x z → ctx y z
+    cosub g ((w , b) , β) = (w , post g b) , β
+
+    _·_ : ∀ {x y z : A} → composite x y → y ≡ z → composite x z
+    (α · g) γ = α (sub g γ)
+
+    _·ᵒᵖ_ : ∀ {x y z : A} → x ≡ y → composite y z → composite x z
+    (f ·ᵒᵖ β) γ = β (cosub f γ)
+
+    _·'_ : ∀ {x y z : A} → composite x y → composite y z → composite x z
+    _·'_ {y = y} β α γ = β (γ .fst , (γ .snd .fst , α (ov-idn y , γ .snd)))
+
+    _·''_ : ∀ {x y z : A} → composite x y → composite y z → composite x z
+    _·''_ {y = y} β α γ = α ((γ .fst .fst , β (γ .fst , un-idn y)) , γ .snd)
+
+    -- interchange, packaged as a path between composites.
+    -- `gpd-emb f · g` and `f ·ᵒᵖ gpd-emb g` unfold to the two sides of
+    -- the March equation by Σ-η.
+    ι : ∀ {x y z : A} (f : x ≡ y) (g : y ≡ z)
+      → gpd-emb f · g ≡ f ·ᵒᵖ gpd-emb g
+    ι f g = funext λ γ →
+      gpd-interchange f g
+        (γ .fst .fst) (γ .fst .snd) (γ .snd .fst) (γ .snd .snd)
+
+    -- interchange♭ at arbitrary representables, by two J's over the
+    -- fibers. At `nrm` endpoints this is definitionally `ι`, since
+    -- `·'`/`·''` on representables reduce to `·`/`·ᵒᵖ`.
+    interchange♭-impl
+      : ∀ {x y z : A} {F : composite x y} {G : composite y z}
+      → fiber gpd-emb F → fiber gpd-emb G → F ·' G ≡ F ·'' G
+    interchange♭-impl {G = G} (m , p) (n , q) =
+      J (λ F' _ → F' ·' G ≡ F' ·'' G)
+        (J (λ G' _ → gpd-emb m ·' G' ≡ gpd-emb m ·'' G') (ι m n) q)
+        p
+
+    nrm : ∀ {x y : A} (f : x ≡ y) → fiber gpd-emb (gpd-emb f)
+    nrm f = f , refl
+
+    -- July's `spine`, with `interchange f g` unfolded as
+    -- `interchange♭ (nrm f) (nrm g)` — which is how the record computes
+    -- it from the fields we supply.
+    Spine : ∀ {x y z : A} (f : x ≡ y) (g : y ≡ z) → Type u
+    Spine {x} {y} {z} f g =
+      Σ k ∶ (x ≡ z) ,
+      Σ p ∶ (gpd-emb k ≡ gpd-emb f · g) ,
+      Σ q ∶ (gpd-emb k ≡ f ·ᵒᵖ gpd-emb g) ,
+        PathP (λ i → gpd-emb k ≡ interchange♭-impl (nrm f) (nrm g) i) p q
+
+    spine-contr-impl
+      : ∀ {x y z : A} (f : x ≡ y) (g : y ≡ z) → is-contr (Spine f g)
+    spine-contr-impl f g = reshape c
+      where
+        c = Σ-contr-contr (eqv-fibers emb-equiv (gpd-emb f · g))
+              λ (k , p) → spine-tail p (interchange♭-impl (nrm f) (nrm g))
+
+        reshape : is-contr (Σ λ (k , p) →
+                    Σ q ∶ (gpd-emb k ≡ f ·ᵒᵖ gpd-emb g) ,
+                      PathP (λ i → gpd-emb k ≡ interchange♭-impl (nrm f) (nrm g) i) p q)
+                → is-contr (Spine f g)
+        reshape c .center =
+          c .center .fst .fst , c .center .fst .snd ,
+          c .center .snd .fst , c .center .snd .snd
+        reshape c .paths (k , p , q , θ) i =
+          φ i .fst .fst , φ i .fst .snd , φ i .snd .fst , φ i .snd .snd
+          where φ = c .paths ((k , p) , (q , θ))
+
+  gpd-axioms : category-axioms path-Rx
+  gpd-axioms .category-axioms.emb = gpd-emb
+  gpd-axioms .category-axioms.interchange♭ = interchange♭-impl
+  gpd-axioms .category-axioms.spine-contr = spine-contr-impl
+  gpd-axioms .category-axioms.unit = gpd-post-eval
 
   ∞-groupoid : category u u
-  ∞-groupoid .category.ob = A
-  ∞-groupoid .category.structure = gpd-structure
+  ∞-groupoid .category.structure = path-Rx
   ∞-groupoid .category.axioms = gpd-axioms
-```
