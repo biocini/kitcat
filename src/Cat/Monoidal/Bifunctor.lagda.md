@@ -23,12 +23,9 @@ open import Core.Type
 open import Core.Base hiding (I)
 open import Core.Data.Sigma
 open import Core.Kan
-open import Core.Groupoid using (sym-distr; op-invol; lcancel)
 open import Core.Path.Base using (ap-comp)
-open import Core.Transport.Base
-  using (module Path-over; transport-refl; coe0i; is-prop→PathP)
 open import Core.Transport.J using (J; subst)
-open import Core.Transport.Properties using (subst-path-left)
+open import Core.Transport.Properties using (ap-fst-fiber; sq-from-∙)
 open import Core.Equiv.Base using (iso→equiv; _≃_)
 open import Core.Function.Embedding
   using (image-fibers-contr→is-embedding)
@@ -190,33 +187,9 @@ exactly as `Cat.Base`'s `cast-path` pair.
 ## The displaced unit chain
 
 Each identity of `theory₀`'s unit chain has a morphism-level
-image displaced over the same base path, glued link by link.
-The glue is `compHomP`: the two-object `comp-pathp`, a single
-`com` over the `cat.fill` fillers of the two base `∙`s.
-(`Core.Kan.comp-pathp` composes over a `∙` of *type* paths;
-here the line is `C.hom` of two *object* paths, so the filler
-must be taken pointwise. Upstream candidate.)
-
-```agda
-  private
-    compHomP
-      : {a₀ a₁ a₂ : C.ob} (pa : a₀ ≡ a₁) (qa : a₁ ≡ a₂)
-        {b₀ b₁ b₂ : C.ob} (pb : b₀ ≡ b₁) (qb : b₁ ≡ b₂)
-        {h₀ : C.hom a₀ b₀} {h₁ : C.hom a₁ b₁} {h₂ : C.hom a₂ b₂}
-      → PathP (λ i → C.hom (pa i) (pb i)) h₀ h₁
-      → PathP (λ i → C.hom (qa i) (qb i)) h₁ h₂
-      → PathP (λ i → C.hom ((pa ∙ qa) i) ((pb ∙ qb) i)) h₀ h₂
-    compHomP pa qa pb qb {h₀ = h₀} P Q i =
-      com (λ j → C.hom (fa j i) (fb j i)) (∂ i) λ where
-        j (i = i0) → h₀
-        j (i = i1) → Q j
-        j (j = i0) → P i
-      where
-        fa : (j i : _) → C.ob
-        fa j i = cat.fill pa qa i j
-        fb : (j i : _) → C.ob
-        fb j i = cat.fill pb qb i j
-```
+image displaced over the same base path, glued link by link by
+`Core.Kan`'s `comp-pathp₂` at the family `C.hom`: the line
+composes pointwise along the fillers of the two base `∙`s.
 
 `⊗₁-comp-eq-ev` mirrors `⊗₀-comp-eq-ev`: the reversed unit
 (`sym (⊗₁-unit _)`) glued to the `⊗₁-ev`-image of the spine
@@ -230,7 +203,7 @@ mirror.
     → PathP (λ i → C.hom (⊗₀-comp-eq-ev x y i) (⊗₀-comp-eq-ev x' y' i))
             (φ ⊗₁ ψ) (⊗₁-ev (⊗₁-emb φ ▾₁ ψ))
   ⊗₁-comp-eq-ev {x} {x'} φ {y} {y'} ψ =
-    compHomP
+    comp-pathp₂ C.hom
       (sym (⊗₀-unit (x ⊗₀ y))) (ap ⊗₀-ev (⊗₀-emb-comp x y))
       (sym (⊗₀-unit (x' ⊗₀ y'))) (ap ⊗₀-ev (⊗₀-emb-comp x' y'))
       (sym (⊗₁-unit (φ ⊗₁ ψ)))
@@ -241,7 +214,7 @@ mirror.
     → PathP (λ i → C.hom (⊗₀-comp-eq-pre x y i) (⊗₀-comp-eq-pre x' y' i))
             (φ ⊗₁ ψ) (⊗₁-pre φ ψ)
   ⊗₁-comp-eq-pre {x} {x'} φ {y} {y'} ψ =
-    compHomP
+    comp-pathp₂ C.hom
       (⊗₀-comp-eq-ev x y) (ap (⊗₀-pre x) (⊗₀-unit y))
       (⊗₀-comp-eq-ev x' y') (ap (⊗₀-pre x') (⊗₀-unit y'))
       (⊗₁-comp-eq-ev φ ψ)
@@ -252,13 +225,13 @@ mirror.
     → PathP (λ i → C.hom (⊗₀-comp-eq-post x y i) (⊗₀-comp-eq-post x' y' i))
             (φ ⊗₁ ψ) (⊗₁-post ψ φ)
   ⊗₁-comp-eq-post {x} {x'} φ {y} {y'} ψ =
-    compHomP
+    comp-pathp₂ C.hom
       (sym (⊗₀-unit (x ⊗₀ y)))
       (ap ⊗₀-ev (⊗₀-emb-comp-op x y) ∙ ap (⊗₀-post y) (⊗₀-unit x))
       (sym (⊗₀-unit (x' ⊗₀ y')))
       (ap ⊗₀-ev (⊗₀-emb-comp-op x' y') ∙ ap (⊗₀-post y') (⊗₀-unit x'))
       (sym (⊗₁-unit (φ ⊗₁ ψ)))
-      (compHomP
+      (comp-pathp₂ C.hom
         (ap ⊗₀-ev (⊗₀-emb-comp-op x y)) (ap (⊗₀-post y) (⊗₀-unit x))
         (ap ⊗₀-ev (⊗₀-emb-comp-op x' y')) (ap (⊗₀-post y') (⊗₀-unit x'))
         (apd (λ i → ⊗₁-ev) (⊗₁-emb-comp-op φ ψ))
@@ -269,7 +242,7 @@ mirror.
     → PathP (λ i → C.hom (⊗₀-pre-is-post x y i) (⊗₀-pre-is-post x' y' i))
             (⊗₁-pre φ ψ) (⊗₁-post ψ φ)
   ⊗₁-pre-is-post {x} {x'} φ {y} {y'} ψ =
-    compHomP
+    comp-pathp₂ C.hom
       (sym (⊗₀-comp-eq-pre x y)) (⊗₀-comp-eq-post x y)
       (sym (⊗₀-comp-eq-pre x' y')) (⊗₀-comp-eq-post x' y')
       (sym (⊗₁-comp-eq-pre φ ψ))
@@ -286,7 +259,7 @@ the corollaries (demoted, transport-straightened below).
     → PathP (λ i → C.hom (⊗₀-absorb-l r i) (⊗₀-absorb-l r' i))
             (⊗₁-pre (C.idn I) β) β
   ⊗₁-absorb-l {r} {r'} β =
-    compHomP
+    comp-pathp₂ C.hom
       (⊗₀-pre-is-post I r) (⊗₀-unit r)
       (⊗₀-pre-is-post I r') (⊗₀-unit r')
       (⊗₁-pre-is-post (C.idn I) β)
@@ -297,7 +270,7 @@ the corollaries (demoted, transport-straightened below).
     → PathP (λ i → C.hom (⊗₀-absorb-r l i) (⊗₀-absorb-r l' i))
             (⊗₁-post (C.idn I) α) α
   ⊗₁-absorb-r {l} {l'} α =
-    compHomP
+    comp-pathp₂ C.hom
       (sym (⊗₀-pre-is-post l I)) (⊗₀-unit l)
       (sym (⊗₀-pre-is-post l' I)) (⊗₀-unit l')
       (sym (⊗₁-pre-is-post α (C.idn I)))
@@ -353,51 +326,6 @@ along `⊗₁-idn-▴`, one `subst` in a line of Σ-of-PathP
 types. The straightening square is the only 2-cell; its
 content is the computation of `ap ⊗₀-emb (⊗₀-unitl x)` out
 of `theory₀`'s calculus.
-
-```agda
-  private
-    -- groupoid switch: sym X ∙ U ≡ V iff U ≡ X ∙ V
-    switch
-      : ∀ {u} {A : Type u} {a b c : A} {X : a ≡ b} {U : a ≡ c} {V : b ≡ c}
-      → sym X ∙ U ≡ V → U ≡ X ∙ V
-    switch {X = X} {U = U} h =
-      sym (Path.unitl U)
-      ∙ ap (_∙ U) (sym (Path.invr X))
-      ∙ sym (Path.assoc X (sym X) U)
-      ∙ ap (X ∙_) h
-
-    -- ap of a fiber path's fst is the snd difference
-    -- (upstream candidate, Core.Data.Sigma)
-    ap-fst-fiber
-      : ∀ {u v} {A : Type u} {B : Type v} {g : A → B} {Y : B}
-          {U V : fiber g Y}
-      → (κ : U ≡ V) → ap (g ∘ fst) κ ≡ U .snd ∙ sym (V .snd)
-    ap-fst-fiber {g} {Y} {U} {V} κ =
-      sym
-        ( ap (_∙ sym (V .snd)) (switch h₁)
-        ∙ sym (Path.assoc X (V .snd) (sym (V .snd)))
-        ∙ ap (X ∙_) (Path.invr (V .snd))
-        ∙ Path.unitr X )
-      where
-        X = ap (g ∘ fst) κ
-
-        h₁ : sym X ∙ U .snd ≡ V .snd
-        h₁ = sym (subst-path-left (ap g (ap fst κ)) (U .snd))
-           ∙ Path-over.from-pathp (ap snd κ)
-
-    -- a ∙-decomposition p ≡ q ∙ r packaged as a square (the
-    -- inverse of Path.commutes; upstream candidate)
-    sq-from-∙
-      : ∀ {u} {A : Type u} {a b y : A} {q : a ≡ b} {p : a ≡ y} {r : b ≡ y}
-      → p ≡ q ∙ r → PathP (λ i → q i ≡ y) p r
-    sq-from-∙ {q = q} {p} {r} T =
-      Path-over.to-pathp
-        ( subst-path-left q p
-        ∙ ap (sym q ∙_) T
-        ∙ Path.assoc (sym q) q r
-        ∙ ap (_∙ r) (Path.invl q)
-        ∙ Path.unitl r )
-```
 
 `ap ⊗₀-emb (⊗₀-unitl x)`: the representability computation
 (`ap-fst-fiber` at the canonical κ), the `∙ refl` redexes of
@@ -584,19 +512,13 @@ on paths, and the total-space equivalence.
 
 ## Functoriality of the derived 2-cell tensor
 
-Both sides inhabit the contractible `⊗₁-hfiber`: the left side is
-its center, and the composite side satisfies the
-characterization by gluing three links — two `⊗₁-emb-⨾` rewrites
-sandwiching the side-by-side paste of the two spine
-characterizations, with `⊗₁-pre-comp` collapsing the doubled
-pre-action.
-
-The composite side satisfies the characterization by three
-links: `⊗₁-emb-⨾` rewrites at the endpoint fibers sandwiching
-the side-by-side paste `W` of the two spine characterizations,
-with `⊗₁-pre-comp` collapsing the doubled pre-action. The glue
-is `Core.Kan`'s `pcom` — the pre/post-composition of plain
-paths onto a `PathP` — so no local combinator is needed.
+Both sides inhabit the contractible `⊗₁-hfiber`: the left side
+is its center, and the composite side satisfies the
+characterization by three links — two `⊗₁-emb-⨾` rewrites at
+the endpoint fibers sandwiching the side-by-side paste `W` of
+the two spine characterizations, with `⊗₁-pre-comp` collapsing
+the doubled pre-action. The glue is `Core.Kan`'s `pcom`, the
+pre/post-composition of plain paths onto a `PathP`.
 
 ```agda
   ⊗₁-preserves-⨾

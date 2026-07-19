@@ -70,6 +70,35 @@ transport-∙ {A = A} {C = C} p q a =
   base q' = ap (λ r → transport r a) (Path.unitl q')
           ∙ sym (ap (λ x → transport q' x) (transport-refl a))
 
+-- a ∙-decomposition p ≡ q ∙ r packaged as a square — the inverse
+-- of Path.commutes
+sq-from-∙ : ∀ {u} {A : Type u} {a b y : A} {q : a ≡ b} {p : a ≡ y} {r : b ≡ y}
+          → p ≡ q ∙ r → PathP (λ i → q i ≡ y) p r
+sq-from-∙ {q = q} {p} {r} T =
+  Path-over.to-pathp
+    ( subst-path-left q p
+    ∙ ap (sym q ∙_) T
+    ∙ Path.assoc (sym q) q r
+    ∙ ap (_∙ r) (Path.invl q)
+    ∙ Path.unitl r )
+
+-- ap of a fiber path's fst is the snd difference
+ap-fst-fiber
+  : ∀ {u v} {A : Type u} {B : Type v} {g : A → B} {Y : B} {U V : fiber g Y}
+  → (κ : U ≡ V) → ap (g ∘ fst) κ ≡ U .snd ∙ sym (V .snd)
+ap-fst-fiber {g = g} {Y} {U} {V} κ =
+  sym
+    ( ap (_∙ sym (V .snd)) (Path.switch h₁)
+    ∙ sym (Path.assoc X (V .snd) (sym (V .snd)))
+    ∙ ap (X ∙_) (Path.invr (V .snd))
+    ∙ Path.unitr X )
+  where
+    X = ap (g ∘ fst) κ
+
+    h₁ : sym X ∙ U .snd ≡ V .snd
+    h₁ = sym (subst-path-left (ap g (ap fst κ)) (U .snd))
+       ∙ Path-over.from-pathp (ap snd κ)
+
 ```
 
 ## Inverse Transport laws and equivalence

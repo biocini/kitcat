@@ -634,6 +634,23 @@ comp-pathp A B P Q i =
     j (i = i1) → Q j
     j (j = i0) → P i
 
+-- comp-pathp₂: the two-base-path version, for a binary family —
+-- the line is F of two object paths, so the filler is taken
+-- pointwise along the cat.fill fillers of the two base composites
+comp-pathp₂
+  : ∀ {u v w} {X : Type u} {Y : Type v} (F : X → Y → Type w)
+    {a₀ a₁ a₂ : X} (pa : a₀ ≡ a₁) (qa : a₁ ≡ a₂)
+    {b₀ b₁ b₂ : Y} (pb : b₀ ≡ b₁) (qb : b₁ ≡ b₂)
+    {h₀ : F a₀ b₀} {h₁ : F a₁ b₁} {h₂ : F a₂ b₂}
+  → PathP (λ i → F (pa i) (pb i)) h₀ h₁
+  → PathP (λ i → F (qa i) (qb i)) h₁ h₂
+  → PathP (λ i → F ((pa ∙ qa) i) ((pb ∙ qb) i)) h₀ h₂
+comp-pathp₂ F pa qa pb qb {h₀ = h₀} P Q i =
+  com (λ j → F (cat.fill pa qa i j) (cat.fill pb qb i j)) (∂ i) λ where
+    j (i = i0) → h₀
+    j (i = i1) → Q j
+    j (j = i0) → P i
+
 -- pcom→∙ bridges the ternary composite pcom (sym p) q r to the
 -- binary chain p ∙ q ∙ r, via pcom.unique against cat.lcoh.
 pcom→∙
@@ -743,6 +760,15 @@ module Path {A : Type u} where
     k (j = i1) → s (~ i ∨ k)
     k (i = i0) → rfill p q j k
     k (k = i0) → sq j (~ i)
+
+  -- move an inverse across the composite: sym p ∙ q ≡ r iff q ≡ p ∙ r
+  switch : {x y z : A} {p : x ≡ y} {q : x ≡ z} {r : y ≡ z}
+         → sym p ∙ q ≡ r → q ≡ p ∙ r
+  switch {p = p} {q} h =
+    sym (unitl q)
+    ∙ cong (_∙ q) (sym (invr p))
+    ∙ sym (assoc p (sym p) q)
+    ∙ cong (p ∙_) h
 
   grp-cancel
     : {a b c : A}
