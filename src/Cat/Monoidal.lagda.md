@@ -21,9 +21,8 @@ open import Core.Base hiding (I)
 open import Core.Data.Sigma
 open import Core.Kan
 open import Core.Path.Base
-open import Core.Transport.Base using (is-prop→PathP)
 open import Core.Transport.J using (J; subst)
-open import Core.Equiv.Base using (is-equiv; aut)
+open import Core.Equiv.Base using (is-equiv)
 open import Core.Function.Embedding
   using (image-fibers-contr→is-embedding; equiv→lc)
 
@@ -54,7 +53,7 @@ module tensor-virtual {o h} (C : category o h) (I : category.ob C) where
 
 `⊗₀-is-representable F` is the fiber of `⊗₀-emb` at `F`; `⊗₀-nrm` is the
 canonical representation. `⊗₀-pre` and `⊗₀-post` are the unit-slot
-actions; `⊗sub`/`⊗cosub` substitute them into context slots, giving
+actions; `⊗₀-sub`/`⊗₀-cosub` substitute them into context slots, giving
 the two one-sided composite operators `⊗₀·`/`⊗₀·ᵒᵖ` and the two
 composite-composite orders `⊗₀·'`/`⊗₀·''`. `⊗₀-interchange♭-from` closes
 the ternary interchange over the fibers of `⊗₀-emb`.
@@ -65,10 +64,10 @@ module tensor-representable {o h} (C : category o h) (I : category.ob C)
   private module C = category C
   open tensor-virtual C I
 
-  ⊗₀-is-representable : (⊗₀-composite) → Type o
+  ⊗₀-is-representable : ⊗₀-composite → Type o
   ⊗₀-is-representable = fiber ⊗₀-emb
 
-  _⊨_ : (⊗₀-composite) → C.ob → Type o
+  _⊨_ : ⊗₀-composite → C.ob → Type o
   F ⊨ s = ⊗₀-emb s ≡ F
 
   ⊗₀-nrm : (x : C.ob) → ⊗₀-is-representable (⊗₀-emb x)
@@ -80,18 +79,19 @@ module tensor-representable {o h} (C : category o h) (I : category.ob C)
   ⊗₀-post : C.ob → C.ob → C.ob
   ⊗₀-post x l = ⊗₀-emb x (l , I)
 
-  ⊗sub : C.ob → C.ob × C.ob → C.ob × C.ob
-  ⊗sub y (l , r) = l , ⊗₀-pre y r
+  ⊗₀-sub : C.ob → C.ob × C.ob → C.ob × C.ob
+  ⊗₀-sub y (l , r) = l , ⊗₀-pre y r
 
-  ⊗cosub : C.ob → C.ob × C.ob → C.ob × C.ob
-  ⊗cosub x (l , r) = ⊗₀-post x l , r
+  ⊗₀-cosub : C.ob → C.ob × C.ob → C.ob × C.ob
+  ⊗₀-cosub x (l , r) = ⊗₀-post x l , r
 
-  _⊗₀·_ : (⊗₀-composite) → C.ob → ⊗₀-composite
-  (F ⊗₀· y) γ = F (⊗sub y γ)
+  _⊗₀·_ : ⊗₀-composite → C.ob → ⊗₀-composite
+  (F ⊗₀· y) γ = F (⊗₀-sub y γ)
   infixl 30 _⊗₀·_
 
-  _⊗₀·ᵒᵖ_ : C.ob → (⊗₀-composite) → ⊗₀-composite
-  (x ⊗₀·ᵒᵖ F) γ = F (⊗cosub x γ)
+  _⊗₀·ᵒᵖ_ : C.ob → ⊗₀-composite → ⊗₀-composite
+  (x ⊗₀·ᵒᵖ F) γ = F (⊗₀-cosub x γ)
+  infixl 30 _⊗₀·ᵒᵖ_
 
   _⊗₀·'_ : (⊗₀-composite) → (⊗₀-composite) → ⊗₀-composite
   (F ⊗₀·' G) (l , r) = F (l , G (I , r))
@@ -250,6 +250,13 @@ record monoidal {o h} (C : category o h) : Type₊ (o ⊔ h) where
 
 ## Derived theory
 
+The derived tensor on morphisms `_⊗₁_` is the hom-spine's center,
+with `⊗₁-emb-comp`, `⊗₁-emb-comp-op`, and `⊗₁-emb-comp-coh` its
+characterizations. `_●_`/`_●''_` compose representations along the
+two composite orders; the pull and push fibers of `⊗₀-emb` over the
+one-sided composites are contractible by projection from the object
+spine, giving the `cast-path` pair for composite witnesses.
+
 ```agda
 module theory {o h} {C : category o h} (M : monoidal C) where
   private module C = category C
@@ -331,13 +338,26 @@ module theory {o h} {C : category o h} (M : monoidal C) where
   ⊗₀-push-contr x y .paths u i = ⊗₀-spine→push (φ i) where
     φ : ⊗₀-spine-contr x y .center ≡ bwd x y u
     φ = ⊗₀-spine-contr x y .paths (bwd x y u)
+
+  -- a composite witness: k represents the two-sided tensor of x and y
+  ⊗₀-cast-path : ∀ {x y k} → (⊗₀-emb x ⊗₀· y) ⊨ k → x ⊗ y ≡ k
+  ⊗₀-cast-path {x} {y} {k} α = ap fst (⊗₀-pull-contr x y .paths (k , α))
+
+  ⊗₀-cast-path⁻¹ : ∀ {x y k} → x ⊗ y ≡ k → (⊗₀-emb x ⊗₀· y) ⊨ k
+  ⊗₀-cast-path⁻¹ {x} {y} p = ap ⊗₀-emb (sym p) ∙ ⊗₀-emb-comp x y
+
+  ⊗₀-post-composite : ∀ x y l → ⊗₀-post (x ⊗ y) l ≡ ⊗₀-post y (⊗₀-post x l)
+  ⊗₀-post-composite x y l = happly (⊗₀-emb-comp x y ∙ ⊗₀-interchange x y) (l , I)
+
+  ⊗₀-pre-composite : ∀ y z r → ⊗₀-pre (y ⊗ z) r ≡ ⊗₀-pre y (⊗₀-pre z r)
+  ⊗₀-pre-composite y z r = happly (⊗₀-emb-comp y z) (I , r)
 ```
 
 The following lemmas depend on ⊗₀-unit
 
-```
+```agda
   ⊗₀-comp-eq-ev : ∀ x y → x ⊗ y ≡ ⊗₀-ev (⊗₀-emb x ⊗₀· y)
-  ⊗₀-comp-eq-ev x y = sym (⊗₀-unit (x ⊗ y)) ∙ ap (λ F → ⊗₀-ev F) (⊗₀-emb-comp x y)
+  ⊗₀-comp-eq-ev x y = sym (⊗₀-unit (x ⊗ y)) ∙ ap ⊗₀-ev (⊗₀-emb-comp x y)
 
   ⊗₀-comp-eq-pre : ∀ x y → x ⊗ y ≡ ⊗₀-pre x y
   ⊗₀-comp-eq-pre x y = ⊗₀-comp-eq-ev x y ∙ ap (λ t → ⊗₀-pre x t) (⊗₀-unit y)
@@ -384,12 +404,22 @@ The following lemmas depend on ⊗₀-unit
   _⊳_ : ∀ {F G : ⊗₀-composite}
       → ⊗₀-is-representable F → F ≡ G → ⊗₀-is-representable G
   (m , p) ⊳ e = m , p ∙ e
+
+  ⊗₀-emb-post : ∀ x l r → ⊗₀-emb x (l , r) ≡ ⊗₀-emb I (⊗₀-post x l , r)
+  ⊗₀-emb-post x l r =
+    ap (λ t → ⊗₀-emb x (l , t)) (sym (⊗₀-absorb-l r))
+    ∙ happly (⊗₀-interchange x I) (l , r)
+
+  ⊗₀-emb-pre : ∀ x l r → ⊗₀-emb x (l , r) ≡ ⊗₀-emb I (l , ⊗₀-pre x r)
+  ⊗₀-emb-pre x l r =
+    ap (λ t → ⊗₀-emb x (t , r)) (sym (⊗₀-absorb-r l))
+    ∙ sym (happly (⊗₀-interchange I x) (l , r))
 ```
 
 Associativity and the unit laws are projections from contractible
 fibers of representations
 
-```
+```agda
   ⊗₀-assoc-σ● : ∀ {F G H : ⊗₀-composite}
             → (U : ⊗₀-is-representable F) (V : ⊗₀-is-representable G)
               (W : ⊗₀-is-representable H)
@@ -420,14 +450,6 @@ The argument is the Kraus chain: `⊗₀-post e` squares to itself and is
 idempotent, so it absorbs, forcing `e ≡ I`.
 
 ```agda
-  ⊗₀-emb-post : ∀ x l r → ⊗₀-emb x (l , r) ≡ ⊗₀-emb I (⊗₀-post x l , r)
-  ⊗₀-emb-post x l r =
-    ap (λ t → ⊗₀-emb x (l , t)) (sym (⊗₀-absorb-l r))
-    ∙ happly (⊗₀-interchange x I) (l , r)
-
-  ⊗₀-post-composite : ∀ x y l → ⊗₀-post (x ⊗ y) l ≡ ⊗₀-post y (⊗₀-post x l)
-  ⊗₀-post-composite x y l = happly (⊗₀-emb-comp x y ∙ ⊗₀-interchange x y) (l , I)
-
   ⊗₀-unit-is-prop
     : (e : C.ob)
     → is-equiv (λ l → ⊗₀-emb e (l , e))
@@ -441,8 +463,7 @@ idempotent, so it absorbs, forcing `e ≡ I`.
 
       post-e-idpt : ∀ l → ⊗₀-post e (⊗₀-post e l) ≡ ⊗₀-post e l
       post-e-idpt l =
-        sym (sym (ap (λ t → ⊗₀-post t l) e-idem)
-          ∙ ⊗₀-post-composite e e l)
+        sym (⊗₀-post-composite e e l) ∙ ap (λ t → ⊗₀-post t l) e-idem
 
       post-e-squared : ∀ l → ⊗₀-emb e (l , e) ≡ ⊗₀-post e (⊗₀-post e l)
       post-e-squared l =

@@ -168,6 +168,7 @@ module representable {o h}
 
   _·ᵒᵖ_ : ∀ {x y z} → hom x y → composite y z → composite x z
   (f ·ᵒᵖ β) γ = β (cosub f γ)
+  infixl 30 _·ᵒᵖ_
 
   _·'_ : ∀ {x y z} → composite x y → composite y z → composite x z
   _·'_ {y = y} β α γ = β (γ .fst , (γ .snd .fst , α (ov-idn y , γ .snd)))
