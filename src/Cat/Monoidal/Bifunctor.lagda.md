@@ -24,6 +24,7 @@ open import Core.Base hiding (I)
 open import Core.Data.Sigma
 open import Core.Kan
 open import Core.Path.Base using (ap-comp)
+open import Core.Transport.Base using (is-prop→PathP)
 open import Core.Transport.J using (J; subst)
 open import Core.Transport.Properties using (ap-fst-fiber; sq-from-∙)
 open import Core.Equiv.Base using (iso→equiv; _≃_)
@@ -250,8 +251,7 @@ mirror.
 ```
 
 Absorption is read off the chain and `⊗₁-unit` — a theorem,
-not an axiom; the old module's `htensor-unit` equivalences are
-the corollaries (demoted, transport-straightened below).
+not an axiom.
 
 ```agda
   ⊗₁-absorb-l
@@ -304,8 +304,6 @@ one-liners.
             (⊗₁-pre (φ ⊗₁ ψ) β) (⊗₁-pre φ (⊗₁-pre ψ β))
   ⊗₁-pre-distr φ ψ β = λ i → ⊗₁-emb-comp φ ψ i $₁ (⊗₁-ov-idn , β)
 
-  -- a projection, where the old module glued htensor-post-composite
-  -- by hand out of comp-pt and the interchange
   ⊗₁-post-distr
     : ∀ {x x'} (φ : C.hom x x') {y y'} (ψ : C.hom y y')
         {l l'} (α : C.hom l l')
@@ -496,6 +494,178 @@ on paths, and the total-space equivalence.
       -- path- and Σ-eta
       rep-sec : ∀ s → fwd (bwd s) ≡ s
       rep-sec (_ , a , p) i = p i , a , λ j → p (i ∧ j)
+```
+
+## Naturality of the associator and unitors
+
+Each level-0 identity is `ap fst` of a witness path in a
+representability fiber, so `ap-fst-fiber` computes its
+`⊗₀-emb`-image as a `∙`-decomposition, `sq-from-∙` packages the
+decomposition as a square, and the square bounds a line of
+displaced fibers whose `i1`-end is the plain image fiber. The
+fibers are then propositional pointwise — contractibility rides
+in from `⊗₁-emb-image-contr` — and `is-prop→PathP` threads the
+canonical witnesses at the two ends into a path through the
+total space, whose `fst` is the displaced identity. `⊗₁-unitl`
+reads off the `unitl-line` already used for the image
+contraction; `⊗₁-unitr` mirrors it with the `▾₀-idn`
+straightening, one `∙ refl`-redex shorter because no
+`comp-op`-flip intervenes.
+
+```agda
+  ⊗₁-unitl
+    : ∀ {x x'} (φ : C.hom x x')
+    → PathP (λ i → C.hom (⊗₀-unitl x i) (⊗₀-unitl x' i))
+            (C.idn I ⊗₁ φ) φ
+  ⊗₁-unitl {x} {x'} φ j = θ j .fst
+    where
+      θ : PathP (λ i → unitl-line φ i)
+                (C.idn I ⊗₁ φ , ⊗₁-emb-comp-op (C.idn I) φ)
+                (φ , refl)
+      θ = is-prop→PathP
+            (λ i → is-contr→is-prop
+              (subst is-contr (λ k → unitl-line φ (i ∨ ~ k))
+                (⊗₁-emb-image-contr φ)))
+            (C.idn I ⊗₁ φ , ⊗₁-emb-comp-op (C.idn I) φ)
+            (φ , refl)
+
+  private
+    unitr-ap
+      : ∀ (x : C.ob)
+      → ap ⊗₀-emb (⊗₀-unitr x) ≡ ⊗₀-emb-comp x I ∙ ▾₀-idn (⊗₀-emb x)
+    unitr-ap x =
+        ap-fst-fiber κ₀
+      ∙ Path.unitr (U .snd)
+      ∙ ap (_∙ ▾₀-idn (⊗₀-emb x)) (Path.unitr (⊗₀-emb-comp x I))
+      where
+        U V : is-⊗₀-representable (⊗₀-emb x)
+        U = (⊗₀-nrm x ⋉₀ ⊗₀-nrm I) ↝ ▾₀-idn (⊗₀-emb x)
+        V = ⊗₀-nrm x
+
+        κ₀ : U ≡ V
+        κ₀ = is-⊗₀-representable-prop _ U V
+
+    -- the straightening square: top ap ⊗₀-emb (⊗₀-unitr x),
+    -- left ⊗₀-emb-comp x I, bottom ▾₀-idn, right constant
+    unitr-sq : ∀ (x : C.ob) → (j i : Core.Base.I) → ⊗₀-composite
+    unitr-sq x j i = sq-from-∙ (unitr-ap x) i j
+
+    -- the line of displaced fibers along ⊗₀-unitr
+    unitr-line
+      : ∀ {x x'} (φ : C.hom x x') → Core.Base.I → Type (o ⊔ h)
+    unitr-line {x} {x'} φ j =
+      Σ ω ∶ C.hom (⊗₀-unitr x j) (⊗₀-unitr x' j) ,
+      PathP (λ i → ⊗₁-composite (unitr-sq x j i) (unitr-sq x' j i))
+            (⊗₁-emb ω) (▾₁-idn (⊗₁-emb φ) j)
+
+  ⊗₁-unitr
+    : ∀ {x x'} (φ : C.hom x x')
+    → PathP (λ i → C.hom (⊗₀-unitr x i) (⊗₀-unitr x' i))
+            (φ ⊗₁ C.idn I) φ
+  ⊗₁-unitr {x} {x'} φ j = θ j .fst
+    where
+      θ : PathP (λ i → unitr-line φ i)
+                (φ ⊗₁ C.idn I , ⊗₁-emb-comp φ (C.idn I))
+                (φ , refl)
+      θ = is-prop→PathP
+            (λ i → is-contr→is-prop
+              (subst is-contr (λ k → unitr-line φ (i ∨ ~ k))
+                (⊗₁-emb-image-contr φ)))
+            (φ ⊗₁ C.idn I , ⊗₁-emb-comp φ (C.idn I))
+            (φ , refl)
+```
+
+For the associator, both `▿₀` and `▿₁` are strictly associative,
+so the fully nested composite needs no bracketing and the two
+`⊗₀-emb-comp`-chains `nestL`/`nestR` land in the same operator.
+`⊗₀-assoc` is `ap fst` of `assoc-σ⋉₀` between plain `⋉₀`-pairs,
+so `ap-fst-fiber` gives its decomposition through the nest paths
+directly, with only the `∙ refl`-redexes of `⊗₀-nrm` to
+discharge. The level-1 nest characterizations glue by
+`comp-pathp₂` at the family `⊗₁-composite`.
+
+```agda
+  private
+    nestL
+      : ∀ (x y z : C.ob)
+      → ⊗₀-emb ((x ⊗₀ y) ⊗₀ z) ≡ ⊗₀-emb x ▿₀ ⊗₀-emb y ▿₀ ⊗₀-emb z
+    nestL x y z =
+      ⊗₀-emb-comp (x ⊗₀ y) z ∙ (λ i → ⊗₀-emb-comp x y i ▿₀ ⊗₀-emb z)
+
+    nestR
+      : ∀ (x y z : C.ob)
+      → ⊗₀-emb (x ⊗₀ (y ⊗₀ z)) ≡ ⊗₀-emb x ▿₀ ⊗₀-emb y ▿₀ ⊗₀-emb z
+    nestR x y z =
+      ⊗₀-emb-comp x (y ⊗₀ z) ∙ (λ i → ⊗₀-emb x ▿₀ ⊗₀-emb-comp y z i)
+
+    nestL₁
+      : ∀ {x x'} (φ : C.hom x x') {y y'} (ψ : C.hom y y')
+          {z z'} (χ : C.hom z z')
+      → PathP (λ i → ⊗₁-composite (nestL x y z i) (nestL x' y' z' i))
+              (⊗₁-emb ((φ ⊗₁ ψ) ⊗₁ χ))
+              (⊗₁-emb φ ▿₁ ⊗₁-emb ψ ▿₁ ⊗₁-emb χ)
+    nestL₁ {x} {x'} φ {y} {y'} ψ {z} {z'} χ =
+      comp-pathp₂ ⊗₁-composite
+        (⊗₀-emb-comp (x ⊗₀ y) z) (λ i → ⊗₀-emb-comp x y i ▿₀ ⊗₀-emb z)
+        (⊗₀-emb-comp (x' ⊗₀ y') z') (λ i → ⊗₀-emb-comp x' y' i ▿₀ ⊗₀-emb z')
+        (⊗₁-emb-comp (φ ⊗₁ ψ) χ)
+        (λ i → ⊗₁-emb-comp φ ψ i ▿₁ ⊗₁-emb χ)
+
+    nestR₁
+      : ∀ {x x'} (φ : C.hom x x') {y y'} (ψ : C.hom y y')
+          {z z'} (χ : C.hom z z')
+      → PathP (λ i → ⊗₁-composite (nestR x y z i) (nestR x' y' z' i))
+              (⊗₁-emb (φ ⊗₁ (ψ ⊗₁ χ)))
+              (⊗₁-emb φ ▿₁ ⊗₁-emb ψ ▿₁ ⊗₁-emb χ)
+    nestR₁ {x} {x'} φ {y} {y'} ψ {z} {z'} χ =
+      comp-pathp₂ ⊗₁-composite
+        (⊗₀-emb-comp x (y ⊗₀ z)) (λ i → ⊗₀-emb x ▿₀ ⊗₀-emb-comp y z i)
+        (⊗₀-emb-comp x' (y' ⊗₀ z')) (λ i → ⊗₀-emb x' ▿₀ ⊗₀-emb-comp y' z' i)
+        (⊗₁-emb-comp φ (ψ ⊗₁ χ))
+        (λ i → ⊗₁-emb φ ▿₁ ⊗₁-emb-comp ψ χ i)
+
+    assoc-ap
+      : ∀ (x y z : C.ob)
+      → ap ⊗₀-emb (⊗₀-assoc x y z) ≡ nestR x y z ∙ sym (nestL x y z)
+    assoc-ap x y z =
+        ap-fst-fiber
+          (assoc-σ⋉₀ (⊗₀-nrm x) (⊗₀-nrm y) (⊗₀-nrm z))
+      ∙ λ k → (⊗₀-emb-comp x (y ⊗₀ z)
+                ∙ λ i → ⊗₀-emb x ▿₀ Path.unitr (⊗₀-emb-comp y z) k i)
+            ∙ sym (⊗₀-emb-comp (x ⊗₀ y) z
+                ∙ λ i → Path.unitr (⊗₀-emb-comp x y) k i ▿₀ ⊗₀-emb z)
+
+    -- the straightening square: top ap ⊗₀-emb (⊗₀-assoc x y z),
+    -- left nestR, bottom the reversed nestL, right constant
+    assoc-sq : ∀ (x y z : C.ob) → (j i : Core.Base.I) → ⊗₀-composite
+    assoc-sq x y z j i = sq-from-∙ (assoc-ap x y z) i j
+
+    -- the line of displaced fibers along ⊗₀-assoc; the
+    -- characterizing target rides the reversed left nest
+    assoc-line
+      : ∀ {x x'} (φ : C.hom x x') {y y'} (ψ : C.hom y y')
+          {z z'} (χ : C.hom z z') → Core.Base.I → Type (o ⊔ h)
+    assoc-line {x} {x'} φ {y} {y'} ψ {z} {z'} χ j =
+      Σ ω ∶ C.hom (⊗₀-assoc x y z j) (⊗₀-assoc x' y' z' j) ,
+      PathP (λ i → ⊗₁-composite (assoc-sq x y z j i) (assoc-sq x' y' z' j i))
+            (⊗₁-emb ω) (nestL₁ φ ψ χ (~ j))
+
+  ⊗₁-assoc
+    : ∀ {x x'} (φ : C.hom x x') {y y'} (ψ : C.hom y y')
+        {z z'} (χ : C.hom z z')
+    → PathP (λ i → C.hom (⊗₀-assoc x y z i) (⊗₀-assoc x' y' z' i))
+            (φ ⊗₁ (ψ ⊗₁ χ)) ((φ ⊗₁ ψ) ⊗₁ χ)
+  ⊗₁-assoc {x} {x'} φ {y} {y'} ψ {z} {z'} χ j = θ j .fst
+    where
+      θ : PathP (λ i → assoc-line φ ψ χ i)
+                (φ ⊗₁ (ψ ⊗₁ χ) , nestR₁ φ ψ χ)
+                ((φ ⊗₁ ψ) ⊗₁ χ , refl)
+      θ = is-prop→PathP
+            (λ i → is-contr→is-prop
+              (subst is-contr (λ k → assoc-line φ ψ χ (i ∨ ~ k))
+                (⊗₁-emb-image-contr ((φ ⊗₁ ψ) ⊗₁ χ))))
+            (φ ⊗₁ (ψ ⊗₁ χ) , nestR₁ φ ψ χ)
+            ((φ ⊗₁ ψ) ⊗₁ χ , refl)
 ```
 
 ## Collapsing a vertical composite of pre-actions

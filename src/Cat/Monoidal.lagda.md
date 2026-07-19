@@ -43,8 +43,8 @@ open import Cat.Base
 ## Level 0: the tensor context calculus
 
 `virtual`, transcribed: the over-slot is a left tensorand, the
-under-slot a right tensorand; `I`/`I` are both
-the unit. `⊗₀-res` is constant because the anonymous endpoints
+under-slot a right tensorand; `ov-idn` and `un-idn` both
+collapse to the unit `I`. `⊗₀-res` is constant because the anonymous endpoints
 of the arc have been erased.
 
 ```agda
