@@ -516,6 +516,14 @@ boundary `(x , x')` fills the middle slots of the two frame
 images inside the result type — the flanks themselves carry no
 boundary. Frame-maps compose slotwise: the context category.
 
+The frames are quantified *visibly*, as `Cat.Type` keeps the
+anonymous endpoints inside the context: a hidden-Π-headed
+composite type would have its inhabitants eta-expanded with
+frame metas wherever they meet an inference-mode position (bare
+`_≡_`, `fiber`, a Σ-bound operator variable), while a visible Π
+is never expanded. `_$₁_` recovers application with the frames
+read off the context argument's type.
+
 ```agda
 module tensor-virtual₁ {o h} (C : category o h) (I : category.ob C) where
   private module C = category C
@@ -532,11 +540,17 @@ module tensor-virtual₁ {o h} (C : category o h) (I : category.ob C) where
   ⊗₁-un-idn = C.idn I
 
   ⊗₁-composite : ⊗₀-composite → ⊗₀-composite → Type (o ⊔ h)
-  ⊗₁-composite F F' = ∀ {γ γ'} → ⊗₁-ctx γ γ' → C.hom (F γ) (F' γ')
+  ⊗₁-composite F F' = ∀ γ γ' → ⊗₁-ctx γ γ' → C.hom (F γ) (F' γ')
+
+  -- application, with the frames read off the context's type
+  _$₁_ : ∀ {F F'} → ⊗₁-composite F F'
+       → ∀ {γ γ'} → ⊗₁-ctx γ γ' → C.hom (F γ) (F' γ')
+  _$₁_ η {γ} {γ'} δ = η γ γ' δ
+  infixl 90 _$₁_
 
   -- evaluation at the identity context
   ⊗₁-ev : ∀ {F F'} → ⊗₁-composite F F' → C.hom (⊗₀-ev F) (⊗₀-ev F')
-  ⊗₁-ev η = η (⊗₁-ov-idn , ⊗₁-un-idn)
+  ⊗₁-ev η = η $₁ (⊗₁-ov-idn , ⊗₁-un-idn)
 
   _⊗₁-ctx-⨾_ : ∀ {γ γ' γ''}
              → ⊗₁-ctx γ γ' → ⊗₁-ctx γ' γ'' → ⊗₁-ctx γ γ''
@@ -550,10 +564,11 @@ module tensor-virtual₁ {o h} (C : category o h) (I : category.ob C) where
 
 ## The displayed representable layer
 
-The unit-slot actions `⊗₁-pre`/`⊗₁-post` and the context
-substitutions `⊗₁-sub`/`⊗₁-cosub`, mirroring the object layer;
-the two one-sided composite operators `·₁`/`·₁ᵒᵖ` and the two
-ternary orders `·₁'`/`·₁''`.
+The representability predicate with its satisfaction relation
+and normal form, the unit-slot actions `⊗₁-pre`/`⊗₁-post` and
+the context substitutions `⊗₁-sub`/`⊗₁-cosub`, mirroring the
+object layer; the two one-sided composite operators `·₁`/`·₁ᵒᵖ`
+and the two ternary orders `·₁'`/`·₁''`.
 
 ```agda
 module tensor-representable₁ {o h} (C : category o h) (I : category.ob C)
@@ -567,13 +582,21 @@ module tensor-representable₁ {o h} (C : category o h) (I : category.ob C)
   open tensor-representable C I ⊗₀-emb
   private module C = category C
 
+  is-⊗₁-representable
+    : ∀ {x x'} → ⊗₁-composite (⊗₀-emb x) (⊗₀-emb x') → Type (o ⊔ h)
+  is-⊗₁-representable = fiber ⊗₁-emb
+
+  _⊨₁_ : ∀ {x x'} → ⊗₁-composite (⊗₀-emb x) (⊗₀-emb x')
+       → C.hom x x' → Type (o ⊔ h)
+  η ⊨₁ σ = ⊗₁-emb σ ≡ η
+
   ⊗₁-pre : ∀ {y y'} → C.hom y y' → ∀ {r r'} → C.hom r r'
         → C.hom (⊗₀-pre y r) (⊗₀-pre y' r')
-  ⊗₁-pre ψ β = ⊗₁-emb ψ (⊗₁-ov-idn , β)
+  ⊗₁-pre ψ β = ⊗₁-emb ψ $₁ (⊗₁-ov-idn , β)
 
   ⊗₁-post : ∀ {x x'} → C.hom x x' → ∀ {l l'} → C.hom l l'
         → C.hom (⊗₀-post x l) (⊗₀-post x' l')
-  ⊗₁-post φ α = ⊗₁-emb φ (α , ⊗₁-un-idn)
+  ⊗₁-post φ α = ⊗₁-emb φ $₁ (α , ⊗₁-un-idn)
 
   ⊗₁-sub : ∀ {y y'} (ψ : C.hom y y') {γ γ'}
         → ⊗₁-ctx γ γ' → ⊗₁-ctx (⊗₀-sub y γ) (⊗₀-sub y' γ')
@@ -583,28 +606,31 @@ module tensor-representable₁ {o h} (C : category o h) (I : category.ob C)
           → ⊗₁-ctx γ γ' → ⊗₁-ctx (⊗₀-cosub x γ) (⊗₀-cosub x' γ')
   ⊗₁-cosub φ (α , β) = ⊗₁-post φ α , β
 
+  ⊗₁-nrm : ∀ {x x'} (φ : C.hom x x') → is-⊗₁-representable (⊗₁-emb φ)
+  ⊗₁-nrm φ = φ , refl
+
   _·₁_ : ∀ {F F' : ⊗₀-composite} {y y'}
        → ⊗₁-composite F F' → C.hom y y'
        → ⊗₁-composite (F ·₀ y) (F' ·₀ y')
-  (η ·₁ ψ) δ = η (⊗₁-sub ψ δ)
+  (η ·₁ ψ) γ γ' δ = η $₁ ⊗₁-sub ψ δ
   infixl 30 _·₁_
 
   _·₁ᵒᵖ_ : ∀ {x x'} {G G' : ⊗₀-composite}
          → C.hom x x' → ⊗₁-composite G G'
          → ⊗₁-composite (x ·₀ᵒᵖ G) (x' ·₀ᵒᵖ G')
-  (φ ·₁ᵒᵖ η) δ = η (⊗₁-cosub φ δ)
+  (φ ·₁ᵒᵖ η) γ γ' δ = η $₁ ⊗₁-cosub φ δ
   infixl 30 _·₁ᵒᵖ_
 
   _·₁'_ : ∀ {F F' G G' : ⊗₀-composite}
         → ⊗₁-composite F F' → ⊗₁-composite G G'
         → ⊗₁-composite (F ·₀' G) (F' ·₀' G')
-  (η ·₁' ζ) (α , β) = η (α , ζ (⊗₁-ov-idn , β))
+  (η ·₁' ζ) γ γ' (α , β) = η $₁ (α , ζ $₁ (⊗₁-ov-idn , β))
   infixl 30 _·₁'_
 
   _·₁''_ : ∀ {F F' G G' : ⊗₀-composite}
          → ⊗₁-composite F F' → ⊗₁-composite G G'
          → ⊗₁-composite (F ·₀'' G) (F' ·₀'' G')
-  (η ·₁'' ζ) (α , β) = ζ (η (α , ⊗₁-un-idn) , β)
+  (η ·₁'' ζ) γ γ' (α , β) = ζ $₁ (η $₁ (α , ⊗₁-un-idn) , β)
   infixl 30 _·₁''_
 ```
 
@@ -667,8 +693,8 @@ record monoidal-axioms₁ {o h} {C : category o h}
     ⊗₁-emb-⨾
       : ∀ {x x' x''} (φ₁ : C.hom x x') (φ₂ : C.hom x' x'')
           {γ γ' γ''} (δ₁ : ⊗₁-ctx γ γ') (δ₂ : ⊗₁-ctx γ' γ'')
-      → ⊗₁-emb (φ₁ Ct.⨾ φ₂) (δ₁ ⊗₁-ctx-⨾ δ₂)
-      ≡ ⊗₁-emb φ₁ δ₁ Ct.⨾ ⊗₁-emb φ₂ δ₂
+      → ⊗₁-emb (φ₁ Ct.⨾ φ₂) $₁ (δ₁ ⊗₁-ctx-⨾ δ₂)
+      ≡ ⊗₁-emb φ₁ $₁ δ₁ Ct.⨾ ⊗₁-emb φ₂ $₁ δ₂
 
   _⊗₁_ : ∀ {x x'} → C.hom x x' → ∀ {y y'} → C.hom y y'
        → C.hom (x ⊗₀ y) (x' ⊗₀ y')

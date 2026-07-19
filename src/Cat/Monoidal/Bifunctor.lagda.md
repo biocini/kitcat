@@ -245,7 +245,7 @@ mirror.
       (⊗₀-comp-eq-ev x y) (ap (⊗₀-pre x) (⊗₀-unit y))
       (⊗₀-comp-eq-ev x' y') (ap (⊗₀-pre x') (⊗₀-unit y'))
       (⊗₁-comp-eq-ev φ ψ)
-      (apd (λ i χ → ⊗₁-emb φ (⊗₁-ov-idn , χ)) (⊗₁-unit ψ))
+      (apd (λ i χ → ⊗₁-emb φ $₁ (⊗₁-ov-idn , χ)) (⊗₁-unit ψ))
 
   ⊗₁-comp-eq-post
     : ∀ {x x'} (φ : C.hom x x') {y y'} (ψ : C.hom y y')
@@ -262,7 +262,7 @@ mirror.
         (ap ⊗₀-ev (⊗₀-emb-comp-op x y)) (ap (⊗₀-post y) (⊗₀-unit x))
         (ap ⊗₀-ev (⊗₀-emb-comp-op x' y')) (ap (⊗₀-post y') (⊗₀-unit x'))
         (apd (λ i → ⊗₁-ev) (⊗₁-emb-comp-op φ ψ))
-        (apd (λ i χ → ⊗₁-emb ψ (χ , ⊗₁-un-idn)) (⊗₁-unit φ)))
+        (apd (λ i χ → ⊗₁-emb ψ $₁ (χ , ⊗₁-un-idn)) (⊗₁-unit φ)))
 
   ⊗₁-pre-is-post
     : ∀ {x x'} (φ : C.hom x x') {y y'} (ψ : C.hom y y')
@@ -306,32 +306,30 @@ the corollaries (demoted, transport-straightened below).
 
 ## Displaced funext and pointwise projections
 
-The displaced funext lemmas are direct implicit-frame
-λ-terms with the frames silently reindexed by the
-absorptions; the projections of the spine characterizations
-at the identity frames are one-liners.
+The displaced funext lemmas are direct λ-terms with the
+frames reindexed by the absorptions; the projections of the
+spine characterizations at the identity frames are
+one-liners.
 
 ```agda
   ⊗₁-idn-·ᵒᵖ
     : ∀ {F F'} (η : ⊗₁-composite F F')
-    → PathP (λ i → ∀ {γ γ'} → ⊗₁-ctx γ γ'
-                  → C.hom (⊗₀-idn-·ᵒᵖ F i γ) (⊗₀-idn-·ᵒᵖ F' i γ'))
+    → PathP (λ i → ⊗₁-composite (⊗₀-idn-·ᵒᵖ F i) (⊗₀-idn-·ᵒᵖ F' i))
             (C.idn I ·₁ᵒᵖ η) η
-  ⊗₁-idn-·ᵒᵖ η i {γ} {γ'} (α , β) = η (⊗₁-absorb-r α i , β)
+  ⊗₁-idn-·ᵒᵖ η i γ γ' (α , β) = η $₁ (⊗₁-absorb-r α i , β)
 
   ·₁-idn
     : ∀ {F F'} (η : ⊗₁-composite F F')
-    → PathP (λ i → ∀ {γ γ'} → ⊗₁-ctx γ γ'
-                  → C.hom (·₀-idn F i γ) (·₀-idn F' i γ'))
+    → PathP (λ i → ⊗₁-composite (·₀-idn F i) (·₀-idn F' i))
             (η ·₁ C.idn I) η
-  ·₁-idn η i {γ} {γ'} (α , β) = η (α , ⊗₁-absorb-l β i)
+  ·₁-idn η i γ γ' (α , β) = η $₁ (α , ⊗₁-absorb-l β i)
 
   ⊗₁-pre-distr
     : ∀ {x x'} (φ : C.hom x x') {y y'} (ψ : C.hom y y')
         {r r'} (β : C.hom r r')
     → PathP (λ i → C.hom (⊗₀-pre-distr x y r i) (⊗₀-pre-distr x' y' r' i))
             (⊗₁-pre (φ ⊗₁ ψ) β) (⊗₁-pre φ (⊗₁-pre ψ β))
-  ⊗₁-pre-distr φ ψ β = λ i → ⊗₁-emb-comp φ ψ i (⊗₁-ov-idn , β)
+  ⊗₁-pre-distr φ ψ β = λ i → ⊗₁-emb-comp φ ψ i $₁ (⊗₁-ov-idn , β)
 
   -- a projection, where the old module glued htensor-post-composite
   -- by hand out of comp-pt and the interchange
@@ -340,7 +338,7 @@ at the identity frames are one-liners.
         {l l'} (α : C.hom l l')
     → PathP (λ i → C.hom (⊗₀-post-distr x y l i) (⊗₀-post-distr x' y' l' i))
             (⊗₁-post (φ ⊗₁ ψ) α) (⊗₁-post ψ (⊗₁-post φ α))
-  ⊗₁-post-distr φ ψ α = λ i → ⊗₁-emb-comp-op φ ψ i (α , ⊗₁-un-idn)
+  ⊗₁-post-distr φ ψ α = λ i → ⊗₁-emb-comp-op φ ψ i $₁ (α , ⊗₁-un-idn)
 ```
 
 ## The representability calculus
@@ -447,27 +445,6 @@ fiber: the square's right edge is constant, so the
 characterizing PathP is over a constant line — a plain path.
 
 ```agda
-  -- The operator type between fixed frames, and its homogeneous
-  -- path type with the line explicit. ⊗₁-composite's implicit frame
-  -- quantifiers make bare _≡_ between operators elaborate in
-  -- inference mode, where Agda inserts hidden *applications*
-  -- (frames) rather than hidden lambdas; naming the type keeps
-  -- every path statement in checking mode. Definitionally,
-  -- η ≡₁ ζ is the equality `fiber ⊗₁-emb` carries in its second
-  -- component, so (m , p) pairs below need no coercion.
-  Ω₁ : C.ob → C.ob → Type (o ⊔ h)
-  Ω₁ x x' = ⊗₁-composite (⊗₀-emb x) (⊗₀-emb x')
-
-  _≡₁_ : ∀ {x x'} → Ω₁ x x' → Ω₁ x x' → Type (o ⊔ h)
-  _≡₁_ {x} {x'} η ζ = PathP (λ _ → Ω₁ x x') η ζ
-
-  is-⊗₁-representable
-    : ∀ {x x'} → Ω₁ x x' → Type (o ⊔ h)
-  is-⊗₁-representable = fiber ⊗₁-emb
-
-  ⊗₁-nrm : ∀ {x x'} (φ : C.hom x x') → is-⊗₁-representable (⊗₁-emb φ)
-  ⊗₁-nrm φ = φ , refl
-
   ⊗₁-emb-image-contr
     : ∀ {x x'} (φ : C.hom x x')
     → is-contr (is-⊗₁-representable (⊗₁-emb φ))
@@ -475,7 +452,7 @@ characterizing PathP is over a constant line — a plain path.
     subst is-contr (λ j → unitl-line φ j) (⊗₁-push-contr (C.idn I) φ)
 
   is-⊗₁-representable-prop
-    : ∀ {x x'} (η : Ω₁ x x')
+    : ∀ {x x'} (η : ⊗₁-composite (⊗₀-emb x) (⊗₀-emb x'))
     → is-prop (is-⊗₁-representable η)
   is-⊗₁-representable-prop =
     image-fibers-contr→is-embedding (λ φ → ⊗₁-emb-image-contr φ)
@@ -488,18 +465,18 @@ on paths, and the total-space equivalence.
 
 ```agda
   ⊗₁-rep-contr
-    : ∀ {x x'} {η : Ω₁ x x'}
+    : ∀ {x x'} {η : ⊗₁-composite (⊗₀-emb x) (⊗₀-emb x')}
     → is-⊗₁-representable η → is-contr (is-⊗₁-representable η)
   ⊗₁-rep-contr {η = η} u .center = u
   ⊗₁-rep-contr {η = η} u .paths  = is-⊗₁-representable-prop η u
 
   ⊗₁-repr-unique
-    : ∀ {x x'} {η : Ω₁ x x'}
+    : ∀ {x x'} {η : ⊗₁-composite (⊗₀-emb x) (⊗₀-emb x')}
     → (u v : is-⊗₁-representable η) → u .fst ≡ v .fst
   ⊗₁-repr-unique {η = η} u v = ap fst (is-⊗₁-representable-prop η u v)
 
   ⊗₁-repr-lc
-    : ∀ {x x'} {η : Ω₁ x x'}
+    : ∀ {x x'} {η : ⊗₁-composite (⊗₀-emb x) (⊗₀-emb x')}
         {U V : is-⊗₁-representable η}
     → (κ : U ≡ V) → ap fst κ ≡ ⊗₁-repr-unique U V
   ⊗₁-repr-lc {η = η} {U} {V} κ =
@@ -507,21 +484,22 @@ on paths, and the total-space equivalence.
       (is-⊗₁-representable-prop η U V))
 
   ⊗₁-repr-refl
-    : ∀ {x x'} {η : Ω₁ x x'} {m : C.hom x x'}
-      (p q : ⊗₁-emb m ≡₁ η)
+    : ∀ {x x'} {η : ⊗₁-composite (⊗₀-emb x) (⊗₀-emb x')} {m : C.hom x x'}
+      (p q : ⊗₁-emb m ≡ η)
     → p ≡ q → ⊗₁-repr-unique (m , p) (m , q) ≡ refl
   ⊗₁-repr-refl {η = η} {m} p q =
     J (λ q' _ → ⊗₁-repr-unique (m , p) (m , q') ≡ refl)
       (sym (⊗₁-repr-lc (refl {x = m , p})))
 
   ⊗₁-repr-cast
-    : ∀ {x x'} {η : Ω₁ x x'} {m : C.hom x x'} {p q : ⊗₁-emb m ≡₁ η}
+    : ∀ {x x'} {η : ⊗₁-composite (⊗₀-emb x) (⊗₀-emb x')}
+        {m : C.hom x x'} {p q : ⊗₁-emb m ≡ η}
     → (V : is-⊗₁-representable η) → p ≡ q
     → ⊗₁-repr-unique (m , p) V ≡ ⊗₁-repr-unique (m , q) V
   ⊗₁-repr-cast {m = m} V e i = ⊗₁-repr-unique (m , e i) V
 
   ⊗₁-repr-∙
-    : ∀ {x x'} {η : Ω₁ x x'}
+    : ∀ {x x'} {η : ⊗₁-composite (⊗₀-emb x) (⊗₀-emb x')}
     → (U V W : is-⊗₁-representable η)
     → ⊗₁-repr-unique U V ∙ ⊗₁-repr-unique V W ≡ ⊗₁-repr-unique U W
   ⊗₁-repr-∙ {η = η} U V W =
@@ -531,13 +509,13 @@ on paths, and the total-space equivalence.
         (is-⊗₁-representable-prop η U V ∙ is-⊗₁-representable-prop η V W)
 
   _⊳₁_
-    : ∀ {x x'} {η ζ : Ω₁ x x'}
-    → is-⊗₁-representable η → η ≡₁ ζ → is-⊗₁-representable ζ
+    : ∀ {x x'} {η ζ : ⊗₁-composite (⊗₀-emb x) (⊗₀-emb x')}
+    → is-⊗₁-representable η → η ≡ ζ → is-⊗₁-representable ζ
   (m , p) ⊳₁ e = m , p ∙ e
 
   ⊳₁-repr
-    : ∀ {x x'} {η ζ : Ω₁ x x'}
-      (U V : is-⊗₁-representable η) (e : η ≡₁ ζ)
+    : ∀ {x x'} {η ζ : ⊗₁-composite (⊗₀-emb x) (⊗₀-emb x')}
+      (U V : is-⊗₁-representable η) (e : η ≡ ζ)
     → ⊗₁-repr-unique (U ⊳₁ e) (V ⊳₁ e) ≡ ⊗₁-repr-unique U V
   ⊳₁-repr (m , p) (n , q) =
     J (λ _ e' → ⊗₁-repr-unique ((m , p) ⊳₁ e') ((n , q) ⊳₁ e')
@@ -549,30 +527,25 @@ on paths, and the total-space equivalence.
     → ap ⊗₁-emb r ≡ ap ⊗₁-emb s → r ≡ s
   ap-⊗₁-emb-lc {n = n} {r} {s} h =
     total-contr-unique (⊗₁-emb-image-contr n) r s (sq r)
-      (subst (λ t → PathP (λ i → ⊗₁-emb (s i) ≡₁ ⊗₁-emb n) t refl)
+      (subst (λ t → PathP (λ i → ⊗₁-emb (s i) ≡ ⊗₁-emb n) t refl)
         (sym h) (sq s))
     where
       sq : (t : _ ≡ n)
-        → PathP (λ i → ⊗₁-emb (t i) ≡₁ ⊗₁-emb n) (ap ⊗₁-emb t) refl
+        → PathP (λ i → ⊗₁-emb (t i) ≡ ⊗₁-emb n) (ap ⊗₁-emb t) refl
       sq t i j = ⊗₁-emb (t (i ∨ j))
 
-  -- the total space, phrased so that no operator variable ever
-  -- appears bare in a checked position: the Σ takes the fiber
-  -- family as a partial application with its hiddens given (a
-  -- visible-Π-typed term, needing no insertion), and the section
-  -- proof is a connection square rather than a J whose motive
-  -- would pair a Σ-bound operator variable
-  ⊗₁-total : (x x' : C.ob) → Type (o ⊔ h)
-  ⊗₁-total x x' =
-    Σ (is-⊗₁-representable {x = x} {x' = x'})
-
-  ⊗₁-hom≃total-representable : ∀ {x x'} → C.hom x x' ≃ ⊗₁-total x x'
+  ⊗₁-hom≃total-representable
+    : ∀ {x x'}
+    → C.hom x x'
+    ≃ (Σ η ∶ ⊗₁-composite (⊗₀-emb x) (⊗₀-emb x') , is-⊗₁-representable η)
   ⊗₁-hom≃total-representable {x} {x'} = iso→equiv fwd bwd hom-ret rep-sec
     where
-      fwd : C.hom x x' → ⊗₁-total x x'
+      fwd : C.hom x x'
+          → Σ η ∶ ⊗₁-composite (⊗₀-emb x) (⊗₀-emb x') , is-⊗₁-representable η
       fwd f = ⊗₁-emb f , f , refl
 
-      bwd : ⊗₁-total x x' → C.hom x x'
+      bwd : (Σ η ∶ ⊗₁-composite (⊗₀-emb x) (⊗₀-emb x') , is-⊗₁-representable η)
+          → C.hom x x'
       bwd (_ , a , _) = a
 
       hom-ret : ∀ f → bwd (fwd f) ≡ f
@@ -596,7 +569,7 @@ on paths, and the total-space equivalence.
     → (⊗₁-pre ψ β) Ct.⨾ (⊗₁-pre ψ' (C.idn r')) ≡ ⊗₁-pre (ψ Ct.⨾ ψ') β
   ⊗₁-pre-comp {y} {y'} ψ {y''} ψ' {r} {r'} β =
       sym (⊗₁-emb-⨾ ψ ψ' (⊗₁-ov-idn , β) (⊗₁-ov-idn , C.idn r'))
-    ∙ (λ i → ⊗₁-emb (ψ Ct.⨾ ψ') (Ct.idem {I} i , Ct.unitr β i))
+    ∙ (λ i → ⊗₁-emb (ψ Ct.⨾ ψ') $₁ (Ct.idem {I} i , Ct.unitr β i))
 ```
 
 ## Functoriality of the derived 2-cell tensor
@@ -633,7 +606,7 @@ paths onto a `PathP` — so no local combinator is needed.
       -- δ ⊗₁-ctx-⨾ ⊗₁-ctx-idn and ⊗₁-pre-comp consumes
       _⨾₁_ : ∀ {F F' F''} → ⊗₁-composite F F' → ⊗₁-composite F' F''
            → ⊗₁-composite F F''
-      (η ⨾₁ η') δ = η δ Ct.⨾ η' ⊗₁-ctx-idn
+      (η ⨾₁ η') γ γ' δ = η $₁ δ Ct.⨾ η' $₁ ⊗₁-ctx-idn
 
       -- the side-by-side paste of the two characterizations; the
       -- middle operators ⊗₀-emb-comp x' y' i match, so this is a
@@ -646,22 +619,20 @@ paths onto a `PathP` — so no local combinator is needed.
 
       -- link A, in the fixed i0-fiber: the frame rewrite by
       -- unitr lands on δ ⊗₁-ctx-⨾ ⊗₁-ctx-idn, where ⊗₁-emb-⨾ splits
-      linkA : PathP (λ i → ∀ {γ γ'} → ⊗₁-ctx γ γ'
-                          → C.hom (⊗₀-emb (x ⊗₀ y) γ) (⊗₀-emb (x'' ⊗₀ y'') γ'))
+      linkA : PathP (λ i → ⊗₁-composite (⊗₀-emb (x ⊗₀ y)) (⊗₀-emb (x'' ⊗₀ y'')))
                     (⊗₁-emb (σ₁ Ct.⨾ σ₂)) (W i0)
-      linkA i {γ} {γ'} (α , β) =
-        ( (λ j → ⊗₁-emb (σ₁ Ct.⨾ σ₂) (sym (Ct.unitr α) j , sym (Ct.unitr β) j))
+      linkA i γ γ' (α , β) =
+        ( (λ j → ⊗₁-emb (σ₁ Ct.⨾ σ₂) $₁ (sym (Ct.unitr α) j , sym (Ct.unitr β) j))
         ∙ ⊗₁-emb-⨾ σ₁ σ₂ (α , β) ⊗₁-ctx-idn ) i
 
       -- link B, in the fixed i1-fiber: W i1 computes to the two
       -- pre-actions, ⊗₁-emb-⨾ rejoins them, and the second slot is
       -- exactly ⊗₁-pre-comp
-      linkB : PathP (λ i → ∀ {γ γ'} → ⊗₁-ctx γ γ'
-                          → C.hom ((⊗₀-emb x ·₀ y) γ) ((⊗₀-emb x'' ·₀ y'') γ'))
+      linkB : PathP (λ i → ⊗₁-composite (⊗₀-emb x ·₀ y) (⊗₀-emb x'' ·₀ y''))
                     (W i1) (⊗₁-emb (φ Ct.⨾ φ') ·₁ (ψ Ct.⨾ ψ'))
-      linkB i {γ} {γ'} (α , β) =
+      linkB i γ γ' (α , β) =
         ( sym (⊗₁-emb-⨾ φ φ' (α , ⊗₁-pre ψ β) (C.idn _ , ⊗₁-pre ψ' (C.idn _)))
-        ∙ (λ j → ⊗₁-emb (φ Ct.⨾ φ') (Ct.unitr α j , ⊗₁-pre-comp ψ ψ' β j)) ) i
+        ∙ (λ j → ⊗₁-emb (φ Ct.⨾ φ') $₁ (Ct.unitr α j , ⊗₁-pre-comp ψ ψ' β j)) ) i
 
       glued : hfiber.p-char (φ Ct.⨾ φ') (ψ Ct.⨾ ψ') (σ₁ Ct.⨾ σ₂)
       glued = pcom {A = λ i → ⊗₁-composite (⊗₀-emb-comp x y i)
