@@ -72,19 +72,19 @@ private
   Spine : ∀ {x y z} (f : hom x y) (g : hom y z) → Type 0ℓ
   Spine {x} {z} f g =
     Σ k ∶ hom x z ,
-    Σ p ∶ (temb k ≡ temb f · g) ,
-    Σ q ∶ (temb k ≡ f ·ᵒᵖ temb g) ,
+    Σ p ∶ (temb k ≡ temb f ▾ g) ,
+    Σ q ∶ (temb k ≡ f ▴ temb g) ,
       PathP (λ i → temb k ≡
-        is-contr→is-prop composite-contr (temb f ·' temb g) (temb f ·'' temb g) i)
+        is-contr→is-prop composite-contr (temb f ▿ temb g) (temb f ▵ temb g) i)
         p q
 
   spine-contr-impl : ∀ {x y z} (f : hom x y) (g : hom y z) → is-contr (Spine f g)
   spine-contr-impl f g =
     Σ-contr-contr hom-contr λ k →
     Σ-contr-contr
-      (PathP-is-contr composite-contr (temb k) (temb f · g)) λ p →
+      (PathP-is-contr composite-contr (temb k) (temb f ▾ g)) λ p →
     Σ-contr-contr
-      (PathP-is-contr composite-contr (temb k) (f ·ᵒᵖ temb g)) λ q →
+      (PathP-is-contr composite-contr (temb k) (f ▴ temb g)) λ q →
       PathP-is-contr
         (PathP-is-contr composite-contr (temb k) _)
         p q

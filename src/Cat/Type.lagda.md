@@ -161,31 +161,31 @@ module representable {o h}
   nrm : ∀ {x y} (f : hom x y) → is-representable (emb f)
   nrm f = f , refl
 
-  _·_ : ∀ {x y z} → composite x y → hom y z → composite x z
-  (α · g) γ = α (sub g γ)
-  infixl 30 _·_
+  _▾_ : ∀ {x y z} → composite x y → hom y z → composite x z
+  (α ▾ g) γ = α (sub g γ)
+  infixl 30 _▾_
 
-  _·ᵒᵖ_ : ∀ {x y z} → hom x y → composite y z → composite x z
-  (f ·ᵒᵖ β) γ = β (cosub f γ)
-  infixl 30 _·ᵒᵖ_
+  _▴_ : ∀ {x y z} → hom x y → composite y z → composite x z
+  (f ▴ β) γ = β (cosub f γ)
+  infixl 30 _▴_
 
-  _·'_ : ∀ {x y z} → composite x y → composite y z → composite x z
-  _·'_ {y = y} β α γ = β (γ .fst , (γ .snd .fst , α (ov-idn y , γ .snd)))
-  infixl 30 _·'_
+  _▿_ : ∀ {x y z} → composite x y → composite y z → composite x z
+  _▿_ {y = y} β α γ = β (γ .fst , (γ .snd .fst , α (ov-idn y , γ .snd)))
+  infixl 30 _▿_
 
-  _·''_ : ∀ {x y z} → composite x y → composite y z → composite x z
-  _·''_ {y = y} β α γ = α ((γ .fst .fst , β (γ .fst , un-idn y)) , γ .snd)
-  infixl 30 _·''_
+  _▵_ : ∀ {x y z} → composite x y → composite y z → composite x z
+  _▵_ {y = y} β α γ = α ((γ .fst .fst , β (γ .fst , un-idn y)) , γ .snd)
+  infixl 30 _▵_
 
   -- closure of the ternary interchange over the fibers of emb;
   -- at nrm endpoints it agrees with the input up to J-refl
   interchange♭-from
-    : (∀ {x y z} (f : hom x y) (g : hom y z) → emb f · g ≡ f ·ᵒᵖ emb g)
+    : (∀ {x y z} (f : hom x y) (g : hom y z) → emb f ▾ g ≡ f ▴ emb g)
     → ∀ {x y z} {A : composite x y} {B : composite y z}
-    → is-representable A → is-representable B → A ·' B ≡ A ·'' B
+    → is-representable A → is-representable B → A ▿ B ≡ A ▵ B
   interchange♭-from ι {B = B} (m , p) (n , q) =
-    J (λ F' _ → F' ·' B ≡ F' ·'' B)
-      (J (λ G' _ → emb m ·' G' ≡ emb m ·'' G') (ι m n) q)
+    J (λ F' _ → F' ▿ B ≡ F' ▵ B)
+      (J (λ G' _ → emb m ▿ G' ≡ emb m ▵ G') (ι m n) q)
       p
 
 record category-axioms {o h} (S : reflexive-graph o h) : Type (o ⊔ h) where
@@ -201,16 +201,16 @@ record category-axioms {o h} (S : reflexive-graph o h) : Type (o ⊔ h) where
       : ∀ {x y z} {A : composite x y} {B : composite y z}
       → is-representable A
       → is-representable B
-      → A ·' B ≡ A ·'' B
+      → A ▿ B ≡ A ▵ B
 
-  interchange : ∀ {x y z} (f : hom x y) (g : hom y z) → emb f · g ≡ f ·ᵒᵖ emb g
+  interchange : ∀ {x y z} (f : hom x y) (g : hom y z) → emb f ▾ g ≡ f ▴ emb g
   interchange f g = interchange♭ (nrm f) (nrm g)
 
   spine : ∀ {x y z} (f : hom x y) (g : hom y z) → Type (o ⊔ h)
   spine f g =
     Σ k ∶ hom _ _ ,
-    Σ p ∶ (emb k ≡ emb f · g) ,
-    Σ q ∶ (emb k ≡ f ·ᵒᵖ emb g) ,
+    Σ p ∶ (emb k ≡ emb f ▾ g) ,
+    Σ q ∶ (emb k ≡ f ▴ emb g) ,
       PathP (λ i → emb k ≡ interchange f g i) p q
 
   field

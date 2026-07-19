@@ -129,10 +129,10 @@ module _ {u} (A : Type u) where
 
   private
     -- interchange, packaged as a path between composites.
-    -- `gpd-emb f · g` and `f ·ᵒᵖ gpd-emb g` unfold to the two sides of
+    -- `gpd-emb f ▾ g` and `f ▴ gpd-emb g` unfold to the two sides of
     -- the March equation by Σ-η.
     ι : ∀ {x y z : A} (f : x ≡ y) (g : y ≡ z)
-      → gpd-emb f · g ≡ f ·ᵒᵖ gpd-emb g
+      → gpd-emb f ▾ g ≡ f ▴ gpd-emb g
     ι f g = funext λ γ →
       gpd-interchange f g
         (γ .fst .fst) (γ .fst .snd) (γ .snd .fst) (γ .snd .snd)
@@ -140,26 +140,26 @@ module _ {u} (A : Type u) where
     -- closure of ι over the fibers; at nrm endpoints this is how the
     -- record computes its derived `interchange` from the field we supply
     ι♭ : ∀ {x y z : A} {F : composite x y} {G : composite y z}
-       → fiber gpd-emb F → fiber gpd-emb G → F ·' G ≡ F ·'' G
+       → fiber gpd-emb F → fiber gpd-emb G → F ▿ G ≡ F ▵ G
     ι♭ = interchange♭-from ι
 
     -- the record's `spine`, with `interchange f g` computed from `ι♭`
     Spine : ∀ {x y z : A} (f : x ≡ y) (g : y ≡ z) → Type u
     Spine {x} {y} {z} f g =
       Σ k ∶ (x ≡ z) ,
-      Σ p ∶ (gpd-emb k ≡ gpd-emb f · g) ,
-      Σ q ∶ (gpd-emb k ≡ f ·ᵒᵖ gpd-emb g) ,
+      Σ p ∶ (gpd-emb k ≡ gpd-emb f ▾ g) ,
+      Σ q ∶ (gpd-emb k ≡ f ▴ gpd-emb g) ,
         PathP (λ i → gpd-emb k ≡ ι♭ (nrm f) (nrm g) i) p q
 
     spine-contr-impl
       : ∀ {x y z : A} (f : x ≡ y) (g : y ≡ z) → is-contr (Spine f g)
     spine-contr-impl f g = reshape c
       where
-        c = Σ-contr-contr (eqv-fibers emb-equiv (gpd-emb f · g))
+        c = Σ-contr-contr (eqv-fibers emb-equiv (gpd-emb f ▾ g))
               λ (k , p) → spine-tail p (ι♭ (nrm f) (nrm g))
 
         reshape : is-contr (Σ λ (k , p) →
-                    Σ q ∶ (gpd-emb k ≡ f ·ᵒᵖ gpd-emb g) ,
+                    Σ q ∶ (gpd-emb k ≡ f ▴ gpd-emb g) ,
                       PathP (λ i → gpd-emb k ≡ ι♭ (nrm f) (nrm g) i) p q)
                 → is-contr (Spine f g)
         reshape c .center =

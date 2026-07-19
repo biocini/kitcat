@@ -31,7 +31,7 @@ record is-2-coherent {o h} (C : category o h) : Type (o ⊔ h) where
   field
     is-coh
       : ∀ {x y z} (f : C.hom x y) (g : C.hom y z)
-      → ap (C._·' (C.emb g)) (T.·-idn (C.emb f)) ≡ ap ((C.emb f) C.·'_) (T.emb-idn-absorb g)
+      → ap (C._▿ (C.emb g)) (T.▾-idn (C.emb f)) ≡ ap ((C.emb f) C.▿_) (T.emb-idn-absorb g)
 
 module interchange-coh {o h} (C : category o h) where
   open category C
@@ -41,95 +41,95 @@ module interchange-coh {o h} (C : category o h) where
              (U : is-representable A) (V : is-representable B) (W : is-representable Cc)
            → Type (o ⊔ h)
   ι-mult-r {Cc = Cc} U V W =
-    ap (λ X → X ·' Cc) (interchange♭ U V) ≡ interchange♭ U (V ● W)
+    ap (λ X → X ▿ Cc) (interchange♭ U V) ≡ interchange♭ U (V ⋉ W)
 
   ι-mult-l : ∀ {x y z w} {A : composite x y} {B : composite y z} {Cc : composite z w}
              (U : is-representable A) (V : is-representable B) (W : is-representable Cc)
            → Type (o ⊔ h)
   ι-mult-l {A = A} U V W =
-    ap (λ X → A ·'' X) (interchange♭ V W) ≡ interchange♭ (U ●'' V) W
+    ap (λ X → A ▵ X) (interchange♭ V W) ≡ interchange♭ (U ⋊ V) W
 
-  ●-coh : ∀ {x y z} {A : composite x y} {B : composite y z}
+  ⋉-coh : ∀ {x y z} {A : composite x y} {B : composite y z}
           (U : is-representable A) (V : is-representable B)
-        → PathP (λ i → is-representable (interchange♭ U V i)) (U ● V) (U ●'' V)
-  ●-coh U V = is-prop→PathP (λ i → is-representable-prop (interchange♭ U V i)) (U ● V) (U ●'' V)
+        → PathP (λ i → is-representable (interchange♭ U V i)) (U ⋉ V) (U ⋊ V)
+  ⋉-coh U V = is-prop→PathP (λ i → is-representable-prop (interchange♭ U V i)) (U ⋉ V) (U ⋊ V)
 
   interchange-natural
     : ∀ {x y z w} {A : composite x y} {B : composite y z} {Cc : composite z w}
       (U : is-representable A) (V : is-representable B) (W : is-representable Cc)
-    → ap (λ X → X ·' Cc) (interchange♭ U V) ∙ interchange♭ (U ●'' V) W
-    ≡ interchange♭ (U ● V) W ∙ ap (λ X → X ·'' Cc) (interchange♭ U V)
+    → ap (λ X → X ▿ Cc) (interchange♭ U V) ∙ interchange♭ (U ⋊ V) W
+    ≡ interchange♭ (U ⋉ V) W ∙ ap (λ X → X ▵ Cc) (interchange♭ U V)
   interchange-natural {Cc = Cc} U V W =
     Path.commutes
-      (ap (λ X → X ·' Cc) (interchange♭ U V)) (interchange♭ (U ●'' V) W)
-      (interchange♭ (U ● V) W) (ap (λ X → X ·'' Cc) (interchange♭ U V))
-      (λ j i → interchange♭ (●-coh U V i) W j)
+      (ap (λ X → X ▿ Cc) (interchange♭ U V)) (interchange♭ (U ⋊ V) W)
+      (interchange♭ (U ⋉ V) W) (ap (λ X → X ▵ Cc) (interchange♭ U V))
+      (λ j i → interchange♭ (⋉-coh U V i) W j)
 
 module _ {o h} (C : category o h) where
   open category C
   open theory C
-  module pentagon● {x y z w v}
+  module pentagon⋉ {x y z w v}
     {A : composite x y} {B : composite y z} {C : composite z w} {D : composite w v}
     (U : is-representable A) (V : is-representable B)
     (W : is-representable C) (X : is-representable D)
     where
 
     T : composite x v
-    T = A ·' B ·' C ·' D
+    T = A ▿ B ▿ C ▿ D
 
     p₁ p₂ p₃ p₄ p₅ : is-representable T
-    p₁ = ((U ● V) ● W) ● X
-    p₂ = (U ● (V ● W)) ● X
-    p₃ = U ● ((V ● W) ● X)
-    p₄ = (U ● V) ● (W ● X)
-    p₅ = U ● (V ● (W ● X))
+    p₁ = ((U ⋉ V) ⋉ W) ⋉ X
+    p₂ = (U ⋉ (V ⋉ W)) ⋉ X
+    p₃ = U ⋉ ((V ⋉ W) ⋉ X)
+    p₄ = (U ⋉ V) ⋉ (W ⋉ X)
+    p₅ = U ⋉ (V ⋉ (W ⋉ X))
 
     T-contr : is-contr (is-representable T)
     T-contr .center = p₁
     T-contr .paths  = is-representable-prop T p₁
 
-    σ₂₁ : p₂ ≡ p₁ ; σ₂₁ i = assoc-σ● U V W i ● X
-    σ₃₂ : p₃ ≡ p₂ ; σ₃₂   = assoc-σ● U (V ● W) X
-    σ₅₃ : p₅ ≡ p₃ ; σ₅₃ i = U ● assoc-σ● V W X i
-    σ₄₁ : p₄ ≡ p₁ ; σ₄₁   = assoc-σ● (U ● V) W X
-    σ₅₄ : p₅ ≡ p₄ ; σ₅₄   = assoc-σ● U V (W ● X)
+    σ₂₁ : p₂ ≡ p₁ ; σ₂₁ i = assoc-σ⋉ U V W i ⋉ X
+    σ₃₂ : p₃ ≡ p₂ ; σ₃₂   = assoc-σ⋉ U (V ⋉ W) X
+    σ₅₃ : p₅ ≡ p₃ ; σ₅₃ i = U ⋉ assoc-σ⋉ V W X i
+    σ₄₁ : p₄ ≡ p₁ ; σ₄₁   = assoc-σ⋉ (U ⋉ V) W X
+    σ₅₄ : p₅ ≡ p₄ ; σ₅₄   = assoc-σ⋉ U V (W ⋉ X)
 
     fiber-pentagon : σ₅₃ ∙ σ₃₂ ∙ σ₂₁ ≡ σ₅₄ ∙ σ₄₁
     fiber-pentagon = is-contr→is-set T-contr p₅ p₁ (σ₅₃ ∙ σ₃₂ ∙ σ₂₁) (σ₅₄ ∙ σ₄₁)
 
-    pentagon●
-      : ap (U .fst ⨾_) (assoc● V W X) ∙ assoc● U (V ● W) X ∙ ap (_⨾ X .fst) (assoc● U V W)
-      ≡ assoc● U V (W ● X) ∙ assoc● (U ● V) W X
-    pentagon● =
+    pentagon⋉
+      : ap (U .fst ⨾_) (assoc⋉ V W X) ∙ assoc⋉ U (V ⋉ W) X ∙ ap (_⨾ X .fst) (assoc⋉ U V W)
+      ≡ assoc⋉ U V (W ⋉ X) ∙ assoc⋉ (U ⋉ V) W X
+    pentagon⋉ =
         sym (ap (ap fst σ₅₃ ∙_) (ap-comp fst σ₃₂ σ₂₁))
       ∙ sym (ap-comp fst σ₅₃ (σ₃₂ ∙ σ₂₁))
       ∙ ap (ap fst) fiber-pentagon
       ∙ ap-comp fst σ₅₄ σ₄₁
 
-  assoc●-nrm
+  assoc⋉-nrm
     : ∀ {x y z w} {A : composite x y} {B : composite y z} {C : composite z w}
       (U : is-representable A) (V : is-representable B) (W : is-representable C)
-    → assoc● U V W ≡ assoc (U .fst) (V .fst) (W .fst)
-  assoc●-nrm (m , p) (n , q) (o , r) =
-      J (λ _ r' → assoc● (m , p) (n , q) (o , r') ≡ assoc● (m , p) (n , q) (nrm o)) refl r
-    ∙ J (λ _ q' → assoc● (m , p) (n , q') (nrm o) ≡ assoc● (m , p) (nrm n) (nrm o)) refl q
-    ∙ J (λ _ p' → assoc● (m , p') (nrm n) (nrm o) ≡ assoc● (nrm m) (nrm n) (nrm o)) refl p
+    → assoc⋉ U V W ≡ assoc (U .fst) (V .fst) (W .fst)
+  assoc⋉-nrm (m , p) (n , q) (o , r) =
+      J (λ _ r' → assoc⋉ (m , p) (n , q) (o , r') ≡ assoc⋉ (m , p) (n , q) (nrm o)) refl r
+    ∙ J (λ _ q' → assoc⋉ (m , p) (n , q') (nrm o) ≡ assoc⋉ (m , p) (nrm n) (nrm o)) refl q
+    ∙ J (λ _ p' → assoc⋉ (m , p') (nrm n) (nrm o) ≡ assoc⋉ (nrm m) (nrm n) (nrm o)) refl p
 
   module _ {x y z w v} (f : hom x y) (g : hom y z) (h : hom z w) (k : hom w v) where
-    open pentagon● (nrm f) (nrm g) (nrm h) (nrm k)
+    open pentagon⋉ (nrm f) (nrm g) (nrm h) (nrm k)
 
     private
-      A₁ = assoc●-nrm (nrm f ● nrm g) (nrm h) (nrm k)   -- ≡ assoc (f ⨾ g) h k
-      A₂ = assoc●-nrm (nrm f) (nrm g) (nrm h ● nrm k)   -- ≡ assoc f g (h ⨾ k)
-      A₃ = assoc●-nrm (nrm f) (nrm g ● nrm h) (nrm k)   -- ≡ assoc f (g ⨾ h) k
+      A₁ = assoc⋉-nrm (nrm f ⋉ nrm g) (nrm h) (nrm k)   -- ≡ assoc (f ⨾ g) h k
+      A₂ = assoc⋉-nrm (nrm f) (nrm g) (nrm h ⋉ nrm k)   -- ≡ assoc f g (h ⨾ k)
+      A₃ = assoc⋉-nrm (nrm f) (nrm g ⋉ nrm h) (nrm k)   -- ≡ assoc f (g ⨾ h) k
 
     pentagon
       : ap (f ⨾_) (assoc g h k) ∙ assoc f (g ⨾ h) k ∙ ap (_⨾ k) (assoc f g h)
       ≡ assoc f g (h ⨾ k) ∙ assoc (f ⨾ g) h k
     pentagon =
         ap (λ t → ap (f ⨾_) (assoc g h k) ∙ (t ∙ ap (_⨾ k) (assoc f g h))) (sym A₃)
-      ∙ pentagon●
-      ∙ ap (λ t → t ∙ assoc● (nrm f ● nrm g) (nrm h) (nrm k)) A₂
+      ∙ pentagon⋉
+      ∙ ap (λ t → t ∙ assoc⋉ (nrm f ⋉ nrm g) (nrm h) (nrm k)) A₂
       ∙ ap (assoc f g (h ⨾ k) ∙_) A₁
 ```
 
@@ -143,16 +143,16 @@ The triangle
     B = emb g
 
     -- 1 = source of assoc (right-nested), 2 = target (left-nested)
-    e₁ : A ·' (E ·' B) ≡ A ·' B ;  e₁ = ap (A ·'_) (emb-idn-absorb g)
-    e₂ : (A ·' E) ·' B ≡ A ·' B ;  e₂ = ap (_·' B) (·-idn A)
+    e₁ : A ▿ (E ▿ B) ≡ A ▿ B ;  e₁ = ap (A ▿_) (emb-idn-absorb g)
+    e₂ : (A ▿ E) ▿ B ≡ A ▿ B ;  e₂ = ap (_▿ B) (▾-idn A)
 
-    r₁ r₂ r₀¹ r₀² : is-representable (A ·' E ·' B)
-    r₁  = nrm f ● (nrm (idn y) ● nrm g)      -- fst = f ⨾ (idn y ⨾ g)
-    r₂  = (nrm f ● nrm (idn y)) ● nrm g      -- fst = (f ⨾ idn y) ⨾ g
-    r₀¹ = (nrm f ● nrm g) ⊳ sym e₁
-    r₀² = (nrm f ● nrm g) ⊳ sym e₂
+    r₁ r₂ r₀¹ r₀² : is-representable (A ▿ E ▿ B)
+    r₁  = nrm f ⋉ (nrm (idn y) ⋉ nrm g)      -- fst = f ⨾ (idn y ⨾ g)
+    r₂  = (nrm f ⋉ nrm (idn y)) ⋉ nrm g      -- fst = (f ⨾ idn y) ⨾ g
+    r₀¹ = (nrm f ⋉ nrm g) ↝ sym e₁
+    r₀² = (nrm f ⋉ nrm g) ↝ sym e₂
 
-    T-contr : is-contr (is-representable (A ·' E ·' B))
+    T-contr : is-contr (is-representable (A ▿ E ▿ B))
     T-contr .center = r₁
     T-contr .paths  = is-representable-prop _ r₁
 
@@ -162,26 +162,26 @@ The triangle
     loop : f ⨾ g ≡ f ⨾ g
     loop = repr-unique r₀¹ r₀²
 
-    Uf : is-representable A ; Uf = (nrm f ● nrm (idn y)) ⊳ ·-idn A
-    Vg : is-representable B ; Vg = (nrm (idn y) ● nrm g) ⊳ emb-idn-absorb g
+    Uf : is-representable A ; Uf = (nrm f ⋉ nrm (idn y)) ↝ ▾-idn A
+    Vg : is-representable B ; Vg = (nrm (idn y) ⋉ nrm g) ↝ emb-idn-absorb g
 
-    s₀ s₁ s₂ : is-representable (A ·' B)
-    s₀ = nrm f ● nrm g          ;  s₁ = r₁ ⊳ e₁  ;  s₂ = r₂ ⊳ e₂
+    s₀ s₁ s₂ : is-representable (A ▿ B)
+    s₀ = nrm f ⋉ nrm g          ;  s₁ = r₁ ↝ e₁  ;  s₂ = r₂ ↝ e₂
 
-    Ĝr : is-representable A → is-representable (A ·' B) ; Ĝr u = u ● nrm g
-    Ĝl : is-representable B → is-representable (A ·' B) ; Ĝl v = nrm f ● v
+    Ĝr : is-representable A → is-representable (A ▿ B) ; Ĝr u = u ⋉ nrm g
+    Ĝl : is-representable B → is-representable (A ▿ B) ; Ĝl v = nrm f ⋉ v
 
     private
-      W  = (nrm f ● nrm (idn y)) .snd ; X  = emb-comp (f ⨾ idn y) g
-      W' = (nrm (idn y) ● nrm g) .snd ; X' = emb-comp f (idn y ⨾ g)
+      W  = (nrm f ⋉ nrm (idn y)) .snd ; X  = emb-comp (f ⨾ idn y) g
+      W' = (nrm (idn y) ⋉ nrm g) .snd ; X' = emb-comp f (idn y ⨾ g)
 
       wr : s₂ .snd ≡ Ĝr Uf .snd
-      wr = sym (Path.assoc X (ap (_·' B) W) e₂)
-         ∙ ap (X ∙_) (sym (ap-comp (_·' B) W (·-idn A)))
+      wr = sym (Path.assoc X (ap (_▿ B) W) e₂)
+         ∙ ap (X ∙_) (sym (ap-comp (_▿ B) W (▾-idn A)))
 
       wl : s₁ .snd ≡ Ĝl Vg .snd
-      wl = sym (Path.assoc X' (ap (A ·'_) W') e₁)
-         ∙ ap (X' ∙_) (sym (ap-comp (A ·'_) W' (emb-idn-absorb g)))
+      wl = sym (Path.assoc X' (ap (A ▿_) W') e₁)
+         ∙ ap (X' ∙_) (sym (ap-comp (A ▿_) W' (emb-idn-absorb g)))
 
     face-r : repr-unique s₂ s₀ ≡ ap (_⨾ g) (unitr f)
     face-r = sym (repr-∙ s₂ (Ĝr Uf) s₀)
@@ -201,23 +201,23 @@ The triangle
     loop-refl : is-2-coherent C → loop ≡ refl
     loop-refl mid = ap (ap fst)
       (is-contr→is-set T-contr r₀¹ r₀² (is-representable-prop _ r₀¹ r₀²)
-         (ap ((nrm f ● nrm g) ⊳_) (ap sym (sym (mid .is-2-coherent.is-coh f g)))))
+         (ap ((nrm f ⋉ nrm g) ↝_) (ap sym (sym (mid .is-2-coherent.is-coh f g)))))
 
 
     face-a : is-2-coherent C → repr-unique s₁ s₂ ≡ assoc f (idn y) g
-    face-a mid = ap (λ t → repr-unique (r₁ ⊳ e₁) (r₂ ⊳ t)) (mid .is-2-coherent.is-coh f g) ∙ ⊳-repr r₁ r₂ e₁
+    face-a mid = ap (λ t → repr-unique (r₁ ↝ e₁) (r₂ ↝ t)) (mid .is-2-coherent.is-coh f g) ∙ ↝-repr r₁ r₂ e₁
 
     triangle : is-2-coherent C
              → assoc f (idn y) g ∙ ap (_⨾ g) (unitr f) ≡ ap (f ⨾_) (unitl g)
     triangle mid = ap (_∙ ap (_⨾ g) (unitr f)) (sym (face-a mid)) ∙ triangle-weak
 
 
-  ·-idn-·' : ∀ {x y z} (A : composite x y) (B : composite y z)
-           → ·-idn (A ·' B) ≡ ap (A ·'_) (·-idn B)
-  ·-idn-·' A B = refl
+  ▾-idn-▿ : ∀ {x y z} (A : composite x y) (B : composite y z)
+           → ▾-idn (A ▿ B) ≡ ap (A ▿_) (▾-idn B)
+  ▾-idn-▿ A B = refl
 
-  idn-·' : ∀ {x y} {A : composite x y} → is-representable A → emb (idn x) ·' A ≡ A
-  idn-·' U = interchange♭ (nrm (idn _)) U ∙ idn-·ᵒᵖ _      -- emb-idn-absorb f ≐ idn-·' (nrm f)
+  idn-▿ : ∀ {x y} {A : composite x y} → is-representable A → emb (idn x) ▿ A ≡ A
+  idn-▿ U = interchange♭ (nrm (idn _)) U ∙ idn-▴ _      -- emb-idn-absorb f ≐ idn-▿ (nrm f)
 
 module op-coh {o h} (C : category o h) where
   open category C
@@ -230,39 +230,39 @@ module op-coh {o h} (C : category o h) where
     module Iᵒ = interchange-coh (op C)
 
   private
-    ·'-op : ∀ {x y z} (X : Cᵒ.composite x y) (Y : Cᵒ.composite y z)
-          → (X Cᵒ.·' Y) ≡ ⟲ (⟳ Y ·'' ⟳ X)
-    ·'-op _ _ = refl
+    ▿-op : ∀ {x y z} (X : Cᵒ.composite x y) (Y : Cᵒ.composite y z)
+          → (X Cᵒ.▿ Y) ≡ ⟲ (⟳ Y ▵ ⟳ X)
+    ▿-op _ _ = refl
 
-    ·''-op : ∀ {x y z} (X : Cᵒ.composite x y) (Y : Cᵒ.composite y z)
-           → (X Cᵒ.·'' Y) ≡ ⟲ (⟳ Y ·' ⟳ X)
-    ·''-op _ _ = refl
+    ▵-op : ∀ {x y z} (X : Cᵒ.composite x y) (Y : Cᵒ.composite y z)
+           → (X Cᵒ.▵ Y) ≡ ⟲ (⟳ Y ▿ ⟳ X)
+    ▵-op _ _ = refl
 
-    ·''-assoc : ∀ {x y z w} (β : composite x y) (α : composite y z) (δ : composite z w)
-              → (β ·'' α) ·'' δ ≡ β ·'' (α ·'' δ)
-    ·''-assoc _ _ _ = refl
+    ▵-assoc : ∀ {x y z w} (β : composite x y) (α : composite y z) (δ : composite z w)
+              → (β ▵ α) ▵ δ ≡ β ▵ (α ▵ δ)
+    ▵-assoc _ _ _ = refl
 
-    ·'-is-·     : ∀ {x y z} (α : composite x y) (g : hom y z) → (α ·' emb g) ≡ (α · g)
-    ·'-is-·     _ _ = refl
+    ▿-is-▾     : ∀ {x y z} (α : composite x y) (g : hom y z) → (α ▿ emb g) ≡ (α ▾ g)
+    ▿-is-▾     _ _ = refl
 
-    ·''-is-·ᵒᵖ  : ∀ {x y z} (f : hom x y) (α : composite y z) → (emb f ·'' α) ≡ (f ·ᵒᵖ α)
-    ·''-is-·ᵒᵖ  _ _ = refl
+    ▵-is-▴  : ∀ {x y z} (f : hom x y) (α : composite y z) → (emb f ▵ α) ≡ (f ▴ α)
+    ▵-is-▴  _ _ = refl
 
     mirror-lhs : ∀ {x y z} (f : hom x y) (g : hom y z)
-      → ((Cᵒ.emb g Cᵒ.·' Cᵒ.emb (Cᵒ.idn y)) Cᵒ.·' Cᵒ.emb f)
-      ≡ ⟲ (emb f ·'' emb (idn y) ·'' emb g)
+      → ((Cᵒ.emb g Cᵒ.▿ Cᵒ.emb (Cᵒ.idn y)) Cᵒ.▿ Cᵒ.emb f)
+      ≡ ⟲ (emb f ▵ emb (idn y) ▵ emb g)
     mirror-lhs _ _ = refl
 
     mirror-rhs : ∀ {x y z} (f : hom x y) (g : hom y z)
-      → (Cᵒ.emb g Cᵒ.·' Cᵒ.emb f) ≡ ⟲ (emb f ·'' emb g)
+      → (Cᵒ.emb g Cᵒ.▿ Cᵒ.emb f) ≡ ⟲ (emb f ▵ emb g)
     mirror-rhs _ _ = refl
 
-  emb-·ᵒᵖ-idn : ∀ {x y} (f : hom x y) → (f ·ᵒᵖ emb (idn y)) ≡ emb f
-  emb-·ᵒᵖ-idn {y = y} f = sym (interchange f (idn y)) ∙ ·-idn (emb f)
+  emb-▴-idn : ∀ {x y} (f : hom x y) → (f ▴ emb (idn y)) ≡ emb f
+  emb-▴-idn {y = y} f = sym (interchange f (idn y)) ∙ ▾-idn (emb f)
 
   is-2-coherent'' : ∀ {x y z} (f : hom x y) (g : hom y z) → Type (o ⊔ h)
   is-2-coherent'' {y = y} f g =
-    ap (emb f ·''_) (idn-·ᵒᵖ (emb g)) ≡ ap (_·'' emb g) (emb-·ᵒᵖ-idn f)
+    ap (emb f ▵_) (idn-▴ (emb g)) ≡ ap (_▵ emb g) (emb-▴-idn f)
 
   private
     ⨾-op : ∀ {x y z} (f : hom x y) (g : hom y z) → (g Tᵒ.⨾ f) ≡ (f ⨾ g)
@@ -306,34 +306,34 @@ module op-coh {o h} (C : category o h) where
   absorb-r-op {x = x} a =
     ap (_∙ unit a) (ap sym (pip-op (idn x) a) ∙ refl)
 
-  bridge-l : ∀ {y z} (g : hom y z) → Tᵒ.·-idn (Cᵒ.emb g) ≡ ap ⟲ (idn-·ᵒᵖ (emb g))
+  bridge-l : ∀ {y z} (g : hom y z) → Tᵒ.▾-idn (Cᵒ.emb g) ≡ ap ⟲ (idn-▴ (emb g))
   bridge-l g i = funext λ γ →
     ap (λ β → Cᵒ.emb g (γ .fst , β))
        (ap (γ .snd .fst ,_) (absorb-l-op (γ .snd .snd) i))
 
-  bridge-idn : ∀ {x y} (β : Cᵒ.composite x y) → Tᵒ.idn-·ᵒᵖ β ≡ ap ⟲ (·-idn (⟳ β))
+  bridge-idn : ∀ {x y} (β : Cᵒ.composite x y) → Tᵒ.idn-▴ β ≡ ap ⟲ (▾-idn (⟳ β))
   bridge-idn β i = funext λ γ →
     ap (λ α → β (α , γ .snd))
        (ap (γ .fst .fst ,_) (absorb-r-op (γ .fst .snd) i))
 
-  bridge-r : ∀ {x y} (f : hom x y) → Tᵒ.emb-idn-absorb f ≡ ap ⟲ (emb-·ᵒᵖ-idn f)
+  bridge-r : ∀ {x y} (f : hom x y) → Tᵒ.emb-idn-absorb f ≡ ap ⟲ (emb-▴-idn f)
   bridge-r {y = y} f =
       ap (ap ⟲ (sym (interchange f (idn y))) ∙_) (bridge-idn (Cᵒ.emb f))
-    ∙ sym (ap-comp ⟲ (sym (interchange f (idn y))) (·-idn (emb f)))
+    ∙ sym (ap-comp ⟲ (sym (interchange f (idn y))) (▾-idn (emb f)))
 
   -- 2-coh→ : ∀ {x y z} (f : hom x y) (g : hom y z)
   --        → is-2-coherent'' f g → is-2-coherent Tᵒ g f
   -- 2-coh→ f g mid =
-  --     ap (ap (Cᵒ._·' Cᵒ.emb f)) (bridge-l g)
+  --     ap (ap (Cᵒ._▿ Cᵒ.emb f)) (bridge-l g)
   --   ∙ ap (ap ⟲) mid
-  --   ∙ sym (ap (ap (Cᵒ.emb g Cᵒ.·'_)) (bridge-r f))
+  --   ∙ sym (ap (ap (Cᵒ.emb g Cᵒ.▿_)) (bridge-r f))
 
   -- 2-coh← : ∀ {x y z} (f : hom x y) (g : hom y z)
   --        → Tᵒ.triangle.is-2-coherent g f → is-2-coherent'' f g
   -- 2-coh← f g midᵒ = ap (ap ⟳)
-  --   ( sym (ap (ap (Cᵒ._·' Cᵒ.emb f)) (bridge-l g))
+  --   ( sym (ap (ap (Cᵒ._▿ Cᵒ.emb f)) (bridge-l g))
   --   ∙ midᵒ
-  --   ∙ ap (ap (Cᵒ.emb g Cᵒ.·'_)) (bridge-r f) )
+  --   ∙ ap (ap (Cᵒ.emb g Cᵒ.▿_)) (bridge-r f) )
 
   rep-op  : ∀ {x y} {α : composite y x} → is-representable α → Cᵒ.is-representable (⟲ α)
   rep-op  (k , p) = k , ap ⟲ p
@@ -361,17 +361,17 @@ module op-coh {o h} (C : category o h) where
     ∙ Path.unitl (repr-unique P₂ (nrm f))
     where
       Q₀ = emb-comp-op (idn y) f ; Q = emb-comp (idn y) f
-      ι  = interchange (idn y) f ; U = idn-·ᵒᵖ (emb f)
+      ι  = interchange (idn y) f ; U = idn-▴ (emb f)
 
       P₁ : is-representable (emb f)
-      P₁ = rep-op' ((Cᵒ.nrm f Tᵒ.● Cᵒ.nrm (idn y)) Tᵒ.⊳ Tᵒ.·-idn (Cᵒ.emb f))
+      P₁ = rep-op' ((Cᵒ.nrm f Tᵒ.⋉ Cᵒ.nrm (idn y)) Tᵒ.↝ Tᵒ.▾-idn (Cᵒ.emb f))
       P₂ : is-representable (emb f)
-      P₂ = (nrm (idn y) ● nrm f) ⊳ emb-idn-absorb f
+      P₂ = (nrm (idn y) ⋉ nrm f) ↝ emb-idn-absorb f
 
       wit : P₁ .snd ≡ P₂ .snd
       wit =
         begin
-          ap ⟳ ((ap ⟲ Q₀ ∙ refl) ∙ Tᵒ.·-idn (Cᵒ.emb f))
+          ap ⟳ ((ap ⟲ Q₀ ∙ refl) ∙ Tᵒ.▾-idn (Cᵒ.emb f))
             ≡⟨ ap (λ t → ap ⟳ ((ap ⟲ Q₀ ∙ refl) ∙ t)) (bridge-l f) ⟩
           ap ⟳ ((ap ⟲ Q₀ ∙ refl) ∙ ap ⟲ U)
             ≡⟨ ap-comp ⟳ (ap ⟲ Q₀ ∙ refl) (ap ⟲ U) ⟩
@@ -399,49 +399,49 @@ module op-coh {o h} (C : category o h) where
   ⟳⟲-ap _ = refl
 
   T'-op : ∀ {x y z w} (f : hom x y) (g : hom y z) (h : hom z w)
-        → (Cᵒ.emb h Cᵒ.·' Cᵒ.emb g Cᵒ.·' Cᵒ.emb f) ≡ ⟲ (emb f ·'' emb g ·'' emb h)
+        → (Cᵒ.emb h Cᵒ.▿ Cᵒ.emb g Cᵒ.▿ Cᵒ.emb f) ≡ ⟲ (emb f ▵ emb g ▵ emb h)
   T'-op _ _ _ = refl
 
 
   M-assoc : ∀ {x y z w} (A : composite x y) (B : composite y z) (Cc : composite z w)
-          → (A ·'' B) ·' Cc ≡ A ·'' (B ·' Cc)
+          → (A ▵ B) ▿ Cc ≡ A ▵ (B ▿ Cc)
   M-assoc _ _ _ = refl        -- bimod, generalized
 
-  ●-op : ∀ {x y z} {A : composite x y} {B : composite y z}
+  ⋉-op : ∀ {x y z} {A : composite x y} {B : composite y z}
          (U : is-representable A) (V : is-representable B)
-       → rep-op' (rep-op V Tᵒ.● rep-op U) ≡ (U ●'' V)
-  ●-op _ _ = refl
+       → rep-op' (rep-op V Tᵒ.⋉ rep-op U) ≡ (U ⋊ V)
+  ⋉-op _ _ = refl
 
   ι-square
     : ∀ {x y z w} {A : composite x y} {B : composite y z} {Cc : composite z w}
       (U : is-representable A) (V : is-representable B) (W : is-representable Cc)
-    → PathP (λ i → interchange♭ (U ● V) W i ≡ interchange♭ (U ●'' V) W i)
-        (ap (λ X → X ·'  Cc) (interchange♭ U V))
-        (ap (λ X → X ·'' Cc) (interchange♭ U V))
-  ι-square U V W j i = interchange♭ (●-coh U V i) W j
+    → PathP (λ i → interchange♭ (U ⋉ V) W i ≡ interchange♭ (U ⋊ V) W i)
+        (ap (λ X → X ▿  Cc) (interchange♭ U V))
+        (ap (λ X → X ▵ Cc) (interchange♭ U V))
+  ι-square U V W j i = interchange♭ (⋉-coh U V i) W j
 
   is-3-coherent
     : ∀ {x y z w} {A : composite x y} {B : composite y z} {Cc : composite z w}
       (U : is-representable A) (V : is-representable B) (W : is-representable Cc)
     → Type (o ⊔ h)
   is-3-coherent {A = A} {Cc = Cc} U V W =
-      interchange♭ U (V ● W) ∙ ap (λ X → A ·'' X) (interchange♭ V W)
-    ≡ interchange♭ (U ● V) W ∙ ap (λ X → X ·'' Cc) (interchange♭ U V)
+      interchange♭ U (V ⋉ W) ∙ ap (λ X → A ▵ X) (interchange♭ V W)
+    ≡ interchange♭ (U ⋉ V) W ∙ ap (λ X → X ▵ Cc) (interchange♭ U V)
 
   mult→3coh
     : ∀ {x y z w} {A : composite x y} {B : composite y z} {Cc : composite z w}
       (U : is-representable A) (V : is-representable B) (W : is-representable Cc)
     → ι-mult-r U V W → ι-mult-l U V W → is-3-coherent U V W
   mult→3coh {A = A} {Cc = Cc} U V W mr ml =
-      ap (λ t → t ∙ ap (λ X → A ·'' X) (interchange♭ V W)) (sym mr)
-    ∙ ap (λ t → ap (λ X → X ·' Cc) (interchange♭ U V) ∙ t) ml
+      ap (λ t → t ∙ ap (λ X → A ▵ X) (interchange♭ V W)) (sym mr)
+    ∙ ap (λ t → ap (λ X → X ▿ Cc) (interchange♭ U V) ∙ t) ml
     ∙ interchange-natural U V W
 
 
-  ●''-op : ∀ {x y z} {A : composite x y} {B : composite y z}
+  ⋊-op : ∀ {x y z} {A : composite x y} {B : composite y z}
            (U : is-representable A) (V : is-representable B)
-         → rep-op' (rep-op V Tᵒ.●'' rep-op U) ≡ (U ● V)
-  ●''-op _ _ = refl
+         → rep-op' (rep-op V Tᵒ.⋊ rep-op U) ≡ (U ⋉ V)
+  ⋊-op _ _ = refl
 
   ι-mult-r-op
     : ∀ {x y z w} {A : composite x y} {B : composite y z} {Cc : composite z w}
@@ -457,8 +457,8 @@ module op-coh {o h} (C : category o h) where
 
 
   ι-can : ∀ {x y z} {A : composite x y} {B : composite y z}
-          (U : is-representable A) (V : is-representable B) → A ·' B ≡ A ·'' B
-  ι-can U V = sym ((U ● V) .snd) ∙ (U ●'' V) .snd
+          (U : is-representable A) (V : is-representable B) → A ▿ B ≡ A ▵ B
+  ι-can U V = sym ((U ⋉ V) .snd) ∙ (U ⋊ V) .snd
 
   ι-can-is-ι : ∀ {x y z} {A : composite x y} {B : composite y z}
                (U : is-representable A) (V : is-representable B)
@@ -485,22 +485,22 @@ record category-3-coherent {o h} (C : category o h) : Type (o ⊔ h) where
     interchange-rcomp
       : ∀ {x y z w} {A : composite x y} {B : composite y z} {Cc : composite z w}
         (U : is-representable A) (V : is-representable B) (W : is-representable Cc)
-      → ap (λ X → X ·' Cc) (interchange♭ U V) ≡ interchange♭ U (V ● W)
+      → ap (λ X → X ▿ Cc) (interchange♭ U V) ≡ interchange♭ U (V ⋉ W)
 
     interchange-lcomp
       : ∀ {x y z w} {A : composite x y} {B : composite y z} {Cc : composite z w}
         (U : is-representable A) (V : is-representable B) (W : is-representable Cc)
-      → ap (λ X → A ·'' X) (interchange♭ V W) ≡ interchange♭ (U ●'' V) W
+      → ap (λ X → A ▵ X) (interchange♭ V W) ≡ interchange♭ (U ⋊ V) W
 
   -- The two double-slides agree: T' → M₁ → T'' equals T' → N → T''.
   interchange-square
     : ∀ {x y z w} {A : composite x y} {B : composite y z} {Cc : composite z w}
       (U : is-representable A) (V : is-representable B) (W : is-representable Cc)
-    → interchange♭ U (V ● W) ∙ ap (λ X → A ·'' X) (interchange♭ V W)
-    ≡ interchange♭ (U ● V) W ∙ ap (λ X → X ·'' Cc) (interchange♭ U V)
+    → interchange♭ U (V ⋉ W) ∙ ap (λ X → A ▵ X) (interchange♭ V W)
+    ≡ interchange♭ (U ⋉ V) W ∙ ap (λ X → X ▵ Cc) (interchange♭ U V)
   interchange-square {A = A} {Cc = Cc} U V W =
-      ap (λ t → t ∙ ap (λ X → A ·'' X) (interchange♭ V W))
+      ap (λ t → t ∙ ap (λ X → A ▵ X) (interchange♭ V W))
          (sym (interchange-rcomp U V W))
-    ∙ ap (λ t → ap (λ X → X ·' Cc) (interchange♭ U V) ∙ t)
+    ∙ ap (λ t → ap (λ X → X ▿ Cc) (interchange♭ U V) ∙ t)
          (interchange-lcomp U V W)
     ∙ interchange-natural U V W

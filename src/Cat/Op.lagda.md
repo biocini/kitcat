@@ -43,8 +43,8 @@ module op {o h} (C : category o h) where
   Spineᵒ : ∀ {x y z} (f : Vᵒ.hom x y) (g : Vᵒ.hom y z) → Type (o ⊔ h)
   Spineᵒ {x} {z = z} f g =
     Σ k ∶ Vᵒ.hom x z ,
-    Σ p ∶ (⟲ (A.emb k) ≡ ⟲ (g A.·ᵒᵖ A.emb f)) ,
-    Σ q ∶ (⟲ (A.emb k) ≡ ⟲ (A.emb g A.· f)) ,
+    Σ p ∶ (⟲ (A.emb k) ≡ ⟲ (g A.▴ A.emb f)) ,
+    Σ q ∶ (⟲ (A.emb k) ≡ ⟲ (A.emb g A.▾ f)) ,
       PathP (λ i → ⟲ (A.emb k) ≡ ap ⟲ (sym (A.interchange g f)) i) p q
 
   to  : ∀ {x y z} {f : Vᵒ.hom x y} {g : Vᵒ.hom y z} → A.spine g f → Spineᵒ f g

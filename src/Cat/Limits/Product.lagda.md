@@ -104,8 +104,8 @@ module _ {o h} (C : category o h) where
 
 The pairing of the projections is the identity: `idn` factors through
 each projection as itself, since `idn ⨾ π => π` is exactly
-`emb π ≡ emb (idn) · π`, and `emb-idn-absorb` proves the composite
-`emb (idn) · π` collapses to `emb π`. Uniqueness of the product cone
+`emb π ≡ emb (idn) ▾ π`, and `emb-idn-absorb` proves the composite
+`emb (idn) ▾ π` collapses to `emb π`. Uniqueness of the product cone
 does the rest.
 
 ```agda

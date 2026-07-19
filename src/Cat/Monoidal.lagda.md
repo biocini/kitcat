@@ -102,32 +102,32 @@ module tensor-representable {o h} (C : category o h) (I : category.ob C)
   ⊗₀-nrm : (x : C.ob) → is-⊗₀-representable (⊗₀-emb x)
   ⊗₀-nrm x = x , refl
 
-  _·₀_ : ⊗₀-composite → C.ob → ⊗₀-composite
-  (F ·₀ y) γ = F (⊗₀-sub y γ)
-  infixl 30 _·₀_
+  _▾₀_ : ⊗₀-composite → C.ob → ⊗₀-composite
+  (F ▾₀ y) γ = F (⊗₀-sub y γ)
+  infixl 30 _▾₀_
 
-  _·₀ᵒᵖ_ : C.ob → ⊗₀-composite → ⊗₀-composite
-  (x ·₀ᵒᵖ G) γ = G (⊗₀-cosub x γ)
-  infixl 30 _·₀ᵒᵖ_
+  _▴₀_ : C.ob → ⊗₀-composite → ⊗₀-composite
+  (x ▴₀ G) γ = G (⊗₀-cosub x γ)
+  infixl 30 _▴₀_
 
-  _·₀'_ : ⊗₀-composite → ⊗₀-composite → ⊗₀-composite
-  (F ·₀' G) γ = F (γ .fst , G (I , γ .snd))
-  infixl 30 _·₀'_
+  _▿₀_ : ⊗₀-composite → ⊗₀-composite → ⊗₀-composite
+  (F ▿₀ G) γ = F (γ .fst , G (I , γ .snd))
+  infixl 30 _▿₀_
 
-  _·₀''_ : ⊗₀-composite → ⊗₀-composite → ⊗₀-composite
-  (F ·₀'' G) γ = G (F (γ .fst , I) , γ .snd)
-  infixl 30 _·₀''_
+  _▵₀_ : ⊗₀-composite → ⊗₀-composite → ⊗₀-composite
+  (F ▵₀ G) γ = G (F (γ .fst , I) , γ .snd)
+  infixl 30 _▵₀_
 
   -- closure of the ternary interchange over the fibers of ⊗₀-emb;
   -- at ⊗₀-nrm endpoints it agrees with the input up to J-refl
   ⊗₀-interchange♭-from
-    : ((x y : C.ob) → ⊗₀-emb x ·₀ y ≡ x ·₀ᵒᵖ ⊗₀-emb y)
+    : ((x y : C.ob) → ⊗₀-emb x ▾₀ y ≡ x ▴₀ ⊗₀-emb y)
     → {A B : ⊗₀-composite}
     → is-⊗₀-representable A → is-⊗₀-representable B
-    → A ·₀' B ≡ A ·₀'' B
+    → A ▿₀ B ≡ A ▵₀ B
   ⊗₀-interchange♭-from ι {B = B} (m , p) (n , q) =
-    J (λ F' _ → F' ·₀' B ≡ F' ·₀'' B)
-      (J (λ G' _ → ⊗₀-emb m ·₀' G' ≡ ⊗₀-emb m ·₀'' G') (ι m n) q)
+    J (λ F' _ → F' ▿₀ B ≡ F' ▵₀ B)
+      (J (λ G' _ → ⊗₀-emb m ▿₀ G' ≡ ⊗₀-emb m ▵₀ G') (ι m n) q)
       p
 ```
 
@@ -155,16 +155,16 @@ record monoidal-axioms₀ {o h} (C : category o h) : Type₊ o where
     ⊗₀-interchange♭
       : {A B : ⊗₀-composite}
       → is-⊗₀-representable A → is-⊗₀-representable B
-      → A ·₀' B ≡ A ·₀'' B
+      → A ▿₀ B ≡ A ▵₀ B
 
-  ⊗₀-interchange : (x y : C.ob) → ⊗₀-emb x ·₀ y ≡ x ·₀ᵒᵖ ⊗₀-emb y
+  ⊗₀-interchange : (x y : C.ob) → ⊗₀-emb x ▾₀ y ≡ x ▴₀ ⊗₀-emb y
   ⊗₀-interchange x y = ⊗₀-interchange♭ (⊗₀-nrm x) (⊗₀-nrm y)
 
   ⊗₀-spine : C.ob → C.ob → Type o
   ⊗₀-spine x y =
     Σ s ∶ C.ob ,
-    Σ p ∶ (⊗₀-emb s ≡ ⊗₀-emb x ·₀ y) ,
-    Σ q ∶ (⊗₀-emb s ≡ x ·₀ᵒᵖ ⊗₀-emb y) ,
+    Σ p ∶ (⊗₀-emb s ≡ ⊗₀-emb x ▾₀ y) ,
+    Σ q ∶ (⊗₀-emb s ≡ x ▴₀ ⊗₀-emb y) ,
       PathP (λ i → ⊗₀-emb s ≡ ⊗₀-interchange x y i) p q
 
   field
@@ -175,10 +175,10 @@ record monoidal-axioms₀ {o h} (C : category o h) : Type₊ o where
   x ⊗₀ y = ⊗₀-spine-contr x y .center .fst
   infixr 40 _⊗₀_
 
-  ⊗₀-emb-comp : (x y : C.ob) → ⊗₀-emb (x ⊗₀ y) ≡ ⊗₀-emb x ·₀ y
+  ⊗₀-emb-comp : (x y : C.ob) → ⊗₀-emb (x ⊗₀ y) ≡ ⊗₀-emb x ▾₀ y
   ⊗₀-emb-comp x y = ⊗₀-spine-contr x y .center .snd .fst
 
-  ⊗₀-emb-comp-op : (x y : C.ob) → ⊗₀-emb (x ⊗₀ y) ≡ x ·₀ᵒᵖ ⊗₀-emb y
+  ⊗₀-emb-comp-op : (x y : C.ob) → ⊗₀-emb (x ⊗₀ y) ≡ x ▴₀ ⊗₀-emb y
   ⊗₀-emb-comp-op x y = ⊗₀-spine-contr x y .center .snd .snd .fst
 
   -- the spine's 2-cell: the two composite comparisons agree along
@@ -203,53 +203,53 @@ module theory₀ {o h} {C : category o h} (M₀ : monoidal-axioms₀ C) where
   open monoidal-axioms₀ M₀
   private module C = category C
 
-  _●₀_ : ∀ {F G : ⊗₀-composite}
+  _⋉₀_ : ∀ {F G : ⊗₀-composite}
       → is-⊗₀-representable F → is-⊗₀-representable G
-      → is-⊗₀-representable (F ·₀' G)
-  (m , p) ●₀ (n , q) = m ⊗₀ n , ⊗₀-emb-comp m n ∙ (λ i → p i ·₀' q i)
-  infixr 40 _●₀_
+      → is-⊗₀-representable (F ▿₀ G)
+  (m , p) ⋉₀ (n , q) = m ⊗₀ n , ⊗₀-emb-comp m n ∙ (λ i → p i ▿₀ q i)
+  infixr 40 _⋉₀_
 
-  _●₀''_ : ∀ {F G : ⊗₀-composite}
+  _⋊₀_ : ∀ {F G : ⊗₀-composite}
         → is-⊗₀-representable F → is-⊗₀-representable G
-        → is-⊗₀-representable (F ·₀'' G)
-  (m , p) ●₀'' (n , q) = m ⊗₀ n , ⊗₀-emb-comp-op m n ∙ (λ i → p i ·₀'' q i)
+        → is-⊗₀-representable (F ▵₀ G)
+  (m , p) ⋊₀ (n , q) = m ⊗₀ n , ⊗₀-emb-comp-op m n ∙ (λ i → p i ▵₀ q i)
 
   private
-    fwd : ∀ x y → fiber ⊗₀-emb (⊗₀-emb x ·₀ y) → ⊗₀-spine x y
+    fwd : ∀ x y → fiber ⊗₀-emb (⊗₀-emb x ▾₀ y) → ⊗₀-spine x y
     fwd x y (k , r) =
       k , r , r ∙ ⊗₀-interchange x y , transpose (cat.fill r (⊗₀-interchange x y))
 
-    bwd : ∀ x y → fiber ⊗₀-emb (x ·₀ᵒᵖ ⊗₀-emb y) → ⊗₀-spine x y
+    bwd : ∀ x y → fiber ⊗₀-emb (x ▴₀ ⊗₀-emb y) → ⊗₀-spine x y
     bwd x y (k , r) =
       k , r ∙ sym ι , r , sym (transpose (cat.fill r (sym ι)))
       where ι = ⊗₀-interchange x y
 
   -- the pull and push fibers of ⊗₀-emb over the one-sided
   -- composites are contractible by projection from the spine
-  ⊗₀-pull-contr : ∀ x y → is-contr (fiber ⊗₀-emb (⊗₀-emb x ·₀ y))
+  ⊗₀-pull-contr : ∀ x y → is-contr (fiber ⊗₀-emb (⊗₀-emb x ▾₀ y))
   ⊗₀-pull-contr x y .center = x ⊗₀ y , ⊗₀-emb-comp x y
   ⊗₀-pull-contr x y .paths u i = φ i .fst , φ i .snd .fst where
     φ : ⊗₀-spine-contr x y .center ≡ fwd x y u
     φ = ⊗₀-spine-contr x y .paths (fwd x y u)
 
-  ⊗₀-push-contr : ∀ x y → is-contr (fiber ⊗₀-emb (x ·₀ᵒᵖ ⊗₀-emb y))
+  ⊗₀-push-contr : ∀ x y → is-contr (fiber ⊗₀-emb (x ▴₀ ⊗₀-emb y))
   ⊗₀-push-contr x y .center = x ⊗₀ y , ⊗₀-emb-comp-op x y
   ⊗₀-push-contr x y .paths u i = φ i .fst , φ i .snd .snd .fst where
     φ : ⊗₀-spine-contr x y .center ≡ bwd x y u
     φ = ⊗₀-spine-contr x y .paths (bwd x y u)
 
   -- a composite witness: k represents the two-sided tensor of x and y
-  ⊗₀-cast-path : ∀ {x y k} → (⊗₀-emb x ·₀ y) ⊨₀ k → x ⊗₀ y ≡ k
+  ⊗₀-cast-path : ∀ {x y k} → (⊗₀-emb x ▾₀ y) ⊨₀ k → x ⊗₀ y ≡ k
   ⊗₀-cast-path {x} {y} {k} α = ap fst (⊗₀-pull-contr x y .paths (k , α))
 
-  ⊗₀-cast-path⁻¹ : ∀ {x y k} → x ⊗₀ y ≡ k → (⊗₀-emb x ·₀ y) ⊨₀ k
+  ⊗₀-cast-path⁻¹ : ∀ {x y k} → x ⊗₀ y ≡ k → (⊗₀-emb x ▾₀ y) ⊨₀ k
   ⊗₀-cast-path⁻¹ {x} {y} p = ap ⊗₀-emb (sym p) ∙ ⊗₀-emb-comp x y
 ```
 
 ### The unit laws at the identity context
 
 ```agda
-  ⊗₀-comp-eq-ev : ∀ x y → x ⊗₀ y ≡ ⊗₀-ev (⊗₀-emb x ·₀ y)
+  ⊗₀-comp-eq-ev : ∀ x y → x ⊗₀ y ≡ ⊗₀-ev (⊗₀-emb x ▾₀ y)
   ⊗₀-comp-eq-ev x y = sym (⊗₀-unit (x ⊗₀ y)) ∙ ap ⊗₀-ev (⊗₀-emb-comp x y)
 
   ⊗₀-comp-eq-pre : ∀ x y → x ⊗₀ y ≡ ⊗₀-pre x y
@@ -274,19 +274,19 @@ module theory₀ {o h} {C : category o h} (M₀ : monoidal-axioms₀ C) where
   ⊗₀-absorb-r : ∀ l → ⊗₀-post I l ≡ l
   ⊗₀-absorb-r l = sym (⊗₀-pre-is-post l I) ∙ ⊗₀-unit l
 
-  ⊗₀-idn-·ᵒᵖ : ∀ (F : ⊗₀-composite) → I ·₀ᵒᵖ F ≡ F
-  ⊗₀-idn-·ᵒᵖ F = funext λ (l , r) → ap (λ t → F (t , r)) (⊗₀-absorb-r l)
+  ⊗₀-idn-▴ : ∀ (F : ⊗₀-composite) → I ▴₀ F ≡ F
+  ⊗₀-idn-▴ F = funext λ (l , r) → ap (λ t → F (t , r)) (⊗₀-absorb-r l)
 
   ⊗₀-emb-image-contr : ∀ x → is-contr (fiber ⊗₀-emb (⊗₀-emb x))
   ⊗₀-emb-image-contr x =
     subst (λ F → is-contr (fiber ⊗₀-emb F))
-      (⊗₀-idn-·ᵒᵖ (⊗₀-emb x)) (⊗₀-push-contr I x)
+      (⊗₀-idn-▴ (⊗₀-emb x)) (⊗₀-push-contr I x)
 
-  ·₀-idn : ∀ (F : ⊗₀-composite) → F ·₀ I ≡ F
-  ·₀-idn F = funext λ (l , r) → ap (λ t → F (l , t)) (⊗₀-absorb-l r)
+  ▾₀-idn : ∀ (F : ⊗₀-composite) → F ▾₀ I ≡ F
+  ▾₀-idn F = funext λ (l , r) → ap (λ t → F (l , t)) (⊗₀-absorb-l r)
 
-  ⊗₀-emb-idn-absorb : ∀ x → ⊗₀-emb I ·₀ x ≡ ⊗₀-emb x
-  ⊗₀-emb-idn-absorb x = ⊗₀-interchange I x ∙ ⊗₀-idn-·ᵒᵖ (⊗₀-emb x)
+  ⊗₀-emb-idn-absorb : ∀ x → ⊗₀-emb I ▾₀ x ≡ ⊗₀-emb x
+  ⊗₀-emb-idn-absorb x = ⊗₀-interchange I x ∙ ⊗₀-idn-▴ (⊗₀-emb x)
 ```
 
 ### Post and pre decomposition
@@ -363,14 +363,14 @@ module theory₀ {o h} {C : category o h} (M₀ : monoidal-axioms₀ C) where
     ∙ ⊗₀-repr-lc
         (is-⊗₀-representable-prop F U V ∙ is-⊗₀-representable-prop F V W)
 
-  _⊳_ : ∀ {F G : ⊗₀-composite}
+  _↝_ : ∀ {F G : ⊗₀-composite}
       → is-⊗₀-representable F → F ≡ G → is-⊗₀-representable G
-  (m , p) ⊳ e = m , p ∙ e
+  (m , p) ↝ e = m , p ∙ e
 
-  ⊳-repr : ∀ {F G} (U V : is-⊗₀-representable F) (e : F ≡ G)
-         → ⊗₀-repr-unique (U ⊳ e) (V ⊳ e) ≡ ⊗₀-repr-unique U V
-  ⊳-repr (m , p) (n , q) =
-    J (λ _ e' → ⊗₀-repr-unique ((m , p) ⊳ e') ((n , q) ⊳ e')
+  ↝-repr : ∀ {F G} (U V : is-⊗₀-representable F) (e : F ≡ G)
+         → ⊗₀-repr-unique (U ↝ e) (V ↝ e) ≡ ⊗₀-repr-unique U V
+  ↝-repr (m , p) (n , q) =
+    J (λ _ e' → ⊗₀-repr-unique ((m , p) ↝ e') ((n , q) ↝ e')
               ≡ ⊗₀-repr-unique (m , p) (n , q))
       (λ i → ⊗₀-repr-unique (m , Path.unitr p i) (n , Path.unitr q i))
 
@@ -392,8 +392,8 @@ module theory₀ {o h} {C : category o h} (M₀ : monoidal-axioms₀ C) where
         (⊗₀-emb-comp-coh x y)
     ∙ Path.unitl (⊗₀-emb-comp-op x y)
 
-  ·₀-comp : ∀ (F : ⊗₀-composite) y z → F ·₀ (y ⊗₀ z) ≡ (F ·₀ y) ·₀ z
-  ·₀-comp F y z = ap (F ·₀'_) (⊗₀-emb-comp y z)
+  ▾₀-comp : ∀ (F : ⊗₀-composite) y z → F ▾₀ (y ⊗₀ z) ≡ (F ▾₀ y) ▾₀ z
+  ▾₀-comp F y z = ap (F ▿₀_) (⊗₀-emb-comp y z)
 ```
 
 ### Associativity and the unit laws
@@ -404,28 +404,28 @@ representations inhabit the one propositional representability
 fiber.
 
 ```agda
-  assoc-σ●₀ : ∀ {F G H : ⊗₀-composite}
+  assoc-σ⋉₀ : ∀ {F G H : ⊗₀-composite}
            → (U : is-⊗₀-representable F) (V : is-⊗₀-representable G)
              (W : is-⊗₀-representable H)
-           → U ●₀ (V ●₀ W) ≡ (U ●₀ V) ●₀ W
-  assoc-σ●₀ U V W = is-⊗₀-representable-prop _ (U ●₀ (V ●₀ W)) ((U ●₀ V) ●₀ W)
+           → U ⋉₀ (V ⋉₀ W) ≡ (U ⋉₀ V) ⋉₀ W
+  assoc-σ⋉₀ U V W = is-⊗₀-representable-prop _ (U ⋉₀ (V ⋉₀ W)) ((U ⋉₀ V) ⋉₀ W)
 
-  assoc●₀ : ∀ {F G H : ⊗₀-composite}
+  assoc⋉₀ : ∀ {F G H : ⊗₀-composite}
          → (U : is-⊗₀-representable F) (V : is-⊗₀-representable G)
            (W : is-⊗₀-representable H)
-         → fst (U ●₀ (V ●₀ W)) ≡ fst ((U ●₀ V) ●₀ W)
-  assoc●₀ U V W = ap fst (assoc-σ●₀ U V W)
+         → fst (U ⋉₀ (V ⋉₀ W)) ≡ fst ((U ⋉₀ V) ⋉₀ W)
+  assoc⋉₀ U V W = ap fst (assoc-σ⋉₀ U V W)
 
   ⊗₀-assoc : ∀ x y z → x ⊗₀ (y ⊗₀ z) ≡ (x ⊗₀ y) ⊗₀ z
-  ⊗₀-assoc x y z = assoc●₀ (⊗₀-nrm x) (⊗₀-nrm y) (⊗₀-nrm z)
+  ⊗₀-assoc x y z = assoc⋉₀ (⊗₀-nrm x) (⊗₀-nrm y) (⊗₀-nrm z)
 
   ⊗₀-unitr : ∀ x → x ⊗₀ I ≡ x
   ⊗₀-unitr x =
-    ⊗₀-repr-unique ((⊗₀-nrm x ●₀ ⊗₀-nrm I) ⊳ ·₀-idn (⊗₀-emb x)) (⊗₀-nrm x)
+    ⊗₀-repr-unique ((⊗₀-nrm x ⋉₀ ⊗₀-nrm I) ↝ ▾₀-idn (⊗₀-emb x)) (⊗₀-nrm x)
 
   ⊗₀-unitl : ∀ x → I ⊗₀ x ≡ x
   ⊗₀-unitl x =
-    ⊗₀-repr-unique ((⊗₀-nrm I ●₀ ⊗₀-nrm x) ⊳ ⊗₀-emb-idn-absorb x) (⊗₀-nrm x)
+    ⊗₀-repr-unique ((⊗₀-nrm I ⋉₀ ⊗₀-nrm x) ↝ ⊗₀-emb-idn-absorb x) (⊗₀-nrm x)
 ```
 
 ### Unit uniqueness and the demoted equivalences
@@ -503,8 +503,8 @@ record monoidal-2-coherent {o h} {C : category o h}
   field
     is-⊗₀-2-coherent
       : (x y : C.ob)
-      → ap (_·₀' ⊗₀-emb y) (·₀-idn (⊗₀-emb x))
-      ≡ ap (⊗₀-emb x ·₀'_) (⊗₀-emb-idn-absorb y)
+      → ap (_▿₀ ⊗₀-emb y) (▾₀-idn (⊗₀-emb x))
+      ≡ ap (⊗₀-emb x ▿₀_) (⊗₀-emb-idn-absorb y)
 ```
 
 ## Level 1: the displayed context calculus
@@ -567,8 +567,8 @@ module tensor-virtual₁ {o h} (C : category o h) (I : category.ob C) where
 The representability predicate with its satisfaction relation
 and normal form, the unit-slot actions `⊗₁-pre`/`⊗₁-post` and
 the context substitutions `⊗₁-sub`/`⊗₁-cosub`, mirroring the
-object layer; the two one-sided composite operators `·₁`/`·₁ᵒᵖ`,
-the two ternary orders `·₁'`/`·₁''`, and the vertical composite
+object layer; the two one-sided composite operators `▾₁`/`▴₁`,
+the two ternary orders `▿₁`/`▵₁`, and the vertical composite
 `_⨾₁_`.
 
 ```agda
@@ -611,29 +611,29 @@ module tensor-representable₁ {o h} (C : category o h) (I : category.ob C)
   ⊗₁-nrm : ∀ {x x'} (φ : C.hom x x') → is-⊗₁-representable (⊗₁-emb φ)
   ⊗₁-nrm φ = φ , refl
 
-  _·₁_ : ∀ {F F' : ⊗₀-composite} {y y'}
+  _▾₁_ : ∀ {F F' : ⊗₀-composite} {y y'}
        → ⊗₁-composite F F' → C.hom y y'
-       → ⊗₁-composite (F ·₀ y) (F' ·₀ y')
-  (η ·₁ ψ) γ γ' δ = η $₁ ⊗₁-sub ψ δ
-  infixl 30 _·₁_
+       → ⊗₁-composite (F ▾₀ y) (F' ▾₀ y')
+  (η ▾₁ ψ) γ γ' δ = η $₁ ⊗₁-sub ψ δ
+  infixl 30 _▾₁_
 
-  _·₁ᵒᵖ_ : ∀ {x x'} {G G' : ⊗₀-composite}
+  _▴₁_ : ∀ {x x'} {G G' : ⊗₀-composite}
          → C.hom x x' → ⊗₁-composite G G'
-         → ⊗₁-composite (x ·₀ᵒᵖ G) (x' ·₀ᵒᵖ G')
-  (φ ·₁ᵒᵖ η) γ γ' δ = η $₁ ⊗₁-cosub φ δ
-  infixl 30 _·₁ᵒᵖ_
+         → ⊗₁-composite (x ▴₀ G) (x' ▴₀ G')
+  (φ ▴₁ η) γ γ' δ = η $₁ ⊗₁-cosub φ δ
+  infixl 30 _▴₁_
 
-  _·₁'_ : ∀ {F F' G G' : ⊗₀-composite}
+  _▿₁_ : ∀ {F F' G G' : ⊗₀-composite}
         → ⊗₁-composite F F' → ⊗₁-composite G G'
-        → ⊗₁-composite (F ·₀' G) (F' ·₀' G')
-  (η ·₁' ζ) γ γ' (α , β) = η $₁ (α , ζ $₁ (⊗₁-ov-idn , β))
-  infixl 30 _·₁'_
+        → ⊗₁-composite (F ▿₀ G) (F' ▿₀ G')
+  (η ▿₁ ζ) γ γ' (α , β) = η $₁ (α , ζ $₁ (⊗₁-ov-idn , β))
+  infixl 30 _▿₁_
 
-  _·₁''_ : ∀ {F F' G G' : ⊗₀-composite}
+  _▵₁_ : ∀ {F F' G G' : ⊗₀-composite}
          → ⊗₁-composite F F' → ⊗₁-composite G G'
-         → ⊗₁-composite (F ·₀'' G) (F' ·₀'' G')
-  (η ·₁'' ζ) γ γ' (α , β) = ζ $₁ (η $₁ (α , ⊗₁-un-idn) , β)
-  infixl 30 _·₁''_
+         → ⊗₁-composite (F ▵₀ G) (F' ▵₀ G')
+  (η ▵₁ ζ) γ γ' (α , β) = ζ $₁ (η $₁ (α , ⊗₁-un-idn) , β)
+  infixl 30 _▵₁_
 
   -- vertical composite of hom-composites, with the second factor
   -- read at the identity frame: the normal form ⊗₁-emb-⨾ produces
@@ -672,8 +672,8 @@ record monoidal-axioms₁ {o h} {C : category o h}
       : ∀ {x x'} (φ : C.hom x x') {y y'} (ψ : C.hom y y')
       → PathP (λ i → ⊗₁-composite (⊗₀-interchange x y i)
                                    (⊗₀-interchange x' y' i))
-              (⊗₁-emb φ ·₁ ψ)
-              (φ ·₁ᵒᵖ ⊗₁-emb ψ)
+              (⊗₁-emb φ ▾₁ ψ)
+              (φ ▴₁ ⊗₁-emb ψ)
 
   ⊗₁-spine : ∀ {x x'} (φ : C.hom x x') {y y'} (ψ : C.hom y y')
           → Type (o ⊔ h)
@@ -681,10 +681,10 @@ record monoidal-axioms₁ {o h} {C : category o h}
     Σ σ ∶ C.hom (x ⊗₀ y) (x' ⊗₀ y') ,
     Σ P ∶ PathP (λ i → ⊗₁-composite (⊗₀-emb-comp x y i)
                                      (⊗₀-emb-comp x' y' i))
-                (⊗₁-emb σ) (⊗₁-emb φ ·₁ ψ) ,
+                (⊗₁-emb σ) (⊗₁-emb φ ▾₁ ψ) ,
     Σ Q ∶ PathP (λ i → ⊗₁-composite (⊗₀-emb-comp-op x y i)
                                      (⊗₀-emb-comp-op x' y' i))
-                (⊗₁-emb σ) (φ ·₁ᵒᵖ ⊗₁-emb ψ) ,
+                (⊗₁-emb σ) (φ ▴₁ ⊗₁-emb ψ) ,
       PathP (λ i → PathP (λ j → ⊗₁-composite (⊗₀-emb-comp-coh x  y  i j)
                                               (⊗₀-emb-comp-coh x' y' i j))
                          (⊗₁-emb σ) (⊗₁-interchange φ ψ i))
@@ -714,13 +714,13 @@ record monoidal-axioms₁ {o h} {C : category o h}
   ⊗₁-emb-comp : ∀ {x x'} (φ : C.hom x x') {y y'} (ψ : C.hom y y')
               → PathP (λ i → ⊗₁-composite (⊗₀-emb-comp x y i)
                                            (⊗₀-emb-comp x' y' i))
-                      (⊗₁-emb (φ ⊗₁ ψ)) (⊗₁-emb φ ·₁ ψ)
+                      (⊗₁-emb (φ ⊗₁ ψ)) (⊗₁-emb φ ▾₁ ψ)
   ⊗₁-emb-comp φ ψ = ⊗₁-spine-contr φ ψ .center .snd .fst
 
   ⊗₁-emb-comp-op : ∀ {x x'} (φ : C.hom x x') {y y'} (ψ : C.hom y y')
                  → PathP (λ i → ⊗₁-composite (⊗₀-emb-comp-op x y i)
                                               (⊗₀-emb-comp-op x' y' i))
-                         (⊗₁-emb (φ ⊗₁ ψ)) (φ ·₁ᵒᵖ ⊗₁-emb ψ)
+                         (⊗₁-emb (φ ⊗₁ ψ)) (φ ▴₁ ⊗₁-emb ψ)
   ⊗₁-emb-comp-op φ ψ = ⊗₁-spine-contr φ ψ .center .snd .snd .fst
 
   -- the spine's 2-cell

@@ -49,36 +49,36 @@ module theory {o h} (C : category o h) where
   f ⨾ g = spine-contr f g .center .fst
   infixr 40 _⨾_
 
-  emb-comp : ∀ {x y z} (f : hom x y) (g : hom y z) → emb (f ⨾ g) ≡ emb f · g
+  emb-comp : ∀ {x y z} (f : hom x y) (g : hom y z) → emb (f ⨾ g) ≡ emb f ▾ g
   emb-comp f g = spine-contr f g .center .snd .fst
 
-  emb-comp-op : ∀ {x y z} (f : hom x y) (g : hom y z) → emb (f ⨾ g) ≡ f ·ᵒᵖ emb g
+  emb-comp-op : ∀ {x y z} (f : hom x y) (g : hom y z) → emb (f ⨾ g) ≡ f ▴ emb g
   emb-comp-op  f g = spine-contr f g .center .snd .snd .fst
 
-  _●_ : ∀ {x y z} {A : composite x y} {B : composite y z}
-      → is-representable A → is-representable B → is-representable (A ·' B)
-  (m , p) ● (n , q) = m ⨾ n , emb-comp m n ∙ (λ i → p i ·' q i)
+  _⋉_ : ∀ {x y z} {A : composite x y} {B : composite y z}
+      → is-representable A → is-representable B → is-representable (A ▿ B)
+  (m , p) ⋉ (n , q) = m ⨾ n , emb-comp m n ∙ (λ i → p i ▿ q i)
 
-  _●''_ : ∀ {x y z} {A : composite x y} {B : composite y z}
-        → is-representable A → is-representable B → is-representable (A ·'' B)
-  (m , p) ●'' (n , q) = m ⨾ n , emb-comp-op m n ∙ (λ i → p i ·'' q i)
+  _⋊_ : ∀ {x y z} {A : composite x y} {B : composite y z}
+        → is-representable A → is-representable B → is-representable (A ▵ B)
+  (m , p) ⋊ (n , q) = m ⨾ n , emb-comp-op m n ∙ (λ i → p i ▵ q i)
 
   private
-    fwd : ∀ {x y z} (f : hom x y) (g : hom y z) → fiber emb (emb f · g) → spine f g
+    fwd : ∀ {x y z} (f : hom x y) (g : hom y z) → fiber emb (emb f ▾ g) → spine f g
     fwd f g (h , r) = h , r , r ∙ interchange f g , transpose (cat.fill r (interchange f g))
 
-    bwd : ∀ {x y z} (f : hom x y) (g : hom y z) → fiber emb (f ·ᵒᵖ emb g) → spine f g
+    bwd : ∀ {x y z} (f : hom x y) (g : hom y z) → fiber emb (f ▴ emb g) → spine f g
     bwd f g (h , r) =
       h , r ∙ sym ι , r , sym (transpose (cat.fill r (sym ι)))
       where ι = interchange f g
 
-  pull-contr : ∀ {x y z} (f : hom x y) (g : hom y z) → is-contr (fiber emb (emb f · g))
+  pull-contr : ∀ {x y z} (f : hom x y) (g : hom y z) → is-contr (fiber emb (emb f ▾ g))
   pull-contr f g .center  = f ⨾ g , emb-comp f g
   pull-contr f g .paths u i = φ i .fst , φ i .snd .fst  where
     φ : spine-contr f g .center ≡ fwd f g u
     φ = spine-contr f g .paths (fwd f g u)
 
-  push-contr : ∀ {x y z} (f : hom x y) (g : hom y z) → is-contr (fiber emb (f ·ᵒᵖ emb g))
+  push-contr : ∀ {x y z} (f : hom x y) (g : hom y z) → is-contr (fiber emb (f ▴ emb g))
   push-contr f g .center  = f ⨾ g , emb-comp-op f g
   push-contr f g .paths u i = (φ i .fst) , φ i .snd .snd .fst where
     φ : spine-contr f g .center ≡ bwd f g u
@@ -86,7 +86,7 @@ module theory {o h} (C : category o h) where
 
   -- a composite witness: s represents the two-sided composite of f and g
   _⨾_=>_ : ∀ {x y z} → hom x y → hom y z → hom x z → Type (o ⊔ h)
-  _⨾_=>_ f g s = (emb f · g) ⊨ s
+  _⨾_=>_ f g s = (emb f ▾ g) ⊨ s
 
   cast-path
     : ∀ {x y z} {f : hom x y} {g : hom y z} {s : hom x z}
@@ -104,7 +104,7 @@ module theory {o h} (C : category o h) where
 The following lemmas depend on unit
 
 ```
-  comp-eq-ev : ∀ {x y z} (f : hom x y) (g : hom y z) → f ⨾ g ≡ ev (emb f · g)
+  comp-eq-ev : ∀ {x y z} (f : hom x y) (g : hom y z) → f ⨾ g ≡ ev (emb f ▾ g)
   comp-eq-ev f g = sym (unit (f ⨾ g)) ∙ ap (λ α → ev α) (emb-comp f g)
 
   comp-eq-pre : ∀ {x y z} (f : hom x y) (g : hom y z) → f ⨾ g ≡ pre f g
@@ -126,20 +126,20 @@ The following lemmas depend on unit
   absorb-r : ∀ {w x} (a : hom w x) → post (idn x) a ≡ a
   absorb-r a = sym (pre-is-post a (idn _)) ∙ unit a
 
-  idn-·ᵒᵖ : ∀ {x y} (β : composite x y) → idn x ·ᵒᵖ β ≡ β
-  idn-·ᵒᵖ β = funext λ γ →
+  idn-▴ : ∀ {x y} (β : composite x y) → idn x ▴ β ≡ β
+  idn-▴ β = funext λ γ →
     ap (λ α → β (α , γ .snd)) (ap (γ .fst .fst ,_) (absorb-r (γ .fst .snd)))
 
   emb-image-contr : ∀ {x y} (f : hom x y) → is-contr (fiber emb (emb f))
   emb-image-contr {x} f =
-    subst (λ α → is-contr (fiber emb α)) (idn-·ᵒᵖ (emb f)) (push-contr (idn x) f)
+    subst (λ α → is-contr (fiber emb α)) (idn-▴ (emb f)) (push-contr (idn x) f)
 
-  ·-idn : ∀ {x y} (α : composite x y) → α · idn y ≡ α
-  ·-idn α = funext λ γ →
+  ▾-idn : ∀ {x y} (α : composite x y) → α ▾ idn y ≡ α
+  ▾-idn α = funext λ γ →
     ap (λ β → α (γ .fst , β)) (ap (γ .snd .fst ,_) (absorb-l (γ .snd .snd)))
 
-  emb-idn-absorb : ∀ {x y} (f : hom x y) → emb (idn x) · f ≡ emb f
-  emb-idn-absorb {x} f = interchange (idn x) f ∙ idn-·ᵒᵖ (emb f)
+  emb-idn-absorb : ∀ {x y} (f : hom x y) → emb (idn x) ▾ f ≡ emb f
+  emb-idn-absorb {x} f = interchange (idn x) f ∙ idn-▴ (emb f)
 
   emb-post
     : ∀ {x y} (f : hom x y) {w} (a : hom w x) {v} (b : hom y v)
@@ -200,13 +200,13 @@ The following lemmas depend on unit
       sym (ap-comp fst (is-representable-prop α U V) (is-representable-prop α V W))
     ∙ repr-lc (is-representable-prop α U V ∙ is-representable-prop α V W)
 
-  _⊳_ : ∀ {x y} {A B : composite x y} → is-representable A → A ≡ B → is-representable B
-  (m , p) ⊳ e = m , p ∙ e
+  _↝_ : ∀ {x y} {A B : composite x y} → is-representable A → A ≡ B → is-representable B
+  (m , p) ↝ e = m , p ∙ e
 
-  ⊳-repr : ∀ {x y} {α β : composite x y} (U V : is-representable α) (e : α ≡ β)
-         → repr-unique (U ⊳ e) (V ⊳ e) ≡ repr-unique U V
-  ⊳-repr (m , p) (n , q) =
-    J (λ _ e' → repr-unique ((m , p) ⊳ e') ((n , q) ⊳ e') ≡ repr-unique (m , p) (n , q))
+  ↝-repr : ∀ {x y} {α β : composite x y} (U V : is-representable α) (e : α ≡ β)
+         → repr-unique (U ↝ e) (V ↝ e) ≡ repr-unique U V
+  ↝-repr (m , p) (n , q) =
+    J (λ _ e' → repr-unique ((m , p) ↝ e') ((n , q) ↝ e') ≡ repr-unique (m , p) (n , q))
       (λ i → repr-unique (m , Path.unitr p i) (n , Path.unitr q i))
 
   ap-emb-lc : ∀ {x y} {m n : hom x y} {r s : m ≡ n} → ap emb r ≡ ap emb s → r ≡ s
@@ -235,27 +235,27 @@ Associativity can be recovered through the strictness of composite composition
 
 ```
 
-  ·-comp : ∀ {x y z w} (α : composite x y) (g : hom y z) (h : hom z w)
-         → α · (g ⨾ h) ≡ (α · g) · h
-  ·-comp α g h = ap (α ·'_) (emb-comp g h)
+  ▾-comp : ∀ {x y z w} (α : composite x y) (g : hom y z) (h : hom z w)
+         → α ▾ (g ⨾ h) ≡ (α ▾ g) ▾ h
+  ▾-comp α g h = ap (α ▿_) (emb-comp g h)
 
-  assoc-σ● : ∀ {w x y z} {A : composite w x} {B : composite x y} {C : composite y z}
+  assoc-σ⋉ : ∀ {w x y z} {A : composite w x} {B : composite x y} {C : composite y z}
            → (U : is-representable A) (V : is-representable B) (W : is-representable C)
-           → U ● (V ● W) ≡ (U ● V) ● W
-  assoc-σ● U V W = is-representable-prop _ (U ● (V ● W)) ((U ● V) ● W)
+           → U ⋉ (V ⋉ W) ≡ (U ⋉ V) ⋉ W
+  assoc-σ⋉ U V W = is-representable-prop _ (U ⋉ (V ⋉ W)) ((U ⋉ V) ⋉ W)
 
-  assoc● : ∀ {w x y z} {A : composite w x} {B : composite x y} {C : composite y z}
+  assoc⋉ : ∀ {w x y z} {A : composite w x} {B : composite x y} {C : composite y z}
          → (U : is-representable A) (V : is-representable B) (W : is-representable C)
-         → fst (U ● (V ● W)) ≡ fst ((U ● V) ● W)
-  assoc● U V W = ap fst (assoc-σ● U V W)
+         → fst (U ⋉ (V ⋉ W)) ≡ fst ((U ⋉ V) ⋉ W)
+  assoc⋉ U V W = ap fst (assoc-σ⋉ U V W)
 
   assoc : ∀ {x y z w} (f : hom x y) (g : hom y z) (h : hom z w)
         → f ⨾ (g ⨾ h) ≡ (f ⨾ g) ⨾ h
-  assoc f g h = assoc● (nrm f) (nrm g) (nrm h)
+  assoc f g h = assoc⋉ (nrm f) (nrm g) (nrm h)
 
   unitr : ∀ {x y} (f : hom x y) → f ⨾ idn y ≡ f
-  unitr f = repr-unique ((nrm f ● nrm (idn _)) ⊳ ·-idn (emb f)) (nrm f)
+  unitr f = repr-unique ((nrm f ⋉ nrm (idn _)) ↝ ▾-idn (emb f)) (nrm f)
 
   unitl : ∀ {x y} (f : hom x y) → idn x ⨾ f ≡ f
-  unitl f = repr-unique ((nrm (idn _) ● nrm f) ⊳ emb-idn-absorb f) (nrm f)
+  unitl f = repr-unique ((nrm (idn _) ⋉ nrm f) ↝ emb-idn-absorb f) (nrm f)
 ```

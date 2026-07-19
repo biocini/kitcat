@@ -111,7 +111,7 @@ module _ {o h} (C : category o h) where
 
 The copairing of the injections is the identity: `idn` factors
 through each injection as itself, since `ι ⨾ idn => ι` is
-`emb ι ≡ emb ι · idn`, collapsed by `·-idn`.
+`emb ι ≡ emb ι ▾ idn`, collapsed by `▾-idn`.
 
 ```agda
   module _
@@ -122,10 +122,10 @@ through each injection as itself, since `ι ⨾ idn => ι` is
 
     private
       idn-cofactors₁ : ι₁ ⨾ idn S => ι₁
-      idn-cofactors₁ = sym (·-idn (emb ι₁))
+      idn-cofactors₁ = sym (▾-idn (emb ι₁))
 
       idn-cofactors₂ : ι₂ ⨾ idn S => ι₂
-      idn-cofactors₂ = sym (·-idn (emb ι₂))
+      idn-cofactors₂ = sym (▾-idn (emb ι₂))
 
     copair-η-idn : copair ι₁ ι₂ ≡ idn S
     copair-η-idn =
@@ -183,7 +183,7 @@ identity by η-expansion.
 ## Duality
 
 A coproduct in `C` is a product in `op C`. The op-side witness
-`embᵒ f ≡ embᵒ m ·ᵒ ι` unfolds to `⟲ (emb f) ≡ ⟲ (ι ·ᵒᵖ emb m)`, so
+`embᵒ f ≡ embᵒ m ▾ᵒ ι` unfolds to `⟲ (emb f) ≡ ⟲ (ι ▴ emb m)`, so
 the cocone and the op-cone are fiberwise equivalent by
 post-composition with `interchange` under `⟲`.
 
@@ -215,7 +215,7 @@ module dual {o h} (C : category o h) where
 
     wit-equiv
       : ∀ {x y z} (ι : hom x y) (m : hom y z) (f : hom x z)
-      → (emb f ≡ emb ι · m) ≃ (Cᵒ.emb f ≡ Cᵒ.emb m Cᵒ.· ι)
+      → (emb f ≡ emb ι ▾ m) ≃ (Cᵒ.emb f ≡ Cᵒ.emb m Cᵒ.▾ ι)
     wit-equiv ι m f =
       (_ , comp-equiv
             (path-equiv-r (interchange ι m) .snd)

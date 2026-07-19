@@ -58,13 +58,13 @@ from `⊗₁-spine-contr`.
     p-char : C.hom (x ⊗₀ y) (x' ⊗₀ y') → Type (o ⊔ h)
     p-char σ =
       PathP (λ i → ⊗₁-composite (⊗₀-emb-comp x y i) (⊗₀-emb-comp x' y' i))
-            (⊗₁-emb σ) (⊗₁-emb φ ·₁ ψ)
+            (⊗₁-emb σ) (⊗₁-emb φ ▾₁ ψ)
 
     q-char : C.hom (x ⊗₀ y) (x' ⊗₀ y') → Type (o ⊔ h)
     q-char σ =
       PathP (λ i → ⊗₁-composite (⊗₀-emb-comp-op x y i)
                                  (⊗₀-emb-comp-op x' y' i))
-            (⊗₁-emb σ) (φ ·₁ᵒᵖ ⊗₁-emb ψ)
+            (⊗₁-emb σ) (φ ▴₁ ⊗₁-emb ψ)
 ```
 
 The extension itself: over the object spine's square
@@ -228,7 +228,7 @@ mirror.
   ⊗₁-comp-eq-ev
     : ∀ {x x'} (φ : C.hom x x') {y y'} (ψ : C.hom y y')
     → PathP (λ i → C.hom (⊗₀-comp-eq-ev x y i) (⊗₀-comp-eq-ev x' y' i))
-            (φ ⊗₁ ψ) (⊗₁-ev (⊗₁-emb φ ·₁ ψ))
+            (φ ⊗₁ ψ) (⊗₁-ev (⊗₁-emb φ ▾₁ ψ))
   ⊗₁-comp-eq-ev {x} {x'} φ {y} {y'} ψ =
     compHomP
       (sym (⊗₀-unit (x ⊗₀ y))) (ap ⊗₀-ev (⊗₀-emb-comp x y))
@@ -312,17 +312,17 @@ spine characterizations at the identity frames are
 one-liners.
 
 ```agda
-  ⊗₁-idn-·ᵒᵖ
+  ⊗₁-idn-▴
     : ∀ {F F'} (η : ⊗₁-composite F F')
-    → PathP (λ i → ⊗₁-composite (⊗₀-idn-·ᵒᵖ F i) (⊗₀-idn-·ᵒᵖ F' i))
-            (C.idn I ·₁ᵒᵖ η) η
-  ⊗₁-idn-·ᵒᵖ η i γ γ' (α , β) = η $₁ (⊗₁-absorb-r α i , β)
+    → PathP (λ i → ⊗₁-composite (⊗₀-idn-▴ F i) (⊗₀-idn-▴ F' i))
+            (C.idn I ▴₁ η) η
+  ⊗₁-idn-▴ η i γ γ' (α , β) = η $₁ (⊗₁-absorb-r α i , β)
 
-  ·₁-idn
+  ▾₁-idn
     : ∀ {F F'} (η : ⊗₁-composite F F')
-    → PathP (λ i → ⊗₁-composite (·₀-idn F i) (·₀-idn F' i))
-            (η ·₁ C.idn I) η
-  ·₁-idn η i γ γ' (α , β) = η $₁ (α , ⊗₁-absorb-l β i)
+    → PathP (λ i → ⊗₁-composite (▾₀-idn F i) (▾₀-idn F' i))
+            (η ▾₁ C.idn I) η
+  ▾₁-idn η i γ γ' (α , β) = η $₁ (α , ⊗₁-absorb-l β i)
 
   ⊗₁-pre-distr
     : ∀ {x x'} (φ : C.hom x x') {y y'} (ψ : C.hom y y')
@@ -349,7 +349,7 @@ between fixed types, and its plain fibers support the
 transcription, not displacement. The one genuinely level-1
 input is the image-fiber contraction: the `q-char` fiber at
 the identity slot is straightened to the plain image fiber
-along `⊗₁-idn-·ᵒᵖ`, one `subst` in a line of Σ-of-PathP
+along `⊗₁-idn-▴`, one `subst` in a line of Σ-of-PathP
 types. The straightening square is the only 2-cell; its
 content is the computation of `ap ⊗₀-emb (⊗₀-unitl x)` out
 of `theory₀`'s calculus.
@@ -401,30 +401,30 @@ of `theory₀`'s calculus.
 
 `ap ⊗₀-emb (⊗₀-unitl x)`: the representability computation
 (`ap-fst-fiber` at the canonical κ), the `∙ refl` redexes of
-`_●₀_`/`_⊳_` discharged by `unitr` — they are definitionally
+`_⋉₀_`/`_↝_` discharged by `unitr` — they are definitionally
 `refl` whiskers — and the spine's 2-cell `⊗₀-coh→∙`.
 
 ```agda
   private
     unitl-ap
       : ∀ (x : C.ob)
-      → ap ⊗₀-emb (⊗₀-unitl x) ≡ ⊗₀-emb-comp-op I x ∙ ⊗₀-idn-·ᵒᵖ (⊗₀-emb x)
+      → ap ⊗₀-emb (⊗₀-unitl x) ≡ ⊗₀-emb-comp-op I x ∙ ⊗₀-idn-▴ (⊗₀-emb x)
     unitl-ap x =
         ap-fst-fiber κ₀
       ∙ Path.unitr (U .snd)
       ∙ ap (_∙ ⊗₀-emb-idn-absorb x) (Path.unitr (⊗₀-emb-comp I x))
-      ∙ Path.assoc (⊗₀-emb-comp I x) (⊗₀-interchange I x) (⊗₀-idn-·ᵒᵖ (⊗₀-emb x))
-      ∙ ap (_∙ ⊗₀-idn-·ᵒᵖ (⊗₀-emb x)) (⊗₀-coh→∙ I x)
+      ∙ Path.assoc (⊗₀-emb-comp I x) (⊗₀-interchange I x) (⊗₀-idn-▴ (⊗₀-emb x))
+      ∙ ap (_∙ ⊗₀-idn-▴ (⊗₀-emb x)) (⊗₀-coh→∙ I x)
       where
         U V : is-⊗₀-representable (⊗₀-emb x)
-        U = (⊗₀-nrm I ●₀ ⊗₀-nrm x) ⊳ ⊗₀-emb-idn-absorb x
+        U = (⊗₀-nrm I ⋉₀ ⊗₀-nrm x) ↝ ⊗₀-emb-idn-absorb x
         V = ⊗₀-nrm x
 
         κ₀ : U ≡ V
         κ₀ = is-⊗₀-representable-prop _ U V
 
     -- the straightening square: top ap ⊗₀-emb (⊗₀-unitl x),
-    -- left ⊗₀-emb-comp-op I x, bottom ⊗₀-idn-·ᵒᵖ, right constant
+    -- left ⊗₀-emb-comp-op I x, bottom ⊗₀-idn-▴, right constant
     unitl-sq : ∀ (x : C.ob) → (j i : Core.Base.I) → ⊗₀-composite
     unitl-sq x j i = sq-from-∙ (unitl-ap x) i j
 
@@ -434,13 +434,13 @@ of `theory₀`'s calculus.
     unitl-line {x} {x'} φ j =
       Σ χ ∶ C.hom (⊗₀-unitl x j) (⊗₀-unitl x' j) ,
       PathP (λ i → ⊗₁-composite (unitl-sq x j i) (unitl-sq x' j i))
-            (⊗₁-emb χ) (⊗₁-idn-·ᵒᵖ (⊗₁-emb φ) j)
+            (⊗₁-emb χ) (⊗₁-idn-▴ (⊗₁-emb φ) j)
 ```
 
 At `j = i0` the line is the `q-char` fiber of
 `⊗₁-push-contr (C.idn I) φ` — the unit square's left edge is
-`⊗₀-emb-comp-op I x` and `⊗₁-idn-·ᵒᵖ` starts at
-`C.idn I ·₁ᵒᵖ ⊗₁-emb φ`. At `j = i1` it is the plain image
+`⊗₀-emb-comp-op I x` and `⊗₁-idn-▴` starts at
+`C.idn I ▴₁ ⊗₁-emb φ`. At `j = i1` it is the plain image
 fiber: the square's right edge is constant, so the
 characterizing PathP is over a constant line — a plain path.
 
@@ -518,17 +518,17 @@ on paths, and the total-space equivalence.
     ∙ ⊗₁-repr-lc
         (is-⊗₁-representable-prop η U V ∙ is-⊗₁-representable-prop η V W)
 
-  _⊳₁_
+  _↝₁_
     : ∀ {x x'} {η ζ : ⊗₁-composite (⊗₀-emb x) (⊗₀-emb x')}
     → is-⊗₁-representable η → η ≡ ζ → is-⊗₁-representable ζ
-  (m , p) ⊳₁ e = m , p ∙ e
+  (m , p) ↝₁ e = m , p ∙ e
 
-  ⊳₁-repr
+  ↝₁-repr
     : ∀ {x x'} {η ζ : ⊗₁-composite (⊗₀-emb x) (⊗₀-emb x')}
       (U V : is-⊗₁-representable η) (e : η ≡ ζ)
-    → ⊗₁-repr-unique (U ⊳₁ e) (V ⊳₁ e) ≡ ⊗₁-repr-unique U V
-  ⊳₁-repr (m , p) (n , q) =
-    J (λ _ e' → ⊗₁-repr-unique ((m , p) ⊳₁ e') ((n , q) ⊳₁ e')
+    → ⊗₁-repr-unique (U ↝₁ e) (V ↝₁ e) ≡ ⊗₁-repr-unique U V
+  ↝₁-repr (m , p) (n , q) =
+    J (λ _ e' → ⊗₁-repr-unique ((m , p) ↝₁ e') ((n , q) ↝₁ e')
               ≡ ⊗₁-repr-unique (m , p) (n , q))
       (λ i → ⊗₁-repr-unique (m , Path.unitr p i) (n , Path.unitr q i))
 
@@ -617,7 +617,7 @@ paths onto a `PathP` — so no local combinator is needed.
       W : PathP (λ i → ⊗₁-composite (⊗₀-emb-comp x y i)
                                      (⊗₀-emb-comp x'' y'' i))
                 (⊗₁-emb σ₁ ⨾₁ ⊗₁-emb σ₂)
-                ((⊗₁-emb φ ·₁ ψ) ⨾₁ (⊗₁-emb φ' ·₁ ψ'))
+                ((⊗₁-emb φ ▾₁ ψ) ⨾₁ (⊗₁-emb φ' ▾₁ ψ'))
       W i = ⊗₁-emb-comp φ ψ i ⨾₁ ⊗₁-emb-comp φ' ψ' i
 
       -- link A, in the fixed i0-fiber: the frame rewrite by
@@ -631,8 +631,8 @@ paths onto a `PathP` — so no local combinator is needed.
       -- link B, in the fixed i1-fiber: W i1 computes to the two
       -- pre-actions, ⊗₁-emb-⨾ rejoins them, and the second slot is
       -- exactly ⊗₁-pre-comp
-      linkB : PathP (λ i → ⊗₁-composite (⊗₀-emb x ·₀ y) (⊗₀-emb x'' ·₀ y''))
-                    (W i1) (⊗₁-emb (φ Ct.⨾ φ') ·₁ (ψ Ct.⨾ ψ'))
+      linkB : PathP (λ i → ⊗₁-composite (⊗₀-emb x ▾₀ y) (⊗₀-emb x'' ▾₀ y''))
+                    (W i1) (⊗₁-emb (φ Ct.⨾ φ') ▾₁ (ψ Ct.⨾ ψ'))
       linkB i γ γ' (α , β) =
         ( sym (⊗₁-emb-⨾ φ φ' (α , ⊗₁-pre ψ β) (C.idn _ , ⊗₁-pre ψ' (C.idn _)))
         ∙ (λ j → ⊗₁-emb (φ Ct.⨾ φ') $₁ (Ct.unitr α j , ⊗₁-pre-comp ψ ψ' β j)) ) i
