@@ -85,7 +85,6 @@ if the latter exists.
   ctx : ob → ob → Type (o ⊔ h)
   ctx x y = over x × under y
 
-  -- the "empty context" in this case are two morphisms that do not share any index
   emp : ∀ {w x y z} → hom w x → hom y z → ctx x y
   emp h k = ov-ctr h , un-ctr k
 ```

@@ -1,15 +1,25 @@
 Lane Biocini
 July 2026
 
-Monoidal categories over a `Cat.Type` category, presented through a
-representable tensor embedding `⊗₀-emb` into two-slot tensor contexts.
+Monoidal categories, presented through representable tensor
+embeddings and graded by the dimension of cell the tensor acts
+on. `monoidal-axioms₀` is the object level, `monoidal-axioms₁`
+the morphism level displayed over it, and `monoidal` the
+coalescing bundle — mirroring the `structure`/`axioms`/
+`category` spine of `Cat.Type`.
 
-This is the erased-index image of the `Cat.Type` presentation:
-contexts collapse to pairs of objects, composites are object-valued
-families on contexts, the monoidal unit is the erased identity, and
-the binary tensor is the center of a contractible spine. The unit
-laws, absorption, uniqueness of the unit, and the associator are
-derived from the contractibility machinery rather than assumed.
+The object level is the `category-axioms` field list under the
+dictionary hom ↦ ob, with the anonymous endpoints of the
+`Cat.Type` context erased outright: the over-slot is a left
+tensorand, the under-slot a right tensorand, and the unit plays
+the role of the reflexive identity. `theory₀` is the
+token-level transcription of `Cat.Base.theory` under the same
+dictionary: every proof there factors through the
+`virtual`/`representable` vocabulary, so its terms carry over
+by renaming, with the `ov-ctr`/`un-ctr` packagings vanishing
+and the congruences into the endpoint pairing erased. The
+one-object bicategory is the moral picture only; nothing in
+the formalization routes through it.
 
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
@@ -22,56 +32,60 @@ open import Core.Data.Sigma
 open import Core.Kan
 open import Core.Path.Base
 open import Core.Transport.J using (J; subst)
-open import Core.Equiv.Base using (is-equiv)
+open import Core.Equiv.Base using (is-equiv; iso→equiv; _≃_; id-equiv)
 open import Core.Function.Embedding
   using (image-fibers-contr→is-embedding; equiv→lc)
 
 open import Cat.Type
-import Cat.Base
+open import Cat.Base
 ```
 
-## Tensor contexts
+## Level 0: the tensor context calculus
 
-The erased virtual layer: over- and under-arrows collapse to bare
-objects, so a tensor context is a pair of factor slots `(l , r)`,
-a composite is an object-valued family on contexts, and evaluation
-`⊗₀-ev` reads at the identity context `(I , I)`. The unit slot plays
-the role of the graph's reflexivity: it is the erased `idn`.
+`virtual`, transcribed: the over-slot is a left tensorand, the
+under-slot a right tensorand; `I`/`I` are both
+the unit. `⊗₀-res` is constant because the anonymous endpoints
+of the arc have been erased.
 
 ```agda
 module tensor-virtual {o h} (C : category o h) (I : category.ob C) where
   private module C = category C
 
+  ⊗₀-ctx : Type o
+  ⊗₀-ctx = C.ob × C.ob
+
+  ⊗₀-emp : C.ob → C.ob → ⊗₀-ctx
+  ⊗₀-emp l r = l , r
+
+  ⊗₀-res : ⊗₀-ctx → Type o
+  ⊗₀-res _ = C.ob
+
   ⊗₀-composite : Type o
-  ⊗₀-composite = C.ob × C.ob → C.ob
+  ⊗₀-composite = (γ : ⊗₀-ctx) → ⊗₀-res γ
 
   ⊗₀-ev : ⊗₀-composite → C.ob
   ⊗₀-ev F = F (I , I)
 ```
 
-## The representable layer
+## The representable tensor
 
-`⊗₀-is-representable F` is the fiber of `⊗₀-emb` at `F`; `⊗₀-nrm` is the
-canonical representation. `⊗₀-pre` and `⊗₀-post` are the unit-slot
-actions; `⊗₀-sub`/`⊗₀-cosub` substitute them into context slots, giving
-the two one-sided composite operators `⊗₀·`/`⊗₀·ᵒᵖ` and the two
-composite-composite orders `⊗₀·'`/`⊗₀·''`. `⊗₀-interchange♭-from` closes
-the ternary interchange over the fibers of `⊗₀-emb`.
+Token-for-token transcription of `Cat.Type.representable`
+under the dictionary hom ↦ ob, idn ↦ I. `⊗₀-emb x (l , r)` is
+the two-sided tensor action: the left factor `l`, the cell `x`
+in the middle slot, the right factor `r`.
 
 ```agda
 module tensor-representable {o h} (C : category o h) (I : category.ob C)
-  (⊗₀-emb : category.ob C → category.ob C × category.ob C → category.ob C) where
-  private module C = category C
+  (⊗₀-emb : category.ob C → tensor-virtual.⊗₀-composite C I) where
+
   open tensor-virtual C I
+  private module C = category C
 
-  ⊗₀-is-representable : ⊗₀-composite → Type o
-  ⊗₀-is-representable = fiber ⊗₀-emb
+  is-⊗₀-representable : ⊗₀-composite → Type o
+  is-⊗₀-representable = fiber ⊗₀-emb
 
-  _⊨_ : ⊗₀-composite → C.ob → Type o
-  F ⊨ s = ⊗₀-emb s ≡ F
-
-  ⊗₀-nrm : (x : C.ob) → ⊗₀-is-representable (⊗₀-emb x)
-  ⊗₀-nrm x = x , refl
+  _⊨₀_ : ⊗₀-composite → C.ob → Type o
+  F ⊨₀ s = ⊗₀-emb s ≡ F
 
   ⊗₀-pre : C.ob → C.ob → C.ob
   ⊗₀-pre y r = ⊗₀-emb y (I , r)
@@ -79,332 +93,205 @@ module tensor-representable {o h} (C : category o h) (I : category.ob C)
   ⊗₀-post : C.ob → C.ob → C.ob
   ⊗₀-post x l = ⊗₀-emb x (l , I)
 
-  ⊗₀-sub : C.ob → C.ob × C.ob → C.ob × C.ob
+  ⊗₀-sub : C.ob → ⊗₀-ctx → ⊗₀-ctx
   ⊗₀-sub y (l , r) = l , ⊗₀-pre y r
 
-  ⊗₀-cosub : C.ob → C.ob × C.ob → C.ob × C.ob
+  ⊗₀-cosub : C.ob → ⊗₀-ctx → ⊗₀-ctx
   ⊗₀-cosub x (l , r) = ⊗₀-post x l , r
 
-  _⊗₀·_ : ⊗₀-composite → C.ob → ⊗₀-composite
-  (F ⊗₀· y) γ = F (⊗₀-sub y γ)
-  infixl 30 _⊗₀·_
+  ⊗₀-nrm : (x : C.ob) → is-⊗₀-representable (⊗₀-emb x)
+  ⊗₀-nrm x = x , refl
 
-  _⊗₀·ᵒᵖ_ : C.ob → ⊗₀-composite → ⊗₀-composite
-  (x ⊗₀·ᵒᵖ F) γ = F (⊗₀-cosub x γ)
-  infixl 30 _⊗₀·ᵒᵖ_
+  _·₀_ : ⊗₀-composite → C.ob → ⊗₀-composite
+  (F ·₀ y) γ = F (⊗₀-sub y γ)
+  infixl 30 _·₀_
 
-  _⊗₀·'_ : (⊗₀-composite) → (⊗₀-composite) → ⊗₀-composite
-  (F ⊗₀·' G) (l , r) = F (l , G (I , r))
-  infixl 30 _⊗₀·'_
+  _·₀ᵒᵖ_ : C.ob → ⊗₀-composite → ⊗₀-composite
+  (x ·₀ᵒᵖ G) γ = G (⊗₀-cosub x γ)
+  infixl 30 _·₀ᵒᵖ_
 
-  _⊗₀·''_ : (⊗₀-composite) → (⊗₀-composite) → ⊗₀-composite
-  (F ⊗₀·'' G) (l , r) = G (F (l , I) , r)
-  infixl 30 _⊗₀·''_
+  _·₀'_ : ⊗₀-composite → ⊗₀-composite → ⊗₀-composite
+  (F ·₀' G) γ = F (γ .fst , G (I , γ .snd))
+  infixl 30 _·₀'_
+
+  _·₀''_ : ⊗₀-composite → ⊗₀-composite → ⊗₀-composite
+  (F ·₀'' G) γ = G (F (γ .fst , I) , γ .snd)
+  infixl 30 _·₀''_
 
   -- closure of the ternary interchange over the fibers of ⊗₀-emb;
   -- at ⊗₀-nrm endpoints it agrees with the input up to J-refl
   ⊗₀-interchange♭-from
-    : (∀ (x y : C.ob) → ⊗₀-emb x ⊗₀· y ≡ x ⊗₀·ᵒᵖ ⊗₀-emb y)
-    → ∀ {F G : ⊗₀-composite}
-    → ⊗₀-is-representable F → ⊗₀-is-representable G
-    → F ⊗₀·' G ≡ F ⊗₀·'' G
-  ⊗₀-interchange♭-from ι {G = G} (m , p) (n , q) =
-    J (λ F' _ → F' ⊗₀·' G ≡ F' ⊗₀·'' G)
-      (J (λ G' _ → ⊗₀-emb m ⊗₀·' G' ≡ ⊗₀-emb m ⊗₀·'' G') (ι m n) q)
+    : ((x y : C.ob) → ⊗₀-emb x ·₀ y ≡ x ·₀ᵒᵖ ⊗₀-emb y)
+    → {A B : ⊗₀-composite}
+    → is-⊗₀-representable A → is-⊗₀-representable B
+    → A ·₀' B ≡ A ·₀'' B
+  ⊗₀-interchange♭-from ι {B = B} (m , p) (n , q) =
+    J (λ F' _ → F' ·₀' B ≡ F' ·₀'' B)
+      (J (λ G' _ → ⊗₀-emb m ·₀' G' ≡ ⊗₀-emb m ·₀'' G') (ι m n) q)
       p
 ```
 
-## The monoidal record
+## `monoidal-axioms₀`
 
-`I` is the erased reflexive element; `⊗₀-interchange♭` is the flat
-interchange at arbitrary representables; `⊗₀-spine-contr` packs the
-tensor candidate, its two comparisons, and the coherence 2-cell into
-a contractible spine; `⊗₀-unit` is evaluation at the identity context.
-The binary tensor is the spine's center.
+The `category-axioms` field list under the dictionary:
+`⊗₀-emb`, `⊗₀-interchange♭`, `⊗₀-spine-contr`, `⊗₀-unit`, with
+`I` playing the role of `rx`. The record holds fields and bare
+spine projections only — every `where`-using lemma lives in
+`theory₀` — and the universe is `Type₊ o`: no hom-level data
+appears at this level.
 
 ```agda
-record monoidal {o h} (C : category o h) : Type₊ (o ⊔ h) where
-  no-eta-equality
+record monoidal-axioms₀ {o h} (C : category o h) : Type₊ o where
   private module C = category C
 
   field
-    I : C.ob
+    I      : C.ob
+    ⊗₀-emb : C.ob → tensor-virtual.⊗₀-composite C I
 
   open tensor-virtual C I public
-
-  field
-    ⊗₀-emb : C.ob → ⊗₀-composite
-
   open tensor-representable C I ⊗₀-emb public
 
   field
     ⊗₀-interchange♭
-      : ∀ {F G : ⊗₀-composite}
-      → ⊗₀-is-representable F → ⊗₀-is-representable G
-      → F ⊗₀·' G ≡ F ⊗₀·'' G
+      : {A B : ⊗₀-composite}
+      → is-⊗₀-representable A → is-⊗₀-representable B
+      → A ·₀' B ≡ A ·₀'' B
 
-  ⊗₀-interchange : (x y : C.ob) → ⊗₀-emb x ⊗₀· y ≡ x ⊗₀·ᵒᵖ ⊗₀-emb y
+  ⊗₀-interchange : (x y : C.ob) → ⊗₀-emb x ·₀ y ≡ x ·₀ᵒᵖ ⊗₀-emb y
   ⊗₀-interchange x y = ⊗₀-interchange♭ (⊗₀-nrm x) (⊗₀-nrm y)
 
-  ⊗₀-spine : (x y : C.ob) → Type o
+  ⊗₀-spine : C.ob → C.ob → Type o
   ⊗₀-spine x y =
-    Σ k ∶ C.ob ,
-    Σ p ∶ (⊗₀-emb k ≡ ⊗₀-emb x ⊗₀· y) ,
-    Σ q ∶ (⊗₀-emb k ≡ x ⊗₀·ᵒᵖ ⊗₀-emb y) ,
-      PathP (λ i → ⊗₀-emb k ≡ ⊗₀-interchange x y i) p q
+    Σ s ∶ C.ob ,
+    Σ p ∶ (⊗₀-emb s ≡ ⊗₀-emb x ·₀ y) ,
+    Σ q ∶ (⊗₀-emb s ≡ x ·₀ᵒᵖ ⊗₀-emb y) ,
+      PathP (λ i → ⊗₀-emb s ≡ ⊗₀-interchange x y i) p q
 
   field
-    ⊗₀-spine-contr : ∀ x y → is-contr (⊗₀-spine x y)
-    ⊗₀-unit : ∀ x → ⊗₀-emb x (I , I) ≡ x
+    ⊗₀-spine-contr : (x y : C.ob) → is-contr (⊗₀-spine x y)
+    ⊗₀-unit        : (x : C.ob) → ⊗₀-ev (⊗₀-emb x) ≡ x
 
-  _⊗_ : C.ob → C.ob → C.ob
-  x ⊗ y = ⊗₀-spine-contr x y .center .fst
-  infixr 40 _⊗_
+  _⊗₀_ : C.ob → C.ob → C.ob
+  x ⊗₀ y = ⊗₀-spine-contr x y .center .fst
+  infixr 40 _⊗₀_
 
-  ⊗₀-emb-comp : ∀ x y → ⊗₀-emb (x ⊗ y) ≡ ⊗₀-emb x ⊗₀· y
+  ⊗₀-emb-comp : (x y : C.ob) → ⊗₀-emb (x ⊗₀ y) ≡ ⊗₀-emb x ·₀ y
   ⊗₀-emb-comp x y = ⊗₀-spine-contr x y .center .snd .fst
 
-  ⊗₀-emb-comp-op : ∀ x y → ⊗₀-emb (x ⊗ y) ≡ x ⊗₀·ᵒᵖ ⊗₀-emb y
+  ⊗₀-emb-comp-op : (x y : C.ob) → ⊗₀-emb (x ⊗₀ y) ≡ x ·₀ᵒᵖ ⊗₀-emb y
   ⊗₀-emb-comp-op x y = ⊗₀-spine-contr x y .center .snd .snd .fst
 
   -- the spine's 2-cell: the two composite comparisons agree along
-  -- ⊗₀-interchange
+  -- the interchange
   ⊗₀-emb-comp-coh
-    : ∀ x y
-    → PathP (λ i → ⊗₀-emb (x ⊗ y) ≡ ⊗₀-interchange x y i)
+    : (x y : C.ob)
+    → PathP (λ i → ⊗₀-emb (x ⊗₀ y) ≡ ⊗₀-interchange x y i)
             (⊗₀-emb-comp x y) (⊗₀-emb-comp-op x y)
   ⊗₀-emb-comp-coh x y = ⊗₀-spine-contr x y .center .snd .snd .snd
-
-  ⊗coh→∙ : ∀ x y → ⊗₀-emb-comp x y ∙ ⊗₀-interchange x y ≡ ⊗₀-emb-comp-op x y
-  ⊗coh→∙ x y =
-      Path.commutes
-        (⊗₀-emb-comp x y) (⊗₀-interchange x y) refl (⊗₀-emb-comp-op x y)
-        (⊗₀-emb-comp-coh x y)
-    ∙ Path.unitl (⊗₀-emb-comp-op x y)
-
-  private module Ct = Cat.Base.theory C
-
-  -- the morphism layer: a morphism of tensor contexts is a pair of
-  -- morphisms, and ⊗₁-emb is the trifunctor action on it; the indices
-  -- of the derived binary tensor range over the derived _⊗_
-  field
-    ⊗₁-emb : ∀ {m m'} (φ : C.hom m m') {l l' r r'}
-          → C.hom l l' × C.hom r r'
-          → C.hom (⊗₀-emb m (l , r)) (⊗₀-emb m' (l' , r'))
-
-  ⊗₁-pre : ∀ {y y'} (ψ : C.hom y y') {r r'} (χ : C.hom r r')
-        → C.hom (⊗₀-pre y r) (⊗₀-pre y' r')
-  ⊗₁-pre ψ χ = ⊗₁-emb ψ (C.idn I , χ)
-
-  ⊗₁-post : ∀ {x x'} (φ : C.hom x x') {l l'} (α : C.hom l l')
-        → C.hom (⊗₀-post x l) (⊗₀-post x' l')
-  ⊗₁-post φ α = ⊗₁-emb φ (α , C.idn I)
-
-  field
-    ⊗₁-unit
-      : ∀ {x x'} (φ : C.hom x x')
-      → PathP (λ i → C.hom (⊗₀-unit x i) (⊗₀-unit x' i))
-              (⊗₁-emb φ (C.idn I , C.idn I)) φ
-
-    ⊗₁-interchange
-      : ∀ {x x'} (φ : C.hom x x') {y y'} (ψ : C.hom y y')
-          {l l'} (α : C.hom l l') {r r'} (β : C.hom r r')
-      → PathP (λ i → C.hom (happly (⊗₀-interchange x y) (l , r) i)
-                            (happly (⊗₀-interchange x' y') (l' , r') i))
-              (⊗₁-emb φ (α , ⊗₁-pre ψ β))
-              (⊗₁-emb ψ (⊗₁-post φ α , β))
-
-    ⊗₁-bifunctor
-      : ∀ {x x' x''} (φ₁ : C.hom x x') (φ₂ : C.hom x' x'')
-          {l l' l''} (α₁ : C.hom l l') (α₂ : C.hom l' l'')
-          {r r' r''} (β₁ : C.hom r r') (β₂ : C.hom r' r'')
-      → ⊗₁-emb (φ₁ Ct.⨾ φ₂) ((α₁ Ct.⨾ α₂) , (β₁ Ct.⨾ β₂))
-      ≡ ⊗₁-emb φ₁ (α₁ , β₁) Ct.⨾ ⊗₁-emb φ₂ (α₂ , β₂)
-
-  ⊗₁-spine : ∀ {x x'} (φ : C.hom x x') {y y'} (ψ : C.hom y y') → Type (o ⊔ h)
-  ⊗₁-spine {x} {x'} φ {y} {y'} ψ =
-    Σ σ ∶ C.hom (x ⊗ y) (x' ⊗ y') ,
-    Σ p ∶ (∀ {l l'} (α : C.hom l l') {r r'} (β : C.hom r r')
-           → PathP (λ j → C.hom (happly (⊗₀-emb-comp x y) (l , r) j)
-                                 (happly (⊗₀-emb-comp x' y') (l' , r') j))
-                   (⊗₁-emb σ (α , β))
-                   (⊗₁-emb φ (α , ⊗₁-pre ψ β))) ,
-    Σ q ∶ (∀ {l l'} (α : C.hom l l') {r r'} (β : C.hom r r')
-           → PathP (λ j → C.hom (happly (⊗₀-emb-comp-op x y) (l , r) j)
-                                 (happly (⊗₀-emb-comp-op x' y') (l' , r') j))
-                   (⊗₁-emb σ (α , β))
-                   (⊗₁-emb ψ (⊗₁-post φ α , β))) ,
-      ∀ {l l'} (α : C.hom l l') {r r'} (β : C.hom r r')
-      → PathP
-          (λ i → PathP
-            (λ j → C.hom (⊗₀-emb-comp-coh x y i j (l , r))
-                          (⊗₀-emb-comp-coh x' y' i j (l' , r')))
-            (⊗₁-emb σ (α , β))
-            (⊗₁-interchange φ ψ α β i))
-          (p α β) (q α β)
-
-  field
-    ⊗₁-spine-contr : ∀ {x x'} (φ : C.hom x x') {y y'} (ψ : C.hom y y')
-                  → is-contr (⊗₁-spine φ ψ)
 ```
 
-## Derived theory
+## `theory₀`
 
-The derived tensor on morphisms `_⊗₁_` is the hom-spine's center,
-with `⊗₁-emb-comp`, `⊗₁-emb-comp-op`, and `⊗₁-emb-comp-coh` its
-characterizations. `_●_`/`_●''_` compose representations along the
-two composite orders; the pull and push fibers of `⊗₀-emb` over the
-one-sided composites are contractible by projection from the object
-spine, giving the `cast-path` pair for composite witnesses.
+The transcription of `Cat.Base.theory`. The contractible spine
+makes `⊗₀-emb` an embedding with propositional fibers, so the
+binary tensor is extracted from the spine's center, and
+associativity and the unit laws are theorems rather than
+axioms.
 
 ```agda
-module theory {o h} {C : category o h} (M : monoidal C) where
+module theory₀ {o h} {C : category o h} (M₀ : monoidal-axioms₀ C) where
+  open monoidal-axioms₀ M₀
   private module C = category C
-  open monoidal M
 
-  _⊗₁_ : ∀ {x x'} → C.hom x x' → ∀ {y y'} → C.hom y y' → C.hom (x ⊗ y) (x' ⊗ y')
-  φ ⊗₁ ψ = ⊗₁-spine-contr φ ψ .center .fst
-  infixr 40 _⊗₁_
+  _●₀_ : ∀ {F G : ⊗₀-composite}
+      → is-⊗₀-representable F → is-⊗₀-representable G
+      → is-⊗₀-representable (F ·₀' G)
+  (m , p) ●₀ (n , q) = m ⊗₀ n , ⊗₀-emb-comp m n ∙ (λ i → p i ·₀' q i)
+  infixr 40 _●₀_
 
-  -- the remaining hom-spine projections: the pre- and post-side
-  -- characterizations of φ ⊗₁ ψ, and the 2-cell relating them over
-  -- the object spine's square
-  ⊗₁-emb-comp
-    : ∀ {x x'} (φ : C.hom x x') {y y'} (ψ : C.hom y y')
-        {l l'} (α : C.hom l l') {r r'} (β : C.hom r r')
-    → PathP (λ j → C.hom (happly (⊗₀-emb-comp x y) (l , r) j)
-                          (happly (⊗₀-emb-comp x' y') (l' , r') j))
-            (⊗₁-emb (φ ⊗₁ ψ) (α , β))
-            (⊗₁-emb φ (α , ⊗₁-pre ψ β))
-  ⊗₁-emb-comp φ ψ α β = ⊗₁-spine-contr φ ψ .center .snd .fst α β
-
-  ⊗₁-emb-comp-op
-    : ∀ {x x'} (φ : C.hom x x') {y y'} (ψ : C.hom y y')
-        {l l'} (α : C.hom l l') {r r'} (β : C.hom r r')
-    → PathP (λ j → C.hom (happly (⊗₀-emb-comp-op x y) (l , r) j)
-                          (happly (⊗₀-emb-comp-op x' y') (l' , r') j))
-            (⊗₁-emb (φ ⊗₁ ψ) (α , β))
-            (⊗₁-emb ψ (⊗₁-post φ α , β))
-  ⊗₁-emb-comp-op φ ψ α β = ⊗₁-spine-contr φ ψ .center .snd .snd .fst α β
-
-  ⊗₁-emb-comp-coh
-    : ∀ {x x'} (φ : C.hom x x') {y y'} (ψ : C.hom y y')
-        {l l'} (α : C.hom l l') {r r'} (β : C.hom r r')
-    → PathP
-        (λ i → PathP
-          (λ j → C.hom (⊗₀-emb-comp-coh x y i j (l , r))
-                        (⊗₀-emb-comp-coh x' y' i j (l' , r')))
-          (⊗₁-emb (φ ⊗₁ ψ) (α , β))
-          (⊗₁-interchange φ ψ α β i))
-        (⊗₁-emb-comp φ ψ α β) (⊗₁-emb-comp-op φ ψ α β)
-  ⊗₁-emb-comp-coh φ ψ α β = ⊗₁-spine-contr φ ψ .center .snd .snd .snd α β
-
-  _●_ : ∀ {F G : ⊗₀-composite}
-      → ⊗₀-is-representable F → ⊗₀-is-representable G
-      → ⊗₀-is-representable (F ⊗₀·' G)
-  (m , p) ● (n , q) = m ⊗ n , ⊗₀-emb-comp m n ∙ (λ i → p i ⊗₀·' q i)
-
-  _●''_ : ∀ {F G : ⊗₀-composite}
-        → ⊗₀-is-representable F → ⊗₀-is-representable G
-        → ⊗₀-is-representable (F ⊗₀·'' G)
-  (m , p) ●'' (n , q) = m ⊗ n , ⊗₀-emb-comp-op m n ∙ (λ i → p i ⊗₀·'' q i)
+  _●₀''_ : ∀ {F G : ⊗₀-composite}
+        → is-⊗₀-representable F → is-⊗₀-representable G
+        → is-⊗₀-representable (F ·₀'' G)
+  (m , p) ●₀'' (n , q) = m ⊗₀ n , ⊗₀-emb-comp-op m n ∙ (λ i → p i ·₀'' q i)
 
   private
-    fwd : ∀ x y → fiber ⊗₀-emb (⊗₀-emb x ⊗₀· y) → ⊗₀-spine x y
+    fwd : ∀ x y → fiber ⊗₀-emb (⊗₀-emb x ·₀ y) → ⊗₀-spine x y
     fwd x y (k , r) =
       k , r , r ∙ ⊗₀-interchange x y , transpose (cat.fill r (⊗₀-interchange x y))
 
-    bwd : ∀ x y → fiber ⊗₀-emb (x ⊗₀·ᵒᵖ ⊗₀-emb y) → ⊗₀-spine x y
+    bwd : ∀ x y → fiber ⊗₀-emb (x ·₀ᵒᵖ ⊗₀-emb y) → ⊗₀-spine x y
     bwd x y (k , r) =
       k , r ∙ sym ι , r , sym (transpose (cat.fill r (sym ι)))
       where ι = ⊗₀-interchange x y
 
-  -- the spine's candidate and each comparison, coerced to the two
-  -- fibers of ⊗₀-emb over the one-sided composites
-  ⊗₀-spine→pull : ∀ {x y} → ⊗₀-spine x y → fiber ⊗₀-emb (⊗₀-emb x ⊗₀· y)
-  ⊗₀-spine→pull s = s .fst , s .snd .fst
-
-  ⊗₀-spine→push : ∀ {x y} → ⊗₀-spine x y → fiber ⊗₀-emb (x ⊗₀·ᵒᵖ ⊗₀-emb y)
-  ⊗₀-spine→push s = s .fst , s .snd .snd .fst
-
-  ⊗₀-pull-contr : ∀ x y → is-contr (fiber ⊗₀-emb (⊗₀-emb x ⊗₀· y))
-  ⊗₀-pull-contr x y .center = x ⊗ y , ⊗₀-emb-comp x y
-  ⊗₀-pull-contr x y .paths u i = ⊗₀-spine→pull (φ i) where
+  -- the pull and push fibers of ⊗₀-emb over the one-sided
+  -- composites are contractible by projection from the spine
+  ⊗₀-pull-contr : ∀ x y → is-contr (fiber ⊗₀-emb (⊗₀-emb x ·₀ y))
+  ⊗₀-pull-contr x y .center = x ⊗₀ y , ⊗₀-emb-comp x y
+  ⊗₀-pull-contr x y .paths u i = φ i .fst , φ i .snd .fst where
     φ : ⊗₀-spine-contr x y .center ≡ fwd x y u
     φ = ⊗₀-spine-contr x y .paths (fwd x y u)
 
-  ⊗₀-push-contr : ∀ x y → is-contr (fiber ⊗₀-emb (x ⊗₀·ᵒᵖ ⊗₀-emb y))
-  ⊗₀-push-contr x y .center = x ⊗ y , ⊗₀-emb-comp-op x y
-  ⊗₀-push-contr x y .paths u i = ⊗₀-spine→push (φ i) where
+  ⊗₀-push-contr : ∀ x y → is-contr (fiber ⊗₀-emb (x ·₀ᵒᵖ ⊗₀-emb y))
+  ⊗₀-push-contr x y .center = x ⊗₀ y , ⊗₀-emb-comp-op x y
+  ⊗₀-push-contr x y .paths u i = φ i .fst , φ i .snd .snd .fst where
     φ : ⊗₀-spine-contr x y .center ≡ bwd x y u
     φ = ⊗₀-spine-contr x y .paths (bwd x y u)
 
   -- a composite witness: k represents the two-sided tensor of x and y
-  ⊗₀-cast-path : ∀ {x y k} → (⊗₀-emb x ⊗₀· y) ⊨ k → x ⊗ y ≡ k
+  ⊗₀-cast-path : ∀ {x y k} → (⊗₀-emb x ·₀ y) ⊨₀ k → x ⊗₀ y ≡ k
   ⊗₀-cast-path {x} {y} {k} α = ap fst (⊗₀-pull-contr x y .paths (k , α))
 
-  ⊗₀-cast-path⁻¹ : ∀ {x y k} → x ⊗ y ≡ k → (⊗₀-emb x ⊗₀· y) ⊨ k
+  ⊗₀-cast-path⁻¹ : ∀ {x y k} → x ⊗₀ y ≡ k → (⊗₀-emb x ·₀ y) ⊨₀ k
   ⊗₀-cast-path⁻¹ {x} {y} p = ap ⊗₀-emb (sym p) ∙ ⊗₀-emb-comp x y
-
-  ⊗₀-post-composite : ∀ x y l → ⊗₀-post (x ⊗ y) l ≡ ⊗₀-post y (⊗₀-post x l)
-  ⊗₀-post-composite x y l = happly (⊗₀-emb-comp x y ∙ ⊗₀-interchange x y) (l , I)
-
-  ⊗₀-pre-composite : ∀ y z r → ⊗₀-pre (y ⊗ z) r ≡ ⊗₀-pre y (⊗₀-pre z r)
-  ⊗₀-pre-composite y z r = happly (⊗₀-emb-comp y z) (I , r)
 ```
 
-The following lemmas depend on ⊗₀-unit
+### The unit laws at the identity context
 
 ```agda
-  ⊗₀-comp-eq-ev : ∀ x y → x ⊗ y ≡ ⊗₀-ev (⊗₀-emb x ⊗₀· y)
-  ⊗₀-comp-eq-ev x y = sym (⊗₀-unit (x ⊗ y)) ∙ ap ⊗₀-ev (⊗₀-emb-comp x y)
+  ⊗₀-comp-eq-ev : ∀ x y → x ⊗₀ y ≡ ⊗₀-ev (⊗₀-emb x ·₀ y)
+  ⊗₀-comp-eq-ev x y = sym (⊗₀-unit (x ⊗₀ y)) ∙ ap ⊗₀-ev (⊗₀-emb-comp x y)
 
-  ⊗₀-comp-eq-pre : ∀ x y → x ⊗ y ≡ ⊗₀-pre x y
-  ⊗₀-comp-eq-pre x y = ⊗₀-comp-eq-ev x y ∙ ap (λ t → ⊗₀-pre x t) (⊗₀-unit y)
+  ⊗₀-comp-eq-pre : ∀ x y → x ⊗₀ y ≡ ⊗₀-pre x y
+  ⊗₀-comp-eq-pre x y = ⊗₀-comp-eq-ev x y ∙ ap (⊗₀-pre x) (⊗₀-unit y)
 
-  ⊗₀-comp-eq-post : ∀ x y → x ⊗ y ≡ ⊗₀-post y x
+  ⊗₀-comp-eq-post : ∀ x y → x ⊗₀ y ≡ ⊗₀-post y x
   ⊗₀-comp-eq-post x y =
-    sym (⊗₀-unit (x ⊗ y)) ∙ ap ⊗₀-ev (⊗₀-emb-comp-op x y) ∙ ap (λ t → ⊗₀-post y t) (⊗₀-unit x)
+    sym (⊗₀-unit (x ⊗₀ y)) ∙ ap ⊗₀-ev (⊗₀-emb-comp-op x y)
+    ∙ ap (⊗₀-post y) (⊗₀-unit x)
 
-  ⊗₀-idem : I ⊗ I ≡ I
+  ⊗₀-idem : I ⊗₀ I ≡ I
   ⊗₀-idem = ⊗₀-comp-eq-pre I I ∙ ⊗₀-unit I
 
   ⊗₀-pre-is-post : ∀ x y → ⊗₀-pre x y ≡ ⊗₀-post y x
   ⊗₀-pre-is-post x y = sym (⊗₀-comp-eq-pre x y) ∙ ⊗₀-comp-eq-post x y
 
+  -- absorption needs no equivalence hypothesis: it is read off the
+  -- spine center and the unit
   ⊗₀-absorb-l : ∀ r → ⊗₀-pre I r ≡ r
   ⊗₀-absorb-l r = ⊗₀-pre-is-post I r ∙ ⊗₀-unit r
 
   ⊗₀-absorb-r : ∀ l → ⊗₀-post I l ≡ l
   ⊗₀-absorb-r l = sym (⊗₀-pre-is-post l I) ∙ ⊗₀-unit l
 
-  ⊗₀-I-·ᵒᵖ : ∀ (F : ⊗₀-composite) → I ⊗₀·ᵒᵖ F ≡ F
-  ⊗₀-I-·ᵒᵖ F = funext λ (l , r) → ap (λ t → F (t , r)) (⊗₀-absorb-r l)
-
-  ⊗₀-·-I : ∀ (F : ⊗₀-composite) → F ⊗₀· I ≡ F
-  ⊗₀-·-I F = funext λ (l , r) → ap (λ t → F (l , t)) (⊗₀-absorb-l r)
-
-  ⊗₀-emb-I-· : ∀ x → ⊗₀-emb I ⊗₀· x ≡ ⊗₀-emb x
-  ⊗₀-emb-I-· x = ⊗₀-interchange I x ∙ ⊗₀-I-·ᵒᵖ (⊗₀-emb x)
+  ⊗₀-idn-·ᵒᵖ : ∀ (F : ⊗₀-composite) → I ·₀ᵒᵖ F ≡ F
+  ⊗₀-idn-·ᵒᵖ F = funext λ (l , r) → ap (λ t → F (t , r)) (⊗₀-absorb-r l)
 
   ⊗₀-emb-image-contr : ∀ x → is-contr (fiber ⊗₀-emb (⊗₀-emb x))
   ⊗₀-emb-image-contr x =
-    subst (λ F → is-contr (fiber ⊗₀-emb F)) (⊗₀-I-·ᵒᵖ (⊗₀-emb x)) (⊗₀-push-contr I x)
+    subst (λ F → is-contr (fiber ⊗₀-emb F))
+      (⊗₀-idn-·ᵒᵖ (⊗₀-emb x)) (⊗₀-push-contr I x)
 
-  ⊗₀-is-representable-prop : ∀ F → is-prop (⊗₀-is-representable F)
-  ⊗₀-is-representable-prop = image-fibers-contr→is-embedding ⊗₀-emb-image-contr
+  ·₀-idn : ∀ (F : ⊗₀-composite) → F ·₀ I ≡ F
+  ·₀-idn F = funext λ (l , r) → ap (λ t → F (l , t)) (⊗₀-absorb-l r)
 
-  ⊗₀-rep-contr : ∀ {F} → ⊗₀-is-representable F → is-contr (⊗₀-is-representable F)
-  ⊗₀-rep-contr {F} u .center = u
-  ⊗₀-rep-contr {F} u .paths = ⊗₀-is-representable-prop F u
+  ⊗₀-emb-idn-absorb : ∀ x → ⊗₀-emb I ·₀ x ≡ ⊗₀-emb x
+  ⊗₀-emb-idn-absorb x = ⊗₀-interchange I x ∙ ⊗₀-idn-·ᵒᵖ (⊗₀-emb x)
+```
 
-  ⊗₀-repr-unique : ∀ {F} (u v : ⊗₀-is-representable F) → u .fst ≡ v .fst
-  ⊗₀-repr-unique {F} u v = ap fst (⊗₀-is-representable-prop F u v)
+### Post and pre decomposition
 
-  _⊳_ : ∀ {F G : ⊗₀-composite}
-      → ⊗₀-is-representable F → F ≡ G → ⊗₀-is-representable G
-  (m , p) ⊳ e = m , p ∙ e
-
+```agda
   ⊗₀-emb-post : ∀ x l r → ⊗₀-emb x (l , r) ≡ ⊗₀-emb I (⊗₀-post x l , r)
   ⊗₀-emb-post x l r =
     ap (λ t → ⊗₀-emb x (l , t)) (sym (⊗₀-absorb-l r))
@@ -414,40 +301,141 @@ The following lemmas depend on ⊗₀-unit
   ⊗₀-emb-pre x l r =
     ap (λ t → ⊗₀-emb x (t , r)) (sym (⊗₀-absorb-r l))
     ∙ sym (happly (⊗₀-interchange I x) (l , r))
+
+  -- the fully post-normal form of a tensor image
+  ⊗₀-emb-normal : ∀ x l r → ⊗₀-emb x (l , r) ≡ ⊗₀-post r (⊗₀-post x l)
+  ⊗₀-emb-normal x l r =
+    ⊗₀-emb-post x l r
+    ∙ ap (λ t → ⊗₀-emb I (⊗₀-post x l , t)) (sym (⊗₀-unit r))
+    ∙ happly (⊗₀-interchange I r) (⊗₀-post x l , I)
+    ∙ ap (λ t → ⊗₀-emb r (t , I)) (⊗₀-absorb-r (⊗₀-post x l))
+
+  ⊗₀-pre-distr : ∀ x y r → ⊗₀-pre (x ⊗₀ y) r ≡ ⊗₀-pre x (⊗₀-pre y r)
+  ⊗₀-pre-distr x y r = happly (⊗₀-emb-comp x y) (I , r)
+
+  ⊗₀-post-distr : ∀ x y l → ⊗₀-post (x ⊗₀ y) l ≡ ⊗₀-post y (⊗₀-post x l)
+  ⊗₀-post-distr x y l = happly (⊗₀-emb-comp-op x y) (l , I)
 ```
 
-Associativity and the unit laws are projections from contractible
-fibers of representations
+### The representability calculus
 
 ```agda
-  ⊗₀-assoc-σ● : ∀ {F G H : ⊗₀-composite}
-            → (U : ⊗₀-is-representable F) (V : ⊗₀-is-representable G)
-              (W : ⊗₀-is-representable H)
-            → U ● (V ● W) ≡ (U ● V) ● W
-  ⊗₀-assoc-σ● U V W = ⊗₀-is-representable-prop _ (U ● (V ● W)) ((U ● V) ● W)
+  is-⊗₀-representable-prop : ∀ F → is-prop (is-⊗₀-representable F)
+  is-⊗₀-representable-prop =
+    image-fibers-contr→is-embedding ⊗₀-emb-image-contr
 
-  ⊗₀-assoc● : ∀ {F G H : ⊗₀-composite}
-          → (U : ⊗₀-is-representable F) (V : ⊗₀-is-representable G)
-            (W : ⊗₀-is-representable H)
-          → fst (U ● (V ● W)) ≡ fst ((U ● V) ● W)
-  ⊗₀-assoc● U V W = ap fst (⊗₀-assoc-σ● U V W)
+  ⊗₀-rep-contr : ∀ {F} → is-⊗₀-representable F → is-contr (is-⊗₀-representable F)
+  ⊗₀-rep-contr {F} u .center = u
+  ⊗₀-rep-contr {F} u .paths = is-⊗₀-representable-prop F u
 
-  ⊗₀-assoc : ∀ x y z → (x ⊗ y) ⊗ z ≡ x ⊗ (y ⊗ z)
-  ⊗₀-assoc x y z = sym (⊗₀-assoc● (⊗₀-nrm x) (⊗₀-nrm y) (⊗₀-nrm z))
+  ⊗₀-repr-unique : ∀ {F} (u v : is-⊗₀-representable F) → u .fst ≡ v .fst
+  ⊗₀-repr-unique {F} u v = ap fst (is-⊗₀-representable-prop F u v)
 
-  ⊗₀-unitr : ∀ x → x ⊗ I ≡ x
-  ⊗₀-unitr x = ⊗₀-repr-unique ((⊗₀-nrm x ● ⊗₀-nrm I) ⊳ ⊗₀-·-I (⊗₀-emb x)) (⊗₀-nrm x)
+  ⊗₀-repr-lc : ∀ {F} {U V : is-⊗₀-representable F}
+            → (κ : U ≡ V) → ap fst κ ≡ ⊗₀-repr-unique U V
+  ⊗₀-repr-lc {F} {U} {V} κ =
+    ap (ap fst) (is-contr→is-set (⊗₀-rep-contr U) U V κ
+      (is-⊗₀-representable-prop F U V))
 
-  ⊗₀-unitl : ∀ x → I ⊗ x ≡ x
-  ⊗₀-unitl x = ⊗₀-repr-unique ((⊗₀-nrm I ● ⊗₀-nrm x) ⊳ ⊗₀-emb-I-· x) (⊗₀-nrm x)
+  ⊗₀-repr-refl : ∀ {F} {m : C.ob} (p q : ⊗₀-emb m ≡ F)
+              → p ≡ q → ⊗₀-repr-unique (m , p) (m , q) ≡ refl
+  ⊗₀-repr-refl {F} {m} p q =
+    J (λ q' _ → ⊗₀-repr-unique (m , p) (m , q') ≡ refl)
+      (sym (⊗₀-repr-lc (refl {x = m , p})))
+
+  ⊗₀-repr-cast : ∀ {F} {m : C.ob} {p q : ⊗₀-emb m ≡ F}
+              → (V : is-⊗₀-representable F) → p ≡ q
+              → ⊗₀-repr-unique (m , p) V ≡ ⊗₀-repr-unique (m , q) V
+  ⊗₀-repr-cast {m = m} V e i = ⊗₀-repr-unique (m , e i) V
+
+  ⊗₀-repr-ap : ∀ {F G} (Ĝ : is-⊗₀-representable F → is-⊗₀-representable G)
+              (U V : is-⊗₀-representable F)
+            → ⊗₀-repr-unique (Ĝ U) (Ĝ V)
+            ≡ ap (λ u → Ĝ u .fst) (is-⊗₀-representable-prop F U V)
+  ⊗₀-repr-ap Ĝ U V =
+    sym (⊗₀-repr-lc (λ i → Ĝ (is-⊗₀-representable-prop _ U V i)))
+
+  ⊗₀-repr-∙ : ∀ {F} (U V W : is-⊗₀-representable F)
+           → ⊗₀-repr-unique U V ∙ ⊗₀-repr-unique V W ≡ ⊗₀-repr-unique U W
+  ⊗₀-repr-∙ {F} U V W =
+      sym (ap-comp fst (is-⊗₀-representable-prop F U V)
+            (is-⊗₀-representable-prop F V W))
+    ∙ ⊗₀-repr-lc
+        (is-⊗₀-representable-prop F U V ∙ is-⊗₀-representable-prop F V W)
+
+  _⊳_ : ∀ {F G : ⊗₀-composite}
+      → is-⊗₀-representable F → F ≡ G → is-⊗₀-representable G
+  (m , p) ⊳ e = m , p ∙ e
+
+  ⊳-repr : ∀ {F G} (U V : is-⊗₀-representable F) (e : F ≡ G)
+         → ⊗₀-repr-unique (U ⊳ e) (V ⊳ e) ≡ ⊗₀-repr-unique U V
+  ⊳-repr (m , p) (n , q) =
+    J (λ _ e' → ⊗₀-repr-unique ((m , p) ⊳ e') ((n , q) ⊳ e')
+              ≡ ⊗₀-repr-unique (m , p) (n , q))
+      (λ i → ⊗₀-repr-unique (m , Path.unitr p i) (n , Path.unitr q i))
+
+  ap-⊗₀-emb-lc : ∀ {m n : C.ob} {r s : m ≡ n}
+              → ap ⊗₀-emb r ≡ ap ⊗₀-emb s → r ≡ s
+  ap-⊗₀-emb-lc {n = n} {r} {s} h =
+    total-contr-unique (⊗₀-emb-image-contr n) r s (sq r)
+      (subst (λ t → PathP (λ i → ⊗₀-emb (s i) ≡ ⊗₀-emb n) t refl)
+        (sym h) (sq s))
+    where
+      sq : (t : _ ≡ n)
+        → PathP (λ i → ⊗₀-emb (t i) ≡ ⊗₀-emb n) (ap ⊗₀-emb t) refl
+      sq t i j = ⊗₀-emb (t (i ∨ j))
+
+  ⊗₀-coh→∙ : ∀ x y → ⊗₀-emb-comp x y ∙ ⊗₀-interchange x y ≡ ⊗₀-emb-comp-op x y
+  ⊗₀-coh→∙ x y =
+      Path.commutes
+        (⊗₀-emb-comp x y) (⊗₀-interchange x y) refl (⊗₀-emb-comp-op x y)
+        (⊗₀-emb-comp-coh x y)
+    ∙ Path.unitl (⊗₀-emb-comp-op x y)
+
+  ·₀-comp : ∀ (F : ⊗₀-composite) y z → F ·₀ (y ⊗₀ z) ≡ (F ·₀ y) ·₀ z
+  ·₀-comp F y z = ap (F ·₀'_) (⊗₀-emb-comp y z)
 ```
 
-## Unit uniqueness
+### Associativity and the unit laws
 
-Any object whose middle-slot action at itself is an equivalence and
-which is idempotent under `⊗₀-post` is uniquely the chosen unit `I`.
-The argument is the Kraus chain: `⊗₀-post e` squares to itself and is
-idempotent, so it absorbs, forcing `e ≡ I`.
+Associativity is recovered through the strictness of composite
+composition: the two bracketings of a threefold composite of
+representations inhabit the one propositional representability
+fiber.
+
+```agda
+  assoc-σ●₀ : ∀ {F G H : ⊗₀-composite}
+           → (U : is-⊗₀-representable F) (V : is-⊗₀-representable G)
+             (W : is-⊗₀-representable H)
+           → U ●₀ (V ●₀ W) ≡ (U ●₀ V) ●₀ W
+  assoc-σ●₀ U V W = is-⊗₀-representable-prop _ (U ●₀ (V ●₀ W)) ((U ●₀ V) ●₀ W)
+
+  assoc●₀ : ∀ {F G H : ⊗₀-composite}
+         → (U : is-⊗₀-representable F) (V : is-⊗₀-representable G)
+           (W : is-⊗₀-representable H)
+         → fst (U ●₀ (V ●₀ W)) ≡ fst ((U ●₀ V) ●₀ W)
+  assoc●₀ U V W = ap fst (assoc-σ●₀ U V W)
+
+  ⊗₀-assoc : ∀ x y z → x ⊗₀ (y ⊗₀ z) ≡ (x ⊗₀ y) ⊗₀ z
+  ⊗₀-assoc x y z = assoc●₀ (⊗₀-nrm x) (⊗₀-nrm y) (⊗₀-nrm z)
+
+  ⊗₀-unitr : ∀ x → x ⊗₀ I ≡ x
+  ⊗₀-unitr x =
+    ⊗₀-repr-unique ((⊗₀-nrm x ●₀ ⊗₀-nrm I) ⊳ ·₀-idn (⊗₀-emb x)) (⊗₀-nrm x)
+
+  ⊗₀-unitl : ∀ x → I ⊗₀ x ≡ x
+  ⊗₀-unitl x =
+    ⊗₀-repr-unique ((⊗₀-nrm I ●₀ ⊗₀-nrm x) ⊳ ⊗₀-emb-idn-absorb x) (⊗₀-nrm x)
+```
+
+### Unit uniqueness and the demoted equivalences
+
+Any object whose middle-slot action at itself is an equivalence
+and which is idempotent under `⊗₀-post` is uniquely the chosen
+unit `I`. The argument is the Kraus chain: `⊗₀-post e` squares
+to itself and is idempotent, so it absorbs, forcing `e ≡ I`.
+The unit equivalences of the curried presentation are not
+axioms: they are recovered from absorption.
 
 ```agda
   ⊗₀-unit-is-prop
@@ -458,23 +446,268 @@ idempotent, so it absorbs, forcing `e ≡ I`.
   ⊗₀-unit-is-prop e re idpt =
     sym (⊗₀-unit e) ∙ post-e-absorb I
     where
-      e-idem : e ⊗ e ≡ e
+      e-idem : e ⊗₀ e ≡ e
       e-idem = ⊗₀-comp-eq-post e e ∙ idpt
 
       post-e-idpt : ∀ l → ⊗₀-post e (⊗₀-post e l) ≡ ⊗₀-post e l
       post-e-idpt l =
-        sym (⊗₀-post-composite e e l) ∙ ap (λ t → ⊗₀-post t l) e-idem
-
-      post-e-squared : ∀ l → ⊗₀-emb e (l , e) ≡ ⊗₀-post e (⊗₀-post e l)
-      post-e-squared l =
-        ⊗₀-emb-post e l e
-        ∙ sym (ap (λ t → ⊗₀-emb I (⊗₀-post e l , t)) (⊗₀-unit e))
-        ∙ happly (⊗₀-interchange I e) (⊗₀-post e l , I)
-        ∙ ap (⊗₀-post e) (⊗₀-absorb-r (⊗₀-post e l))
+        sym (⊗₀-post-distr e e l) ∙ ap (λ t → ⊗₀-post t l) e-idem
 
       post-e-absorb : ∀ l → ⊗₀-post e l ≡ l
       post-e-absorb l = equiv→lc re
-        (post-e-squared (⊗₀-post e l)
+        (⊗₀-emb-normal e (⊗₀-post e l) e
         ∙ post-e-idpt (⊗₀-post e l)
-        ∙ sym (post-e-squared l))
+        ∙ sym (⊗₀-emb-normal e l e))
+
+  ⊗₀-unit-eqvl : is-equiv (λ (r : C.ob) → ⊗₀-pre I r)
+  ⊗₀-unit-eqvl =
+    subst is-equiv (funext λ r → sym (⊗₀-absorb-l r)) id-equiv
+
+  ⊗₀-unit-eqvr : is-equiv (λ (l : C.ob) → ⊗₀-post I l)
+  ⊗₀-unit-eqvr =
+    subst is-equiv (funext λ l → sym (⊗₀-absorb-r l)) id-equiv
+
+  ⊗₀-ob≃total-representable
+    : C.ob ≃ (Σ F ∶ ⊗₀-composite , is-⊗₀-representable F)
+  ⊗₀-ob≃total-representable = iso→equiv to fro ob-ret rep-sec
+    where
+      to : C.ob → Σ F ∶ ⊗₀-composite , is-⊗₀-representable F
+      to x = ⊗₀-emb x , ⊗₀-nrm x
+
+      fro : (Σ F ∶ ⊗₀-composite , is-⊗₀-representable F) → C.ob
+      fro (_ , a , _) = a
+
+      ob-ret : ∀ x → fro (to x) ≡ x
+      ob-ret x = refl
+
+      rep-sec : ∀ s → to (fro s) ≡ s
+      rep-sec (_ , a , p) = J (λ F' p' → to a ≡ (F' , a , p')) refl p
+```
+
+## 2-coherence
+
+The coherence law identifying the two middle-unit absorptions of
+a two-step composite. It is path-degree-2 data *about* level-0
+structure, so it lives in an extension record over
+`monoidal-axioms₀` rather than in either axiom level — the same
+choice `Cat.Coherence` makes with `is-2-coherent` and
+`category-axioms`.
+
+```agda
+record monoidal-2-coherent {o h} {C : category o h}
+  (M₀ : monoidal-axioms₀ C) : Type o where
+  open monoidal-axioms₀ M₀
+  open theory₀ M₀
+  private module C = category C
+
+  field
+    is-⊗₀-2-coherent
+      : (x y : C.ob)
+      → ap (_·₀' ⊗₀-emb y) (·₀-idn (⊗₀-emb x))
+      ≡ ap (⊗₀-emb x ·₀'_) (⊗₀-emb-idn-absorb y)
+```
+
+## Level 1: the displayed context calculus
+
+A morphism of tensor contexts is a left-flank map paired with a
+right-flank map; a `⊗₁-composite` is a family of homs over all
+such maps, displayed over a pair of object-composites. The 2-cell
+boundary `(x , x')` fills the middle slots of the two frame
+images inside the result type — the flanks themselves carry no
+boundary. Frame-maps compose slotwise: the context category.
+
+```agda
+module tensor-virtual₁ {o h} (C : category o h) (I : category.ob C) where
+  private module C = category C
+  private module Ct = theory C
+  open tensor-virtual C I
+
+  ⊗₁-ctx : ⊗₀-ctx → ⊗₀-ctx → Type h
+  ⊗₁-ctx (l , r) (l' , r') = C.hom l l' × C.hom r r'
+
+  ⊗₁-ov-idn : C.hom I I
+  ⊗₁-ov-idn = C.idn I
+
+  ⊗₁-un-idn : C.hom I I
+  ⊗₁-un-idn = C.idn I
+
+  ⊗₁-composite : ⊗₀-composite → ⊗₀-composite → Type (o ⊔ h)
+  ⊗₁-composite F F' = ∀ {γ γ'} → ⊗₁-ctx γ γ' → C.hom (F γ) (F' γ')
+
+  -- evaluation at the identity context
+  ⊗₁-ev : ∀ {F F'} → ⊗₁-composite F F' → C.hom (⊗₀-ev F) (⊗₀-ev F')
+  ⊗₁-ev η = η (⊗₁-ov-idn , ⊗₁-un-idn)
+
+  _⊗₁-ctx-⨾_ : ∀ {γ γ' γ''}
+             → ⊗₁-ctx γ γ' → ⊗₁-ctx γ' γ'' → ⊗₁-ctx γ γ''
+  (α , β) ⊗₁-ctx-⨾ (α' , β') = (α Ct.⨾ α') , (β Ct.⨾ β')
+  infixr 40 _⊗₁-ctx-⨾_
+
+  -- the context category's identity, at any frame
+  ⊗₁-ctx-idn : ∀ {γ} → ⊗₁-ctx γ γ
+  ⊗₁-ctx-idn {γ = (l , r)} = (C.idn l , C.idn r)
+```
+
+## The displayed representable layer
+
+The unit-slot actions `⊗₁-pre`/`⊗₁-post` and the context
+substitutions `⊗₁-sub`/`⊗₁-cosub`, mirroring the object layer;
+the two one-sided composite operators `·₁`/`·₁ᵒᵖ` and the two
+ternary orders `·₁'`/`·₁''`.
+
+```agda
+module tensor-representable₁ {o h} (C : category o h) (I : category.ob C)
+  (⊗₀-emb : category.ob C → tensor-virtual.⊗₀-composite C I)
+  (⊗₁-emb : ∀ {x x'} → category.hom C x x'
+          → tensor-virtual₁.⊗₁-composite C I (⊗₀-emb x) (⊗₀-emb x'))
+  where
+
+  open tensor-virtual C I
+  open tensor-virtual₁ C I
+  open tensor-representable C I ⊗₀-emb
+  private module C = category C
+
+  ⊗₁-pre : ∀ {y y'} → C.hom y y' → ∀ {r r'} → C.hom r r'
+        → C.hom (⊗₀-pre y r) (⊗₀-pre y' r')
+  ⊗₁-pre ψ β = ⊗₁-emb ψ (⊗₁-ov-idn , β)
+
+  ⊗₁-post : ∀ {x x'} → C.hom x x' → ∀ {l l'} → C.hom l l'
+        → C.hom (⊗₀-post x l) (⊗₀-post x' l')
+  ⊗₁-post φ α = ⊗₁-emb φ (α , ⊗₁-un-idn)
+
+  ⊗₁-sub : ∀ {y y'} (ψ : C.hom y y') {γ γ'}
+        → ⊗₁-ctx γ γ' → ⊗₁-ctx (⊗₀-sub y γ) (⊗₀-sub y' γ')
+  ⊗₁-sub ψ (α , β) = α , ⊗₁-pre ψ β
+
+  ⊗₁-cosub : ∀ {x x'} (φ : C.hom x x') {γ γ'}
+          → ⊗₁-ctx γ γ' → ⊗₁-ctx (⊗₀-cosub x γ) (⊗₀-cosub x' γ')
+  ⊗₁-cosub φ (α , β) = ⊗₁-post φ α , β
+
+  _·₁_ : ∀ {F F' : ⊗₀-composite} {y y'}
+       → ⊗₁-composite F F' → C.hom y y'
+       → ⊗₁-composite (F ·₀ y) (F' ·₀ y')
+  (η ·₁ ψ) δ = η (⊗₁-sub ψ δ)
+  infixl 30 _·₁_
+
+  _·₁ᵒᵖ_ : ∀ {x x'} {G G' : ⊗₀-composite}
+         → C.hom x x' → ⊗₁-composite G G'
+         → ⊗₁-composite (x ·₀ᵒᵖ G) (x' ·₀ᵒᵖ G')
+  (φ ·₁ᵒᵖ η) δ = η (⊗₁-cosub φ δ)
+  infixl 30 _·₁ᵒᵖ_
+
+  _·₁'_ : ∀ {F F' G G' : ⊗₀-composite}
+        → ⊗₁-composite F F' → ⊗₁-composite G G'
+        → ⊗₁-composite (F ·₀' G) (F' ·₀' G')
+  (η ·₁' ζ) (α , β) = η (α , ζ (⊗₁-ov-idn , β))
+  infixl 30 _·₁'_
+
+  _·₁''_ : ∀ {F F' G G' : ⊗₀-composite}
+         → ⊗₁-composite F F' → ⊗₁-composite G G'
+         → ⊗₁-composite (F ·₀'' G) (F' ·₀'' G')
+  (η ·₁'' ζ) (α , β) = ζ (η (α , ⊗₁-un-idn) , β)
+  infixl 30 _·₁''_
+```
+
+## `monoidal-axioms₁`
+
+The displayed copy of the axiom shape, over a chosen
+`monoidal-axioms₀`: `⊗₁-emb`, `⊗₁-interchange`, `⊗₁-spine-contr`,
+`⊗₁-unit`, plus the one field with no object-level shadow — the
+enrichment law `⊗₁-emb-⨾`, preserving the whole composition of
+the context category. The characterizations are single `PathP`s
+between morphism-composites, displaced over the object operator
+paths.
+
+```agda
+record monoidal-axioms₁ {o h} {C : category o h}
+  (M₀ : monoidal-axioms₀ C) : Type₊ (o ⊔ h) where
+  open monoidal-axioms₀ M₀
+  open tensor-virtual₁ C I public
+  private module C = category C
+  private module Ct = theory C
+
+  field
+    ⊗₁-emb : ∀ {x x'} → C.hom x x' → ⊗₁-composite (⊗₀-emb x) (⊗₀-emb x')
+
+  open tensor-representable₁ C I ⊗₀-emb ⊗₁-emb public
+
+  field
+    ⊗₁-interchange
+      : ∀ {x x'} (φ : C.hom x x') {y y'} (ψ : C.hom y y')
+      → PathP (λ i → ⊗₁-composite (⊗₀-interchange x y i)
+                                   (⊗₀-interchange x' y' i))
+              (⊗₁-emb φ ·₁ ψ)
+              (φ ·₁ᵒᵖ ⊗₁-emb ψ)
+
+  ⊗₁-spine : ∀ {x x'} (φ : C.hom x x') {y y'} (ψ : C.hom y y')
+          → Type (o ⊔ h)
+  ⊗₁-spine {x} {x'} φ {y} {y'} ψ =
+    Σ σ ∶ C.hom (x ⊗₀ y) (x' ⊗₀ y') ,
+    Σ P ∶ PathP (λ i → ⊗₁-composite (⊗₀-emb-comp x y i)
+                                     (⊗₀-emb-comp x' y' i))
+                (⊗₁-emb σ) (⊗₁-emb φ ·₁ ψ) ,
+    Σ Q ∶ PathP (λ i → ⊗₁-composite (⊗₀-emb-comp-op x y i)
+                                     (⊗₀-emb-comp-op x' y' i))
+                (⊗₁-emb σ) (φ ·₁ᵒᵖ ⊗₁-emb ψ) ,
+      PathP (λ i → PathP (λ j → ⊗₁-composite (⊗₀-emb-comp-coh x  y  i j)
+                                              (⊗₀-emb-comp-coh x' y' i j))
+                         (⊗₁-emb σ) (⊗₁-interchange φ ψ i))
+            P Q
+
+  field
+    ⊗₁-spine-contr
+      : ∀ {x x'} (φ : C.hom x x') {y y'} (ψ : C.hom y y')
+      → is-contr (⊗₁-spine φ ψ)
+
+    ⊗₁-unit
+      : ∀ {x x'} (φ : C.hom x x')
+      → PathP (λ i → C.hom (⊗₀-unit x i) (⊗₀-unit x' i))
+              (⊗₁-ev (⊗₁-emb φ)) φ
+
+    ⊗₁-emb-⨾
+      : ∀ {x x' x''} (φ₁ : C.hom x x') (φ₂ : C.hom x' x'')
+          {γ γ' γ''} (δ₁ : ⊗₁-ctx γ γ') (δ₂ : ⊗₁-ctx γ' γ'')
+      → ⊗₁-emb (φ₁ Ct.⨾ φ₂) (δ₁ ⊗₁-ctx-⨾ δ₂)
+      ≡ ⊗₁-emb φ₁ δ₁ Ct.⨾ ⊗₁-emb φ₂ δ₂
+
+  _⊗₁_ : ∀ {x x'} → C.hom x x' → ∀ {y y'} → C.hom y y'
+       → C.hom (x ⊗₀ y) (x' ⊗₀ y')
+  φ ⊗₁ ψ = ⊗₁-spine-contr φ ψ .center .fst
+  infixr 40 _⊗₁_
+
+  ⊗₁-emb-comp : ∀ {x x'} (φ : C.hom x x') {y y'} (ψ : C.hom y y')
+              → PathP (λ i → ⊗₁-composite (⊗₀-emb-comp x y i)
+                                           (⊗₀-emb-comp x' y' i))
+                      (⊗₁-emb (φ ⊗₁ ψ)) (⊗₁-emb φ ·₁ ψ)
+  ⊗₁-emb-comp φ ψ = ⊗₁-spine-contr φ ψ .center .snd .fst
+
+  ⊗₁-emb-comp-op : ∀ {x x'} (φ : C.hom x x') {y y'} (ψ : C.hom y y')
+                 → PathP (λ i → ⊗₁-composite (⊗₀-emb-comp-op x y i)
+                                              (⊗₀-emb-comp-op x' y' i))
+                         (⊗₁-emb (φ ⊗₁ ψ)) (φ ·₁ᵒᵖ ⊗₁-emb ψ)
+  ⊗₁-emb-comp-op φ ψ = ⊗₁-spine-contr φ ψ .center .snd .snd .fst
+
+  -- the spine's 2-cell
+  ⊗₁-emb-comp-coh
+    : ∀ {x x'} (φ : C.hom x x') {y y'} (ψ : C.hom y y')
+    → PathP (λ i → PathP (λ j → ⊗₁-composite (⊗₀-emb-comp-coh x  y  i j)
+                                              (⊗₀-emb-comp-coh x' y' i j))
+                         (⊗₁-emb (φ ⊗₁ ψ)) (⊗₁-interchange φ ψ i))
+            (⊗₁-emb-comp φ ψ) (⊗₁-emb-comp-op φ ψ)
+  ⊗₁-emb-comp-coh φ ψ = ⊗₁-spine-contr φ ψ .center .snd .snd .snd
+```
+
+## The bundle
+
+Mirroring `category = structure + axioms`.
+
+```agda
+record monoidal {o h} (C : category o h) : Type₊ (o ⊔ h) where
+  field
+    axioms₀ : monoidal-axioms₀ C
+    axioms₁ : monoidal-axioms₁ axioms₀
+
+  open monoidal-axioms₀ axioms₀ public
+  open monoidal-axioms₁ axioms₁ public
+  open theory₀ axioms₀ public
 ```

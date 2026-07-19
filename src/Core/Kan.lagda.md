@@ -24,7 +24,9 @@ private
     U : I → Type u
 
 ```
+
 Partial systems: the data for a composition problem.
+
 ```agda
 
 Sys : (φ : I) → Type u → Exo u
@@ -46,6 +48,7 @@ SysExt : (φ : I) {A : Type u} → Sys φ A → Exo u
 SysExt φ {A} u = A [ φ ↦ sys-lid u ]
 
 ```
+
 Homogeneous composition (hcom) and filler (hfil). These will be very short
 abbreviations to emphasize they are primitives.
 
@@ -134,7 +137,9 @@ TotalP a .paths (y , q , b , α) i =
   q i , (λ j → q (i ∧ j)) , α i , λ j → α (i ∧ j)
 
 ```
+
 Named wrappers for the primitives.
+
 ```agda
 
 sys-composite : {A : Type u} (φ : I) → Sys φ A → A
@@ -155,7 +160,9 @@ module sys-filler where
     plid = λ _ → sys-composite φ s
 
 ```
+
 The space of system composites is contractible - this is the Kan condition.
+
 ```agda
 
 Total-sys : {A : Type u} (φ : I) (s : Sys φ A) → Type u
@@ -166,6 +173,7 @@ Total-sys-contr φ s .center = sys-composite φ s , sys-filler.plid φ s
 Total-sys-contr φ s .paths (x , p) i = p i , λ j → p (i ∧ j)
 
 ```
+
 Heterogeneous composition (com) and filler (fil).
 
 ```agda
@@ -187,7 +195,9 @@ fil A φ i u = com (∂.extend A i) (imp i φ) sys
 {-# DISPLAY com (∂.extend A i) _ (fil.sys A φ i u) = fil A φ i u #-}
 
 ```
+
 Connection: degenerate square for monotone path extension.
+
 ```agda
 
 hc : (A : ∀ i → Type (ℓ i))
@@ -468,7 +478,9 @@ module pfil {A : I → Type} where
 
 
 ```
+
 ## Connection
+
 ```agda
 
 conn : {A : Type u} {x y z : A} (p : x ≡ y) (q : y ≡ z) → HCell p p q q
@@ -483,6 +495,7 @@ conn {x} {y} {z} p q i j = hcom (∂ i ∨ ∂ j) sys
 {-# DISPLAY hcom _ (conn.sys p q i j) = conn p q i j #-}
 
 ```
+
 ## Composition uniqueness
 
 Any two fillers for the same system agree on their lids.
@@ -607,6 +620,20 @@ module cat where
 
 open cat public using () renaming (composite to infixr 9 _∙_)
 
+-- comp-pathp concatenates two PathPs over composable type paths:
+-- the two-family image of the ternary composition, glued along
+-- the cat.fill filler of the type-path composite.
+comp-pathp
+  : ∀ {u} {X Y Z : Type u} {x : X} {y : Y} {z : Z}
+  → (A : X ≡ Y) (B : Y ≡ Z)
+  → PathP (λ i → A i) x y → PathP (λ i → B i) y z
+  → PathP (λ i → (A ∙ B) i) x z
+comp-pathp A B P Q i =
+  com (λ j → cat.fill A B i j) (∂ i) λ where
+    j (i = i0) → P i0
+    j (i = i1) → Q j
+    j (j = i0) → P i
+
 -- pcom→∙ bridges the ternary composite pcom (sym p) q r to the
 -- binary chain p ∙ q ∙ r, via pcom.unique against cat.lcoh.
 pcom→∙
@@ -618,7 +645,9 @@ pcom→∙ p q r = pcom.unique
   (p ∙ q ∙ r , cat.lcoh p q r)
 
 ```
+
 ## Groupoid Laws
+
 ```agda
 
 module Path {A : Type u} where
@@ -750,6 +779,7 @@ cocone {x} p q i j = hcom (∂ i ∨ ~ j) λ where
 ```
 
 ## Chain Reasoning
+
 ```agda
 
 module Chain where
@@ -779,6 +809,7 @@ open Chain public
 ```
 
 ## Triangles
+
 ```agda
 
 module Triangle {ℓ} {A : Type ℓ} {x y z : A}
