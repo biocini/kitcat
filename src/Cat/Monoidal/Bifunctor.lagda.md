@@ -53,7 +53,7 @@ characterizations. The fiber is thus contractible by projection
 from `⊗₁-spine-contr`.
 
 ```agda
-  module hfiber {x x'} (φ : C.hom x x') {y y'} (ψ : C.hom y y') where
+  module ⊗₁-hfiber {x x'} (φ : C.hom x x') {y y'} (ψ : C.hom y y') where
 
     p-char : C.hom (x ⊗₀ y) (x' ⊗₀ y') → Type (o ⊔ h)
     p-char σ =
@@ -103,10 +103,10 @@ square.
           pc (extend-q pc)
     extend-θ pc i j = lid pc i j
 
-    hfiber-contr : is-contr (Σ σ ∶ C.hom (x ⊗₀ y) (x' ⊗₀ y') , p-char σ)
-    hfiber-contr .center =
+    pull-contr : is-contr (Σ σ ∶ C.hom (x ⊗₀ y) (x' ⊗₀ y') , p-char σ)
+    pull-contr .center =
       (φ ⊗₁ ψ) , ⊗₁-emb-comp φ ψ
-    hfiber-contr .paths (σ , pc) i =
+    pull-contr .paths (σ , pc) i =
       Φ i .fst , Φ i .snd .fst
       where
         Φ : ⊗₁-spine-contr φ ψ .center ≡ (σ , pc , extend-q pc , extend-θ pc)
@@ -147,10 +147,10 @@ contraction.
           (extend-p qc) qc
     extend-θ⁻ qc i j = rlid qc (~ i) j
 
-    hfiber-push-contr : is-contr (Σ σ ∶ C.hom (x ⊗₀ y) (x' ⊗₀ y') , q-char σ)
-    hfiber-push-contr .center =
+    push-contr : is-contr (Σ σ ∶ C.hom (x ⊗₀ y) (x' ⊗₀ y') , q-char σ)
+    push-contr .center =
       (φ ⊗₁ ψ) , ⊗₁-emb-comp-op φ ψ
-    hfiber-push-contr .paths (σ , qc) i =
+    push-contr .paths (σ , qc) i =
       Φ i .fst , Φ i .snd .snd .fst
       where
         Φ : ⊗₁-spine-contr φ ψ .center ≡ (σ , extend-p qc , qc , extend-θ⁻ qc)
@@ -167,22 +167,22 @@ exactly as `Cat.Base`'s `cast-path` pair.
 ```agda
   ⊗₁-push-contr
     : ∀ {x x'} (φ : C.hom x x') {y y'} (ψ : C.hom y y')
-    → is-contr (Σ σ ∶ C.hom (x ⊗₀ y) (x' ⊗₀ y') , hfiber.q-char φ ψ σ)
-  ⊗₁-push-contr φ ψ = hfiber.hfiber-push-contr φ ψ
+    → is-contr (Σ σ ∶ C.hom (x ⊗₀ y) (x' ⊗₀ y') , ⊗₁-hfiber.q-char φ ψ σ)
+  ⊗₁-push-contr φ ψ = ⊗₁-hfiber.push-contr φ ψ
 
   ⊗₁-cast-path
     : ∀ {x x'} {φ : C.hom x x'} {y y'} {ψ : C.hom y y'}
         {σ : C.hom (x ⊗₀ y) (x' ⊗₀ y')}
-    → hfiber.p-char φ ψ σ → φ ⊗₁ ψ ≡ σ
+    → ⊗₁-hfiber.p-char φ ψ σ → φ ⊗₁ ψ ≡ σ
   ⊗₁-cast-path {φ = φ} {ψ = ψ} {σ} pc =
-    ap fst (hfiber.hfiber-contr φ ψ .paths (σ , pc))
+    ap fst (⊗₁-hfiber.pull-contr φ ψ .paths (σ , pc))
 
   -- a plain equation transports the center's characterization
   -- across it: cap the spine's PathP with the ap-rewrite
   ⊗₁-cast-path⁻¹
     : ∀ {x x'} {φ : C.hom x x'} {y y'} {ψ : C.hom y y'}
         {σ : C.hom (x ⊗₀ y) (x' ⊗₀ y')}
-    → φ ⊗₁ ψ ≡ σ → hfiber.p-char φ ψ σ
+    → φ ⊗₁ ψ ≡ σ → ⊗₁-hfiber.p-char φ ψ σ
   ⊗₁-cast-path⁻¹ {φ = φ} {ψ = ψ} p =
     pcom (ap ⊗₁-emb p) (⊗₁-emb-comp φ ψ) refl
 ```
@@ -498,6 +498,16 @@ on paths, and the total-space equivalence.
     → ⊗₁-repr-unique (m , p) V ≡ ⊗₁-repr-unique (m , q) V
   ⊗₁-repr-cast {m = m} V e i = ⊗₁-repr-unique (m , e i) V
 
+  ⊗₁-repr-ap
+    : ∀ {x x' y y'} {η : ⊗₁-composite (⊗₀-emb x) (⊗₀-emb x')}
+        {ζ : ⊗₁-composite (⊗₀-emb y) (⊗₀-emb y')}
+      (Ĝ : is-⊗₁-representable η → is-⊗₁-representable ζ)
+      (U V : is-⊗₁-representable η)
+    → ⊗₁-repr-unique (Ĝ U) (Ĝ V)
+    ≡ ap (λ u → Ĝ u .fst) (is-⊗₁-representable-prop η U V)
+  ⊗₁-repr-ap Ĝ U V =
+    sym (⊗₁-repr-lc (λ i → Ĝ (is-⊗₁-representable-prop _ U V i)))
+
   ⊗₁-repr-∙
     : ∀ {x x'} {η : ⊗₁-composite (⊗₀-emb x) (⊗₀-emb x')}
     → (U V W : is-⊗₁-representable η)
@@ -574,7 +584,7 @@ on paths, and the total-space equivalence.
 
 ## Functoriality of the derived 2-cell tensor
 
-Both sides inhabit the contractible `hfiber`: the left side is
+Both sides inhabit the contractible `⊗₁-hfiber`: the left side is
 its center, and the composite side satisfies the
 characterization by gluing three links — two `⊗₁-emb-⨾` rewrites
 sandwiching the side-by-side paste of the two spine
@@ -595,18 +605,11 @@ paths onto a `PathP` — so no local combinator is needed.
     → (φ Ct.⨾ φ') ⊗₁ (ψ Ct.⨾ ψ') ≡ (φ ⊗₁ ψ) Ct.⨾ (φ' ⊗₁ ψ')
   ⊗₁-preserves-⨾ {x} {x'} φ {x''} φ' {y} {y'} ψ {y''} ψ' =
     ap fst
-      (hfiber.hfiber-contr (φ Ct.⨾ φ') (ψ Ct.⨾ ψ') .paths
+      (⊗₁-hfiber.pull-contr (φ Ct.⨾ φ') (ψ Ct.⨾ ψ') .paths
         ((φ ⊗₁ ψ) Ct.⨾ (φ' ⊗₁ ψ') , glued))
     where
       σ₁ = φ ⊗₁ ψ
       σ₂ = φ' ⊗₁ ψ'
-
-      -- vertical composite of hom-composites, identity in the
-      -- second slot: the shape ⊗₁-emb-⨾ produces at
-      -- δ ⊗₁-ctx-⨾ ⊗₁-ctx-idn and ⊗₁-pre-comp consumes
-      _⨾₁_ : ∀ {F F' F''} → ⊗₁-composite F F' → ⊗₁-composite F' F''
-           → ⊗₁-composite F F''
-      (η ⨾₁ η') γ γ' δ = η $₁ δ Ct.⨾ η' $₁ ⊗₁-ctx-idn
 
       -- the side-by-side paste of the two characterizations; the
       -- middle operators ⊗₀-emb-comp x' y' i match, so this is a
@@ -634,7 +637,7 @@ paths onto a `PathP` — so no local combinator is needed.
         ( sym (⊗₁-emb-⨾ φ φ' (α , ⊗₁-pre ψ β) (C.idn _ , ⊗₁-pre ψ' (C.idn _)))
         ∙ (λ j → ⊗₁-emb (φ Ct.⨾ φ') $₁ (Ct.unitr α j , ⊗₁-pre-comp ψ ψ' β j)) ) i
 
-      glued : hfiber.p-char (φ Ct.⨾ φ') (ψ Ct.⨾ ψ') (σ₁ Ct.⨾ σ₂)
+      glued : ⊗₁-hfiber.p-char (φ Ct.⨾ φ') (ψ Ct.⨾ ψ') (σ₁ Ct.⨾ σ₂)
       glued = pcom {A = λ i → ⊗₁-composite (⊗₀-emb-comp x y i)
                                             (⊗₀-emb-comp x'' y'' i)}
                    (sym linkA) W linkB

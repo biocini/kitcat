@@ -567,8 +567,9 @@ module tensor-virtual₁ {o h} (C : category o h) (I : category.ob C) where
 The representability predicate with its satisfaction relation
 and normal form, the unit-slot actions `⊗₁-pre`/`⊗₁-post` and
 the context substitutions `⊗₁-sub`/`⊗₁-cosub`, mirroring the
-object layer; the two one-sided composite operators `·₁`/`·₁ᵒᵖ`
-and the two ternary orders `·₁'`/`·₁''`.
+object layer; the two one-sided composite operators `·₁`/`·₁ᵒᵖ`,
+the two ternary orders `·₁'`/`·₁''`, and the vertical composite
+`_⨾₁_`.
 
 ```agda
 module tensor-representable₁ {o h} (C : category o h) (I : category.ob C)
@@ -581,6 +582,7 @@ module tensor-representable₁ {o h} (C : category o h) (I : category.ob C)
   open tensor-virtual₁ C I
   open tensor-representable C I ⊗₀-emb
   private module C = category C
+  private module Ct = theory C
 
   is-⊗₁-representable
     : ∀ {x x'} → ⊗₁-composite (⊗₀-emb x) (⊗₀-emb x') → Type (o ⊔ h)
@@ -632,6 +634,14 @@ module tensor-representable₁ {o h} (C : category o h) (I : category.ob C)
          → ⊗₁-composite (F ·₀'' G) (F' ·₀'' G')
   (η ·₁'' ζ) γ γ' (α , β) = ζ $₁ (η $₁ (α , ⊗₁-un-idn) , β)
   infixl 30 _·₁''_
+
+  -- vertical composite of hom-composites, with the second factor
+  -- read at the identity frame: the normal form ⊗₁-emb-⨾ produces
+  -- at δ ⊗₁-ctx-⨾ ⊗₁-ctx-idn and ⊗₁-pre-comp consumes
+  _⨾₁_ : ∀ {F F' F''} → ⊗₁-composite F F' → ⊗₁-composite F' F''
+       → ⊗₁-composite F F''
+  (η ⨾₁ η') γ γ' δ = η $₁ δ Ct.⨾ η' $₁ ⊗₁-ctx-idn
+  infixr 40 _⨾₁_
 ```
 
 ## `monoidal-axioms₁`
