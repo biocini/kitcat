@@ -3,12 +3,13 @@ July 2026
 
 2-coherence of the tensor: the transcription of `Cat.Coherence`
 under the dictionary hom ↦ ob, graded like the rest of the
-monoidal spine. `coherence₀` carries the interchange coherence
-and the object-level pentagon, both read off the propositional
-representability fibers — the pentagon is one `is-contr→is-set`
-away from `⊗₀-nrm`-strictness, exactly as at the hom level. The
-triangle (consuming `monoidal-2-coherent`) and the displaced
-level-1 pentagon over `⊗₁-assoc` follow the same spine.
+monoidal spine. `coherence₀` carries the interchange coherence,
+the object-level pentagon, and the triangle, all read off the
+propositional representability fibers — the pentagon is one
+`is-contr→is-set` away from `⊗₀-nrm`-strictness, and the
+triangle consumes `monoidal-2-coherent` to close its loop,
+exactly as at the hom level. The displaced level-1 pentagon
+over `⊗₁-assoc` follows the same spine.
 
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
@@ -146,4 +147,104 @@ straightened to `⊗₀-assoc` endpoints by `assoc⋉₀-nrm`.
       ∙ pentagon⋉₀
       ∙ ap (λ t → t ∙ assoc⋉₀ (⊗₀-nrm x ⋉₀ ⊗₀-nrm y) (⊗₀-nrm z) (⊗₀-nrm w)) A₂
       ∙ ap (⊗₀-assoc x y (z ⊗₀ w) ∙_) A₁
+```
+
+## The triangle
+
+The middle-unit composite `A ▿₀ E ▿₀ B` carries five witnesses:
+the two bracketings `r₁`/`r₂` and the `↝`-transports of the
+plain pair along the two unit contractions. Every face of the
+triangle is a `⊗₀-repr-unique` between two of them — the unitor
+faces computed by `⊗₀-repr-ap` at the one-sided pairings, the
+associator face definitionally `⊗₀-assoc x I y` — and
+`monoidal-2-coherent` identifies the two transports, closing the
+`loop` and strengthening the weak triangle to the standard one.
+
+```agda
+  module triangle₀ (x y : C.ob) where
+    A = ⊗₀-emb x
+    E = ⊗₀-emb I
+    B = ⊗₀-emb y
+
+    -- 1 = source of ⊗₀-assoc (right-nested), 2 = target (left-nested)
+    e₁ : A ▿₀ (E ▿₀ B) ≡ A ▿₀ B ;  e₁ = ap (A ▿₀_) (⊗₀-emb-idn-absorb y)
+    e₂ : (A ▿₀ E) ▿₀ B ≡ A ▿₀ B ;  e₂ = ap (_▿₀ B) (▾₀-idn A)
+
+    r₁ r₂ r₀¹ r₀² : is-⊗₀-representable (A ▿₀ E ▿₀ B)
+    r₁  = ⊗₀-nrm x ⋉₀ (⊗₀-nrm I ⋉₀ ⊗₀-nrm y)     -- fst = x ⊗₀ (I ⊗₀ y)
+    r₂  = (⊗₀-nrm x ⋉₀ ⊗₀-nrm I) ⋉₀ ⊗₀-nrm y     -- fst = (x ⊗₀ I) ⊗₀ y
+    r₀¹ = (⊗₀-nrm x ⋉₀ ⊗₀-nrm y) ↝ sym e₁
+    r₀² = (⊗₀-nrm x ⋉₀ ⊗₀-nrm y) ↝ sym e₂
+
+    T-contr : is-contr (is-⊗₀-representable (A ▿₀ E ▿₀ B))
+    T-contr .center = r₁
+    T-contr .paths  = is-⊗₀-representable-prop _ r₁
+
+    assoc-eq : ⊗₀-repr-unique r₁ r₂ ≡ ⊗₀-assoc x I y
+    assoc-eq = refl
+
+    loop : x ⊗₀ y ≡ x ⊗₀ y
+    loop = ⊗₀-repr-unique r₀¹ r₀²
+
+    Uf : is-⊗₀-representable A ; Uf = (⊗₀-nrm x ⋉₀ ⊗₀-nrm I) ↝ ▾₀-idn A
+    Vg : is-⊗₀-representable B ; Vg = (⊗₀-nrm I ⋉₀ ⊗₀-nrm y) ↝ ⊗₀-emb-idn-absorb y
+
+    s₀ s₁ s₂ : is-⊗₀-representable (A ▿₀ B)
+    s₀ = ⊗₀-nrm x ⋉₀ ⊗₀-nrm y   ;  s₁ = r₁ ↝ e₁  ;  s₂ = r₂ ↝ e₂
+
+    Ĝr : is-⊗₀-representable A → is-⊗₀-representable (A ▿₀ B)
+    Ĝr u = u ⋉₀ ⊗₀-nrm y
+
+    Ĝl : is-⊗₀-representable B → is-⊗₀-representable (A ▿₀ B)
+    Ĝl v = ⊗₀-nrm x ⋉₀ v
+
+    private
+      W  = (⊗₀-nrm x ⋉₀ ⊗₀-nrm I) .snd ; X  = ⊗₀-emb-comp (x ⊗₀ I) y
+      W' = (⊗₀-nrm I ⋉₀ ⊗₀-nrm y) .snd ; X' = ⊗₀-emb-comp x (I ⊗₀ y)
+
+      wr : s₂ .snd ≡ Ĝr Uf .snd
+      wr = sym (Path.assoc X (ap (_▿₀ B) W) e₂)
+         ∙ ap (X ∙_) (sym (ap-comp (_▿₀ B) W (▾₀-idn A)))
+
+      wl : s₁ .snd ≡ Ĝl Vg .snd
+      wl = sym (Path.assoc X' (ap (A ▿₀_) W') e₁)
+         ∙ ap (X' ∙_) (sym (ap-comp (A ▿₀_) W' (⊗₀-emb-idn-absorb y)))
+
+    face-r : ⊗₀-repr-unique s₂ s₀ ≡ ap (_⊗₀ y) (⊗₀-unitr x)
+    face-r = sym (⊗₀-repr-∙ s₂ (Ĝr Uf) s₀)
+           ∙ ap (_∙ ⊗₀-repr-unique (Ĝr Uf) s₀)
+                (⊗₀-repr-refl (s₂ .snd) (Ĝr Uf .snd) wr)
+           ∙ Path.unitl (⊗₀-repr-unique (Ĝr Uf) s₀)
+           ∙ ⊗₀-repr-ap Ĝr Uf (⊗₀-nrm x)
+
+    face-l : ⊗₀-repr-unique s₁ s₀ ≡ ap (x ⊗₀_) (⊗₀-unitl y)
+    face-l = sym (⊗₀-repr-∙ s₁ (Ĝl Vg) s₀)
+           ∙ ap (_∙ ⊗₀-repr-unique (Ĝl Vg) s₀)
+                (⊗₀-repr-refl (s₁ .snd) (Ĝl Vg .snd) wl)
+           ∙ Path.unitl (⊗₀-repr-unique (Ĝl Vg) s₀)
+           ∙ ⊗₀-repr-ap Ĝl Vg (⊗₀-nrm y)
+
+    triangle-weak
+      : ⊗₀-repr-unique s₁ s₂ ∙ ap (_⊗₀ y) (⊗₀-unitr x)
+      ≡ ap (x ⊗₀_) (⊗₀-unitl y)
+    triangle-weak =
+      ap (⊗₀-repr-unique s₁ s₂ ∙_) (sym face-r) ∙ ⊗₀-repr-∙ s₁ s₂ s₀ ∙ face-l
+
+    loop-refl : monoidal-2-coherent M₀ → loop ≡ refl
+    loop-refl mid = ap (ap fst)
+      (is-contr→is-set T-contr r₀¹ r₀² (is-⊗₀-representable-prop _ r₀¹ r₀²)
+        (ap ((⊗₀-nrm x ⋉₀ ⊗₀-nrm y) ↝_)
+            (ap sym (sym (mid .monoidal-2-coherent.is-⊗₀-2-coherent x y)))))
+
+    face-a : monoidal-2-coherent M₀ → ⊗₀-repr-unique s₁ s₂ ≡ ⊗₀-assoc x I y
+    face-a mid =
+        ap (λ t → ⊗₀-repr-unique (r₁ ↝ e₁) (r₂ ↝ t))
+           (mid .monoidal-2-coherent.is-⊗₀-2-coherent x y)
+      ∙ ↝-repr r₁ r₂ e₁
+
+    ⊗₀-triangle
+      : monoidal-2-coherent M₀
+      → ⊗₀-assoc x I y ∙ ap (_⊗₀ y) (⊗₀-unitr x) ≡ ap (x ⊗₀_) (⊗₀-unitl y)
+    ⊗₀-triangle mid =
+      ap (_∙ ap (_⊗₀ y) (⊗₀-unitr x)) (sym (face-a mid)) ∙ triangle-weak
 ```
