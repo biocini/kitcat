@@ -297,6 +297,20 @@ one-liners.
             (η ▾₁ C.idn I) η
   ▾₁-idn η i γ γ' (α , β) = η $₁ (α , ⊗₁-absorb-l β i)
 
+  -- the displaced image of ⊗₀-emb-idn-absorb: the interchange at
+  -- the identity glued to the displaced funext absorption
+  ⊗₁-emb-idn-absorb
+    : ∀ {x x'} (φ : C.hom x x')
+    → PathP (λ i → ⊗₁-composite (⊗₀-emb-idn-absorb x i)
+                                 (⊗₀-emb-idn-absorb x' i))
+            (⊗₁-emb (C.idn I) ▾₁ φ) (⊗₁-emb φ)
+  ⊗₁-emb-idn-absorb {x} {x'} φ =
+    comp-pathp₂ ⊗₁-composite
+      (⊗₀-interchange I x) (⊗₀-idn-▴ (⊗₀-emb x))
+      (⊗₀-interchange I x') (⊗₀-idn-▴ (⊗₀-emb x'))
+      (⊗₁-interchange (C.idn I) φ)
+      (⊗₁-idn-▴ (⊗₁-emb φ))
+
   ⊗₁-pre-distr
     : ∀ {x x'} (φ : C.hom x x') {y y'} (ψ : C.hom y y')
         {r r'} (β : C.hom r r')

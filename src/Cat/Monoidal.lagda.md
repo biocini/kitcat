@@ -484,29 +484,6 @@ axioms: they are recovered from absorption.
       rep-sec (_ , a , p) = J (λ F' p' → to a ≡ (F' , a , p')) refl p
 ```
 
-## 2-coherence
-
-The coherence law identifying the two middle-unit absorptions of
-a two-step composite. It is path-degree-2 data *about* level-0
-structure, so it lives in an extension record over
-`monoidal-axioms₀` rather than in either axiom level — the same
-choice `Cat.Coherence` makes with `is-2-coherent` and
-`category-axioms`.
-
-```agda
-record monoidal-2-coherent {o h} {C : category o h}
-  (M₀ : monoidal-axioms₀ C) : Type o where
-  open monoidal-axioms₀ M₀
-  open theory₀ M₀
-  private module C = category C
-
-  field
-    is-⊗₀-2-coherent
-      : (x y : C.ob)
-      → ap (_▿₀ ⊗₀-emb y) (▾₀-idn (⊗₀-emb x))
-      ≡ ap (⊗₀-emb x ▿₀_) (⊗₀-emb-idn-absorb y)
-```
-
 ## Level 1: the displayed context calculus
 
 A morphism of tensor contexts is a left-flank map paired with a

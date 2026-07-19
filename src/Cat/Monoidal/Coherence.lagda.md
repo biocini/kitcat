@@ -3,13 +3,16 @@ July 2026
 
 2-coherence of the tensor: the transcription of `Cat.Coherence`
 under the dictionary hom ↦ ob, graded like the rest of the
-monoidal spine. `coherence₀` carries the interchange coherence,
-the object-level pentagon, and the triangle, all read off the
-propositional representability fibers — the pentagon is one
-`is-contr→is-set` away from `⊗₀-nrm`-strictness, and the
-triangle consumes `monoidal-2-coherent` to close its loop,
-exactly as at the hom level. The displaced level-1 pentagon
-over `⊗₁-assoc` follows the same spine.
+monoidal spine. `is-monoidal-2-coherent` is the extension record
+over the full `monoidal` bundle, carrying the coherence law at
+both grades. `coherence` carries the derived theory: the
+interchange coherence, the object-level pentagon, and the
+triangle, all read off the propositional representability
+fibers — the pentagon is one `is-contr→is-set` away from
+`⊗₀-nrm`-strictness, and the triangle consumes the object-level
+coherence field to close its loop, exactly as at the hom level.
+The displaced level-1 pentagon over `⊗₁-assoc` follows the same
+spine.
 
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
@@ -27,10 +30,51 @@ open import Core.Transport.J using (J)
 open import Cat.Type
 open import Cat.Base
 open import Cat.Monoidal
+open import Cat.Monoidal.Bifunctor
+```
 
-module coherence₀ {o h} {C : category o h} (M₀ : monoidal-axioms₀ C) where
-  open monoidal-axioms₀ M₀
-  open theory₀ M₀
+## 2-coherence
+
+The coherence law identifying the two middle-unit absorptions
+of a two-step composite, at both grades: the object level as in
+`Cat.Coherence`'s `is-2-coherent`, and the morphism level
+displaced over it — a square of hom-composites over the
+object-level identification, relating the `▿₁`-whiskers of
+`▾₁-idn` and `⊗₁-emb-idn-absorb`. The two levels are proved
+separately by any instance, but they travel in one record over
+the `monoidal` bundle: a consumer of `monoidal C` answers for
+both.
+
+```agda
+record is-monoidal-2-coherent {o h} {C : category o h}
+  (M : monoidal C) : Type (o ⊔ h) where
+  open monoidal M
+  open theory₁ M
+  private module C = category C
+
+  field
+    is-⊗₀-2-coherent
+      : (x y : C.ob)
+      → ap (_▿₀ ⊗₀-emb y) (▾₀-idn (⊗₀-emb x))
+      ≡ ap (⊗₀-emb x ▿₀_) (⊗₀-emb-idn-absorb y)
+
+    is-⊗₁-2-coherent
+      : ∀ {x x'} (φ : C.hom x x') {y y'} (ψ : C.hom y y')
+      → PathP (λ j → PathP (λ i → ⊗₁-composite
+                                    (is-⊗₀-2-coherent x y j i)
+                                    (is-⊗₀-2-coherent x' y' j i))
+                     ((⊗₁-emb φ ▾₁ C.idn I) ▿₁ ⊗₁-emb ψ)
+                     (⊗₁-emb φ ▿₁ ⊗₁-emb ψ))
+              (λ i → ▾₁-idn (⊗₁-emb φ) i ▿₁ ⊗₁-emb ψ)
+              (λ i → ⊗₁-emb φ ▿₁ ⊗₁-emb-idn-absorb ψ i)
+```
+
+## The derived theory
+
+```agda
+module coherence {o h} {C : category o h} (M : monoidal C) where
+  open monoidal M
+  open theory₁ M
   private module C = category C
 ```
 
@@ -230,20 +274,20 @@ associator face definitionally `⊗₀-assoc x I y` — and
     triangle-weak =
       ap (⊗₀-repr-unique s₁ s₂ ∙_) (sym face-r) ∙ ⊗₀-repr-∙ s₁ s₂ s₀ ∙ face-l
 
-    loop-refl : monoidal-2-coherent M₀ → loop ≡ refl
+    loop-refl : is-monoidal-2-coherent M → loop ≡ refl
     loop-refl mid = ap (ap fst)
       (is-contr→is-set T-contr r₀¹ r₀² (is-⊗₀-representable-prop _ r₀¹ r₀²)
         (ap ((⊗₀-nrm x ⋉₀ ⊗₀-nrm y) ↝_)
-            (ap sym (sym (mid .monoidal-2-coherent.is-⊗₀-2-coherent x y)))))
+            (ap sym (sym (mid .is-monoidal-2-coherent.is-⊗₀-2-coherent x y)))))
 
-    face-a : monoidal-2-coherent M₀ → ⊗₀-repr-unique s₁ s₂ ≡ ⊗₀-assoc x I y
+    face-a : is-monoidal-2-coherent M → ⊗₀-repr-unique s₁ s₂ ≡ ⊗₀-assoc x I y
     face-a mid =
         ap (λ t → ⊗₀-repr-unique (r₁ ↝ e₁) (r₂ ↝ t))
-           (mid .monoidal-2-coherent.is-⊗₀-2-coherent x y)
+           (mid .is-monoidal-2-coherent.is-⊗₀-2-coherent x y)
       ∙ ↝-repr r₁ r₂ e₁
 
     ⊗₀-triangle
-      : monoidal-2-coherent M₀
+      : is-monoidal-2-coherent M
       → ⊗₀-assoc x I y ∙ ap (_⊗₀ y) (⊗₀-unitr x) ≡ ap (x ⊗₀_) (⊗₀-unitl y)
     ⊗₀-triangle mid =
       ap (_∙ ap (_⊗₀ y) (⊗₀-unitr x)) (sym (face-a mid)) ∙ triangle-weak
