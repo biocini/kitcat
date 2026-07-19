@@ -114,41 +114,20 @@ module _ {u} (A : Type u) where
       → E f x refl y refl ≡ f
     gpd-post-eval f = pcom.unit f
 
-  path-Rx : Rx u u
-  path-Rx .Rx.ob = A
-  path-Rx .Rx.edge = _≡_
-  path-Rx .Rx.rx x = refl
+  path-Rx : reflexive-graph u u
+  path-Rx .reflexive-graph.ob = A
+  path-Rx .reflexive-graph.edge = _≡_
+  path-Rx .reflexive-graph.rx x = refl
 
-  open virtual-structure path-Rx
+  open virtual path-Rx
 
   private
     gpd-emb : ∀ {x y : A} → x ≡ y → composite x y
     gpd-emb f = uncurryE (E f)
 
-    pre : ∀ {y z : A} (g : y ≡ z) {v} → z ≡ v → y ≡ v
-    pre {y} g {v} b = gpd-emb g (ov-idn y , un-ctr b)
+  open representable path-Rx gpd-emb
 
-    post : ∀ {x y : A} (f : x ≡ y) {w} → w ≡ x → w ≡ y
-    post {y = y} f {w} a = gpd-emb f (ov-ctr a , un-idn y)
-
-    sub : ∀ {x y z : A} → y ≡ z → ctx x z → ctx x y
-    sub g (c , (v , b)) = c , (v , pre g b)
-
-    cosub : ∀ {x y z : A} → x ≡ y → ctx x z → ctx y z
-    cosub g ((w , b) , β) = (w , post g b) , β
-
-    _·_ : ∀ {x y z : A} → composite x y → y ≡ z → composite x z
-    (α · g) γ = α (sub g γ)
-
-    _·ᵒᵖ_ : ∀ {x y z : A} → x ≡ y → composite y z → composite x z
-    (f ·ᵒᵖ β) γ = β (cosub f γ)
-
-    _·'_ : ∀ {x y z : A} → composite x y → composite y z → composite x z
-    _·'_ {y = y} β α γ = β (γ .fst , (γ .snd .fst , α (ov-idn y , γ .snd)))
-
-    _·''_ : ∀ {x y z : A} → composite x y → composite y z → composite x z
-    _·''_ {y = y} β α γ = α ((γ .fst .fst , β (γ .fst , un-idn y)) , γ .snd)
-
+  private
     -- interchange, packaged as a path between composites.
     -- `gpd-emb f · g` and `f ·ᵒᵖ gpd-emb g` unfold to the two sides of
     -- the March equation by Σ-η.
@@ -158,40 +137,30 @@ module _ {u} (A : Type u) where
       gpd-interchange f g
         (γ .fst .fst) (γ .fst .snd) (γ .snd .fst) (γ .snd .snd)
 
-    -- interchange♭ at arbitrary representables, by two J's over the
-    -- fibers. At `nrm` endpoints this is definitionally `ι`, since
-    -- `·'`/`·''` on representables reduce to `·`/`·ᵒᵖ`.
-    interchange♭-impl
-      : ∀ {x y z : A} {F : composite x y} {G : composite y z}
-      → fiber gpd-emb F → fiber gpd-emb G → F ·' G ≡ F ·'' G
-    interchange♭-impl {G = G} (m , p) (n , q) =
-      J (λ F' _ → F' ·' G ≡ F' ·'' G)
-        (J (λ G' _ → gpd-emb m ·' G' ≡ gpd-emb m ·'' G') (ι m n) q)
-        p
+    -- closure of ι over the fibers; at nrm endpoints this is how the
+    -- record computes its derived `interchange` from the field we supply
+    ι♭ : ∀ {x y z : A} {F : composite x y} {G : composite y z}
+       → fiber gpd-emb F → fiber gpd-emb G → F ·' G ≡ F ·'' G
+    ι♭ = interchange♭-from ι
 
-    nrm : ∀ {x y : A} (f : x ≡ y) → fiber gpd-emb (gpd-emb f)
-    nrm f = f , refl
-
-    -- July's `spine`, with `interchange f g` unfolded as
-    -- `interchange♭ (nrm f) (nrm g)` — which is how the record computes
-    -- it from the fields we supply.
+    -- the record's `spine`, with `interchange f g` computed from `ι♭`
     Spine : ∀ {x y z : A} (f : x ≡ y) (g : y ≡ z) → Type u
     Spine {x} {y} {z} f g =
       Σ k ∶ (x ≡ z) ,
       Σ p ∶ (gpd-emb k ≡ gpd-emb f · g) ,
       Σ q ∶ (gpd-emb k ≡ f ·ᵒᵖ gpd-emb g) ,
-        PathP (λ i → gpd-emb k ≡ interchange♭-impl (nrm f) (nrm g) i) p q
+        PathP (λ i → gpd-emb k ≡ ι♭ (nrm f) (nrm g) i) p q
 
     spine-contr-impl
       : ∀ {x y z : A} (f : x ≡ y) (g : y ≡ z) → is-contr (Spine f g)
     spine-contr-impl f g = reshape c
       where
         c = Σ-contr-contr (eqv-fibers emb-equiv (gpd-emb f · g))
-              λ (k , p) → spine-tail p (interchange♭-impl (nrm f) (nrm g))
+              λ (k , p) → spine-tail p (ι♭ (nrm f) (nrm g))
 
         reshape : is-contr (Σ λ (k , p) →
                     Σ q ∶ (gpd-emb k ≡ f ·ᵒᵖ gpd-emb g) ,
-                      PathP (λ i → gpd-emb k ≡ interchange♭-impl (nrm f) (nrm g) i) p q)
+                      PathP (λ i → gpd-emb k ≡ ι♭ (nrm f) (nrm g) i) p q)
                 → is-contr (Spine f g)
         reshape c .center =
           c .center .fst .fst , c .center .fst .snd ,
@@ -202,7 +171,7 @@ module _ {u} (A : Type u) where
 
   gpd-axioms : category-axioms path-Rx
   gpd-axioms .category-axioms.emb = gpd-emb
-  gpd-axioms .category-axioms.interchange♭ = interchange♭-impl
+  gpd-axioms .category-axioms.interchange♭ = ι♭
   gpd-axioms .category-axioms.spine-contr = spine-contr-impl
   gpd-axioms .category-axioms.unit = gpd-post-eval
 
