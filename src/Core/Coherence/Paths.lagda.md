@@ -136,9 +136,9 @@ module _ {A : Type u} where
     path
       : α₁₄ ∙ α₄₅ ≡ pcom (sym α₁₂) α₂₃ α₃₅
     path = pcom
-      (pcom.ap (λ _ → fst) refl σ₁₄ σ₄₅)
+      (pcom.map (λ _ → fst) refl σ₁₄ σ₄₅)
       (ap (ap fst) fiber-identity)
-      (pcom.ap (λ _ → fst) (sym σ₁₂) σ₂₃ σ₃₅)
+      (pcom.map (λ _ → fst) (sym σ₁₂) σ₂₃ σ₃₅)
 
     -- Face identifications connect each αᵢⱼ to sym (assoc ...).
     -- Strategy: construct a "core" path in E₄ whose fst traces

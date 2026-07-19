@@ -6,7 +6,7 @@ Kan operations: homogeneous and heterogeneous composition and filling.
 module Core.Kan where
 
 open import Core.Type using (Level; Type; Exo; Exoω; _∘_)
-open import Core.Base renaming (ap to cong)
+open import Core.Base
 open import Core.Data.Sigma using (Σ; Σ-syntax; _,_; fst; snd)
 open import Core.Sub
 
@@ -116,7 +116,7 @@ total-contr-unique
   → PathP (λ i → P (q i)) α β
   → p ≡ q
 total-contr-unique cc {α} {β} p q αp αq =
-  cong (cong fst)
+  ap (ap fst)
     (is-contr→is-set cc (_ , α) (_ , β)
       (λ i → p i , αp i) (λ i → q i , αq i))
 
@@ -289,7 +289,7 @@ module pcom where
     fibers = contr .paths
 
     unique : ((s , α) : HComposite p q r) → composite ≡ s
-    unique = cong fst ∘ fibers
+    unique = ap fst ∘ fibers
 
   open base public
 
@@ -310,12 +310,12 @@ module pcom where
     {w x : A i0} {y z : A i1}
     (p : x ≡ w) (q : x ≡ y ∶ A) (r : y ≡ z) where
     private module P = base {A = B}
-    ap : (λ i → f i (composite p q r i))
-       ≡ P.composite (λ j → f i0 (p j)) (λ i → f i (q i)) (λ j → f i1 (r j))
-    ap = sym (P.unique
-               ( λ j → f i0 (p j)) (λ i → f i (q i)) (λ j → f i1 (r j) )
-               ( (λ i → f i (composite p q r i) )
-               , λ i j → f i (fill p q r i j)) )
+    map : (λ i → f i (composite p q r i))
+        ≡ P.composite (λ j → f i0 (p j)) (λ i → f i (q i)) (λ j → f i1 (r j))
+    map = sym (P.unique
+                ( λ j → f i0 (p j)) (λ i → f i (q i)) (λ j → f i1 (r j) )
+                ( (λ i → f i (composite p q r i) )
+                , λ i j → f i (fill p q r i j)) )
 
   module _ {A : Type u} where
     private
@@ -445,13 +445,13 @@ contr-face
   → (w : α ≡ α')
     (core : (a , α') ≡ (b , β'))
     (v : β' ≡ β)
-  → cong fst σ ≡ cong fst core
+  → ap fst σ ≡ ap fst core
 contr-face c {a} {b} σ w core v =
   pcom (sym (total-contr-unique c
-    (cong fst σ) (cong fst tri)
-    (cong snd σ) (cong snd tri)))
-  (pcom.ap (λ _ → fst) (sym w') core v')
-  (pcom.unit (cong fst core))
+    (ap fst σ) (ap fst tri)
+    (ap snd σ) (ap snd tri)))
+  (pcom.map (λ _ → fst) (sym w') core v')
+  (pcom.unit (ap fst core))
   where
     w' : (a , _) ≡ (a , _)
     w' i = a , w i
@@ -464,7 +464,7 @@ module pfil {A : I → Type} where
     coh
       : ((s , α) : HComposite p q r)
       → SquareP (λ i j → q j ≡ pcom.unique p q r (s , α) i j) (pcom.fill p q r) refl α refl
-    coh = cong snd ∘ pcom.fibers p q r
+    coh = ap snd ∘ pcom.fibers p q r
 
   module _ {w x : A i0} {y z : A i1} (p : w ≡ x) (q : w ≡ y ∶ A) (r : y ≡ z) (s : x ≡ z ∶ A) where
     lcomp≡rcomp
@@ -682,7 +682,7 @@ module Path {A : Type u} where
 
   assoc : {w x y z : A} (p : w ≡ x) (q : x ≡ y) (r : y ≡ z)
         → p ∙ (q ∙ r) ≡ (p ∙ q) ∙ r
-  assoc p q r = cong fst comp
+  assoc p q r = ap fst comp
     module assoc where
     private
       comp = HComposite.unique (sym p) q r
@@ -690,10 +690,10 @@ module Path {A : Type u} where
         ((p ∙ q) ∙ r , cat.rcoh p q r)
 
     fill : SquareP (λ i j → q j ≡ comp i .fst j) (cat.lcoh p q r) refl (cat.rcoh p q r) refl
-    fill = cong snd comp
+    fill = ap snd comp
 
   idem : ∀ {u} {A : Type u} (x : A) → refl ∙ refl ≡ refl {x = x}
-  idem x = cong fst comp
+  idem x = ap fst comp
     module idem where
     private
       comp = HComposite.unique (refl {x = x}) refl refl
@@ -701,7 +701,7 @@ module Path {A : Type u} where
         (refl , refl)
 
     fill : SquareP (λ i j → x ≡ comp i .fst j) (cat.fill (λ _ → x) (λ _ → x)) refl refl refl
-    fill = cong snd comp
+    fill = ap snd comp
 
   unitl-filler
     : {x y : A} (p : x ≡ y) → I → I → I → A
@@ -738,10 +738,10 @@ module Path {A : Type u} where
     k (k = i0) → H i j
 
   lwhisker : {x y z : A} (p : x ≡ y) {q r : y ≡ z} → q ≡ r → p ∙ q ≡ p ∙ r
-  lwhisker p = cong (p ∙_)
+  lwhisker p = ap (p ∙_)
 
   rwhisker : {x y z : A} {p q : x ≡ y} (r : y ≡ z) → p ≡ q → p ∙ r ≡ q ∙ r
-  rwhisker r = cong (_∙ r)
+  rwhisker r = ap (_∙ r)
 
   loop-refl : {x y : A} (p : x ≡ y) (q : y ≡ y)
             → Square p refl p q → q ≡ refl
@@ -766,9 +766,9 @@ module Path {A : Type u} where
          → sym p ∙ q ≡ r → q ≡ p ∙ r
   switch {p = p} {q} h =
     sym (unitl q)
-    ∙ cong (_∙ q) (sym (invr p))
+    ∙ ap (_∙ q) (sym (invr p))
     ∙ sym (assoc p (sym p) q)
-    ∙ cong (p ∙_) h
+    ∙ ap (p ∙_) h
 
   grp-cancel
     : {a b c : A}
@@ -776,9 +776,9 @@ module Path {A : Type u} where
     → (sym p ∙ sym q) ∙ (q ∙ p) ≡ refl
   grp-cancel p q =
     pcom (sym (assoc (sym p ∙ sym q) q p))
-      (cong (_∙ p)
+      (ap (_∙ p)
         (pcom (assoc (sym p) (sym q) q)
-          (cong (sym p ∙_) (invl q))
+          (ap (sym p ∙_) (invl q))
           (unitr (sym p))))
       (invl p)
 
@@ -911,7 +911,7 @@ ap-comp-dep
     (p : x ≡ y) (q : y ≡ z)
   → PathP (λ i → PathP (λ j → B (cat.fill p q j i))
       (f x) (f (q i)))
-    (cong f p) (cong f (p ∙ q))
+    (ap f p) (ap f (p ∙ q))
 ap-comp-dep f p q i j = f (cat.fill p q j i)
 
 ```
