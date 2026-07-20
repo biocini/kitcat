@@ -53,6 +53,35 @@ Branch: `monoidal-visible-frames` (off `fa2188d`).
   (five bracketings in one propositional fiber, `fiber-pentagon` by
   `is-contr→is-set`), `assoc⋉₀-nrm`, and the object-level
   `⊗₀-pentagon`. Token transcription of `Cat.Coherence`'s pentagon core.
+- **The triangle** (`f73a35b`): token transcription of
+  `Cat.Coherence.triangle` under the dictionary — five witnesses on
+  `A ▿₀ E ▿₀ B`, unitor faces by `⊗₀-repr-ap`, associator face
+  definitionally `⊗₀-assoc x I y`, `loop-refl`/`face-a` consuming the
+  2-coherence field. First-attempt typecheck.
+- **`is-monoidal-2-coherent`** (`d732a74`, per Lane's direction): ONE
+  extension record over the full `monoidal C` bundle, fields `is-coh₀`
+  and `is-coh₁` — the levels are proved separately but travel
+  together; any `monoidal C`-based record answers for both. Lives in
+  `Cat.Monoidal.Coherence` (mirroring `Cat.Coherence`/`is-2-coherent`);
+  `Cat.Monoidal` no longer carries a coherence record. `is-coh₁` is
+  the level-0 square displaced along morphisms, via the new `theory₁`
+  cell `⊗₁-emb-idn-absorb` (= `⊗₁-interchange (idn I) φ` glued to
+  `⊗₁-idn-▴` by `comp-pathp₂`). The derived-theory module is now
+  `coherence (M : monoidal C)` — `theory₁` in scope throughout.
+- **The displaced pentagon** (`58ee03e`): `theory₁` gains the
+  displaced witness calculus — `⊗₁-wit U U' η` (fiber of `⊗₁-emb`
+  displaced along level-0 witness paths), `⊗₁-wit-contr` (any
+  inhabitant contracts: slide its characterization along its own base
+  line to the plain image fiber — `subst is-contr` at the `j ∧ i`
+  connection; no nest chains needed), `_⋉₁_` (token mirror of `_⋉₀_`
+  with `comp-pathp₂` for `∙`), `assoc-σ⋉₁`/`assoc⋉₁`, `⊗₁-wit-∙`.
+  `Core.Kan` gains `comp-pathp₂-over` (sections glued over the `com`
+  filler of `comp-pathp₂`; `fil` at `i1` is `com` definitionally).
+  `Cat.Monoidal.Coherence` gains `pentagon⋉₁`: `p̂₁`–`p̂₅` the
+  `⋉₁`-bracketings, `σ̂`-edges the whiskered `assoc-σ⋉₁` lines,
+  `fiber-pentagon₁` by `is-prop→SquareP` over pointwise-transported
+  `⊗₁-wit-contr`, hom shadow by `fst`-projection over
+  `fiber-pentagon`'s shadow.
 
 ## Notation conventions (durable)
 
@@ -90,9 +119,54 @@ Interchange reads `⊗₀-emb x ▾₀ y ≡ x ▴₀ ⊗₀-emb y`; the ♭-clo
   reaffirmed from 07-14). **Open**: `monoidal-axioms₁` takes the
   pointwise `⊗₁-interchange` as its field with no `⊗₁-interchange♭`;
   decide whether level 1 wants the ♭ shape when the displaced pentagon
-  needs interchange at witness composites.
+  needs interchange at witness composites. (The `⋉`-form pentagon did
+  NOT need it — the question is now deferred to the hexagon/braid
+  ports and the interchange-coherence displacement `⋉₁-coh`.)
+- One coherence record over the bundle (Lane): `is-monoidal-2-coherent
+  (M : monoidal C)`, fields `is-coh₀`/`is-coh₁`; downstream records
+  based on `monoidal C` handle both levels.
+- Circumflex marks displaced witnesses: `Û : ⊗₁-wit U U' η`, `p̂ᵢ`,
+  `σ̂ᵢⱼ`, `top̂`/`bot̂` — the hat is "the level-1 lift of".
 - `Core.Path.Composition` compiles again (Lane filled the holes);
   revisit deferred.
+
+## Cubical engineering facts (hard-won, reusable)
+
+- `hcomp`/`com` at a Σ-type does NOT project componentwise
+  definitionally: `fst ∘ comp-pathp₂ (Σ-family) ≠ comp-pathp₂ (fst)`
+  as a refl-check. Σ-valued glues whose `fst` must be the fst-level
+  glue are ASSEMBLED as pairs — `comp-pathp₂` on `fst`,
+  `comp-pathp₂-over` on `snd` — never projected. This is why
+  `⊗₁-wit-∙` exists.
+- `fil A φ i1 s ≡ com A φ s` IS definitional — `comp-pathp₂-over`'s
+  characterization family rides the `com` filler and its lid lands on
+  `comp-pathp₂` on the nose.
+- PathP boundary reduction is definitional for ANY head (neutral
+  included): endpoint-exactness of glued corners is free whenever the
+  corner is the stated endpoint of a typed PathP. This is what makes
+  the `σ̂`-edges' corners match the `p̂ᵢ` with no reconciliation.
+- Do NOT state definitional facts about `com`-towers as standalone
+  `refl` lemmas: conversion explodes (a `top-fst = refl` probe hung
+  the typechecker). The fact still holds by construction; consumers
+  just use it silently.
+- **Seal prop-paths that level-1 families project.** Conversion
+  whnfs both sides, so a type mentioning `(assoc-σ⋉₀ … i) .fst`
+  under a generic interval binder normalizes the whole
+  `is-⊗₀-representable-prop` hcom tower at fourfold-`⋉₀` arguments —
+  each `σ̂` declaration cost 4–6.7 s (measured by
+  `--profile=definitions`; `--profile=internal` put it all in
+  `Typing.CheckRHS`). Homogeneous level-0 σ-types never project, so
+  level 0 never pays. Fix: `opaque assoc-σ⋉₀` — projections stay
+  neutral, comparison is syntactic, boundaries still reduce by the
+  type-directed rule. 32.7 s → 3.0 s for the module. The `= refl`
+  checks that genuinely need the tower (`assoc-eq`, `face-a`) sit in
+  `opaque unfolding assoc-σ⋉₀` blocks. `assoc-σ⋉₁` is opaque for the
+  same reason one level up (`(assoc-σ⋉₁ … i) .fst` in a future
+  consumer's family would unfold `is-prop→PathP` towers).
+  `fiber-pentagon` is the next candidate if a consumer's family ever
+  projects it at generic points.
+- Interval-typed signatures inside `monoidal`-opening modules must
+  write `Core.Base.I` (the unit `I` shadows the interval).
 
 ## Verification state
 
@@ -100,19 +174,40 @@ All live modules pass (`--safe --erased-cubical`, Agda 2.9.0):
 `Cat.{Type,Op,Base,Groupoid,Coherence,Terminal}`,
 `Cat.Limits.{Product,Coproduct}`, `Cat.Monoidal`,
 `Cat.Monoidal.{Bifunctor,Coherence}`, plus the `Core` cone including
-all `Transport.Properties` importers. `All.lagda.md` is stale (Lane
-deleting). `src/Test/{Probe,Probe2,Scratch}` are scratch, not gated.
+all `Transport.Properties` importers (full sweep after `Core.Kan`
+grew `comp-pathp₂-over`). `Cat.Monoidal.Coherence` checks in ~3 s
+after sealing `assoc-σ⋉₀` (see the engineering facts).
+`All.lagda.md` is stale (Lane deleting).
+`src/Test/{Probe,Probe2,Scratch}` are scratch, not gated.
 
 ## Next steps
 
-1. **Level-1 coherence**: displace `⊗₀-pentagon` over `⊗₁-assoc` (the
-   `assoc-line` technique from Bifunctor should lift the fiber pentagon
-   through `⊗₁-hfiber`); then the triangle, consuming
-   `monoidal-2-coherent` — first consumer of `is-⊗₀-2-coherent`, and
-   the point where the `⊗₁-interchange♭` decision comes due.
-2. The braided story: port `old-formulation-curried/Monoidal/`
+1. **Pentagon endgame** — from `pentagon⋉₁` to the `⊗₀-pentagon`-based
+   `⊗₁-pentagon` (edges the `comp-pathp₂`-composites of whiskered
+   `⊗₁-assoc`, over the canonical `⊗₀-pentagon`). Since `⊗₀-pentagon`
+   is a `∙`-tree of six squares (`A₃`-whisker, two `ap-comp` shuffles,
+   `ap (ap fst) fiber-pentagon`, one shuffle, `A₂`/`A₁`-whiskers), the
+   level-1 square can be glued leaf-by-leaf with `comp-pathp₂` at the
+   family `λ p p' → PathP (λ i → C.hom (p i) (p' i)) A₅ A₁` —
+   `pentagon⋉₁` supplies the core leaf. Remaining: displace the
+   `ap-comp` shuffles (their base is `ap fst` of fiber paths — lift
+   through `⊗₁-wit` squares over `HComposite.unique`), displace
+   `assoc⋉₀-nrm` (triple-J straightening; its displacement should J
+   the same witness paths), and discharge the `⋉₀`-vs-nest `∙ refl`
+   redexes (`Path.unitr`, as in Bifunctor's `assoc-ap`). Also relate
+   `assoc⋉₁` at `⊗₁-nrm`s to `⊗₁-assoc` (the `assoc⋉₀-nrm` analogue —
+   both ends are `is-prop→PathP`-style through contractible lines, so
+   `is-prop→PathP-is-contr` at the `⊗₁-wit` family should give it).
+2. **`triangle₁`**: displace `triangle₀` over the morphism level —
+   first consumer of `is-coh₁`. The `⊗₁-wit` calculus should carry it:
+   the five witnesses become `⊗₁-wit`s, the faces `⊗₁-wit`-lines, the
+   loop closed by `is-coh₁`.
+3. Interchange-coherence displacement: `⋉₁-coh`/`⊗₁-interchange-natural`
+   over their level-0 mates — the `⊗₁-interchange♭` decision lands
+   here or in the hexagon.
+4. The braided story: port `old-formulation-curried/Monoidal/`
    `{Twist,Braid,Hexagon}` onto the new spine (`absorb-coh` layer noted
    as irreducible in the old form — re-examine against the new
    naturality recipe).
-3. `Cat.Monoidal.{Iso,Indiscrete}` ports; `_⊨₁_`/`⊗₁-repr-ap` gain
+5. `Cat.Monoidal.{Iso,Indiscrete}` ports; `_⊨₁_`/`⊗₁-repr-ap` gain
    their consumers here.
