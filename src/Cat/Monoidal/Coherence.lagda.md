@@ -795,6 +795,31 @@ argument, riding the same fiber square.
     ρ̂l m = ⊗₁-wit-nrm φ
            ●₁ ↝̂-fill (⊗₁-wit-nrm ι ●₁ ⊗₁-wit-nrm ψ) (⊗₁-emb-idn-absorb ψ) m
 
+    -- the face bottoms, named: an inline face is elaborated in the
+    -- ascription and again in the fill, and the two elaborations
+    -- are compared term-by-term; a named face is checked once and
+    -- compared by name
+    whisker-σ̂r
+      : PathP (λ i → ⊗₁-wit (unitr-σ●₀ x i ●₀ ⊗₀-nrm y)
+                            (unitr-σ●₀ x' i ●₀ ⊗₀-nrm y')
+                            (⊗₁-emb φ ▿₁ ⊗₁-emb ψ))
+              ŝr ŝ₀
+    whisker-σ̂r i = unitr-σ●₁ φ i ●₁ ⊗₁-wit-nrm ψ
+
+    whisker-σ̂l
+      : PathP (λ i → ⊗₁-wit (⊗₀-nrm x ●₀ unitl-σ●₀ y i)
+                            (⊗₀-nrm x' ●₀ unitl-σ●₀ y' i)
+                            (⊗₁-emb φ ▿₁ ⊗₁-emb ψ))
+              ŝl ŝ₀
+    whisker-σ̂l i = ⊗₁-wit-nrm φ ●₁ unitl-σ●₁ ψ i
+
+    assoc-σ̂
+      : PathP (λ i → ⊗₁-wit (assoc-σ●₀ (⊗₀-nrm x) (⊗₀-nrm I) (⊗₀-nrm y) i)
+                            (assoc-σ●₀ (⊗₀-nrm x') (⊗₀-nrm I) (⊗₀-nrm y') i)
+                            N)
+              r̂₁ r̂₂
+    assoc-σ̂ = assoc-σ●₁ (⊗₁-wit-nrm φ) (⊗₁-wit-nrm ι) (⊗₁-wit-nrm ψ)
+
     face₁-r
       : PathP (λ i → C.hom (ap fst T.σᵣ₀ i) (ap fst T'.σᵣ₀ i))
               ((φ ⊗₁ ι) ⊗₁ ψ) (φ ⊗₁ ψ)
@@ -842,12 +867,8 @@ whiskered `⊗₁-unitr` resp. `⊗₁-unitl` definitionally.
       : PathP (λ m → PathP (λ i → ⊗₁-wit (T.face-σr m i) (T'.face-σr m i)
                                          (⊗₁-emb φ ▿₁ ⊗₁-emb ψ))
                      ŝr ŝ₀)
-              σ̂ᵣ₀
-              (λ i → unitr-σ●₁ φ i ●₁ ⊗₁-wit-nrm ψ)
-    face-σ̂r =
-      is-prop→SquareP wit-prop-r
-        σ̂ᵣ₀ refl
-        (λ i → unitr-σ●₁ φ i ●₁ ⊗₁-wit-nrm ψ) refl
+              σ̂ᵣ₀ whisker-σ̂r
+    face-σ̂r = is-prop→SquareP wit-prop-r σ̂ᵣ₀ refl whisker-σ̂r refl
 
     face-r̂
       : PathP (λ m → PathP (λ i → C.hom (T.face-r m i) (T'.face-r m i))
@@ -859,12 +880,8 @@ whiskered `⊗₁-unitr` resp. `⊗₁-unitl` definitionally.
       : PathP (λ m → PathP (λ i → ⊗₁-wit (T.face-σl m i) (T'.face-σl m i)
                                          (⊗₁-emb φ ▿₁ ⊗₁-emb ψ))
                      ŝl ŝ₀)
-              σ̂ₗ₀
-              (λ i → ⊗₁-wit-nrm φ ●₁ unitl-σ●₁ ψ i)
-    face-σ̂l =
-      is-prop→SquareP wit-prop-l
-        σ̂ₗ₀ refl
-        (λ i → ⊗₁-wit-nrm φ ●₁ unitl-σ●₁ ψ i) refl
+              σ̂ₗ₀ whisker-σ̂l
+    face-σ̂l = is-prop→SquareP wit-prop-l σ̂ₗ₀ refl whisker-σ̂l refl
 
     face-l̂
       : PathP (λ m → PathP (λ i → C.hom (T.face-l m i) (T'.face-l m i))
@@ -989,12 +1006,11 @@ it live under the coherence hypothesis, the rest is absolute.
                                            (mid .is-monoidal-2-coherent.is-coh₁
                                              φ ψ (~ i) (~ m)))
                        (ρ̂l (~ m)) (ρ̂r (~ m)))
-                σ̂ₗᵣ
-                (assoc-σ●₁ (⊗₁-wit-nrm φ) (⊗₁-wit-nrm ι) (⊗₁-wit-nrm ψ))
+                σ̂ₗᵣ assoc-σ̂
       face-σ̂a =
         is-prop→SquareP wit-prop-a
           σ̂ₗᵣ (λ m → ρ̂l (~ m))
-          (assoc-σ●₁ (⊗₁-wit-nrm φ) (⊗₁-wit-nrm ι) (⊗₁-wit-nrm ψ))
+          assoc-σ̂
           (λ m → ρ̂r (~ m))
 
       face-â

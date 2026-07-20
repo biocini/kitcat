@@ -238,15 +238,162 @@ at the end — do not invent a rule from a split.
   `Class-Type`, re-exported under the type's `impl` namespace by
   the aggregator; inline `instance` blocks only where the instance
   is inseparable from the type.
-- **Width**: 72 prose / 85 code, enforced on new and changed lines
-  (`just lint changed`). Core itself carries 137 of the tree's 197
-  baseline violations — the baseline is being driven down
+- **Width**: 72 prose / 100 code (code width raised from 85, ruled
+  by Lane 2026-07-20), enforced on new and changed lines
+  (`just lint changed`). The baseline is being driven down
   deliberately and is not license for new over-width lines.
 - **Unicode is purposeful**: notation freely (`∂`, `⌞_⌟`,
   `Σ x ∶ A , B` — `∶` is U+2236), subscripts for corner variables,
   with spelled aliases for discoverability.
 - `ind` is the canonical name for hand-rolled eliminators, inside
   the type's module scope.
+
+## Performance
+
+Coding guidance for typechecking performance in cubical Agda.
+The through-line: conversion cost is governed by which terms the
+checker treats as neutral, and the durable fix is structural — a
+construction whose types keep conversion syntactic — never a seal
+bolted onto a construction that leaks. The code below is
+schematic: `Fib` is any family with `Fib-prop : ∀ c → is-prop
+(Fib c)`, `Over` any family indexed by `Fib`-values, `_●_` any
+operation with heavyweight implicit arguments. (Provenance: the
+2026-07-20 optimization pass,
+`notes/2026-07-20-displayed-triangle.md`, all norms
+profile-verified.)
+
+**Seal values that families ride; boundaries survive sealing.**
+`opaque` keeps a body out of conversion, but a path's endpoints
+still reduce, because `PathP` boundaries are type-directed: the
+checker reads them off the stated type, not the body. So a proof
+of an identification in a propositional fiber — a value consumers
+only transport along, or index type families by at generic
+interval points — is a good seal:
+
+```agda
+opaque
+  σ : u ≡ v                     -- u v : Fib c
+  σ = Fib-prop c u v
+
+thread : PathP (λ i → Over (σ i)) u' v'   -- σ i stays neutral;
+thread = …                                -- σ i0 ≐ u, σ i1 ≐ v
+                                          -- by the type alone
+```
+
+Families over `σ` compare as neutral applications instead of
+normalizing the `hcomp`/`transp` interior of `Fib-prop`'s body.
+Corollary: sealing is useless when the *statement* leaks. A path
+between paths whose declared face is itself a transparent proof
+term hands that term to every family through boundary reduction,
+seal or no seal (measured: no change):
+
+```agda
+opaque
+  sq : Fib-prop c u v ≡ e   -- the i0 face is the transparent
+  sq = …                    -- term: sq i0 ≐ Fib-prop c u v by
+                            -- boundary reduction, so families
+                            -- over sq normalize the body anyway
+```
+
+The fix is structural, not another seal — state the square
+against the sealed face, so every face a family can extract is
+neutral:
+
+```agda
+opaque
+  sq : σ ≡ e
+  sq = …
+```
+
+**Generalize over the path; do not `unfolding` to re-type.** The
+scenario: a lemma proved over a canonical path (typically the
+propositional-fiber identification) is needed over a sealed path
+with the same endpoints. Re-checking the lemma inside `opaque
+unfolding` makes the conversion normalize the seal's body at
+every such site (seconds each, measured):
+
+```agda
+opaque
+  unfolding σ                             -- misfactored: pays a
+  threadᴰ : PathP (λ i → Over (σ i)) u' v'  -- full conversion
+  threadᴰ = thread-canonical u' v'          -- against σ's body
+```
+
+Instead parameterize the lemma by the path — when the family is
+pointwise propositional or contractible, the proof goes through
+for an arbitrary path unchanged — and recover the canonical form
+as an instance:
+
+```agda
+opaque
+  thread[_] : (p : u ≡ v) → ∀ u' v' → PathP (λ i → Over (p i)) u' v'
+  thread[ p ] u' v' =
+    is-prop→PathP (λ i → Over-prop (p i)) u' v'
+
+thread-canonical = thread[ Fib-prop c u v ]   -- the instance
+threadᴰ          = thread[ σ ]                -- no unfolding: p
+                                              -- is consumed as a
+                                              -- neutral family
+```
+
+Reserve `opaque unfolding` for proofs that genuinely compute
+through a body; if a block's only purpose is re-typing, the
+abstraction is misfactored.
+
+**Name the faces of ascribed fills.** A term that appears both in
+a definition's type ascription and in its body — the usual shape
+when a square-filling combinator's face is written inline as a
+lambda — is elaborated twice, and the two elaborations are
+compared by full structural conversion, re-solving the face's
+implicit arguments each time:
+
+```agda
+face : PathP (λ m → PathP (λ i → B m i) b₀ b₁)
+             top (λ i → w i ● n)          -- inline face: once in
+face = is-prop→SquareP B-prop             -- the type…
+         top refl (λ i → w i ● n) refl    -- …and again here
+```
+
+Binding the face to its own named, type-ascribed definition
+elaborates it once; every later occurrence is compared by name:
+
+```agda
+bot : PathP (λ i → B i1 i) b₀ b₁
+bot i = w i ● n
+
+face : PathP (λ m → PathP (λ i → B m i) b₀ b₁) top bot
+face = is-prop→SquareP B-prop top refl bot refl
+```
+
+Measured 14× on a face whose implicits carry fibered witness
+structure. Faces whose terms are small elaborate cheaply either
+way and may stay inline — profile before churning.
+
+**Argument-position nesting is not the same disease.** A term
+that occurs once, as an argument, with its expected type
+propagated from the head's signature, pays its endpoint
+conversions exactly once:
+
+```agda
+glue = comp-pathp F p (q ∙ r) P    -- the nested glue occurs
+         (comp-pathp F q r Q R)    -- once; naming its sub-terms
+                                   -- only redistributes cost
+```
+
+Naming sub-terms here measured slightly *worse* (the same
+endpoint conversions, plus the ascriptions). Do not churn these.
+
+**Profile, then keep only what pays.**
+
+```sh
+rm _build/<ver>/agda/src/Some/Module.agdai   # touch does not
+agda --profile=definitions src/Some/Module.lagda.md   # invalidate
+```
+
+`--profile=definitions` attributes elaboration time per
+definition. Every seal and every naming is justified by a
+before/after profile; an experiment that moves nothing is
+reverted, not kept on principle.
 
 ## Rulings
 

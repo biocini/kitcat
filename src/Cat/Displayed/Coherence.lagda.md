@@ -502,16 +502,35 @@ resp. `unitlᴰ` definitionally.
                      (emb[ φ ] ▿ᴰ emb[ ψ ]))
             (repr-contrᴰ ŝl))
 
+    -- the face bottoms, named: an inline face is elaborated in the
+    -- ascription and again in the fill, and the two elaborations
+    -- are compared term-by-term; a named face is checked once and
+    -- compared by name (measured 14× on this square)
+    whisker-σ̂r
+      : PathP (λ i → is-representable[ unitr-σ● f i ● nrm g ]
+                       (emb[ φ ] ▿ᴰ emb[ ψ ]))
+              ŝr ŝ₀
+    whisker-σ̂r i = unitr-σ●ᴰ φ i ●ᴰ nrm[ ψ ]
+
+    whisker-σ̂l
+      : PathP (λ i → is-representable[ nrm f ● unitl-σ● g i ]
+                       (emb[ φ ] ▿ᴰ emb[ ψ ]))
+              ŝl ŝ₀
+    whisker-σ̂l i = nrm[ φ ] ●ᴰ unitl-σ●ᴰ ψ i
+
+    assoc-σ̂
+      : PathP (λ i → is-representable[ assoc-σ● (nrm f) (nrm (idn y))
+                                                (nrm g) i ]
+                       N')
+              r̂₁ r̂₂
+    assoc-σ̂ = assoc-σ●ᴰ nrm[ φ ] nrm[ ι' ] nrm[ ψ ]
+
     face-σ̂r
       : PathP (λ m → PathP (λ i → is-representable[ T.face-σr m i ]
                                     (emb[ φ ] ▿ᴰ emb[ ψ ]))
                      ŝr ŝ₀)
-              σ̂ᵣ₀
-              (λ i → unitr-σ●ᴰ φ i ●ᴰ nrm[ ψ ])
-    face-σ̂r =
-      is-prop→SquareP wit-prop-r
-        σ̂ᵣ₀ refl
-        (λ i → unitr-σ●ᴰ φ i ●ᴰ nrm[ ψ ]) refl
+              σ̂ᵣ₀ whisker-σ̂r
+    face-σ̂r = is-prop→SquareP wit-prop-r σ̂ᵣ₀ refl whisker-σ̂r refl
 
     face-r̂
       : PathP (λ m → PathP (λ i → hom[ T.face-r m i ] x' z')
@@ -523,12 +542,8 @@ resp. `unitlᴰ` definitionally.
       : PathP (λ m → PathP (λ i → is-representable[ T.face-σl m i ]
                                     (emb[ φ ] ▿ᴰ emb[ ψ ]))
                      ŝl ŝ₀)
-              σ̂ₗ₀
-              (λ i → nrm[ φ ] ●ᴰ unitl-σ●ᴰ ψ i)
-    face-σ̂l =
-      is-prop→SquareP wit-prop-l
-        σ̂ₗ₀ refl
-        (λ i → nrm[ φ ] ●ᴰ unitl-σ●ᴰ ψ i) refl
+              σ̂ₗ₀ whisker-σ̂l
+    face-σ̂l = is-prop→SquareP wit-prop-l σ̂ₗ₀ refl whisker-σ̂l refl
 
     face-l̂
       : PathP (λ m → PathP (λ i → hom[ T.face-l m i ] x' z')
@@ -644,12 +659,11 @@ it live under the coherence hypotheses, the rest is absolute.
                                       (midᴰ .is-2-coherentᴰ.is-cohᴰ φ ψ
                                         (~ i) (~ m)))
                        (ρ̂l (~ m)) (ρ̂r (~ m)))
-                σ̂ₗᵣ
-                (assoc-σ●ᴰ nrm[ φ ] nrm[ ι' ] nrm[ ψ ])
+                σ̂ₗᵣ assoc-σ̂
       face-σ̂a =
         is-prop→SquareP wit-prop-a
           σ̂ₗᵣ (λ m → ρ̂l (~ m))
-          (assoc-σ●ᴰ nrm[ φ ] nrm[ ι' ] nrm[ ψ ])
+          assoc-σ̂
           (λ m → ρ̂r (~ m))
 
       face-â
