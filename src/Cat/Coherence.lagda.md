@@ -451,56 +451,55 @@ module op-coh {o h} (C : category o h) where
   rep-op-invol : ∀ {x y} {α : composite y x} (U : is-representable α) → rep-op' (rep-op U) ≡ U
   rep-op-invol _ = refl
 
-  repr-op : ∀ {x y} {α : composite y x} (U V : is-representable α)
-          → Tᵒ.repr-unique (rep-op U) (rep-op V) ≡ repr-unique U V
-  repr-op {α = α} U V =
-    repr-lc (ap rep-op' (Tᵒ.is-representable-prop (⟲ α) (rep-op U) (rep-op V)))
+  -- the op mirror of a witness line, generalized over the line:
+  -- κ is consumed as a neutral family and rep-op' preserves fst
+  -- definitionally, so instances at sealed σ-heads need no unfolding
+  repr-op[_] : ∀ {x y} {α : composite y x} {Uᵒ Vᵒ : Cᵒ.is-representable (⟲ α)}
+             → (κ : Uᵒ ≡ Vᵒ) → ap fst κ ≡ repr-unique (rep-op' Uᵒ) (rep-op' Vᵒ)
+  repr-op[ κ ] = repr-lc (ap rep-op' κ)
 
   repr-sym : ∀ {x y} {α : composite x y} (U V : is-representable α)
            → sym (repr-unique U V) ≡ repr-unique V U
   repr-sym U V = repr-lc (sym (is-representable-prop _ U V))
 
-  -- the op-bridge computes through the unitor bodies: the chain's
-  -- endpoints are the two unitors' defining witness identifications
-  opaque
-    unfolding unitr-σ● unitl-σ●
+  -- both unitors are fst-shadows of sealed σ-lines: repr-op[_] reads
+  -- the op line, repr-lc the plain one, and repr-cast carries the
+  -- op-bridge between the two stated witnesses — the seals stay shut
+  unitr-op : ∀ {x y} (f : Cᵒ.hom x y) → Tᵒ.unitr f ≡ unitl f
+  unitr-op {x} {y} f =
+      repr-op[ Tᵒ.unitr-σ● f ]
+    ∙ repr-cast (nrm f) wit
+    ∙ sym (repr-lc (unitl-σ● f))
+    where
+      Q₀ : emb (idn y ⨾ f) ≡ idn y ▴ emb f
+      Q₀ = emb-comp-op (idn y) f
+      Q : emb (idn y ⨾ f) ≡ emb (idn y) ▾ f
+      Q = emb-comp (idn y) f
+      ι : emb (idn y) ▾ f ≡ idn y ▴ emb f
+      ι = interchange (idn y) f
+      U : idn y ▴ emb f ≡ emb f
+      U = idn-▴ (emb f)
 
-    unitr-op : ∀ {x y} (f : Cᵒ.hom x y) → Tᵒ.unitr f ≡ unitl f
-    unitr-op {x} {y} f =
-        repr-op P₁ (nrm f)
-      ∙ sym (repr-∙ P₁ P₂ (nrm f))
-      ∙ ap (_∙ repr-unique P₂ (nrm f)) (repr-refl (P₁ .snd) (P₂ .snd) wit)
-      ∙ Path.unitl (repr-unique P₂ (nrm f))
-      where
-        Q₀ : emb (idn y ⨾ f) ≡ idn y ▴ emb f
-        Q₀ = emb-comp-op (idn y) f
-        Q : emb (idn y ⨾ f) ≡ emb (idn y) ▾ f
-        Q = emb-comp (idn y) f
-        ι : emb (idn y) ▾ f ≡ idn y ▴ emb f
-        ι = interchange (idn y) f
-        U : idn y ▴ emb f ≡ emb f
-        U = idn-▴ (emb f)
+      P₁ : is-representable (emb f)
+      P₁ = rep-op' ((Cᵒ.nrm f Tᵒ.● Cᵒ.nrm (idn y)) Tᵒ.↝ Tᵒ.▾-idn (Cᵒ.emb f))
+      P₂ : is-representable (emb f)
+      P₂ = (nrm (idn y) ● nrm f) ↝ emb-idn-absorb f
 
-        P₁ : is-representable (emb f)
-        P₁ = rep-op' ((Cᵒ.nrm f Tᵒ.● Cᵒ.nrm (idn y)) Tᵒ.↝ Tᵒ.▾-idn (Cᵒ.emb f))
-        P₂ : is-representable (emb f)
-        P₂ = (nrm (idn y) ● nrm f) ↝ emb-idn-absorb f
-
-        wit : P₁ .snd ≡ P₂ .snd
-        wit =
-          begin
-            ap ⟳ ((ap ⟲ Q₀ ∙ refl) ∙ Tᵒ.▾-idn (Cᵒ.emb f))
-              ≡⟨ ap (λ t → ap ⟳ ((ap ⟲ Q₀ ∙ refl) ∙ t)) (bridge-l f) ⟩
-            ap ⟳ ((ap ⟲ Q₀ ∙ refl) ∙ ap ⟲ U)
-              ≡⟨ ap-comp ⟳ (ap ⟲ Q₀ ∙ refl) (ap ⟲ U) ⟩
-            ap ⟳ (ap ⟲ Q₀ ∙ refl) ∙ U
-              ≡⟨ ap (_∙ U) (ap-comp ⟳ (ap ⟲ Q₀) refl) ⟩
-            (Q₀ ∙ refl) ∙ U      ≡⟨ ap (_∙ U) (Path.unitr Q₀) ⟩
-            Q₀ ∙ U               ≡˘⟨ ap (_∙ U) (coh→∙ (idn y) f) ⟩
-            (Q ∙ ι) ∙ U          ≡˘⟨ Path.assoc Q ι U ⟩
-            Q ∙ (ι ∙ U)          ≡˘⟨ ap (_∙ (ι ∙ U)) (Path.unitr Q) ⟩
-            (Q ∙ refl) ∙ (ι ∙ U)
-          ∎
+      wit : P₁ .snd ≡ P₂ .snd
+      wit =
+        begin
+          ap ⟳ ((ap ⟲ Q₀ ∙ refl) ∙ Tᵒ.▾-idn (Cᵒ.emb f))
+            ≡⟨ ap (λ t → ap ⟳ ((ap ⟲ Q₀ ∙ refl) ∙ t)) (bridge-l f) ⟩
+          ap ⟳ ((ap ⟲ Q₀ ∙ refl) ∙ ap ⟲ U)
+            ≡⟨ ap-comp ⟳ (ap ⟲ Q₀ ∙ refl) (ap ⟲ U) ⟩
+          ap ⟳ (ap ⟲ Q₀ ∙ refl) ∙ U
+            ≡⟨ ap (_∙ U) (ap-comp ⟳ (ap ⟲ Q₀) refl) ⟩
+          (Q₀ ∙ refl) ∙ U      ≡⟨ ap (_∙ U) (Path.unitr Q₀) ⟩
+          Q₀ ∙ U               ≡˘⟨ ap (_∙ U) (coh→∙ (idn y) f) ⟩
+          (Q ∙ ι) ∙ U          ≡˘⟨ Path.assoc Q ι U ⟩
+          Q ∙ (ι ∙ U)          ≡˘⟨ ap (_∙ (ι ∙ U)) (Path.unitr Q) ⟩
+          (Q ∙ refl) ∙ (ι ∙ U)
+        ∎
 
   ⟲-∙ : ∀ {x y} {α β γ : composite y x} (p : α ≡ β) (q : β ≡ γ)
       → ap ⟲ (p ∙ q) ≡ ap ⟲ p ∙ ap ⟲ q
