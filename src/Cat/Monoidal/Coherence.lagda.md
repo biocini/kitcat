@@ -278,11 +278,21 @@ strengthening the weak triangle to the standard one.
     triangle-weak =
       ap (⊗₀-repr-unique s₁ s₂ ∙_) (sym face-r) ∙ ⊗₀-repr-∙ s₁ s₂ s₀ ∙ face-l
 
-    loop-refl : is-monoidal-2-coherent M → loop ≡ refl
-    loop-refl mid = ap (ap fst)
-      (is-contr→is-set T-contr r₀¹ r₀² (is-⊗₀-representable-prop _ r₀¹ r₀²)
+    -- the fiber square behind the loop: the canonical witness
+    -- identification against the is-coh₀-transport line
+    loop-sq
+      : (mid : is-monoidal-2-coherent M)
+      → is-⊗₀-representable-prop _ r₀¹ r₀²
+      ≡ ap ((⊗₀-nrm x ⋉₀ ⊗₀-nrm y) ↝_)
+           (ap sym (sym (mid .is-monoidal-2-coherent.is-coh₀ x y)))
+    loop-sq mid =
+      is-contr→is-set T-contr r₀¹ r₀²
+        (is-⊗₀-representable-prop _ r₀¹ r₀²)
         (ap ((⊗₀-nrm x ⋉₀ ⊗₀-nrm y) ↝_)
-            (ap sym (sym (mid .is-monoidal-2-coherent.is-coh₀ x y)))))
+            (ap sym (sym (mid .is-monoidal-2-coherent.is-coh₀ x y))))
+
+    loop-refl : is-monoidal-2-coherent M → loop ≡ refl
+    loop-refl mid = ap (ap fst) (loop-sq mid)
 
     opaque
       unfolding assoc-σ⋉₀
@@ -394,4 +404,116 @@ of `pentagon⋉₀`'s core.
                      (((φ ⊗₁ ψ) ⊗₁ χ) ⊗₁ ω))
               (λ i → top̂ i .fst) (λ i → bot̂ i .fst)
     pentagon⋉₁ j i = fiber-pentagon₁ j i .fst
+```
+
+## The displaced triangle
+
+The `⋉`-form of the triangle, one level up: `triangle₀`'s
+witnesses displace to `⊗₁-wit`s — the bracketings by `⋉₁` at
+normal witnesses, the transports by `↝̂` along the reversed
+absorption lines — and each face is the `⊗₁-wit-unique` line
+over its level-0 mate. The associator face is definitionally
+`⊗₁-assoc`, sealed exactly as at level 0. The loop closes with
+`is-coh₁`: over `loop-sq`, the displaced transports are joined
+by the `↝̂`-image of the coherence square, and `is-prop→SquareP`
+at the displaced witness family projects the displaced
+`loop-refl` — the hom shadow of the level-0 argument, riding
+the same fiber square.
+
+```agda
+  module triangle₁ {x x'} (φ : C.hom x x') {y y'} (ψ : C.hom y y') where
+    private
+      module T  = triangle₀ x  y
+      module T' = triangle₀ x' y'
+
+    ι = C.idn I
+
+    N : ⊗₁-composite (T.A ▿₀ T.E ▿₀ T.B) (T'.A ▿₀ T'.E ▿₀ T'.B)
+    N = ⊗₁-emb φ ▿₁ ⊗₁-emb ι ▿₁ ⊗₁-emb ψ
+
+    ê₁ : PathP (λ i → ⊗₁-composite (T.e₁ i) (T'.e₁ i))
+               N (⊗₁-emb φ ▿₁ ⊗₁-emb ψ)
+    ê₁ i = ⊗₁-emb φ ▿₁ ⊗₁-emb-idn-absorb ψ i
+
+    ê₂ : PathP (λ i → ⊗₁-composite (T.e₂ i) (T'.e₂ i))
+               N (⊗₁-emb φ ▿₁ ⊗₁-emb ψ)
+    ê₂ i = ▾₁-idn (⊗₁-emb φ) i ▿₁ ⊗₁-emb ψ
+
+    r̂₁ : ⊗₁-wit T.r₁ T'.r₁ N
+    r̂₁ = ⊗₁-wit-nrm φ ⋉₁ (⊗₁-wit-nrm ι ⋉₁ ⊗₁-wit-nrm ψ)
+
+    r̂₂ : ⊗₁-wit T.r₂ T'.r₂ N
+    r̂₂ = (⊗₁-wit-nrm φ ⋉₁ ⊗₁-wit-nrm ι) ⋉₁ ⊗₁-wit-nrm ψ
+
+    r̂₀¹ : ⊗₁-wit T.r₀¹ T'.r₀¹ N
+    r̂₀¹ = (⊗₁-wit-nrm φ ⋉₁ ⊗₁-wit-nrm ψ) ↝̂ (λ i → ê₁ (~ i))
+
+    r̂₀² : ⊗₁-wit T.r₀² T'.r₀² N
+    r̂₀² = (⊗₁-wit-nrm φ ⋉₁ ⊗₁-wit-nrm ψ) ↝̂ (λ i → ê₂ (~ i))
+
+    ŝ₀ : ⊗₁-wit T.s₀ T'.s₀ (⊗₁-emb φ ▿₁ ⊗₁-emb ψ)
+    ŝ₀ = ⊗₁-wit-nrm φ ⋉₁ ⊗₁-wit-nrm ψ
+
+    ŝ₁ : ⊗₁-wit T.s₁ T'.s₁ (⊗₁-emb φ ▿₁ ⊗₁-emb ψ)
+    ŝ₁ = r̂₁ ↝̂ ê₁
+
+    ŝ₂ : ⊗₁-wit T.s₂ T'.s₂ (⊗₁-emb φ ▿₁ ⊗₁-emb ψ)
+    ŝ₂ = r̂₂ ↝̂ ê₂
+
+    opaque
+      unfolding assoc-σ⋉₀ assoc-σ⋉₁ T.assoc-eq T'.assoc-eq
+
+      assoc-eq₁
+        : PathP (λ k → PathP (λ i → C.hom (T.assoc-eq  k i)
+                                          (T'.assoc-eq k i))
+                       (φ ⊗₁ (ι ⊗₁ ψ)) ((φ ⊗₁ ι) ⊗₁ ψ))
+                (⊗₁-wit-unique r̂₁ r̂₂) (⊗₁-assoc φ ι ψ)
+      assoc-eq₁ _ = ⊗₁-wit-unique r̂₁ r̂₂
+
+    loop₁ : PathP (λ i → C.hom (T.loop i) (T'.loop i)) (φ ⊗₁ ψ) (φ ⊗₁ ψ)
+    loop₁ = ⊗₁-wit-unique r̂₀¹ r̂₀²
+
+    face₁-r
+      : PathP (λ i → C.hom (⊗₀-repr-unique T.s₂ T.s₀ i)
+                           (⊗₀-repr-unique T'.s₂ T'.s₀ i))
+              ((φ ⊗₁ ι) ⊗₁ ψ) (φ ⊗₁ ψ)
+    face₁-r = ⊗₁-wit-unique ŝ₂ ŝ₀
+
+    face₁-l
+      : PathP (λ i → C.hom (⊗₀-repr-unique T.s₁ T.s₀ i)
+                           (⊗₀-repr-unique T'.s₁ T'.s₀ i))
+              (φ ⊗₁ (ι ⊗₁ ψ)) (φ ⊗₁ ψ)
+    face₁-l = ⊗₁-wit-unique ŝ₁ ŝ₀
+
+    module _ (mid : is-monoidal-2-coherent M) where
+      private
+        K  = T.loop-sq  mid
+        K' = T'.loop-sq mid
+
+        wprop
+          : (k i : Core.Base.I)
+          → is-prop (⊗₁-wit (K k i) (K' k i) N)
+        wprop k i =
+          is-contr→is-prop
+            (subst is-contr
+              (λ t → ⊗₁-wit (K (k ∧ t) (i ∧ t)) (K' (k ∧ t) (i ∧ t)) N)
+              (⊗₁-wit-contr r̂₀¹))
+
+        -- the ↝̂-image of the coherence square: the displaced
+        -- is-coh₀-transport line joining the two loop witnesses
+        ĉ : PathP (λ i → ⊗₁-wit (K i1 i) (K' i1 i) N) r̂₀¹ r̂₀²
+        ĉ i =
+          (⊗₁-wit-nrm φ ⋉₁ ⊗₁-wit-nrm ψ)
+          ↝̂ (λ t → mid .is-monoidal-2-coherent.is-coh₁ φ ψ (~ i) (~ t))
+
+        Ŝ : PathP (λ k → PathP (λ i → ⊗₁-wit (K k i) (K' k i) N) r̂₀¹ r̂₀²)
+                  (⊗₁-wit-σ r̂₀¹ r̂₀²) ĉ
+        Ŝ = is-prop→SquareP wprop (⊗₁-wit-σ r̂₀¹ r̂₀²) refl ĉ refl
+
+      loop₁-refl
+        : PathP (λ k → PathP (λ i → C.hom (T.loop-refl  mid k i)
+                                          (T'.loop-refl mid k i))
+                       (φ ⊗₁ ψ) (φ ⊗₁ ψ))
+                loop₁ refl
+      loop₁-refl k i = Ŝ k i .fst
 ```
