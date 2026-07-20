@@ -666,36 +666,50 @@ produces.
     σ , comp-pathp₂-fill ⊗₁-composite p e p' e' P ê m
 ```
 
-`⊗₁-wit-σ` is the displaced propositionality path: over the
-canonical identification of two level-0 witnesses, the displaced
-witness spaces form a pointwise-contractible line — transport
-`⊗₁-wit-contr` along the connection — and `is-prop→PathP`
-threads any two inhabitants. It is opaque for the same reason as
-`assoc-σ●₀`: a consumer's family projects its components at
-generic interval points, and the sealed head keeps that
-comparison syntactic. `⊗₁-wit-unique` is its hom component, the
-displaced `⊗₀-repr-unique`; `assoc-σ●₁` is its instance at the
-`●₁`-bracketings, sealed over `assoc-σ●₀`, and `assoc●₁` the
-hom component of that.
+`⊗₁-wit-σ[_,_]` is the displaced line over an arbitrary pair of
+level-0 identifications: the level-0 fibers are propositional, so
+every pair of σs lifts — the displaced witness spaces form a
+pointwise-contractible line (transport `⊗₁-wit-contr` along the
+connection) and `is-prop→PathP` threads any two inhabitants. It
+is opaque for the same reason as `assoc-σ●₀`: a consumer's family
+projects its components at generic interval points, and the
+sealed head keeps that comparison syntactic. It consumes its base
+lines as neutral families, so instances at sealed σ-lines need no
+unfolding. `⊗₁-wit-σ` is its instance at the canonical
+propositionality paths, `⊗₁-wit-unique` that instance's hom
+component, the displaced `⊗₀-repr-unique`; `assoc-σ●₁` is the
+instance at the sealed `assoc-σ●₀` lines, and `assoc●₁` the hom
+component of that.
 
 ```agda
   opaque
-    ⊗₁-wit-σ
+    ⊗₁-wit-σ[_,_]
       : ∀ {F F' : ⊗₀-composite}
-          {U V : is-⊗₀-representable F} {U' V' : is-⊗₀-representable F'}
+          {u₀ u₁ : is-⊗₀-representable F}
+          {u₀' u₁' : is-⊗₀-representable F'}
+          (σ : u₀ ≡ u₁) (σ' : u₀' ≡ u₁')
           {η : ⊗₁-composite F F'}
-        (Û : ⊗₁-wit U U' η) (V̂ : ⊗₁-wit V V' η)
-      → PathP (λ i → ⊗₁-wit (is-⊗₀-representable-prop F U V i)
-                            (is-⊗₀-representable-prop F' U' V' i) η)
-              Û V̂
-    ⊗₁-wit-σ {F} {F'} {U} {V} {U'} {V'} {η} Û V̂ =
+        (Û : ⊗₁-wit u₀ u₀' η) (V̂ : ⊗₁-wit u₁ u₁' η)
+      → PathP (λ i → ⊗₁-wit (σ i) (σ' i) η) Û V̂
+    ⊗₁-wit-σ[_,_] σ σ' {η} Û V̂ =
       is-prop→PathP
         (λ i → is-contr→is-prop
           (subst is-contr
-            (λ k → ⊗₁-wit (is-⊗₀-representable-prop F U V (i ∧ k))
-                          (is-⊗₀-representable-prop F' U' V' (i ∧ k)) η)
+            (λ k → ⊗₁-wit (σ (i ∧ k)) (σ' (i ∧ k)) η)
             (⊗₁-wit-contr Û)))
         Û V̂
+
+  ⊗₁-wit-σ
+    : ∀ {F F' : ⊗₀-composite}
+        {U V : is-⊗₀-representable F} {U' V' : is-⊗₀-representable F'}
+        {η : ⊗₁-composite F F'}
+      (Û : ⊗₁-wit U U' η) (V̂ : ⊗₁-wit V V' η)
+    → PathP (λ i → ⊗₁-wit (is-⊗₀-representable-prop F U V i)
+                          (is-⊗₀-representable-prop F' U' V' i) η)
+            Û V̂
+  ⊗₁-wit-σ {F} {F'} {U} {V} {U'} {V'} =
+    ⊗₁-wit-σ[ is-⊗₀-representable-prop F U V
+            , is-⊗₀-representable-prop F' U' V' ]
 
   ⊗₁-wit-unique
     : ∀ {F F' : ⊗₀-composite}
@@ -706,21 +720,20 @@ hom component of that.
             (Û .fst) (V̂ .fst)
   ⊗₁-wit-unique Û V̂ i = ⊗₁-wit-σ Û V̂ i .fst
 
-  opaque
-    unfolding assoc-σ●₀
-
-    assoc-σ●₁
-      : ∀ {F F' G G' H H' : ⊗₀-composite}
-          {U : is-⊗₀-representable F} {U' : is-⊗₀-representable F'}
-          {V : is-⊗₀-representable G} {V' : is-⊗₀-representable G'}
-          {W : is-⊗₀-representable H} {W' : is-⊗₀-representable H'}
-          {η : ⊗₁-composite F F'} {ζ : ⊗₁-composite G G'}
-          {θ : ⊗₁-composite H H'}
-        (Û : ⊗₁-wit U U' η) (V̂ : ⊗₁-wit V V' ζ) (Ŵ : ⊗₁-wit W W' θ)
-      → PathP (λ i → ⊗₁-wit (assoc-σ●₀ U V W i) (assoc-σ●₀ U' V' W' i)
-                            (η ▿₁ ζ ▿₁ θ))
-              (Û ●₁ (V̂ ●₁ Ŵ)) ((Û ●₁ V̂) ●₁ Ŵ)
-    assoc-σ●₁ Û V̂ Ŵ = ⊗₁-wit-σ (Û ●₁ (V̂ ●₁ Ŵ)) ((Û ●₁ V̂) ●₁ Ŵ)
+  assoc-σ●₁
+    : ∀ {F F' G G' H H' : ⊗₀-composite}
+        {U : is-⊗₀-representable F} {U' : is-⊗₀-representable F'}
+        {V : is-⊗₀-representable G} {V' : is-⊗₀-representable G'}
+        {W : is-⊗₀-representable H} {W' : is-⊗₀-representable H'}
+        {η : ⊗₁-composite F F'} {ζ : ⊗₁-composite G G'}
+        {θ : ⊗₁-composite H H'}
+      (Û : ⊗₁-wit U U' η) (V̂ : ⊗₁-wit V V' ζ) (Ŵ : ⊗₁-wit W W' θ)
+    → PathP (λ i → ⊗₁-wit (assoc-σ●₀ U V W i) (assoc-σ●₀ U' V' W' i)
+                          (η ▿₁ ζ ▿₁ θ))
+            (Û ●₁ (V̂ ●₁ Ŵ)) ((Û ●₁ V̂) ●₁ Ŵ)
+  assoc-σ●₁ {U = U} {U'} {V} {V'} {W} {W'} Û V̂ Ŵ =
+    ⊗₁-wit-σ[ assoc-σ●₀ U V W , assoc-σ●₀ U' V' W' ]
+      (Û ●₁ (V̂ ●₁ Ŵ)) ((Û ●₁ V̂) ●₁ Ŵ)
 
   assoc●₁
     : ∀ {F F' G G' H H' : ⊗₀-composite}
@@ -772,11 +785,11 @@ Each level-0 identity is a wit-calculus projection at
 projection one level up, at the displaced witnesses: `⊗₁-assoc`
 is `assoc●₁` at normal witnesses exactly as `⊗₀-assoc` is
 `assoc●₀` at `⊗₀-nrm`s, and the unitors are the `fst`-shadows of
-the `unitr-σ●₁`/`unitl-σ●₁` lines — `⊗₁-wit-σ` at the
-`↝̂`-transports of the normal pairings along the displaced funext
-absorptions, sealed over the level-0 unitor σ-lines exactly as
-`assoc-σ●₁` over `assoc-σ●₀`. Naturality is the type: one
-`PathP` between the derived tensors over the level-0 identity.
+the `unitr-σ●₁`/`unitl-σ●₁` lines — `⊗₁-wit-σ[_,_]` at the
+sealed level-0 unitor σ-lines, threading the `↝̂`-transports of
+the normal pairings along the displaced funext absorptions.
+Naturality is the type: one `PathP` between the derived tensors
+over the level-0 identity.
 
 ```agda
   ⊗₁-assoc
@@ -786,31 +799,25 @@ absorptions, sealed over the level-0 unitor σ-lines exactly as
             (φ ⊗₁ (ψ ⊗₁ χ)) ((φ ⊗₁ ψ) ⊗₁ χ)
   ⊗₁-assoc φ ψ χ = assoc●₁ (⊗₁-wit-nrm φ) (⊗₁-wit-nrm ψ) (⊗₁-wit-nrm χ)
 
-  opaque
-    unfolding unitr-σ●₀
+  unitr-σ●₁
+    : ∀ {x x'} (φ : C.hom x x')
+    → PathP (λ i → ⊗₁-wit (unitr-σ●₀ x i) (unitr-σ●₀ x' i) (⊗₁-emb φ))
+            ((⊗₁-wit-nrm φ ●₁ ⊗₁-wit-nrm (C.idn I)) ↝̂ ▾₁-idn (⊗₁-emb φ))
+            (⊗₁-wit-nrm φ)
+  unitr-σ●₁ {x} {x'} φ =
+    ⊗₁-wit-σ[ unitr-σ●₀ x , unitr-σ●₀ x' ]
+      ((⊗₁-wit-nrm φ ●₁ ⊗₁-wit-nrm (C.idn I)) ↝̂ ▾₁-idn (⊗₁-emb φ))
+      (⊗₁-wit-nrm φ)
 
-    unitr-σ●₁
-      : ∀ {x x'} (φ : C.hom x x')
-      → PathP (λ i → ⊗₁-wit (unitr-σ●₀ x i) (unitr-σ●₀ x' i) (⊗₁-emb φ))
-              ((⊗₁-wit-nrm φ ●₁ ⊗₁-wit-nrm (C.idn I)) ↝̂ ▾₁-idn (⊗₁-emb φ))
-              (⊗₁-wit-nrm φ)
-    unitr-σ●₁ φ =
-      ⊗₁-wit-σ
-        ((⊗₁-wit-nrm φ ●₁ ⊗₁-wit-nrm (C.idn I)) ↝̂ ▾₁-idn (⊗₁-emb φ))
-        (⊗₁-wit-nrm φ)
-
-  opaque
-    unfolding unitl-σ●₀
-
-    unitl-σ●₁
-      : ∀ {x x'} (φ : C.hom x x')
-      → PathP (λ i → ⊗₁-wit (unitl-σ●₀ x i) (unitl-σ●₀ x' i) (⊗₁-emb φ))
-              ((⊗₁-wit-nrm (C.idn I) ●₁ ⊗₁-wit-nrm φ) ↝̂ ⊗₁-emb-idn-absorb φ)
-              (⊗₁-wit-nrm φ)
-    unitl-σ●₁ φ =
-      ⊗₁-wit-σ
-        ((⊗₁-wit-nrm (C.idn I) ●₁ ⊗₁-wit-nrm φ) ↝̂ ⊗₁-emb-idn-absorb φ)
-        (⊗₁-wit-nrm φ)
+  unitl-σ●₁
+    : ∀ {x x'} (φ : C.hom x x')
+    → PathP (λ i → ⊗₁-wit (unitl-σ●₀ x i) (unitl-σ●₀ x' i) (⊗₁-emb φ))
+            ((⊗₁-wit-nrm (C.idn I) ●₁ ⊗₁-wit-nrm φ) ↝̂ ⊗₁-emb-idn-absorb φ)
+            (⊗₁-wit-nrm φ)
+  unitl-σ●₁ {x} {x'} φ =
+    ⊗₁-wit-σ[ unitl-σ●₀ x , unitl-σ●₀ x' ]
+      ((⊗₁-wit-nrm (C.idn I) ●₁ ⊗₁-wit-nrm φ) ↝̂ ⊗₁-emb-idn-absorb φ)
+      (⊗₁-wit-nrm φ)
 
   ⊗₁-unitr
     : ∀ {x x'} (φ : C.hom x x')

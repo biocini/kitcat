@@ -270,8 +270,16 @@ every leaf displaces by construction.
     T-contr .center = r₁
     T-contr .paths  = is-⊗₀-representable-prop _ r₁
 
+    -- the loop σ-line, sealed like the unitor σ-lines: the loop is
+    -- its fst-shadow, and the fiber square behind loop-refl gets
+    -- sealed faces — families over that square never expose the
+    -- propositionality body
+    opaque
+      σ-loop : r₀¹ ≡ r₀²
+      σ-loop = is-⊗₀-representable-prop _ r₀¹ r₀²
+
     loop : x ⊗₀ y ≡ x ⊗₀ y
-    loop = ⊗₀-repr-unique r₀¹ r₀²
+    loop = ap fst σ-loop
 
     Uf : is-⊗₀-representable A ; Uf = (⊗₀-nrm x ●₀ ⊗₀-nrm I) ↝ ▾₀-idn A
     Vg : is-⊗₀-representable B ; Vg = (⊗₀-nrm I ●₀ ⊗₀-nrm y) ↝ ⊗₀-emb-idn-absorb y
@@ -284,8 +292,8 @@ every leaf displaces by construction.
     -- opaque like assoc-σ●₀: the tree and the level-1 witness
     -- families only ever read their boundaries off the types, and
     -- the sealed heads keep the fiber comparisons syntactic; the
-    -- displaced mates are the σ̂-lines of triangle₁, sealed over
-    -- these exactly as assoc-σ●₁ over assoc-σ●₀
+    -- displaced mates are ⊗₁-wit-σ[_,_] instances at these sealed
+    -- lines, no unfolding
     opaque
       σₗᵣ : sl ≡ sr ; σₗᵣ = is-⊗₀-representable-prop _ sl sr
       σᵣ₀ : sr ≡ s₀ ; σᵣ₀ = is-⊗₀-representable-prop _ sr s₀
@@ -376,18 +384,20 @@ every leaf displaces by construction.
       → ⊗₀-assoc x I y ∙ ap (_⊗₀ y) (⊗₀-unitr x) ≡ ap (x ⊗₀_) (⊗₀-unitl y)
     ⊗₀-triangle mid = whisker-a mid ∙ triangle-weak
 
-    -- the fiber square behind the loop: the canonical witness
-    -- identification against the is-coh₀-transport line
-    loop-sq
-      : (mid : is-monoidal-2-coherent M)
-      → is-⊗₀-representable-prop _ r₀¹ r₀²
-      ≡ ap ((⊗₀-nrm x ●₀ ⊗₀-nrm y) ↝_)
-           (ap sym (sym (mid .is-monoidal-2-coherent.is-coh₀ x y)))
-    loop-sq mid =
-      is-contr→is-set T-contr r₀¹ r₀²
-        (is-⊗₀-representable-prop _ r₀¹ r₀²)
-        (ap ((⊗₀-nrm x ●₀ ⊗₀-nrm y) ↝_)
-            (ap sym (sym (mid .is-monoidal-2-coherent.is-coh₀ x y))))
+    -- the fiber square behind the loop: the σ-line against the
+    -- is-coh₀-transport line. Opaque like fiber-pentagon: level-1
+    -- witness families project its slices under generic interval
+    -- binders; the boundary still reduces by the type-directed rule
+    opaque
+      loop-sq
+        : (mid : is-monoidal-2-coherent M)
+        → σ-loop
+        ≡ ap ((⊗₀-nrm x ●₀ ⊗₀-nrm y) ↝_)
+             (ap sym (sym (mid .is-monoidal-2-coherent.is-coh₀ x y)))
+      loop-sq mid =
+        is-contr→is-set T-contr r₀¹ r₀² σ-loop
+          (ap ((⊗₀-nrm x ●₀ ⊗₀-nrm y) ↝_)
+              (ap sym (sym (mid .is-monoidal-2-coherent.is-coh₀ x y))))
 
     loop-refl : is-monoidal-2-coherent M → loop ≡ refl
     loop-refl mid = ap (ap fst) (loop-sq mid)
@@ -732,8 +742,13 @@ argument, riding the same fiber square.
     r̂₀² : ⊗₁-wit T.r₀² T'.r₀² N
     r̂₀² = (⊗₁-wit-nrm φ ●₁ ⊗₁-wit-nrm ψ) ↝̂ (λ i → ê₂ (~ i))
 
+    -- the displaced loop σ-line: ⊗₁-wit-σ[_,_] at the sealed base
+    -- lines; the displaced loop is its fst-shadow
+    σ̂-loop : PathP (λ i → ⊗₁-wit (T.σ-loop i) (T'.σ-loop i) N) r̂₀¹ r̂₀²
+    σ̂-loop = ⊗₁-wit-σ[ T.σ-loop , T'.σ-loop ] r̂₀¹ r̂₀²
+
     loop₁ : PathP (λ i → C.hom (T.loop i) (T'.loop i)) (φ ⊗₁ ψ) (φ ⊗₁ ψ)
-    loop₁ = ⊗₁-wit-unique r̂₀¹ r̂₀²
+    loop₁ i = σ̂-loop i .fst
 
     -- the displaced unitor witnesses: the endpoints of
     -- unitr-σ●₁/unitl-σ●₁, the very pairs the unitors project
@@ -752,25 +767,23 @@ argument, riding the same fiber square.
     ŝr : ⊗₁-wit T.sr T'.sr (⊗₁-emb φ ▿₁ ⊗₁-emb ψ)
     ŝr = Ûf ●₁ ⊗₁-wit-nrm ψ
 
-    -- the displaced σ-lines, sealed over the level-0 seals exactly
-    -- as assoc-σ●₁ over assoc-σ●₀
-    opaque
-      unfolding T.σₗᵣ T.σᵣ₀ T.σₗ₀ T'.σₗᵣ T'.σᵣ₀ T'.σₗ₀
+    -- the displaced σ-lines: ⊗₁-wit-σ[_,_] instances at the sealed
+    -- level-0 lines — the seals are consumed as neutral families,
+    -- no unfolding
+    σ̂ₗᵣ : PathP (λ i → ⊗₁-wit (T.σₗᵣ i) (T'.σₗᵣ i)
+                              (⊗₁-emb φ ▿₁ ⊗₁-emb ψ))
+                ŝl ŝr
+    σ̂ₗᵣ = ⊗₁-wit-σ[ T.σₗᵣ , T'.σₗᵣ ] ŝl ŝr
 
-      σ̂ₗᵣ : PathP (λ i → ⊗₁-wit (T.σₗᵣ i) (T'.σₗᵣ i)
-                                (⊗₁-emb φ ▿₁ ⊗₁-emb ψ))
-                  ŝl ŝr
-      σ̂ₗᵣ = ⊗₁-wit-σ ŝl ŝr
+    σ̂ᵣ₀ : PathP (λ i → ⊗₁-wit (T.σᵣ₀ i) (T'.σᵣ₀ i)
+                              (⊗₁-emb φ ▿₁ ⊗₁-emb ψ))
+                ŝr ŝ₀
+    σ̂ᵣ₀ = ⊗₁-wit-σ[ T.σᵣ₀ , T'.σᵣ₀ ] ŝr ŝ₀
 
-      σ̂ᵣ₀ : PathP (λ i → ⊗₁-wit (T.σᵣ₀ i) (T'.σᵣ₀ i)
-                                (⊗₁-emb φ ▿₁ ⊗₁-emb ψ))
-                  ŝr ŝ₀
-      σ̂ᵣ₀ = ⊗₁-wit-σ ŝr ŝ₀
-
-      σ̂ₗ₀ : PathP (λ i → ⊗₁-wit (T.σₗ₀ i) (T'.σₗ₀ i)
-                                (⊗₁-emb φ ▿₁ ⊗₁-emb ψ))
-                  ŝl ŝ₀
-      σ̂ₗ₀ = ⊗₁-wit-σ ŝl ŝ₀
+    σ̂ₗ₀ : PathP (λ i → ⊗₁-wit (T.σₗ₀ i) (T'.σₗ₀ i)
+                              (⊗₁-emb φ ▿₁ ⊗₁-emb ψ))
+                ŝl ŝ₀
+    σ̂ₗ₀ = ⊗₁-wit-σ[ T.σₗ₀ , T'.σₗ₀ ] ŝl ŝ₀
 
     -- the displaced ρ-lines: ↝̂-fill slides, ●₁-whiskered as at
     -- level 0, over exactly the level-0 slides
@@ -1031,8 +1044,8 @@ it live under the coherence hypothesis, the rest is absolute.
           ↝̂ (λ t → mid .is-monoidal-2-coherent.is-coh₁ φ ψ (~ i) (~ t))
 
         Ŝ : PathP (λ k → PathP (λ i → ⊗₁-wit (K k i) (K' k i) N) r̂₀¹ r̂₀²)
-                  (⊗₁-wit-σ r̂₀¹ r̂₀²) ĉ
-        Ŝ = is-prop→SquareP wprop (⊗₁-wit-σ r̂₀¹ r̂₀²) refl ĉ refl
+                  σ̂-loop ĉ
+        Ŝ = is-prop→SquareP wprop σ̂-loop refl ĉ refl
 
       loop₁-refl
         : PathP (λ k → PathP (λ i → C.hom (T.loop-refl  mid k i)
