@@ -1000,18 +1000,34 @@ it live under the coherence hypothesis, the rest is absolute.
                               (~ (i ∧ k)) (~ (m ∧ k))))
               (⊗₁-wit-contr ŝl))
 
+      -- the ρ-sides of the associator face, named like the face
+      -- bottoms: each enters the ascription and the fill by name
+      side-ρ̂l
+        : PathP (λ m → ⊗₁-wit (T.face-σa mid m i0) (T'.face-σa mid m i0)
+                              (mid .is-monoidal-2-coherent.is-coh₁
+                                φ ψ i1 (~ m)))
+                ŝl r̂₁
+      side-ρ̂l m = ρ̂l (~ m)
+
+      side-ρ̂r
+        : PathP (λ m → ⊗₁-wit (T.face-σa mid m i1) (T'.face-σa mid m i1)
+                              (mid .is-monoidal-2-coherent.is-coh₁
+                                φ ψ i0 (~ m)))
+                ŝr r̂₂
+      side-ρ̂r m = ρ̂r (~ m)
+
       face-σ̂a
         : PathP (λ m → PathP (λ i → ⊗₁-wit (T.face-σa mid m i)
                                            (T'.face-σa mid m i)
                                            (mid .is-monoidal-2-coherent.is-coh₁
                                              φ ψ (~ i) (~ m)))
-                       (ρ̂l (~ m)) (ρ̂r (~ m)))
+                       (side-ρ̂l m) (side-ρ̂r m))
                 σ̂ₗᵣ assoc-σ̂
       face-σ̂a =
         is-prop→SquareP wit-prop-a
-          σ̂ₗᵣ (λ m → ρ̂l (~ m))
+          σ̂ₗᵣ side-ρ̂l
           assoc-σ̂
-          (λ m → ρ̂r (~ m))
+          side-ρ̂r
 
       face-â
         : PathP (λ m → PathP (λ i → C.hom (T.face-a mid m i)
