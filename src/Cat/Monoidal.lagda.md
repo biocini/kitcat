@@ -404,11 +404,17 @@ representations inhabit the one propositional representability
 fiber.
 
 ```agda
-  assoc-σ⋉₀ : ∀ {F G H : ⊗₀-composite}
-           → (U : is-⊗₀-representable F) (V : is-⊗₀-representable G)
-             (W : is-⊗₀-representable H)
-           → U ⋉₀ (V ⋉₀ W) ≡ (U ⋉₀ V) ⋉₀ W
-  assoc-σ⋉₀ U V W = is-⊗₀-representable-prop _ (U ⋉₀ (V ⋉₀ W)) ((U ⋉₀ V) ⋉₀ W)
+  -- opaque: consumers only ever transport along this path or read
+  -- its boundary off the type; keeping the underlying hcom tower
+  -- sealed lets level-1 witness families over it compare as
+  -- neutrals instead of normalizing the embedding proof at a
+  -- generic interval point
+  opaque
+    assoc-σ⋉₀ : ∀ {F G H : ⊗₀-composite}
+             → (U : is-⊗₀-representable F) (V : is-⊗₀-representable G)
+               (W : is-⊗₀-representable H)
+             → U ⋉₀ (V ⋉₀ W) ≡ (U ⋉₀ V) ⋉₀ W
+    assoc-σ⋉₀ U V W = is-⊗₀-representable-prop _ (U ⋉₀ (V ⋉₀ W)) ((U ⋉₀ V) ⋉₀ W)
 
   assoc⋉₀ : ∀ {F G H : ⊗₀-composite}
          → (U : is-⊗₀-representable F) (V : is-⊗₀-representable G)

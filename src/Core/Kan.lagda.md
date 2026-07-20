@@ -651,6 +651,40 @@ comp-pathp₂ F pa qa pb qb {h₀ = h₀} P Q i =
     j (i = i1) → Q j
     j (j = i0) → P i
 
+-- comp-pathp₂-over: a section over comp-pathp₂ — lines of
+-- G-elements over the two glued F-lines glue over the com filler
+-- of comp-pathp₂ itself, whose lid at j = i1 is comp-pathp₂
+-- definitionally. hcomp at a Σ-type does not project
+-- componentwise, so a Σ-valued gluing whose fst is the fst-level
+-- comp-pathp₂ must be assembled from this pair, not projected.
+comp-pathp₂-over
+  : ∀ {u v w w'} {X : Type u} {Y : Type v}
+    (F : X → Y → Type w) (G : ∀ x y → F x y → Type w')
+    {a₀ a₁ a₂ : X} (pa : a₀ ≡ a₁) (qa : a₁ ≡ a₂)
+    {b₀ b₁ b₂ : Y} (pb : b₀ ≡ b₁) (qb : b₁ ≡ b₂)
+    {h₀ : F a₀ b₀} {h₁ : F a₁ b₁} {h₂ : F a₂ b₂}
+    (P : PathP (λ i → F (pa i) (pb i)) h₀ h₁)
+    (Q : PathP (λ i → F (qa i) (qb i)) h₁ h₂)
+    {g₀ : G a₀ b₀ h₀} {g₁ : G a₁ b₁ h₁} {g₂ : G a₂ b₂ h₂}
+  → PathP (λ i → G (pa i) (pb i) (P i)) g₀ g₁
+  → PathP (λ i → G (qa i) (qb i) (Q i)) g₁ g₂
+  → PathP (λ i → G ((pa ∙ qa) i) ((pb ∙ qb) i)
+                   (comp-pathp₂ F pa qa pb qb P Q i))
+          g₀ g₂
+comp-pathp₂-over F G pa qa pb qb {h₀ = h₀} P Q {g₀ = g₀} P' Q' i =
+  com (λ j → G (cat.fill pa qa i j) (cat.fill pb qb i j) (base j))
+      (∂ i) λ where
+    j (i = i0) → g₀
+    j (i = i1) → Q' j
+    j (j = i0) → P' i
+  where
+    base : (j : I) → F (cat.fill pa qa i j) (cat.fill pb qb i j)
+    base j =
+      fil (λ j → F (cat.fill pa qa i j) (cat.fill pb qb i j)) (∂ i) j λ where
+        j (i = i0) → h₀
+        j (i = i1) → Q j
+        j (j = i0) → P i
+
 -- pcom→∙ bridges the ternary composite pcom (sym p) q r to the
 -- binary chain p ∙ q ∙ r, via pcom.unique against cat.lcoh.
 pcom→∙

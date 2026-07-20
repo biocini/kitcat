@@ -748,3 +748,123 @@ pre/post-composition of plain paths onto a `PathP`.
                                             (⊗₀-emb-comp x'' y'' i)}
                    (sym linkA) W linkB
 ```
+
+## The displaced witness calculus
+
+A displaced witness pairs a hom with the image of a level-0
+witness path: `⊗₁-wit U U' η` is the fiber of `⊗₁-emb`
+displaced along the witness paths of `U` and `U'`.
+Contractibility needs no nest chains: sliding an inhabitant's
+characterization along its own base line connects the space to
+the plain image fiber, so any inhabitant contracts — the
+displaced `⊗₁-rep-contr`.
+
+```agda
+  ⊗₁-wit
+    : ∀ {F F' : ⊗₀-composite}
+    → is-⊗₀-representable F → is-⊗₀-representable F'
+    → ⊗₁-composite F F' → Type (o ⊔ h)
+  ⊗₁-wit U U' η =
+    Σ σ ∶ C.hom (U .fst) (U' .fst) ,
+    PathP (λ i → ⊗₁-composite (U .snd i) (U' .snd i)) (⊗₁-emb σ) η
+
+  ⊗₁-wit-contr
+    : ∀ {F F' : ⊗₀-composite}
+        {U : is-⊗₀-representable F} {U' : is-⊗₀-representable F'}
+        {η : ⊗₁-composite F F'}
+    → ⊗₁-wit U U' η → is-contr (⊗₁-wit U U' η)
+  ⊗₁-wit-contr {U = U} {U'} (τ , t) =
+    subst is-contr
+      (λ j → Σ σ ∶ C.hom (U .fst) (U' .fst) ,
+             PathP (λ i → ⊗₁-composite (U .snd (j ∧ i)) (U' .snd (j ∧ i)))
+                   (⊗₁-emb σ) (t j))
+      (⊗₁-emb-image-contr τ)
+```
+
+`_⋉₁_` mirrors `_⋉₀_` token-for-token, with `comp-pathp₂` in the
+role of `∙`: the characterization glues the spine comparison to
+the `▿₁`-paste of the factors' characterizations, over exactly
+the `∙`-decomposition `_⋉₀_` produces at level 0. `assoc-σ⋉₁`
+displaces `assoc-σ⋉₀`, threading the canonical pairings through
+the pointwise-contractible line; `assoc⋉₁` is its hom component.
+
+```agda
+  _⋉₁_
+    : ∀ {F F' G G' : ⊗₀-composite}
+        {U : is-⊗₀-representable F} {U' : is-⊗₀-representable F'}
+        {V : is-⊗₀-representable G} {V' : is-⊗₀-representable G'}
+        {η : ⊗₁-composite F F'} {ζ : ⊗₁-composite G G'}
+    → ⊗₁-wit U U' η → ⊗₁-wit V V' ζ
+    → ⊗₁-wit (U ⋉₀ V) (U' ⋉₀ V') (η ▿₁ ζ)
+  _⋉₁_ {U = m , p} {m' , p'} {n , q} {n' , q'} (σ , P) (τ , Q) =
+    σ ⊗₁ τ ,
+    comp-pathp₂ ⊗₁-composite
+      (⊗₀-emb-comp m n) (λ i → p i ▿₀ q i)
+      (⊗₀-emb-comp m' n') (λ i → p' i ▿₀ q' i)
+      (⊗₁-emb-comp σ τ) (λ i → P i ▿₁ Q i)
+  infixr 40 _⋉₁_
+
+  opaque
+    assoc-σ⋉₁
+      : ∀ {F F' G G' H H' : ⊗₀-composite}
+          {U : is-⊗₀-representable F} {U' : is-⊗₀-representable F'}
+          {V : is-⊗₀-representable G} {V' : is-⊗₀-representable G'}
+          {W : is-⊗₀-representable H} {W' : is-⊗₀-representable H'}
+          {η : ⊗₁-composite F F'} {ζ : ⊗₁-composite G G'}
+          {θ : ⊗₁-composite H H'}
+        (Û : ⊗₁-wit U U' η) (V̂ : ⊗₁-wit V V' ζ) (Ŵ : ⊗₁-wit W W' θ)
+      → PathP (λ i → ⊗₁-wit (assoc-σ⋉₀ U V W i) (assoc-σ⋉₀ U' V' W' i)
+                            (η ▿₁ ζ ▿₁ θ))
+              (Û ⋉₁ (V̂ ⋉₁ Ŵ)) ((Û ⋉₁ V̂) ⋉₁ Ŵ)
+    assoc-σ⋉₁ {U = U} {U'} {V} {V'} {W} {W'} {η} {ζ} {θ} Û V̂ Ŵ =
+      is-prop→PathP
+        (λ i → is-contr→is-prop
+          (subst is-contr
+            (λ k → ⊗₁-wit (assoc-σ⋉₀ U V W (i ∧ k))
+                          (assoc-σ⋉₀ U' V' W' (i ∧ k))
+                          (η ▿₁ ζ ▿₁ θ))
+            (⊗₁-wit-contr (Û ⋉₁ (V̂ ⋉₁ Ŵ)))))
+        (Û ⋉₁ (V̂ ⋉₁ Ŵ)) ((Û ⋉₁ V̂) ⋉₁ Ŵ)
+
+  assoc⋉₁
+    : ∀ {F F' G G' H H' : ⊗₀-composite}
+        {U : is-⊗₀-representable F} {U' : is-⊗₀-representable F'}
+        {V : is-⊗₀-representable G} {V' : is-⊗₀-representable G'}
+        {W : is-⊗₀-representable H} {W' : is-⊗₀-representable H'}
+        {η : ⊗₁-composite F F'} {ζ : ⊗₁-composite G G'}
+        {θ : ⊗₁-composite H H'}
+      (Û : ⊗₁-wit U U' η) (V̂ : ⊗₁-wit V V' ζ) (Ŵ : ⊗₁-wit W W' θ)
+    → PathP (λ i → C.hom (assoc⋉₀ U V W i) (assoc⋉₀ U' V' W' i))
+            (Û .fst ⊗₁ (V̂ .fst ⊗₁ Ŵ .fst))
+            ((Û .fst ⊗₁ V̂ .fst) ⊗₁ Ŵ .fst)
+  assoc⋉₁ Û V̂ Ŵ i = assoc-σ⋉₁ Û V̂ Ŵ i .fst
+```
+
+`⊗₁-wit-∙` glues witness lines over composite fiber paths, with
+`comp-pathp₂-over` supplying the characterization over the
+hom-level `comp-pathp₂`: the hom component of the glue is the
+`comp-pathp₂` of the hom components by construction — `hcom` at
+a Σ-type does not project componentwise, so the pair is
+assembled, never projected.
+
+```agda
+  ⊗₁-wit-∙
+    : ∀ {T T' : ⊗₀-composite} {η : ⊗₁-composite T T'}
+        {u₀ u₁ u₂ : is-⊗₀-representable T}
+        {u₀' u₁' u₂' : is-⊗₀-representable T'}
+      (σa : u₀ ≡ u₁) (σb : u₁ ≡ u₂)
+      (σa' : u₀' ≡ u₁') (σb' : u₁' ≡ u₂')
+      {ĥ₀ : ⊗₁-wit u₀ u₀' η} {ĥ₁ : ⊗₁-wit u₁ u₁' η} {ĥ₂ : ⊗₁-wit u₂ u₂' η}
+    → PathP (λ i → ⊗₁-wit (σa i) (σa' i) η) ĥ₀ ĥ₁
+    → PathP (λ i → ⊗₁-wit (σb i) (σb' i) η) ĥ₁ ĥ₂
+    → PathP (λ i → ⊗₁-wit ((σa ∙ σb) i) ((σa' ∙ σb') i) η) ĥ₀ ĥ₂
+  ⊗₁-wit-∙ {η = η} σa σb σa' σb' P̂ Q̂ i =
+      comp-pathp₂ (λ u u' → C.hom (u .fst) (u' .fst)) σa σb σa' σb'
+        (λ j → P̂ j .fst) (λ j → Q̂ j .fst) i
+    , comp-pathp₂-over (λ u u' → C.hom (u .fst) (u' .fst))
+        (λ u u' σ → PathP (λ k → ⊗₁-composite (u .snd k) (u' .snd k))
+                          (⊗₁-emb σ) η)
+        σa σb σa' σb'
+        (λ j → P̂ j .fst) (λ j → Q̂ j .fst)
+        (λ j → P̂ j .snd) (λ j → Q̂ j .snd) i
+```

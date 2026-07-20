@@ -25,7 +25,8 @@ open import Core.Data.Sigma
 open import Core.Kan
 open import Core.Path.Base using (ap-comp)
 open import Core.Transport.Base using (is-prop→PathP)
-open import Core.Transport.J using (J)
+open import Core.Transport.Properties using (is-prop→SquareP)
+open import Core.Transport.J using (J; subst)
 
 open import Cat.Type
 open import Cat.Base
@@ -53,16 +54,16 @@ record is-monoidal-2-coherent {o h} {C : category o h}
   private module C = category C
 
   field
-    is-⊗₀-2-coherent
+    is-coh₀
       : (x y : C.ob)
       → ap (_▿₀ ⊗₀-emb y) (▾₀-idn (⊗₀-emb x))
       ≡ ap (⊗₀-emb x ▿₀_) (⊗₀-emb-idn-absorb y)
 
-    is-⊗₁-2-coherent
+    is-coh₁
       : ∀ {x x'} (φ : C.hom x x') {y y'} (ψ : C.hom y y')
       → PathP (λ j → PathP (λ i → ⊗₁-composite
-                                    (is-⊗₀-2-coherent x y j i)
-                                    (is-⊗₀-2-coherent x' y' j i))
+                                    (is-coh₀ x y j i)
+                                    (is-coh₀ x' y' j i))
                      ((⊗₁-emb φ ▾₁ C.idn I) ▿₁ ⊗₁-emb ψ)
                      (⊗₁-emb φ ▿₁ ⊗₁-emb ψ))
               (λ i → ▾₁-idn (⊗₁-emb φ) i ▿₁ ⊗₁-emb ψ)
@@ -200,9 +201,9 @@ the two bracketings `r₁`/`r₂` and the `↝`-transports of the
 plain pair along the two unit contractions. Every face of the
 triangle is a `⊗₀-repr-unique` between two of them — the unitor
 faces computed by `⊗₀-repr-ap` at the one-sided pairings, the
-associator face definitionally `⊗₀-assoc x I y` — and
-`monoidal-2-coherent` identifies the two transports, closing the
-`loop` and strengthening the weak triangle to the standard one.
+associator face definitionally `⊗₀-assoc x I y` — and `is-coh₀`
+identifies the two transports, closing the `loop` and
+strengthening the weak triangle to the standard one.
 
 ```agda
   module triangle₀ (x y : C.ob) where
@@ -224,8 +225,11 @@ associator face definitionally `⊗₀-assoc x I y` — and
     T-contr .center = r₁
     T-contr .paths  = is-⊗₀-representable-prop _ r₁
 
-    assoc-eq : ⊗₀-repr-unique r₁ r₂ ≡ ⊗₀-assoc x I y
-    assoc-eq = refl
+    opaque
+      unfolding assoc-σ⋉₀
+
+      assoc-eq : ⊗₀-repr-unique r₁ r₂ ≡ ⊗₀-assoc x I y
+      assoc-eq = refl
 
     loop : x ⊗₀ y ≡ x ⊗₀ y
     loop = ⊗₀-repr-unique r₀¹ r₀²
@@ -278,17 +282,116 @@ associator face definitionally `⊗₀-assoc x I y` — and
     loop-refl mid = ap (ap fst)
       (is-contr→is-set T-contr r₀¹ r₀² (is-⊗₀-representable-prop _ r₀¹ r₀²)
         (ap ((⊗₀-nrm x ⋉₀ ⊗₀-nrm y) ↝_)
-            (ap sym (sym (mid .is-monoidal-2-coherent.is-⊗₀-2-coherent x y)))))
+            (ap sym (sym (mid .is-monoidal-2-coherent.is-coh₀ x y)))))
 
-    face-a : is-monoidal-2-coherent M → ⊗₀-repr-unique s₁ s₂ ≡ ⊗₀-assoc x I y
-    face-a mid =
-        ap (λ t → ⊗₀-repr-unique (r₁ ↝ e₁) (r₂ ↝ t))
-           (mid .is-monoidal-2-coherent.is-⊗₀-2-coherent x y)
-      ∙ ↝-repr r₁ r₂ e₁
+    opaque
+      unfolding assoc-σ⋉₀
+
+      face-a : is-monoidal-2-coherent M → ⊗₀-repr-unique s₁ s₂ ≡ ⊗₀-assoc x I y
+      face-a mid =
+          ap (λ t → ⊗₀-repr-unique (r₁ ↝ e₁) (r₂ ↝ t))
+             (mid .is-monoidal-2-coherent.is-coh₀ x y)
+        ∙ ↝-repr r₁ r₂ e₁
 
     ⊗₀-triangle
       : is-monoidal-2-coherent M
       → ⊗₀-assoc x I y ∙ ap (_⊗₀ y) (⊗₀-unitr x) ≡ ap (x ⊗₀_) (⊗₀-unitl y)
     ⊗₀-triangle mid =
       ap (_∙ ap (_⊗₀ y) (⊗₀-unitr x)) (sym (face-a mid)) ∙ triangle-weak
+```
+
+## The displaced pentagon
+
+The level-1 pentagon in `⋉`-form: the five bracketings of a
+fourfold `⋉₁` displace the level-0 witnesses `p₁`–`p₅`, the five
+edges displace the `σ`s — `assoc-σ⋉₁` lines, `⋉₁`-whiskered on
+the same side as at level 0 — and the square between the glued
+edge composites fills by `is-prop→SquareP`: the displaced
+witness spaces are contractible pointwise over the whole of
+`fiber-pentagon`, one transported `⊗₁-wit-contr` per point.
+
+The hom shadow projects through `fst`. Because the edges are
+glued by `⊗₁-wit-∙`, their hom components are the `comp-pathp₂`
+composites of the whiskered `assoc⋉₁` lines by construction, so
+`pentagon⋉₁` is a genuine identification of associator
+composites over the fiber square's shadow, the displaced image
+of `pentagon⋉₀`'s core.
+
+```agda
+  module pentagon⋉₁ {F F' G G' H H' K K' : ⊗₀-composite}
+    {U : is-⊗₀-representable F} {U' : is-⊗₀-representable F'}
+    {V : is-⊗₀-representable G} {V' : is-⊗₀-representable G'}
+    {W : is-⊗₀-representable H} {W' : is-⊗₀-representable H'}
+    {X : is-⊗₀-representable K} {X' : is-⊗₀-representable K'}
+    {η : ⊗₁-composite F F'} {ζ : ⊗₁-composite G G'}
+    {θ : ⊗₁-composite H H'} {κ : ⊗₁-composite K K'}
+    (Û : ⊗₁-wit U U' η) (V̂ : ⊗₁-wit V V' ζ)
+    (Ŵ : ⊗₁-wit W W' θ) (X̂ : ⊗₁-wit X X' κ)
+    where
+
+    private
+      module P  = pentagon⋉₀ U V W X
+      module P' = pentagon⋉₀ U' V' W' X'
+
+    -- the homs the witnesses represent
+    φ = Û .fst ; ψ = V̂ .fst ; χ = Ŵ .fst ; ω = X̂ .fst
+
+    N₁ : ⊗₁-composite P.T P'.T
+    N₁ = η ▿₁ ζ ▿₁ θ ▿₁ κ
+
+    p̂₁ : ⊗₁-wit P.p₁ P'.p₁ N₁ ; p̂₁ = ((Û ⋉₁ V̂) ⋉₁ Ŵ) ⋉₁ X̂
+    p̂₂ : ⊗₁-wit P.p₂ P'.p₂ N₁ ; p̂₂ = (Û ⋉₁ (V̂ ⋉₁ Ŵ)) ⋉₁ X̂
+    p̂₃ : ⊗₁-wit P.p₃ P'.p₃ N₁ ; p̂₃ = Û ⋉₁ ((V̂ ⋉₁ Ŵ) ⋉₁ X̂)
+    p̂₄ : ⊗₁-wit P.p₄ P'.p₄ N₁ ; p̂₄ = (Û ⋉₁ V̂) ⋉₁ (Ŵ ⋉₁ X̂)
+    p̂₅ : ⊗₁-wit P.p₅ P'.p₅ N₁ ; p̂₅ = Û ⋉₁ (V̂ ⋉₁ (Ŵ ⋉₁ X̂))
+
+    σ̂₂₁ : PathP (λ i → ⊗₁-wit (P.σ₂₁ i) (P'.σ₂₁ i) N₁) p̂₂ p̂₁
+    σ̂₂₁ i = assoc-σ⋉₁ Û V̂ Ŵ i ⋉₁ X̂
+
+    σ̂₃₂ : PathP (λ i → ⊗₁-wit (P.σ₃₂ i) (P'.σ₃₂ i) N₁) p̂₃ p̂₂
+    σ̂₃₂ = assoc-σ⋉₁ Û (V̂ ⋉₁ Ŵ) X̂
+
+    σ̂₅₃ : PathP (λ i → ⊗₁-wit (P.σ₅₃ i) (P'.σ₅₃ i) N₁) p̂₅ p̂₃
+    σ̂₅₃ i = Û ⋉₁ assoc-σ⋉₁ V̂ Ŵ X̂ i
+
+    σ̂₄₁ : PathP (λ i → ⊗₁-wit (P.σ₄₁ i) (P'.σ₄₁ i) N₁) p̂₄ p̂₁
+    σ̂₄₁ = assoc-σ⋉₁ (Û ⋉₁ V̂) Ŵ X̂
+
+    σ̂₅₄ : PathP (λ i → ⊗₁-wit (P.σ₅₄ i) (P'.σ₅₄ i) N₁) p̂₅ p̂₄
+    σ̂₅₄ = assoc-σ⋉₁ Û V̂ (Ŵ ⋉₁ X̂)
+
+    top̂ : PathP (λ i → ⊗₁-wit ((P.σ₅₃ ∙ P.σ₃₂ ∙ P.σ₂₁) i)
+                              ((P'.σ₅₃ ∙ P'.σ₃₂ ∙ P'.σ₂₁) i) N₁)
+                p̂₅ p̂₁
+    top̂ = ⊗₁-wit-∙ P.σ₅₃ (P.σ₃₂ ∙ P.σ₂₁) P'.σ₅₃ (P'.σ₃₂ ∙ P'.σ₂₁)
+            σ̂₅₃ (⊗₁-wit-∙ P.σ₃₂ P.σ₂₁ P'.σ₃₂ P'.σ₂₁ σ̂₃₂ σ̂₂₁)
+
+    bot̂ : PathP (λ i → ⊗₁-wit ((P.σ₅₄ ∙ P.σ₄₁) i) ((P'.σ₅₄ ∙ P'.σ₄₁) i) N₁)
+                p̂₅ p̂₁
+    bot̂ = ⊗₁-wit-∙ P.σ₅₄ P.σ₄₁ P'.σ₅₄ P'.σ₄₁ σ̂₅₄ σ̂₄₁
+
+    wit-prop
+      : (j i : Core.Base.I)
+      → is-prop (⊗₁-wit (P.fiber-pentagon j i) (P'.fiber-pentagon j i) N₁)
+    wit-prop j i =
+      is-contr→is-prop
+        (subst is-contr
+          (λ k → ⊗₁-wit (P.fiber-pentagon (j ∧ k) (i ∧ k))
+                        (P'.fiber-pentagon (j ∧ k) (i ∧ k)) N₁)
+          (⊗₁-wit-contr p̂₅))
+
+    fiber-pentagon₁
+      : PathP (λ j → PathP (λ i → ⊗₁-wit (P.fiber-pentagon j i)
+                                         (P'.fiber-pentagon j i) N₁)
+                     p̂₅ p̂₁)
+              top̂ bot̂
+    fiber-pentagon₁ = is-prop→SquareP wit-prop top̂ refl bot̂ refl
+
+    pentagon⋉₁
+      : PathP (λ j → PathP (λ i → C.hom (P.fiber-pentagon j i .fst)
+                                        (P'.fiber-pentagon j i .fst))
+                     (φ ⊗₁ (ψ ⊗₁ (χ ⊗₁ ω)))
+                     (((φ ⊗₁ ψ) ⊗₁ χ) ⊗₁ ω))
+              (λ i → top̂ i .fst) (λ i → bot̂ i .fst)
+    pentagon⋉₁ j i = fiber-pentagon₁ j i .fst
 ```
