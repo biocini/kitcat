@@ -510,178 +510,6 @@ on paths, and the total-space equivalence.
       rep-sec (_ , a , p) i = p i , a , λ j → p (i ∧ j)
 ```
 
-## Naturality of the associator and unitors
-
-Each level-0 identity is `ap fst` of a witness path in a
-representability fiber, so `ap-fst-fiber` computes its
-`⊗₀-emb`-image as a `∙`-decomposition, `sq-from-∙` packages the
-decomposition as a square, and the square bounds a line of
-displaced fibers whose `i1`-end is the plain image fiber. The
-fibers are then propositional pointwise — contractibility rides
-in from `⊗₁-emb-image-contr` — and `is-prop→PathP` threads the
-canonical witnesses at the two ends into a path through the
-total space, whose `fst` is the displaced identity. `⊗₁-unitl`
-reads off the `unitl-line` already used for the image
-contraction; `⊗₁-unitr` mirrors it with the `▾₀-idn`
-straightening, one `∙ refl`-redex shorter because no
-`comp-op`-flip intervenes.
-
-```agda
-  ⊗₁-unitl
-    : ∀ {x x'} (φ : C.hom x x')
-    → PathP (λ i → C.hom (⊗₀-unitl x i) (⊗₀-unitl x' i))
-            (C.idn I ⊗₁ φ) φ
-  ⊗₁-unitl {x} {x'} φ j = θ j .fst
-    where
-      θ : PathP (λ i → unitl-line φ i)
-                (C.idn I ⊗₁ φ , ⊗₁-emb-comp-op (C.idn I) φ)
-                (φ , refl)
-      θ = is-prop→PathP
-            (λ i → is-contr→is-prop
-              (subst is-contr (λ k → unitl-line φ (i ∨ ~ k))
-                (⊗₁-emb-image-contr φ)))
-            (C.idn I ⊗₁ φ , ⊗₁-emb-comp-op (C.idn I) φ)
-            (φ , refl)
-
-  private
-    unitr-ap
-      : ∀ (x : C.ob)
-      → ap ⊗₀-emb (⊗₀-unitr x) ≡ ⊗₀-emb-comp x I ∙ ▾₀-idn (⊗₀-emb x)
-    unitr-ap x =
-        ap-fst-fiber κ₀
-      ∙ Path.unitr (U .snd)
-      ∙ ap (_∙ ▾₀-idn (⊗₀-emb x)) (Path.unitr (⊗₀-emb-comp x I))
-      where
-        U V : is-⊗₀-representable (⊗₀-emb x)
-        U = (⊗₀-nrm x ⋉₀ ⊗₀-nrm I) ↝ ▾₀-idn (⊗₀-emb x)
-        V = ⊗₀-nrm x
-
-        κ₀ : U ≡ V
-        κ₀ = is-⊗₀-representable-prop _ U V
-
-    -- the straightening square: top ap ⊗₀-emb (⊗₀-unitr x),
-    -- left ⊗₀-emb-comp x I, bottom ▾₀-idn, right constant
-    unitr-sq : ∀ (x : C.ob) → (j i : Core.Base.I) → ⊗₀-composite
-    unitr-sq x j i = sq-from-∙ (unitr-ap x) i j
-
-    -- the line of displaced fibers along ⊗₀-unitr
-    unitr-line
-      : ∀ {x x'} (φ : C.hom x x') → Core.Base.I → Type (o ⊔ h)
-    unitr-line {x} {x'} φ j =
-      Σ ω ∶ C.hom (⊗₀-unitr x j) (⊗₀-unitr x' j) ,
-      PathP (λ i → ⊗₁-composite (unitr-sq x j i) (unitr-sq x' j i))
-            (⊗₁-emb ω) (▾₁-idn (⊗₁-emb φ) j)
-
-  ⊗₁-unitr
-    : ∀ {x x'} (φ : C.hom x x')
-    → PathP (λ i → C.hom (⊗₀-unitr x i) (⊗₀-unitr x' i))
-            (φ ⊗₁ C.idn I) φ
-  ⊗₁-unitr {x} {x'} φ j = θ j .fst
-    where
-      θ : PathP (λ i → unitr-line φ i)
-                (φ ⊗₁ C.idn I , ⊗₁-emb-comp φ (C.idn I))
-                (φ , refl)
-      θ = is-prop→PathP
-            (λ i → is-contr→is-prop
-              (subst is-contr (λ k → unitr-line φ (i ∨ ~ k))
-                (⊗₁-emb-image-contr φ)))
-            (φ ⊗₁ C.idn I , ⊗₁-emb-comp φ (C.idn I))
-            (φ , refl)
-```
-
-For the associator, both `▿₀` and `▿₁` are strictly associative,
-so the fully nested composite needs no bracketing and the two
-`⊗₀-emb-comp`-chains `nestL`/`nestR` land in the same operator.
-`⊗₀-assoc` is `ap fst` of `assoc-σ⋉₀` between plain `⋉₀`-pairs,
-so `ap-fst-fiber` gives its decomposition through the nest paths
-directly, with only the `∙ refl`-redexes of `⊗₀-nrm` to
-discharge. The level-1 nest characterizations glue by
-`comp-pathp₂` at the family `⊗₁-composite`.
-
-```agda
-  private
-    nestL
-      : ∀ (x y z : C.ob)
-      → ⊗₀-emb ((x ⊗₀ y) ⊗₀ z) ≡ ⊗₀-emb x ▿₀ ⊗₀-emb y ▿₀ ⊗₀-emb z
-    nestL x y z =
-      ⊗₀-emb-comp (x ⊗₀ y) z ∙ (λ i → ⊗₀-emb-comp x y i ▿₀ ⊗₀-emb z)
-
-    nestR
-      : ∀ (x y z : C.ob)
-      → ⊗₀-emb (x ⊗₀ (y ⊗₀ z)) ≡ ⊗₀-emb x ▿₀ ⊗₀-emb y ▿₀ ⊗₀-emb z
-    nestR x y z =
-      ⊗₀-emb-comp x (y ⊗₀ z) ∙ (λ i → ⊗₀-emb x ▿₀ ⊗₀-emb-comp y z i)
-
-    nestL₁
-      : ∀ {x x'} (φ : C.hom x x') {y y'} (ψ : C.hom y y')
-          {z z'} (χ : C.hom z z')
-      → PathP (λ i → ⊗₁-composite (nestL x y z i) (nestL x' y' z' i))
-              (⊗₁-emb ((φ ⊗₁ ψ) ⊗₁ χ))
-              (⊗₁-emb φ ▿₁ ⊗₁-emb ψ ▿₁ ⊗₁-emb χ)
-    nestL₁ {x} {x'} φ {y} {y'} ψ {z} {z'} χ =
-      comp-pathp₂ ⊗₁-composite
-        (⊗₀-emb-comp (x ⊗₀ y) z) (λ i → ⊗₀-emb-comp x y i ▿₀ ⊗₀-emb z)
-        (⊗₀-emb-comp (x' ⊗₀ y') z') (λ i → ⊗₀-emb-comp x' y' i ▿₀ ⊗₀-emb z')
-        (⊗₁-emb-comp (φ ⊗₁ ψ) χ)
-        (λ i → ⊗₁-emb-comp φ ψ i ▿₁ ⊗₁-emb χ)
-
-    nestR₁
-      : ∀ {x x'} (φ : C.hom x x') {y y'} (ψ : C.hom y y')
-          {z z'} (χ : C.hom z z')
-      → PathP (λ i → ⊗₁-composite (nestR x y z i) (nestR x' y' z' i))
-              (⊗₁-emb (φ ⊗₁ (ψ ⊗₁ χ)))
-              (⊗₁-emb φ ▿₁ ⊗₁-emb ψ ▿₁ ⊗₁-emb χ)
-    nestR₁ {x} {x'} φ {y} {y'} ψ {z} {z'} χ =
-      comp-pathp₂ ⊗₁-composite
-        (⊗₀-emb-comp x (y ⊗₀ z)) (λ i → ⊗₀-emb x ▿₀ ⊗₀-emb-comp y z i)
-        (⊗₀-emb-comp x' (y' ⊗₀ z')) (λ i → ⊗₀-emb x' ▿₀ ⊗₀-emb-comp y' z' i)
-        (⊗₁-emb-comp φ (ψ ⊗₁ χ))
-        (λ i → ⊗₁-emb φ ▿₁ ⊗₁-emb-comp ψ χ i)
-
-    assoc-ap
-      : ∀ (x y z : C.ob)
-      → ap ⊗₀-emb (⊗₀-assoc x y z) ≡ nestR x y z ∙ sym (nestL x y z)
-    assoc-ap x y z =
-        ap-fst-fiber
-          (assoc-σ⋉₀ (⊗₀-nrm x) (⊗₀-nrm y) (⊗₀-nrm z))
-      ∙ λ k → (⊗₀-emb-comp x (y ⊗₀ z)
-                ∙ λ i → ⊗₀-emb x ▿₀ Path.unitr (⊗₀-emb-comp y z) k i)
-            ∙ sym (⊗₀-emb-comp (x ⊗₀ y) z
-                ∙ λ i → Path.unitr (⊗₀-emb-comp x y) k i ▿₀ ⊗₀-emb z)
-
-    -- the straightening square: top ap ⊗₀-emb (⊗₀-assoc x y z),
-    -- left nestR, bottom the reversed nestL, right constant
-    assoc-sq : ∀ (x y z : C.ob) → (j i : Core.Base.I) → ⊗₀-composite
-    assoc-sq x y z j i = sq-from-∙ (assoc-ap x y z) i j
-
-    -- the line of displaced fibers along ⊗₀-assoc; the
-    -- characterizing target rides the reversed left nest
-    assoc-line
-      : ∀ {x x'} (φ : C.hom x x') {y y'} (ψ : C.hom y y')
-          {z z'} (χ : C.hom z z') → Core.Base.I → Type (o ⊔ h)
-    assoc-line {x} {x'} φ {y} {y'} ψ {z} {z'} χ j =
-      Σ ω ∶ C.hom (⊗₀-assoc x y z j) (⊗₀-assoc x' y' z' j) ,
-      PathP (λ i → ⊗₁-composite (assoc-sq x y z j i) (assoc-sq x' y' z' j i))
-            (⊗₁-emb ω) (nestL₁ φ ψ χ (~ j))
-
-  ⊗₁-assoc
-    : ∀ {x x'} (φ : C.hom x x') {y y'} (ψ : C.hom y y')
-        {z z'} (χ : C.hom z z')
-    → PathP (λ i → C.hom (⊗₀-assoc x y z i) (⊗₀-assoc x' y' z' i))
-            (φ ⊗₁ (ψ ⊗₁ χ)) ((φ ⊗₁ ψ) ⊗₁ χ)
-  ⊗₁-assoc {x} {x'} φ {y} {y'} ψ {z} {z'} χ j = θ j .fst
-    where
-      θ : PathP (λ i → assoc-line φ ψ χ i)
-                (φ ⊗₁ (ψ ⊗₁ χ) , nestR₁ φ ψ χ)
-                ((φ ⊗₁ ψ) ⊗₁ χ , refl)
-      θ = is-prop→PathP
-            (λ i → is-contr→is-prop
-              (subst is-contr (λ k → assoc-line φ ψ χ (i ∨ ~ k))
-                (⊗₁-emb-image-contr ((φ ⊗₁ ψ) ⊗₁ χ))))
-            (φ ⊗₁ (ψ ⊗₁ χ) , nestR₁ φ ψ χ)
-            ((φ ⊗₁ ψ) ⊗₁ χ , refl)
-```
-
 ## Collapsing a vertical composite of pre-actions
 
 ```agda
@@ -753,11 +581,12 @@ pre/post-composition of plain paths onto a `PathP`.
 
 A displaced witness pairs a hom with the image of a level-0
 witness path: `⊗₁-wit U U' η` is the fiber of `⊗₁-emb`
-displaced along the witness paths of `U` and `U'`.
-Contractibility needs no nest chains: sliding an inhabitant's
-characterization along its own base line connects the space to
-the plain image fiber, so any inhabitant contracts — the
-displaced `⊗₁-rep-contr`.
+displaced along the witness paths of `U` and `U'`; at `⊗₀-nrm`
+endpoints the witness paths are constant and `⊗₁-wit-nrm` is
+the plain `⊗₁-nrm` fiber point. Contractibility needs no nest
+chains: sliding an inhabitant's characterization along its own
+base line connects the space to the plain image fiber, so any
+inhabitant contracts — the displaced `⊗₁-rep-contr`.
 
 ```agda
   ⊗₁-wit
@@ -767,6 +596,11 @@ displaced `⊗₁-rep-contr`.
   ⊗₁-wit U U' η =
     Σ σ ∶ C.hom (U .fst) (U' .fst) ,
     PathP (λ i → ⊗₁-composite (U .snd i) (U' .snd i)) (⊗₁-emb σ) η
+
+  ⊗₁-wit-nrm
+    : ∀ {x x'} (φ : C.hom x x')
+    → ⊗₁-wit (⊗₀-nrm x) (⊗₀-nrm x') (⊗₁-emb φ)
+  ⊗₁-wit-nrm φ = φ , refl
 
   ⊗₁-wit-contr
     : ∀ {F F' : ⊗₀-composite}
@@ -781,12 +615,12 @@ displaced `⊗₁-rep-contr`.
       (⊗₁-emb-image-contr τ)
 ```
 
-`_⋉₁_` mirrors `_⋉₀_` token-for-token, with `comp-pathp₂` in the
-role of `∙`: the characterization glues the spine comparison to
-the `▿₁`-paste of the factors' characterizations, over exactly
-the `∙`-decomposition `_⋉₀_` produces at level 0. `assoc-σ⋉₁`
-displaces `assoc-σ⋉₀`, threading the canonical pairings through
-the pointwise-contractible line; `assoc⋉₁` is its hom component.
+`_⋉₁_` and `_↝̂_` mirror `_⋉₀_` and `_↝_` token-for-token, with
+`comp-pathp₂` in the role of `∙`: the pairing glues the spine
+comparison to the `▿₁`-paste of the factors' characterizations,
+and the transport glues the characterization to a level-1 line,
+each over exactly the `∙`-decomposition its level-0 mirror
+produces.
 
 ```agda
   _⋉₁_
@@ -804,7 +638,61 @@ the pointwise-contractible line; `assoc⋉₁` is its hom component.
       (⊗₁-emb-comp σ τ) (λ i → P i ▿₁ Q i)
   infixr 40 _⋉₁_
 
+  _↝̂_
+    : ∀ {F F' G G' : ⊗₀-composite}
+        {U : is-⊗₀-representable F} {U' : is-⊗₀-representable F'}
+        {η : ⊗₁-composite F F'} {ζ : ⊗₁-composite G G'}
+        {e : F ≡ G} {e' : F' ≡ G'}
+    → ⊗₁-wit U U' η
+    → PathP (λ i → ⊗₁-composite (e i) (e' i)) η ζ
+    → ⊗₁-wit (U ↝ e) (U' ↝ e') ζ
+  _↝̂_ {U = m , p} {U' = m' , p'} {e = e} {e' = e'} (σ , P) ê =
+    σ , comp-pathp₂ ⊗₁-composite p e p' e' P ê
+```
+
+`⊗₁-wit-σ` is the displaced propositionality path: over the
+canonical identification of two level-0 witnesses, the displaced
+witness spaces form a pointwise-contractible line — transport
+`⊗₁-wit-contr` along the connection — and `is-prop→PathP`
+threads any two inhabitants. It is opaque for the same reason as
+`assoc-σ⋉₀`: a consumer's family projects its components at
+generic interval points, and the sealed head keeps that
+comparison syntactic. `⊗₁-wit-unique` is its hom component, the
+displaced `⊗₀-repr-unique`; `assoc-σ⋉₁` is its instance at the
+`⋉₁`-bracketings, sealed over `assoc-σ⋉₀`, and `assoc⋉₁` the
+hom component of that.
+
+```agda
   opaque
+    ⊗₁-wit-σ
+      : ∀ {F F' : ⊗₀-composite}
+          {U V : is-⊗₀-representable F} {U' V' : is-⊗₀-representable F'}
+          {η : ⊗₁-composite F F'}
+        (Û : ⊗₁-wit U U' η) (V̂ : ⊗₁-wit V V' η)
+      → PathP (λ i → ⊗₁-wit (is-⊗₀-representable-prop F U V i)
+                            (is-⊗₀-representable-prop F' U' V' i) η)
+              Û V̂
+    ⊗₁-wit-σ {F} {F'} {U} {V} {U'} {V'} {η} Û V̂ =
+      is-prop→PathP
+        (λ i → is-contr→is-prop
+          (subst is-contr
+            (λ k → ⊗₁-wit (is-⊗₀-representable-prop F U V (i ∧ k))
+                          (is-⊗₀-representable-prop F' U' V' (i ∧ k)) η)
+            (⊗₁-wit-contr Û)))
+        Û V̂
+
+  ⊗₁-wit-unique
+    : ∀ {F F' : ⊗₀-composite}
+        {U V : is-⊗₀-representable F} {U' V' : is-⊗₀-representable F'}
+        {η : ⊗₁-composite F F'}
+      (Û : ⊗₁-wit U U' η) (V̂ : ⊗₁-wit V V' η)
+    → PathP (λ i → C.hom (⊗₀-repr-unique U V i) (⊗₀-repr-unique U' V' i))
+            (Û .fst) (V̂ .fst)
+  ⊗₁-wit-unique Û V̂ i = ⊗₁-wit-σ Û V̂ i .fst
+
+  opaque
+    unfolding assoc-σ⋉₀
+
     assoc-σ⋉₁
       : ∀ {F F' G G' H H' : ⊗₀-composite}
           {U : is-⊗₀-representable F} {U' : is-⊗₀-representable F'}
@@ -816,15 +704,7 @@ the pointwise-contractible line; `assoc⋉₁` is its hom component.
       → PathP (λ i → ⊗₁-wit (assoc-σ⋉₀ U V W i) (assoc-σ⋉₀ U' V' W' i)
                             (η ▿₁ ζ ▿₁ θ))
               (Û ⋉₁ (V̂ ⋉₁ Ŵ)) ((Û ⋉₁ V̂) ⋉₁ Ŵ)
-    assoc-σ⋉₁ {U = U} {U'} {V} {V'} {W} {W'} {η} {ζ} {θ} Û V̂ Ŵ =
-      is-prop→PathP
-        (λ i → is-contr→is-prop
-          (subst is-contr
-            (λ k → ⊗₁-wit (assoc-σ⋉₀ U V W (i ∧ k))
-                          (assoc-σ⋉₀ U' V' W' (i ∧ k))
-                          (η ▿₁ ζ ▿₁ θ))
-            (⊗₁-wit-contr (Û ⋉₁ (V̂ ⋉₁ Ŵ)))))
-        (Û ⋉₁ (V̂ ⋉₁ Ŵ)) ((Û ⋉₁ V̂) ⋉₁ Ŵ)
+    assoc-σ⋉₁ Û V̂ Ŵ = ⊗₁-wit-σ (Û ⋉₁ (V̂ ⋉₁ Ŵ)) ((Û ⋉₁ V̂) ⋉₁ Ŵ)
 
   assoc⋉₁
     : ∀ {F F' G G' H H' : ⊗₀-composite}
@@ -867,4 +747,43 @@ assembled, never projected.
         σa σb σa' σb'
         (λ j → P̂ j .fst) (λ j → Q̂ j .fst)
         (λ j → P̂ j .snd) (λ j → Q̂ j .snd) i
+```
+
+## Naturality of the associator and unitors
+
+Each level-0 identity is a wit-calculus projection at
+`⋉₀`/`↝`-witnesses, so its displaced image is the same
+projection one level up, at the displaced witnesses: `⊗₁-assoc`
+is `assoc⋉₁` at normal witnesses exactly as `⊗₀-assoc` is
+`assoc⋉₀` at `⊗₀-nrm`s, and the unitors are `⊗₁-wit-unique` at
+the `↝̂`-transports of the normal pairings along the displaced
+funext absorptions — the same witnesses `⊗₀-unitr`/`⊗₀-unitl`
+name, displaced. Naturality is the type: one `PathP` between
+the derived tensors over the level-0 identity.
+
+```agda
+  ⊗₁-assoc
+    : ∀ {x x'} (φ : C.hom x x') {y y'} (ψ : C.hom y y')
+        {z z'} (χ : C.hom z z')
+    → PathP (λ i → C.hom (⊗₀-assoc x y z i) (⊗₀-assoc x' y' z' i))
+            (φ ⊗₁ (ψ ⊗₁ χ)) ((φ ⊗₁ ψ) ⊗₁ χ)
+  ⊗₁-assoc φ ψ χ = assoc⋉₁ (⊗₁-wit-nrm φ) (⊗₁-wit-nrm ψ) (⊗₁-wit-nrm χ)
+
+  ⊗₁-unitr
+    : ∀ {x x'} (φ : C.hom x x')
+    → PathP (λ i → C.hom (⊗₀-unitr x i) (⊗₀-unitr x' i))
+            (φ ⊗₁ C.idn I) φ
+  ⊗₁-unitr φ =
+    ⊗₁-wit-unique
+      ((⊗₁-wit-nrm φ ⋉₁ ⊗₁-wit-nrm (C.idn I)) ↝̂ ▾₁-idn (⊗₁-emb φ))
+      (⊗₁-wit-nrm φ)
+
+  ⊗₁-unitl
+    : ∀ {x x'} (φ : C.hom x x')
+    → PathP (λ i → C.hom (⊗₀-unitl x i) (⊗₀-unitl x' i))
+            (C.idn I ⊗₁ φ) φ
+  ⊗₁-unitl φ =
+    ⊗₁-wit-unique
+      ((⊗₁-wit-nrm (C.idn I) ⋉₁ ⊗₁-wit-nrm φ) ↝̂ ⊗₁-emb-idn-absorb φ)
+      (⊗₁-wit-nrm φ)
 ```
