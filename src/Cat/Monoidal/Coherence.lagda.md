@@ -23,10 +23,10 @@ open import Core.Type
 open import Core.Base hiding (I)
 open import Core.Data.Sigma
 open import Core.Kan
-open import Core.Path.Base using (ap-comp)
+open import Core.Path.Base using (ap-comp; comp-pathp₂-ap)
 open import Core.Transport.Base using (is-prop→PathP)
 open import Core.Transport.Properties using (is-prop→SquareP)
-open import Core.Transport.J using (J; subst)
+open import Core.Transport.J using (subst)
 
 open import Cat.Type
 open import Cat.Base
@@ -145,53 +145,94 @@ straightened to `⊗₀-assoc` endpoints by `assoc⋉₀-nrm`.
     σ₄₁ : p₄ ≡ p₁ ; σ₄₁   = assoc-σ⋉₀ (U ⋉₀ V) W X
     σ₅₄ : p₅ ≡ p₄ ; σ₅₄   = assoc-σ⋉₀ U V (W ⋉₀ X)
 
-    fiber-pentagon : σ₅₃ ∙ σ₃₂ ∙ σ₂₁ ≡ σ₅₄ ∙ σ₄₁
-    fiber-pentagon =
-      is-contr→is-set T-contr p₅ p₁ (σ₅₃ ∙ σ₃₂ ∙ σ₂₁) (σ₅₄ ∙ σ₄₁)
+    -- opaque like assoc-σ⋉₀: level-1 families project its slices
+    -- at generic interval points, and the sealed head keeps those
+    -- comparisons syntactic; the boundary still reduces by the
+    -- type-directed rule
+    opaque
+      fiber-pentagon : σ₅₃ ∙ σ₃₂ ∙ σ₂₁ ≡ σ₅₄ ∙ σ₄₁
+      fiber-pentagon =
+        is-contr→is-set T-contr p₅ p₁ (σ₅₃ ∙ σ₃₂ ∙ σ₂₁) (σ₅₄ ∙ σ₄₁)
+
+    -- the ∙-tree of the fiber pentagon's hom shadow, leaf by leaf:
+    -- two ap-comp shuffles into the shadow, the shadow itself, one
+    -- shuffle out — named so the displaced pentagon can glue over
+    -- each leaf separately
+    step₁ = sym (ap (ap fst σ₅₃ ∙_) (ap-comp fst σ₃₂ σ₂₁))
+    step₂ = sym (ap-comp fst σ₅₃ (σ₃₂ ∙ σ₂₁))
+    step₃ = ap (ap fst) fiber-pentagon
+    step₄ = ap-comp fst σ₅₄ σ₄₁
 
     pentagon⋉₀
       : ap (U .fst ⊗₀_) (assoc⋉₀ V W X)
         ∙ assoc⋉₀ U (V ⋉₀ W) X
         ∙ ap (_⊗₀ X .fst) (assoc⋉₀ U V W)
       ≡ assoc⋉₀ U V (W ⋉₀ X) ∙ assoc⋉₀ (U ⋉₀ V) W X
-    pentagon⋉₀ =
-        sym (ap (ap fst σ₅₃ ∙_) (ap-comp fst σ₃₂ σ₂₁))
-      ∙ sym (ap-comp fst σ₅₃ (σ₃₂ ∙ σ₂₁))
-      ∙ ap (ap fst) fiber-pentagon
-      ∙ ap-comp fst σ₅₄ σ₄₁
+    pentagon⋉₀ = step₁ ∙ step₂ ∙ step₃ ∙ step₄
+
+  -- a witness slid back along its own path: at m = i0 the slide is
+  -- the witness itself (path eta), at m = i1 the normal form (the
+  -- witness path's typed boundary) — both definitional, so any
+  -- calculus projection applied along the slide is a nrm-
+  -- straightening square with strict endpoints, and its displaced
+  -- mate is the same slide one level up
+  nrm-slide₀
+    : ∀ {F : ⊗₀-composite} (U : is-⊗₀-representable F)
+      (m : Core.Base.I)
+    → is-⊗₀-representable (U .snd (~ m))
+  nrm-slide₀ U m = U .fst , λ k → U .snd (k ∧ ~ m)
+
+  nrm-slide₁
+    : ∀ {F F' : ⊗₀-composite}
+        {U : is-⊗₀-representable F} {U' : is-⊗₀-representable F'}
+        {η : ⊗₁-composite F F'}
+      (Û : ⊗₁-wit U U' η) (m : Core.Base.I)
+    → ⊗₁-wit (nrm-slide₀ U m) (nrm-slide₀ U' m) (Û .snd (~ m))
+  nrm-slide₁ Û m = Û .fst , λ k → Û .snd (k ∧ ~ m)
 
   assoc⋉₀-nrm
     : ∀ {F G H : ⊗₀-composite}
       (U : is-⊗₀-representable F) (V : is-⊗₀-representable G)
       (W : is-⊗₀-representable H)
     → assoc⋉₀ U V W ≡ ⊗₀-assoc (U .fst) (V .fst) (W .fst)
-  assoc⋉₀-nrm (m , p) (n , q) (o , r) =
-      J (λ _ r' → assoc⋉₀ (m , p) (n , q) (o , r')
-                ≡ assoc⋉₀ (m , p) (n , q) (⊗₀-nrm o)) refl r
-    ∙ J (λ _ q' → assoc⋉₀ (m , p) (n , q') (⊗₀-nrm o)
-                ≡ assoc⋉₀ (m , p) (⊗₀-nrm n) (⊗₀-nrm o)) refl q
-    ∙ J (λ _ p' → assoc⋉₀ (m , p') (⊗₀-nrm n) (⊗₀-nrm o)
-                ≡ assoc⋉₀ (⊗₀-nrm m) (⊗₀-nrm n) (⊗₀-nrm o)) refl p
+  assoc⋉₀-nrm U V W m =
+    assoc⋉₀ (nrm-slide₀ U m) (nrm-slide₀ V m) (nrm-slide₀ W m)
 
-  module _ (x y z w : C.ob) where
-    open pentagon⋉₀ (⊗₀-nrm x) (⊗₀-nrm y) (⊗₀-nrm z) (⊗₀-nrm w)
+  assoc⋉₁-nrm
+    : ∀ {F F' G G' H H' : ⊗₀-composite}
+        {U : is-⊗₀-representable F} {U' : is-⊗₀-representable F'}
+        {V : is-⊗₀-representable G} {V' : is-⊗₀-representable G'}
+        {W : is-⊗₀-representable H} {W' : is-⊗₀-representable H'}
+        {η : ⊗₁-composite F F'} {ζ : ⊗₁-composite G G'}
+        {θ : ⊗₁-composite H H'}
+      (Û : ⊗₁-wit U U' η) (V̂ : ⊗₁-wit V V' ζ) (Ŵ : ⊗₁-wit W W' θ)
+    → PathP (λ m → PathP (λ i → C.hom (assoc⋉₀-nrm U V W m i)
+                                      (assoc⋉₀-nrm U' V' W' m i))
+                   (Û .fst ⊗₁ (V̂ .fst ⊗₁ Ŵ .fst))
+                   ((Û .fst ⊗₁ V̂ .fst) ⊗₁ Ŵ .fst))
+            (assoc⋉₁ Û V̂ Ŵ) (⊗₁-assoc (Û .fst) (V̂ .fst) (Ŵ .fst))
+  assoc⋉₁-nrm Û V̂ Ŵ m =
+    assoc⋉₁ (nrm-slide₁ Û m) (nrm-slide₁ V̂ m) (nrm-slide₁ Ŵ m)
 
-    private
-      A₁ = assoc⋉₀-nrm (⊗₀-nrm x ⋉₀ ⊗₀-nrm y) (⊗₀-nrm z) (⊗₀-nrm w)
-      A₂ = assoc⋉₀-nrm (⊗₀-nrm x) (⊗₀-nrm y) (⊗₀-nrm z ⋉₀ ⊗₀-nrm w)
-      A₃ = assoc⋉₀-nrm (⊗₀-nrm x) (⊗₀-nrm y ⋉₀ ⊗₀-nrm z) (⊗₀-nrm w)
+  module pentagon₀ (x y z w : C.ob) where
+    open pentagon⋉₀ (⊗₀-nrm x) (⊗₀-nrm y) (⊗₀-nrm z) (⊗₀-nrm w) public
+
+    A₁ = assoc⋉₀-nrm (⊗₀-nrm x ⋉₀ ⊗₀-nrm y) (⊗₀-nrm z) (⊗₀-nrm w)
+    A₂ = assoc⋉₀-nrm (⊗₀-nrm x) (⊗₀-nrm y) (⊗₀-nrm z ⋉₀ ⊗₀-nrm w)
+    A₃ = assoc⋉₀-nrm (⊗₀-nrm x) (⊗₀-nrm y ⋉₀ ⊗₀-nrm z) (⊗₀-nrm w)
+
+    whisker₃ = ap (λ t → ap (x ⊗₀_) (⊗₀-assoc y z w)
+                         ∙ (t ∙ ap (_⊗₀ w) (⊗₀-assoc x y z))) (sym A₃)
+    whisker₂ = ap (λ t → t ∙ assoc⋉₀ (⊗₀-nrm x ⋉₀ ⊗₀-nrm y)
+                                     (⊗₀-nrm z) (⊗₀-nrm w)) A₂
+    whisker₁ = ap (⊗₀-assoc x y (z ⊗₀ w) ∙_) A₁
 
     ⊗₀-pentagon
       : ap (x ⊗₀_) (⊗₀-assoc y z w)
         ∙ ⊗₀-assoc x (y ⊗₀ z) w
         ∙ ap (_⊗₀ w) (⊗₀-assoc x y z)
       ≡ ⊗₀-assoc x y (z ⊗₀ w) ∙ ⊗₀-assoc (x ⊗₀ y) z w
-    ⊗₀-pentagon =
-        ap (λ t → ap (x ⊗₀_) (⊗₀-assoc y z w)
-                  ∙ (t ∙ ap (_⊗₀ w) (⊗₀-assoc x y z))) (sym A₃)
-      ∙ pentagon⋉₀
-      ∙ ap (λ t → t ∙ assoc⋉₀ (⊗₀-nrm x ⋉₀ ⊗₀-nrm y) (⊗₀-nrm z) (⊗₀-nrm w)) A₂
-      ∙ ap (⊗₀-assoc x y (z ⊗₀ w) ∙_) A₁
+    ⊗₀-pentagon = whisker₃ ∙ pentagon⋉₀ ∙ whisker₂ ∙ whisker₁
 ```
 
 ## The triangle
@@ -404,6 +445,196 @@ of `pentagon⋉₀`'s core.
                      (((φ ⊗₁ ψ) ⊗₁ χ) ⊗₁ ω))
               (λ i → top̂ i .fst) (λ i → bot̂ i .fst)
     pentagon⋉₁ j i = fiber-pentagon₁ j i .fst
+```
+
+## The canonical displaced pentagon
+
+The pentagon over `⊗₀-pentagon` itself: a square of hom-lines
+whose edges are the `comp-pathp₂`-composites of the whiskered
+`⊗₁-assoc` lines. `⊗₀-pentagon` is a `∙`-tree, and every leaf
+displaces by construction: the `A`-whiskers are `assoc⋉₁-nrm`
+slides over their level-0 mates, the `ap-comp` shuffles are
+`comp-pathp₂-ap` squares — the hom component of a `⊗₁-wit-∙`
+glue *is* the `comp-pathp₂` at the reindexed witness family, so
+the shuffle square's two ends are the two readings of the same
+composite — and the core leaf is `pentagon⋉₁`. `comp-pathp₂` at
+the family of pentagon fillers glues the displaced leaves along
+exactly the base tree, so every interface between consecutive
+leaves is definitional.
+
+```agda
+  module pentagon₁ {x x'} (φ : C.hom x x') {y y'} (ψ : C.hom y y')
+                   {z z'} (χ : C.hom z z') {w w'} (ω : C.hom w w')
+    where
+
+    private
+      module Q  = pentagon₀ x y z w
+      module Q' = pentagon₀ x' y' z' w'
+      module P₁ = pentagon⋉₁ (⊗₁-wit-nrm φ) (⊗₁-wit-nrm ψ)
+                             (⊗₁-wit-nrm χ) (⊗₁-wit-nrm ω)
+
+      Fam : (x ⊗₀ y ⊗₀ z ⊗₀ w ≡ ((x ⊗₀ y) ⊗₀ z) ⊗₀ w)
+          → (x' ⊗₀ y' ⊗₀ z' ⊗₀ w' ≡ ((x' ⊗₀ y') ⊗₀ z') ⊗₀ w')
+          → Type h
+      Fam p p' = PathP (λ i → C.hom (p i) (p' i))
+                       (φ ⊗₁ ψ ⊗₁ χ ⊗₁ ω) (((φ ⊗₁ ψ) ⊗₁ χ) ⊗₁ ω)
+
+      -- the displaced A-whiskers: assoc⋉₁-nrm at the same
+      -- compound witnesses A₁–A₃ straighten
+      Â₁ = assoc⋉₁-nrm (⊗₁-wit-nrm φ ⋉₁ ⊗₁-wit-nrm ψ)
+                       (⊗₁-wit-nrm χ) (⊗₁-wit-nrm ω)
+      Â₂ = assoc⋉₁-nrm (⊗₁-wit-nrm φ) (⊗₁-wit-nrm ψ)
+                       (⊗₁-wit-nrm χ ⋉₁ ⊗₁-wit-nrm ω)
+      Â₃ = assoc⋉₁-nrm (⊗₁-wit-nrm φ) (⊗₁-wit-nrm ψ ⋉₁ ⊗₁-wit-nrm χ)
+                       (⊗₁-wit-nrm ω)
+
+      -- the inner witness glue of top̂, shared by both shuffle legs
+      ẑ = ⊗₁-wit-∙ Q.σ₃₂ Q.σ₂₁ Q'.σ₃₂ Q'.σ₂₁ P₁.σ̂₃₂ P₁.σ̂₂₁
+```
+
+The chain of edges: the stated top edge, the σ-projection
+composites in their three degrees of splitting, the hom shadows
+of `top̂`/`bot̂`, the half-straightened composites, and the stated
+bottom edge.
+
+```agda
+    top₁ : Fam (ap (x ⊗₀_) (⊗₀-assoc y z w)
+                ∙ ⊗₀-assoc x (y ⊗₀ z) w ∙ ap (_⊗₀ w) (⊗₀-assoc x y z))
+               (ap (x' ⊗₀_) (⊗₀-assoc y' z' w')
+                ∙ ⊗₀-assoc x' (y' ⊗₀ z') w' ∙ ap (_⊗₀ w') (⊗₀-assoc x' y' z'))
+    top₁ =
+      comp-pathp₂ C.hom
+        (ap (x ⊗₀_) (⊗₀-assoc y z w))
+        (⊗₀-assoc x (y ⊗₀ z) w ∙ ap (_⊗₀ w) (⊗₀-assoc x y z))
+        (ap (x' ⊗₀_) (⊗₀-assoc y' z' w'))
+        (⊗₀-assoc x' (y' ⊗₀ z') w' ∙ ap (_⊗₀ w') (⊗₀-assoc x' y' z'))
+        (λ i → φ ⊗₁ ⊗₁-assoc ψ χ ω i)
+        (comp-pathp₂ C.hom
+          (⊗₀-assoc x (y ⊗₀ z) w) (ap (_⊗₀ w) (⊗₀-assoc x y z))
+          (⊗₀-assoc x' (y' ⊗₀ z') w') (ap (_⊗₀ w') (⊗₀-assoc x' y' z'))
+          (⊗₁-assoc φ (ψ ⊗₁ χ) ω)
+          (λ i → ⊗₁-assoc φ ψ χ i ⊗₁ ω))
+
+    bot₁ : Fam (⊗₀-assoc x y (z ⊗₀ w) ∙ ⊗₀-assoc (x ⊗₀ y) z w)
+               (⊗₀-assoc x' y' (z' ⊗₀ w') ∙ ⊗₀-assoc (x' ⊗₀ y') z' w')
+    bot₁ =
+      comp-pathp₂ C.hom
+        (⊗₀-assoc x y (z ⊗₀ w)) (⊗₀-assoc (x ⊗₀ y) z w)
+        (⊗₀-assoc x' y' (z' ⊗₀ w')) (⊗₀-assoc (x' ⊗₀ y') z' w')
+        (⊗₁-assoc φ ψ (χ ⊗₁ ω)) (⊗₁-assoc (φ ⊗₁ ψ) χ ω)
+
+    private
+      E₁ = comp-pathp₂ C.hom
+             (ap fst Q.σ₅₃) (ap fst Q.σ₃₂ ∙ ap fst Q.σ₂₁)
+             (ap fst Q'.σ₅₃) (ap fst Q'.σ₃₂ ∙ ap fst Q'.σ₂₁)
+             (λ i → P₁.σ̂₅₃ i .fst)
+             (comp-pathp₂ C.hom
+               (ap fst Q.σ₃₂) (ap fst Q.σ₂₁)
+               (ap fst Q'.σ₃₂) (ap fst Q'.σ₂₁)
+               (λ i → P₁.σ̂₃₂ i .fst) (λ i → P₁.σ̂₂₁ i .fst))
+
+      E₂ = comp-pathp₂ C.hom
+             (ap fst Q.σ₅₃) (ap fst (Q.σ₃₂ ∙ Q.σ₂₁))
+             (ap fst Q'.σ₅₃) (ap fst (Q'.σ₃₂ ∙ Q'.σ₂₁))
+             (λ i → P₁.σ̂₅₃ i .fst) (λ i → ẑ i .fst)
+
+      E₃ : Fam (ap fst (Q.σ₅₃ ∙ Q.σ₃₂ ∙ Q.σ₂₁))
+               (ap fst (Q'.σ₅₃ ∙ Q'.σ₃₂ ∙ Q'.σ₂₁))
+      E₃ i = P₁.top̂ i .fst
+
+      E₄ : Fam (ap fst (Q.σ₅₄ ∙ Q.σ₄₁)) (ap fst (Q'.σ₅₄ ∙ Q'.σ₄₁))
+      E₄ i = P₁.bot̂ i .fst
+
+      E₅ = comp-pathp₂ C.hom
+             (ap fst Q.σ₅₄) (ap fst Q.σ₄₁)
+             (ap fst Q'.σ₅₄) (ap fst Q'.σ₄₁)
+             (λ i → P₁.σ̂₅₄ i .fst) (λ i → P₁.σ̂₄₁ i .fst)
+
+      E₆ = comp-pathp₂ C.hom
+             (⊗₀-assoc x y (z ⊗₀ w)) (ap fst Q.σ₄₁)
+             (⊗₀-assoc x' y' (z' ⊗₀ w')) (ap fst Q'.σ₄₁)
+             (⊗₁-assoc φ ψ (χ ⊗₁ ω)) (λ i → P₁.σ̂₄₁ i .fst)
+```
+
+One displaced leaf per base leaf. The whiskers ride the
+`assoc⋉₁-nrm` slides; the shuffles are `comp-pathp₂-ap`
+squares, reversed where the base leaf is a `sym`; the core is
+`pentagon⋉₁` verbatim. Every stated endpoint is the
+definitional value of its neighbour's boundary.
+
+```agda
+      whisker̂₃ : PathP (λ m → Fam (Q.whisker₃ m) (Q'.whisker₃ m)) top₁ E₁
+      whisker̂₃ m =
+        comp-pathp₂ C.hom
+          (ap fst Q.σ₅₃) (Q.A₃ (~ m) ∙ ap fst Q.σ₂₁)
+          (ap fst Q'.σ₅₃) (Q'.A₃ (~ m) ∙ ap fst Q'.σ₂₁)
+          (λ i → P₁.σ̂₅₃ i .fst)
+          (comp-pathp₂ C.hom
+            (Q.A₃ (~ m)) (ap fst Q.σ₂₁)
+            (Q'.A₃ (~ m)) (ap fst Q'.σ₂₁)
+            (Â₃ (~ m)) (λ i → P₁.σ̂₂₁ i .fst))
+
+      step̂₁ : PathP (λ m → Fam (Q.step₁ m) (Q'.step₁ m)) E₁ E₂
+      step̂₁ m =
+        comp-pathp₂ C.hom
+          (ap fst Q.σ₅₃) (ap-comp fst Q.σ₃₂ Q.σ₂₁ (~ m))
+          (ap fst Q'.σ₅₃) (ap-comp fst Q'.σ₃₂ Q'.σ₂₁ (~ m))
+          (λ i → P₁.σ̂₅₃ i .fst)
+          (comp-pathp₂-ap C.hom fst fst Q.σ₃₂ Q.σ₂₁ Q'.σ₃₂ Q'.σ₂₁
+            (λ i → P₁.σ̂₃₂ i .fst) (λ i → P₁.σ̂₂₁ i .fst) (~ m))
+
+      step̂₂ : PathP (λ m → Fam (Q.step₂ m) (Q'.step₂ m)) E₂ E₃
+      step̂₂ m =
+        comp-pathp₂-ap C.hom fst fst
+          Q.σ₅₃ (Q.σ₃₂ ∙ Q.σ₂₁) Q'.σ₅₃ (Q'.σ₃₂ ∙ Q'.σ₂₁)
+          (λ i → P₁.σ̂₅₃ i .fst) (λ i → ẑ i .fst) (~ m)
+
+      step̂₄ : PathP (λ m → Fam (Q.step₄ m) (Q'.step₄ m)) E₄ E₅
+      step̂₄ =
+        comp-pathp₂-ap C.hom fst fst Q.σ₅₄ Q.σ₄₁ Q'.σ₅₄ Q'.σ₄₁
+          (λ i → P₁.σ̂₅₄ i .fst) (λ i → P₁.σ̂₄₁ i .fst)
+
+      whisker̂₂ : PathP (λ m → Fam (Q.whisker₂ m) (Q'.whisker₂ m)) E₅ E₆
+      whisker̂₂ m =
+        comp-pathp₂ C.hom
+          (Q.A₂ m) (ap fst Q.σ₄₁)
+          (Q'.A₂ m) (ap fst Q'.σ₄₁)
+          (Â₂ m) (λ i → P₁.σ̂₄₁ i .fst)
+
+      whisker̂₁ : PathP (λ m → Fam (Q.whisker₁ m) (Q'.whisker₁ m)) E₆ bot₁
+      whisker̂₁ m =
+        comp-pathp₂ C.hom
+          (⊗₀-assoc x y (z ⊗₀ w)) (Q.A₁ m)
+          (⊗₀-assoc x' y' (z' ⊗₀ w')) (Q'.A₁ m)
+          (⊗₁-assoc φ ψ (χ ⊗₁ ω)) (Â₁ m)
+
+      pentagon̂⋉ : PathP (λ m → Fam (Q.pentagon⋉₀ m) (Q'.pentagon⋉₀ m)) E₁ E₅
+      pentagon̂⋉ =
+        comp-pathp₂ Fam Q.step₁ (Q.step₂ ∙ Q.step₃ ∙ Q.step₄)
+                        Q'.step₁ (Q'.step₂ ∙ Q'.step₃ ∙ Q'.step₄)
+          step̂₁
+          (comp-pathp₂ Fam Q.step₂ (Q.step₃ ∙ Q.step₄)
+                           Q'.step₂ (Q'.step₃ ∙ Q'.step₄)
+            step̂₂
+            (comp-pathp₂ Fam Q.step₃ Q.step₄ Q'.step₃ Q'.step₄
+              P₁.pentagon⋉₁ step̂₄))
+
+    ⊗₁-pentagon
+      : PathP (λ m → PathP (λ i → C.hom (Q.⊗₀-pentagon m i)
+                                        (Q'.⊗₀-pentagon m i))
+                     (φ ⊗₁ ψ ⊗₁ χ ⊗₁ ω) (((φ ⊗₁ ψ) ⊗₁ χ) ⊗₁ ω))
+              top₁ bot₁
+    ⊗₁-pentagon =
+      comp-pathp₂ Fam
+        Q.whisker₃ (Q.pentagon⋉₀ ∙ Q.whisker₂ ∙ Q.whisker₁)
+        Q'.whisker₃ (Q'.pentagon⋉₀ ∙ Q'.whisker₂ ∙ Q'.whisker₁)
+        whisker̂₃
+        (comp-pathp₂ Fam
+          Q.pentagon⋉₀ (Q.whisker₂ ∙ Q.whisker₁)
+          Q'.pentagon⋉₀ (Q'.whisker₂ ∙ Q'.whisker₁)
+          pentagon̂⋉
+          (comp-pathp₂ Fam Q.whisker₂ Q.whisker₁ Q'.whisker₂ Q'.whisker₁
+            whisker̂₂ whisker̂₁))
 ```
 
 ## The displaced triangle
