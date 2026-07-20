@@ -98,3 +98,53 @@ and `-l` — consume the same three cells, mirrored.
 ~~`comp-pathp₂-assoc` first (its own session, with the displaced
 `HComposite` uniqueness worked out), `comp-pathp₂-map` beside
 it~~ — landed; the two displaced hexagons land together next.
+
+## The execution map (scoped; the hexagon session follows it)
+
+Template: `pentagon₁` — the two-layer displacement in
+`Cat.Monoidal.Coherence`, whose shapes carry over slot-for-slot.
+Build `-r` first, mint `-l` as its slot-mirror in the same pass;
+both consume the same three Kan cells, mirrored.
+
+0. **`comp-pathp₂-merge`** (`Core.Path.Base`, beside `ap-merge`
+   and `comp-pathp₂-ap`): the displaced `ap-merge`. `ap-merge`
+   is definitionally the two-leaf tree
+   `sym (Path.assoc X (ap G p) (ap G e))
+   ∙ ap (X ∙_) (sym (ap-comp G p e))`, so the displaced mate is
+   `comp-pathp₂` at the `Fam` family along exactly that tree:
+   leaf one the reversed `comp-pathp₂-assoc` at the head line
+   and the two ap-image lines, leaf two the head-whiskered
+   reversed `comp-pathp₂-ap`. Both leaves exist. Where the
+   `▿₁`-whiskers meet a glued line, `comp-pathp₂-map` reconciles
+   whisker-of-`comp-pathp₂` with `comp-pathp₂`-of-whiskers —
+   shape read off the use site, home decided there (local to
+   `Hexagon` or beside `-map`).
+1. **The displaced fibers** — `hexagon-r₁`/`hexagon-l₁` in
+   `hexagon-theory`, each over a pair of level-0 instances
+   `Q`/`Q'` at `⊗₁-wit-nrm` witnesses (the `pentagon₁` layout):
+   displaced stations by `●₁`/`↝̂` over `a₁…a₄`, `c₁`, `c₅–c₇`;
+   `σ̂`-lines as `assoc-σ●₁`/`braid-σ●₁` instances, `↝̂`-slid and
+   `●₁`-whiskered on the level-0 sides; `μ̂`/`ρ̂` as pair-paths
+   with definitionally-refl hom, `Θ`/`θ̂` the `comp-pathp₂ Famc`
+   glue along the `κ`/`θ` base trees — the field whisker
+   (`⊗₁-hexagon-r♭`/`-l♭` entering as the second line),
+   `comp-pathp₂-assoc`, `comp-pathp₂-merge`, one displaced cell
+   per base leaf; `wit-prop` by `subst is-contr` along
+   `fiber-hexagon`, and
+   `fiber-hexagon₁ = is-prop→SquareP wit-prop top̂ refl bot̂ refl`
+   — the `pentagon●₁` closing move.
+2. **The canonical trees** — `braid●₁-nrm` the `nrm-slide₁`
+   one-liner beside `braid●₀-nrm`; the `step̂`-trees with
+   `comp-pathp₂-ap` squares at the `ap-comp` shuffles, the
+   `braid●₁-nrm` slide under `step-l₂`'s whisker, and
+   `comp-pathp₂-unitl` at the two `fst`-constant links — the
+   pair-path discipline is what makes the unitl leaf's endpoint
+   definitional (`λ i → μ̂ i .fst` reduces to `refl`); glue by
+   `comp-pathp₂ Fam` along the base trees into
+   `⊗₁-hexagon-r`/`⊗₁-hexagon-l`, `PathP`s over the object
+   hexagons from the glued `sym`-assoc/braid traversal to the
+   whiskered-braid traversal.
+
+Gates: first-attempt typecheck; `Indiscrete` re-checks untouched
+(its builders construct the fields, not the theory); cold profile
+against the `-r` 866 ms baseline; `just lint changed` clean.
