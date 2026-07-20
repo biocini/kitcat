@@ -1029,6 +1029,186 @@ comp-pathp₂-commutes {X = X} {Y = Y} F pa qa ra sa pb qb rb sb sqa sqb
     cb k (i = i0) = cat.rfill pb qb j k
     cb k (k = i0) = sqb j (~ i)
 
+-- comp-pathp₂-unique: the displaced HComposite.path for a binary
+-- family — two displaced composites over the same displaced walls,
+-- each gluing over one of two base HComposites, are identified over
+-- the base uniqueness square. The com runs along the hfil interiors
+-- of the two base path hcoms with the displaced cells as m-walls;
+-- at m = i0/i1 it caps on the cells' lids, and the j-walls are the
+-- constant endpoints, exactly as the base path square's sides are
+-- tube faces of its own hcom.
+comp-pathp₂-unique
+  : ∀ {u v w} {X : Type u} {Y : Type v} (F : X → Y → Type w)
+    {xa wa ya za : X} {pa : xa ≡ wa} {qa : xa ≡ ya} {ra : ya ≡ za}
+    {xb wb yb zb : Y} {pb : xb ≡ wb} {qb : xb ≡ yb} {rb : yb ≡ zb}
+    (αa βa : HComposite pa qa ra) (αb βb : HComposite pb qb rb)
+    {hx : F xa xb} {hw : F wa wb} {hy : F ya yb} {hz : F za zb}
+    (P : PathP (λ k → F (pa k) (pb k)) hx hw)
+    (Q : PathP (λ j → F (qa j) (qb j)) hx hy)
+    (R : PathP (λ k → F (ra k) (rb k)) hy hz)
+    {S : PathP (λ j → F (αa .fst j) (αb .fst j)) hw hz}
+    {T : PathP (λ j → F (βa .fst j) (βb .fst j)) hw hz}
+    (C : SquareP (λ j k → F (αa .snd j k) (αb .snd j k)) P Q R S)
+    (D : SquareP (λ j k → F (βa .snd j k) (βb .snd j k)) P Q R T)
+  → SquareP (λ m j → F (HComposite.path pa qa ra αa βa m j)
+                       (HComposite.path pb qb rb αb βb m j))
+      S (λ _ → hw) T (λ _ → hz)
+comp-pathp₂-unique {X = X} {Y = Y} F
+  {pa = pa} {qa} {ra} {pb = pb} {qb} {rb}
+  αa βa αb βb P Q R C D m j =
+  com (λ k → F (hfil (∂ m ∨ ∂ j) k ua) (hfil (∂ m ∨ ∂ j) k ub))
+      (∂ m ∨ ∂ j) λ where
+    k (m = i0) → C j k
+    k (m = i1) → D j k
+    k (j = i0) → P k
+    k (j = i1) → R k
+    k (k = i0) → Q j
+  where
+    ua : Sys (∂ m ∨ ∂ j) X
+    ua k (m = i0) = αa .snd j k
+    ua k (m = i1) = βa .snd j k
+    ua k (j = i0) = pa k
+    ua k (j = i1) = ra k
+    ua k (k = i0) = qa j
+    ub : Sys (∂ m ∨ ∂ j) Y
+    ub k (m = i0) = αb .snd j k
+    ub k (m = i1) = βb .snd j k
+    ub k (j = i0) = pb k
+    ub k (j = i1) = rb k
+    ub k (k = i0) = qb j
+
+-- comp-pathp₂-lcoh: the displaced cat.lcoh for a binary family —
+-- sections over the two base lcoh squares, glued along their hfil
+-- interiors; the i = i1 wall is comp-pathp₂-fill of the tail pair,
+-- and at j = i1 the base systems are pcom's for the refl-headed
+-- outer composite, so the lid is the right-nested comp-pathp₂ on
+-- the nose.
+comp-pathp₂-lcoh
+  : ∀ {u v w} {X : Type u} {Y : Type v} (F : X → Y → Type w)
+    {a₀ a₁ a₂ a₃ : X} (pa : a₀ ≡ a₁) (qa : a₁ ≡ a₂) (ra : a₂ ≡ a₃)
+    {b₀ b₁ b₂ b₃ : Y} (pb : b₀ ≡ b₁) (qb : b₁ ≡ b₂) (rb : b₂ ≡ b₃)
+    {h₀ : F a₀ b₀} {h₁ : F a₁ b₁} {h₂ : F a₂ b₂} {h₃ : F a₃ b₃}
+    (P : PathP (λ i → F (pa i) (pb i)) h₀ h₁)
+    (Q : PathP (λ i → F (qa i) (qb i)) h₁ h₂)
+    (R : PathP (λ i → F (ra i) (rb i)) h₂ h₃)
+  → SquareP (λ i j → F (cat.lcoh pa qa ra i j) (cat.lcoh pb qb rb i j))
+      (λ j → P (~ j)) Q R
+      (comp-pathp₂ F pa (qa ∙ ra) pb (qb ∙ rb) P
+        (comp-pathp₂ F qa ra qb rb Q R))
+comp-pathp₂-lcoh {X = X} {Y = Y} F pa qa ra pb qb rb P Q R i j =
+  com (λ k → F (hfil (∂ i ∨ ~ j) k la) (hfil (∂ i ∨ ~ j) k lb))
+      (∂ i ∨ ~ j) λ where
+    k (i = i0) → P (~ j)
+    k (i = i1) → comp-pathp₂-fill F qa ra qb rb Q R j k
+    k (j = i0) → Q (i ∧ k)
+    k (k = i0) → P (i ∨ ~ j)
+  where
+    la : Sys (∂ i ∨ ~ j) X
+    la k (i = i0) = pa (~ j)
+    la k (i = i1) = cat.fill qa ra k j
+    la k (j = i0) = qa (i ∧ k)
+    la k (k = i0) = pa (i ∨ ~ j)
+    lb : Sys (∂ i ∨ ~ j) Y
+    lb k (i = i0) = pb (~ j)
+    lb k (i = i1) = cat.fill qb rb k j
+    lb k (j = i0) = qb (i ∧ k)
+    lb k (k = i0) = pb (i ∨ ~ j)
+
+-- comp-pathp₂-rcoh: the displaced cat.rcoh for a binary family —
+-- the k = i0 cap is comp-pathp₂-rfill of the head pair, whose
+-- composite side is the left-nested inner comp-pathp₂; at j = i1
+-- the base systems are pcom's for the outer composite at the rfill
+-- lid, so the lid is the left-nested comp-pathp₂ on the nose.
+comp-pathp₂-rcoh
+  : ∀ {u v w} {X : Type u} {Y : Type v} (F : X → Y → Type w)
+    {a₀ a₁ a₂ a₃ : X} (pa : a₀ ≡ a₁) (qa : a₁ ≡ a₂) (ra : a₂ ≡ a₃)
+    {b₀ b₁ b₂ b₃ : Y} (pb : b₀ ≡ b₁) (qb : b₁ ≡ b₂) (rb : b₂ ≡ b₃)
+    {h₀ : F a₀ b₀} {h₁ : F a₁ b₁} {h₂ : F a₂ b₂} {h₃ : F a₃ b₃}
+    (P : PathP (λ i → F (pa i) (pb i)) h₀ h₁)
+    (Q : PathP (λ i → F (qa i) (qb i)) h₁ h₂)
+    (R : PathP (λ i → F (ra i) (rb i)) h₂ h₃)
+  → SquareP (λ i j → F (cat.rcoh pa qa ra i j) (cat.rcoh pb qb rb i j))
+      (λ j → P (~ j)) Q R
+      (comp-pathp₂ F (pa ∙ qa) ra (pb ∙ qb) rb
+        (comp-pathp₂ F pa qa pb qb P Q) R)
+comp-pathp₂-rcoh {X = X} {Y = Y} F pa qa ra pb qb rb P Q R i j =
+  com (λ k → F (hfil (∂ i ∨ ~ j) k ca) (hfil (∂ i ∨ ~ j) k cb))
+      (∂ i ∨ ~ j) λ where
+    k (i = i0) → P (~ j)
+    k (i = i1) → R (j ∧ k)
+    k (j = i0) → Q i
+    k (k = i0) → comp-pathp₂-rfill F pa qa pb qb P Q i j
+  where
+    ca : Sys (∂ i ∨ ~ j) X
+    ca k (i = i0) = pa (~ j)
+    ca k (i = i1) = ra (j ∧ k)
+    ca k (j = i0) = qa i
+    ca k (k = i0) = cat.rfill pa qa i j
+    cb : Sys (∂ i ∨ ~ j) Y
+    cb k (i = i0) = pb (~ j)
+    cb k (i = i1) = rb (j ∧ k)
+    cb k (j = i0) = qb i
+    cb k (k = i0) = cat.rfill pb qb i j
+
+-- comp-pathp₂-assoc: the displaced Path.assoc for a binary family —
+-- the two nestings of comp-pathp₂ are identified over the base
+-- assoc squares. Path.assoc is HComposite.unique at the lcoh/rcoh
+-- witnesses, so the displaced mate is comp-pathp₂-unique at the
+-- displaced lcoh/rcoh cells, whose lids are the two nestings on
+-- the nose; every boundary is definitional.
+comp-pathp₂-assoc
+  : ∀ {u v w} {X : Type u} {Y : Type v} (F : X → Y → Type w)
+    {a₀ a₁ a₂ a₃ : X} (pa : a₀ ≡ a₁) (qa : a₁ ≡ a₂) (ra : a₂ ≡ a₃)
+    {b₀ b₁ b₂ b₃ : Y} (pb : b₀ ≡ b₁) (qb : b₁ ≡ b₂) (rb : b₂ ≡ b₃)
+    {h₀ : F a₀ b₀} {h₁ : F a₁ b₁} {h₂ : F a₂ b₂} {h₃ : F a₃ b₃}
+    (P : PathP (λ i → F (pa i) (pb i)) h₀ h₁)
+    (Q : PathP (λ i → F (qa i) (qb i)) h₁ h₂)
+    (R : PathP (λ i → F (ra i) (rb i)) h₂ h₃)
+  → PathP (λ m → PathP (λ i → F (Path.assoc pa qa ra m i)
+                                (Path.assoc pb qb rb m i))
+                 h₀ h₃)
+      (comp-pathp₂ F pa (qa ∙ ra) pb (qb ∙ rb) P
+        (comp-pathp₂ F qa ra qb rb Q R))
+      (comp-pathp₂ F (pa ∙ qa) ra (pb ∙ qb) rb
+        (comp-pathp₂ F pa qa pb qb P Q) R)
+comp-pathp₂-assoc F pa qa ra pb qb rb P Q R =
+  comp-pathp₂-unique F
+    ((pa ∙ (qa ∙ ra)) , cat.lcoh pa qa ra)
+    (((pa ∙ qa) ∙ ra) , cat.rcoh pa qa ra)
+    ((pb ∙ (qb ∙ rb)) , cat.lcoh pb qb rb)
+    (((pb ∙ qb) ∙ rb) , cat.rcoh pb qb rb)
+    (λ k → P (~ k)) Q R
+    (comp-pathp₂-lcoh F pa qa ra pb qb rb P Q R)
+    (comp-pathp₂-rcoh F pa qa ra pb qb rb P Q R)
+
+-- comp-pathp₂-map: a fiberwise map under comp-pathp₂ — hcom does
+-- not commute with fiberwise application definitionally, so the
+-- image of the composite and the composite of the images are
+-- identified by one com along the base fill towers, with the two
+-- fillers (the F-filler's image and the G-filler) as the m-walls;
+-- at m = i0/i1 the fil cap at i1 lands the two composites on the
+-- nose. The binary-family displacement of pcom.map.
+comp-pathp₂-map
+  : ∀ {u v w w'} {X : Type u} {Y : Type v}
+    (F : X → Y → Type w) (G : X → Y → Type w')
+    (f : ∀ {x y} → F x y → G x y)
+    {a₀ a₁ a₂ : X} (pa : a₀ ≡ a₁) (qa : a₁ ≡ a₂)
+    {b₀ b₁ b₂ : Y} (pb : b₀ ≡ b₁) (qb : b₁ ≡ b₂)
+    {h₀ : F a₀ b₀} {h₁ : F a₁ b₁} {h₂ : F a₂ b₂}
+    (P : PathP (λ i → F (pa i) (pb i)) h₀ h₁)
+    (Q : PathP (λ i → F (qa i) (qb i)) h₁ h₂)
+  → (λ i → f (comp-pathp₂ F pa qa pb qb P Q i))
+  ≡ comp-pathp₂ G pa qa pb qb (λ i → f (P i)) (λ i → f (Q i))
+comp-pathp₂-map F G f pa qa pb qb {h₀ = h₀} P Q m i =
+  com (λ j → G (cat.fill pa qa i j) (cat.fill pb qb i j))
+      (∂ i ∨ ∂ m) λ where
+    j (i = i0) → f h₀
+    j (i = i1) → f (Q j)
+    j (j = i0) → f (P i)
+    j (m = i0) → f (comp-pathp₂-fill F pa qa pb qb P Q j i)
+    j (m = i1) → comp-pathp₂-fill G pa qa pb qb
+                   (λ i → f (P i)) (λ i → f (Q i)) j i
+
 ```
 
 ## Chain Reasoning

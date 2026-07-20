@@ -22,6 +22,22 @@ exactly `ap-merge`, which `Core.Path.Base` already carries. All
 four now call it, so the displaced tree targets one displaced
 cell per reconciler instead of a two-leaf inline shape.
 
+**The assoc/map cells** (`Core.Kan`): `comp-pathp₂-unique`
+displaces `HComposite.path` for a binary family — one com along
+the hfil interiors of the two base path hcoms, the displaced
+cells as m-walls, every boundary definitional.
+`comp-pathp₂-lcoh`/`-rcoh` displace `cat.lcoh`/`cat.rcoh` (the
+`-rcoh` cap is `comp-pathp₂-rfill`, whose composite side lands
+the left-nested lid), and `comp-pathp₂-assoc` is
+`comp-pathp₂-unique` at those cells — mirroring `Path.assoc` =
+`HComposite.unique` at `lcoh`/`rcoh` leaf-for-leaf.
+`comp-pathp₂-map` is one com along the base fill towers with the
+F-filler's image and the G-filler as m-walls — the binary-family
+displacement of `pcom.map`. All additive: the base systems are
+rebuilt locally in `where` clauses (the `-rfill`/`-commutes`
+idiom), no landed module touched. First-attempt typecheck; all
+Kan consumers re-check untouched.
+
 ## The finding: the μ̂/ρ̂ links must be pair-paths
 
 The tree's `Path.unitl` leaves demand it. The displaced edge
@@ -57,17 +73,17 @@ so `Θ`'s leaves need:
 2. **`comp-pathp₂-assoc`** — the displaced `Path.assoc`: a square
    from `comp-pathp₂ P (comp-pathp₂ Q R)` to
    `comp-pathp₂ (comp-pathp₂ P Q) R` over the base assoc squares.
-   Missing. `Path.assoc` is an `HComposite.unique` projection, so
-   the displaced mate wants the displaced uniqueness argument —
-   its own Core.Kan arc.
+   Landed (see above): `comp-pathp₂-unique` at the displaced
+   `lcoh`/`rcoh` cells.
 3. **The displaced `ap-merge`** — assembled from 2 plus a
    fiberwise-map naturality cell (`comp-pathp₂-map`): the
    `●₁`-pairings' characterizations whisker *pointwise* under
    `▿₁`, and `hcom` does not commute with fiberwise application
    definitionally, so relating the whisker of a `comp-pathp₂` to
    the `comp-pathp₂` of the whiskers is a lemma, not a reduction.
-   Missing. (`comp-pathp₂-ap` covers reindexing along a map of
-   the *base* only.)
+   `comp-pathp₂-map` landed (see above); the assembly with 2 is
+   hexagon-session material. (`comp-pathp₂-ap` covers reindexing
+   along a map of the *base* only.)
 
 Everything else is ready as the braided-layer note said: the
 σ̂-lines are `⊗₁-wit-σ[_,_]` instances at the sealed heads
@@ -79,6 +95,6 @@ and `-l` — consume the same three cells, mirrored.
 
 ## Order
 
-`comp-pathp₂-assoc` first (its own session, with the displaced
-`HComposite` uniqueness worked out), `comp-pathp₂-map` beside it,
-then the two displaced hexagons land together.
+~~`comp-pathp₂-assoc` first (its own session, with the displaced
+`HComposite` uniqueness worked out), `comp-pathp₂-map` beside
+it~~ — landed; the two displaced hexagons land together next.
