@@ -37,6 +37,37 @@ ap-∘ : ∀ {u v w} {A : Type u} {B : Type v} {C : Type w}
      → ap (λ a → g (f a)) p ≡ ap g (ap f p)
 ap-∘ g f p = refl
 
+-- comp-pathp₂-ap: the displaced ap-comp. A comp-pathp₂ at a
+-- reindexed binary family agrees with the comp-pathp₂ at the base
+-- family over the ap-images, as a square over the two ap-comp
+-- shuffles: the com is retaken along the HComposite coherence
+-- between ap-comp's two fillers, whose i0/i1 slices are the two
+-- comp-pathp₂ lines definitionally.
+comp-pathp₂-ap
+  : ∀ {uA uB u v w} {A : Type uA} {B : Type uB} {X : Type u} {Y : Type v}
+    (F : X → Y → Type w) (f : A → X) (g : B → Y)
+    {a₀ a₁ a₂ : A} (pa : a₀ ≡ a₁) (qa : a₁ ≡ a₂)
+    {b₀ b₁ b₂ : B} (pb : b₀ ≡ b₁) (qb : b₁ ≡ b₂)
+    {h₀ : F (f a₀) (g b₀)} {h₁ : F (f a₁) (g b₁)} {h₂ : F (f a₂) (g b₂)}
+    (P : PathP (λ i → F (f (pa i)) (g (pb i))) h₀ h₁)
+    (Q : PathP (λ i → F (f (qa i)) (g (qb i))) h₁ h₂)
+  → PathP (λ m → PathP (λ i → F (ap-comp f pa qa m i) (ap-comp g pb qb m i))
+                 h₀ h₂)
+          (comp-pathp₂ (λ a b → F (f a) (g b)) pa qa pb qb P Q)
+          (comp-pathp₂ F (ap f pa) (ap f qa) (ap g pb) (ap g qb) P Q)
+comp-pathp₂-ap F f g pa qa pb qb {h₀ = h₀} P Q m i =
+  com (λ t → F (cohA m i t) (cohB m i t)) (∂ i) λ where
+    t (i = i0) → h₀
+    t (i = i1) → Q t
+    t (t = i0) → P i
+  where
+    cohA = HComposite.coh refl (ap f pa) (ap f qa)
+             (ap f (pa ∙ qa) , λ i j → f (cat.fill pa qa i j))
+             (ap f pa ∙ ap f qa , cat.fill (ap f pa) (ap f qa))
+    cohB = HComposite.coh refl (ap g pb) (ap g qb)
+             (ap g (pb ∙ qb) , λ i j → g (cat.fill pb qb i j))
+             (ap g pb ∙ ap g qb , cat.fill (ap g pb) (ap g qb))
+
 ap-merge
   : ∀ {u v} {A : Type u} {B : Type v} (G : A → B) {a a' a'' : A} {w : B}
     (X : w ≡ G a) (p : a ≡ a') (e : a' ≡ a'')
