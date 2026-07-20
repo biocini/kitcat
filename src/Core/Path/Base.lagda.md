@@ -99,6 +99,104 @@ ap-merge
 ap-merge G X p e =
   sym (Path.assoc X (ap G p) (ap G e)) ∙ ap (X ∙_) (sym (ap-comp G p e))
 
+-- comp-pathp₂-merge: the displaced ap-merge. ap-merge is
+-- definitionally the two-leaf tree
+-- sym (Path.assoc X (ap G p) (ap G e)) ∙ ap (X ∙_) (sym (ap-comp G p e)),
+-- so the displaced mate is comp-pathp₂ at the family of lines over
+-- the composite, along exactly that tree: one displaced cell per
+-- leaf — the reversed comp-pathp₂-assoc at the head line and the
+-- two ap-image lines, then the head-whiskered reversed
+-- comp-pathp₂-ap. Every interface between the leaves is
+-- definitional.
+comp-pathp₂-merge
+  : ∀ {uA uB u v w} {A : Type uA} {B : Type uB} {X : Type u} {Y : Type v}
+    (F : X → Y → Type w) (f : A → X) (g : B → Y)
+    {a₀ a₁ a₂ : A} {wa : X} (Xa : wa ≡ f a₀) (pa : a₀ ≡ a₁) (ea : a₁ ≡ a₂)
+    {b₀ b₁ b₂ : B} {wb : Y} (Xb : wb ≡ g b₀) (pb : b₀ ≡ b₁) (eb : b₁ ≡ b₂)
+    {h₀ : F wa wb} {h₁ : F (f a₀) (g b₀)} {h₂ : F (f a₁) (g b₁)}
+    {h₃ : F (f a₂) (g b₂)}
+    (X̂ : PathP (λ i → F (Xa i) (Xb i)) h₀ h₁)
+    (P̂ : PathP (λ i → F (f (pa i)) (g (pb i))) h₁ h₂)
+    (Ê : PathP (λ i → F (f (ea i)) (g (eb i))) h₂ h₃)
+  → PathP (λ m → PathP (λ i → F (ap-merge f Xa pa ea m i)
+                                (ap-merge g Xb pb eb m i))
+                 h₀ h₃)
+      (comp-pathp₂ F (Xa ∙ ap f pa) (ap f ea) (Xb ∙ ap g pb) (ap g eb)
+        (comp-pathp₂ F Xa (ap f pa) Xb (ap g pb) X̂ P̂) Ê)
+      (comp-pathp₂ F Xa (ap f (pa ∙ ea)) Xb (ap g (pb ∙ eb)) X̂
+        (comp-pathp₂ (λ a b → F (f a) (g b)) pa ea pb eb P̂ Ê))
+comp-pathp₂-merge F f g {a₂ = a₂} {wa = wa} Xa pa ea {b₂ = b₂} {wb = wb}
+  Xb pb eb {h₀ = h₀} {h₃ = h₃} X̂ P̂ Ê =
+  comp-pathp₂ Fam
+    (sym (Path.assoc Xa (ap f pa) (ap f ea)))
+    (ap (Xa ∙_) (sym (ap-comp f pa ea)))
+    (sym (Path.assoc Xb (ap g pb) (ap g eb)))
+    (ap (Xb ∙_) (sym (ap-comp g pb eb)))
+    assoĉ shufflê
+  where
+    Fam : wa ≡ f a₂ → wb ≡ g b₂ → Type _
+    Fam p p' = PathP (λ i → F (p i) (p' i)) h₀ h₃
+
+    assoĉ
+      : PathP (λ m → Fam (Path.assoc Xa (ap f pa) (ap f ea) (~ m))
+                         (Path.assoc Xb (ap g pb) (ap g eb) (~ m)))
+          (comp-pathp₂ F (Xa ∙ ap f pa) (ap f ea) (Xb ∙ ap g pb) (ap g eb)
+            (comp-pathp₂ F Xa (ap f pa) Xb (ap g pb) X̂ P̂) Ê)
+          (comp-pathp₂ F Xa (ap f pa ∙ ap f ea) Xb (ap g pb ∙ ap g eb) X̂
+            (comp-pathp₂ F (ap f pa) (ap f ea) (ap g pb) (ap g eb) P̂ Ê))
+    assoĉ m =
+      comp-pathp₂-assoc F Xa (ap f pa) (ap f ea) Xb (ap g pb) (ap g eb)
+        X̂ P̂ Ê (~ m)
+
+    shufflê
+      : PathP (λ m → Fam (Xa ∙ ap-comp f pa ea (~ m))
+                         (Xb ∙ ap-comp g pb eb (~ m)))
+          (comp-pathp₂ F Xa (ap f pa ∙ ap f ea) Xb (ap g pb ∙ ap g eb) X̂
+            (comp-pathp₂ F (ap f pa) (ap f ea) (ap g pb) (ap g eb) P̂ Ê))
+          (comp-pathp₂ F Xa (ap f (pa ∙ ea)) Xb (ap g (pb ∙ eb)) X̂
+            (comp-pathp₂ (λ a b → F (f a) (g b)) pa ea pb eb P̂ Ê))
+    shufflê m =
+      comp-pathp₂ F Xa (ap-comp f pa ea (~ m)) Xb (ap-comp g pb eb (~ m))
+        X̂ (comp-pathp₂-ap F f g pa ea pb eb P̂ Ê (~ m))
+
+-- comp-pathp₂-merge-map: the displaced ap-merge whose tail lines
+-- are fiberwise images ω ∘ P̂, ω ∘ Ê of lines in an inner family.
+-- The bare merge ends at the comp-pathp₂ of the images, but hcom
+-- does not commute with fiberwise application, so the merged end
+-- is reconciled to the image of the comp-pathp₂ — comp-pathp₂-map
+-- at the reindexed inner family, capped on the merge by one hcom
+-- in the m-direction; every boundary is definitional.
+comp-pathp₂-merge-map
+  : ∀ {uA uB u v w w'} {A : Type uA} {B : Type uB} {X : Type u} {Y : Type v}
+    (G : X → Y → Type w) (F : A → B → Type w') (f : A → X) (g : B → Y)
+    (ω : ∀ {a b} → F a b → G (f a) (g b))
+    {a₀ a₁ a₂ : A} {wa : X} (Xa : wa ≡ f a₀) (pa : a₀ ≡ a₁) (ea : a₁ ≡ a₂)
+    {b₀ b₁ b₂ : B} {wb : Y} (Xb : wb ≡ g b₀) (pb : b₀ ≡ b₁) (eb : b₁ ≡ b₂)
+    {h₀ : G wa wb} {k₁ : F a₀ b₀} {k₂ : F a₁ b₁} {k₃ : F a₂ b₂}
+    (X̂ : PathP (λ i → G (Xa i) (Xb i)) h₀ (ω k₁))
+    (P̂ : PathP (λ i → F (pa i) (pb i)) k₁ k₂)
+    (Ê : PathP (λ i → F (ea i) (eb i)) k₂ k₃)
+  → PathP (λ m → PathP (λ i → G (ap-merge f Xa pa ea m i)
+                                (ap-merge g Xb pb eb m i))
+                 h₀ (ω k₃))
+      (comp-pathp₂ G (Xa ∙ ap f pa) (ap f ea) (Xb ∙ ap g pb) (ap g eb)
+        (comp-pathp₂ G Xa (ap f pa) Xb (ap g pb) X̂ (λ i → ω (P̂ i)))
+        (λ i → ω (Ê i)))
+      (comp-pathp₂ G Xa (ap f (pa ∙ ea)) Xb (ap g (pb ∙ eb)) X̂
+        (λ i → ω (comp-pathp₂ F pa ea pb eb P̂ Ê i)))
+comp-pathp₂-merge-map G F f g ω Xa pa ea Xb pb eb X̂ P̂ Ê m =
+  hcom (∂ m) λ where
+    k (m = i0) →
+      comp-pathp₂ G (Xa ∙ ap f pa) (ap f ea) (Xb ∙ ap g pb) (ap g eb)
+        (comp-pathp₂ G Xa (ap f pa) Xb (ap g pb) X̂ (λ i → ω (P̂ i)))
+        (λ i → ω (Ê i))
+    k (m = i1) →
+      comp-pathp₂ G Xa (ap f (pa ∙ ea)) Xb (ap g (pb ∙ eb)) X̂
+        (comp-pathp₂-map F (λ a b → G (f a) (g b)) ω pa ea pb eb P̂ Ê (~ k))
+    k (k = i0) →
+      comp-pathp₂-merge G f g Xa pa ea Xb pb eb X̂
+        (λ i → ω (P̂ i)) (λ i → ω (Ê i)) m
+
 Ω : ∀ {u} → Type* u → Type u
 Ω (_ , a) = a ≡ a
 {-# INLINE Ω #-}

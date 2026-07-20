@@ -148,3 +148,39 @@ both consume the same three Kan cells, mirrored.
 Gates: first-attempt typecheck; `Indiscrete` re-checks untouched
 (its builders construct the fields, not the theory); cold profile
 against the `-r` 866 ms baseline; `just lint changed` clean.
+
+## Verification state
+
+Executed as mapped, first-attempt typecheck throughout
+(`--safe --erased-cubical`, Agda 2.9.0): `comp-pathp₂-merge`,
+then `hexagon-r₁` whole (fiber, both pair-path links, canonical
+tree), then `hexagon-l₁` minted as its slot-mirror — each check
+first-attempt.
+
+The step-0 reconciler question settled by generalization: the
+shape read off the use sites is identical at all four `μ̂`/`ρ̂`
+links — the merge's tail lines are always `▿₁`-whisker images,
+and the stations' characterizations carry the whisker of the
+glue where the bare merge ends at the glue of the whiskers — so
+it landed as one Core cell, `comp-pathp₂-merge-map` in
+`Core.Path.Base` beside `-merge` (the beside-`-map` home is
+unavailable: `Core.Kan` sits below `Path.Base` in the import
+order): the merge at the image lines, capped at the merged end
+by the reversed `comp-pathp₂-map` at the reindexed inner family
+through one `hcom` in the m-direction, every boundary
+definitional. The `ρ̂`-links are bare `comp-pathp₂-merge-map`
+instances wrapped in the pair-path; the `μ̂`-links wrap it in the
+`β₂`-whisker as the third leaf of the `Famc` glue, and the
+stations' `comp-pathp₂`-built characterizations make every
+leaf-to-leaf interface definitional slot-for-slot.
+
+Cold profile: the doubled module totals 13,250 ms against the
+866 ms level-0 baseline (`Coherence` cold: 6,297 ms, for scale).
+Heaviest cells: `fiber-hexagon₁` 865 ms (`-l`) / 559 ms (`-r`),
+`⊗₁-hexagon-l` 551 ms, the `-l` `Θ-assoc` 418 ms — in family
+with `pentagon̂●` 609 ms and `fiber-pentagon₁` 209 ms one level
+down the coherence ladder; level-0 definitions unchanged; no
+cell pathological. `Indiscrete` re-checks untouched; the full
+non-WIP library re-checks clean (the seven failures of the
+`src`-wide sweep are exactly the WIP modules already commented
+in `All.lagda.md`); `just lint changed` clean.
