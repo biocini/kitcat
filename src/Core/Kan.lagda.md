@@ -634,6 +634,22 @@ comp-pathp A B P Q i =
     j (i = i1) → Q j
     j (j = i0) → P i
 
+-- comp-pathp₁: the one-base-path version, for a unary family —
+-- the line is F of a single object path, glued along the
+-- cat.fill filler of the base composite
+comp-pathp₁
+  : ∀ {u w} {X : Type u} (F : X → Type w)
+    {a₀ a₁ a₂ : X} (pa : a₀ ≡ a₁) (qa : a₁ ≡ a₂)
+    {h₀ : F a₀} {h₁ : F a₁} {h₂ : F a₂}
+  → PathP (λ i → F (pa i)) h₀ h₁
+  → PathP (λ i → F (qa i)) h₁ h₂
+  → PathP (λ i → F ((pa ∙ qa) i)) h₀ h₂
+comp-pathp₁ F pa qa {h₀ = h₀} P Q i =
+  com (λ j → F (cat.fill pa qa i j)) (∂ i) λ where
+    j (i = i0) → h₀
+    j (i = i1) → Q j
+    j (j = i0) → P i
+
 -- comp-pathp₂: the two-base-path version, for a binary family —
 -- the line is F of two object paths, so the filler is taken
 -- pointwise along the cat.fill fillers of the two base composites
