@@ -667,6 +667,26 @@ comp-pathp₂ F pa qa pb qb {h₀ = h₀} P Q i =
     j (i = i1) → Q j
     j (j = i0) → P i
 
+-- comp-pathp₂-fill: the filler of comp-pathp₂ — the same com taken
+-- as a fil, sliding the line from P at m = i0 to the composite at
+-- m = i1 along the cat.fill fillers of the two base composites.
+-- Both ends are definitional (the fil cap and the com), so a
+-- construction applied along the filler is a strict-endpoint square.
+comp-pathp₂-fill
+  : ∀ {u v w} {X : Type u} {Y : Type v} (F : X → Y → Type w)
+    {a₀ a₁ a₂ : X} (pa : a₀ ≡ a₁) (qa : a₁ ≡ a₂)
+    {b₀ b₁ b₂ : Y} (pb : b₀ ≡ b₁) (qb : b₁ ≡ b₂)
+    {h₀ : F a₀ b₀} {h₁ : F a₁ b₁} {h₂ : F a₂ b₂}
+    (P : PathP (λ i → F (pa i) (pb i)) h₀ h₁)
+    (Q : PathP (λ i → F (qa i) (qb i)) h₁ h₂)
+    (m : I)
+  → PathP (λ i → F (cat.fill pa qa i m) (cat.fill pb qb i m)) h₀ (Q m)
+comp-pathp₂-fill F pa qa pb qb {h₀ = h₀} P Q m i =
+  fil (λ j → F (cat.fill pa qa i j) (cat.fill pb qb i j)) (∂ i) m λ where
+    j (i = i0) → h₀
+    j (i = i1) → Q j
+    j (j = i0) → P i
+
 -- comp-pathp₂-over: a section over comp-pathp₂ — lines of
 -- G-elements over the two glued F-lines glue over the com filler
 -- of comp-pathp₂ itself, whose lid at j = i1 is comp-pathp₂

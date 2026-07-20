@@ -361,7 +361,7 @@ of `theory₀`'s calculus.
         V = ⊗₀-nrm x
 
         κ₀ : U ≡ V
-        κ₀ = is-⊗₀-representable-prop _ U V
+        κ₀ = unitl-σ⋉₀ x
 
     -- the straightening square: top ap ⊗₀-emb (⊗₀-unitl x),
     -- left ⊗₀-emb-comp-op I x, bottom ⊗₀-idn-▴, right constant
@@ -648,6 +648,22 @@ produces.
     → ⊗₁-wit (U ↝ e) (U' ↝ e') ζ
   _↝̂_ {U = m , p} {U' = m' , p'} {e = e} {e' = e'} (σ , P) ê =
     σ , comp-pathp₂ ⊗₁-composite p e p' e' P ê
+
+  -- the displaced ↝-fill: the same slide one level up, with
+  -- comp-pathp₂-fill in the role of cat.fill — the hom is constant,
+  -- at m = i0 the slide is Û (the fil cap), at m = i1 the transport
+  -- Û ↝̂ ê (the com), both definitional
+  ↝̂-fill
+    : ∀ {F F' G G' : ⊗₀-composite}
+        {U : is-⊗₀-representable F} {U' : is-⊗₀-representable F'}
+        {η : ⊗₁-composite F F'} {ζ : ⊗₁-composite G G'}
+        {e : F ≡ G} {e' : F' ≡ G'}
+      (Û : ⊗₁-wit U U' η)
+      (ê : PathP (λ i → ⊗₁-composite (e i) (e' i)) η ζ)
+      (m : Core.Base.I)
+    → ⊗₁-wit (↝-fill U e m) (↝-fill U' e' m) (ê m)
+  ↝̂-fill {U = m₀ , p} {U' = m₀' , p'} {e = e} {e' = e'} (σ , P) ê m =
+    σ , comp-pathp₂-fill ⊗₁-composite p e p' e' P ê m
 ```
 
 `⊗₁-wit-σ` is the displaced propositionality path: over the
@@ -755,11 +771,12 @@ Each level-0 identity is a wit-calculus projection at
 `⋉₀`/`↝`-witnesses, so its displaced image is the same
 projection one level up, at the displaced witnesses: `⊗₁-assoc`
 is `assoc⋉₁` at normal witnesses exactly as `⊗₀-assoc` is
-`assoc⋉₀` at `⊗₀-nrm`s, and the unitors are `⊗₁-wit-unique` at
-the `↝̂`-transports of the normal pairings along the displaced
-funext absorptions — the same witnesses `⊗₀-unitr`/`⊗₀-unitl`
-name, displaced. Naturality is the type: one `PathP` between
-the derived tensors over the level-0 identity.
+`assoc⋉₀` at `⊗₀-nrm`s, and the unitors are the `fst`-shadows of
+the `unitr-σ⋉₁`/`unitl-σ⋉₁` lines — `⊗₁-wit-σ` at the
+`↝̂`-transports of the normal pairings along the displaced funext
+absorptions, sealed over the level-0 unitor σ-lines exactly as
+`assoc-σ⋉₁` over `assoc-σ⋉₀`. Naturality is the type: one
+`PathP` between the derived tensors over the level-0 identity.
 
 ```agda
   ⊗₁-assoc
@@ -769,21 +786,41 @@ the derived tensors over the level-0 identity.
             (φ ⊗₁ (ψ ⊗₁ χ)) ((φ ⊗₁ ψ) ⊗₁ χ)
   ⊗₁-assoc φ ψ χ = assoc⋉₁ (⊗₁-wit-nrm φ) (⊗₁-wit-nrm ψ) (⊗₁-wit-nrm χ)
 
+  opaque
+    unfolding unitr-σ⋉₀
+
+    unitr-σ⋉₁
+      : ∀ {x x'} (φ : C.hom x x')
+      → PathP (λ i → ⊗₁-wit (unitr-σ⋉₀ x i) (unitr-σ⋉₀ x' i) (⊗₁-emb φ))
+              ((⊗₁-wit-nrm φ ⋉₁ ⊗₁-wit-nrm (C.idn I)) ↝̂ ▾₁-idn (⊗₁-emb φ))
+              (⊗₁-wit-nrm φ)
+    unitr-σ⋉₁ φ =
+      ⊗₁-wit-σ
+        ((⊗₁-wit-nrm φ ⋉₁ ⊗₁-wit-nrm (C.idn I)) ↝̂ ▾₁-idn (⊗₁-emb φ))
+        (⊗₁-wit-nrm φ)
+
+  opaque
+    unfolding unitl-σ⋉₀
+
+    unitl-σ⋉₁
+      : ∀ {x x'} (φ : C.hom x x')
+      → PathP (λ i → ⊗₁-wit (unitl-σ⋉₀ x i) (unitl-σ⋉₀ x' i) (⊗₁-emb φ))
+              ((⊗₁-wit-nrm (C.idn I) ⋉₁ ⊗₁-wit-nrm φ) ↝̂ ⊗₁-emb-idn-absorb φ)
+              (⊗₁-wit-nrm φ)
+    unitl-σ⋉₁ φ =
+      ⊗₁-wit-σ
+        ((⊗₁-wit-nrm (C.idn I) ⋉₁ ⊗₁-wit-nrm φ) ↝̂ ⊗₁-emb-idn-absorb φ)
+        (⊗₁-wit-nrm φ)
+
   ⊗₁-unitr
     : ∀ {x x'} (φ : C.hom x x')
     → PathP (λ i → C.hom (⊗₀-unitr x i) (⊗₀-unitr x' i))
             (φ ⊗₁ C.idn I) φ
-  ⊗₁-unitr φ =
-    ⊗₁-wit-unique
-      ((⊗₁-wit-nrm φ ⋉₁ ⊗₁-wit-nrm (C.idn I)) ↝̂ ▾₁-idn (⊗₁-emb φ))
-      (⊗₁-wit-nrm φ)
+  ⊗₁-unitr φ i = unitr-σ⋉₁ φ i .fst
 
   ⊗₁-unitl
     : ∀ {x x'} (φ : C.hom x x')
     → PathP (λ i → C.hom (⊗₀-unitl x i) (⊗₀-unitl x' i))
             (C.idn I ⊗₁ φ) φ
-  ⊗₁-unitl φ =
-    ⊗₁-wit-unique
-      ((⊗₁-wit-nrm (C.idn I) ⋉₁ ⊗₁-wit-nrm φ) ↝̂ ⊗₁-emb-idn-absorb φ)
-      (⊗₁-wit-nrm φ)
+  ⊗₁-unitl φ i = unitl-σ⋉₁ φ i .fst
 ```

@@ -11,7 +11,7 @@ triangle, all read off the propositional representability
 fibers — the pentagon is one `is-contr→is-set` away from
 `⊗₀-nrm`-strictness, and the triangle consumes the object-level
 coherence field to close its loop, exactly as at the hom level.
-The displaced level-1 pentagon over `⊗₁-assoc` follows the same
+The displaced level-1 pentagon and triangle follow the same
 spine.
 
 ```agda
@@ -237,14 +237,18 @@ straightened to `⊗₀-assoc` endpoints by `assoc⋉₀-nrm`.
 
 ## The triangle
 
-The middle-unit composite `A ▿₀ E ▿₀ B` carries five witnesses:
-the two bracketings `r₁`/`r₂` and the `↝`-transports of the
-plain pair along the two unit contractions. Every face of the
-triangle is a `⊗₀-repr-unique` between two of them — the unitor
-faces computed by `⊗₀-repr-ap` at the one-sided pairings, the
-associator face definitionally `⊗₀-assoc x I y` — and `is-coh₀`
-identifies the two transports, closing the `loop` and
-strengthening the weak triangle to the standard one.
+The unit composite `A ▿₀ B` carries the plain pairing `s₀` and
+the two unitor-bearing pairings `sl`/`sr` — the `⋉₀`-whiskers of
+the transported one-sided witnesses `Vg`/`Uf` — and every face of
+the triangle is the `fst`-shadow of a propositional witness
+square with wit-calculus edges. The unitor faces are squares in
+the one fiber, sides constant; the associator face rides the
+coherence field itself — its base square is `is-coh₀` transposed,
+its sides the `ρ`-lines: `↝-fill` slides of the unit absorptions,
+`⋉₀`-whiskered, connecting the bracketings `r₁`/`r₂` to `sl`/`sr`
+with constant `fst`. The fiber triangle is one `is-contr→is-set`,
+and the tree glues shadow-by-shadow exactly as the pentagon's, so
+every leaf displaces by construction.
 
 ```agda
   module triangle₀ (x y : C.ob) where
@@ -266,58 +270,111 @@ strengthening the weak triangle to the standard one.
     T-contr .center = r₁
     T-contr .paths  = is-⊗₀-representable-prop _ r₁
 
-    opaque
-      unfolding assoc-σ⋉₀
-
-      assoc-eq : ⊗₀-repr-unique r₁ r₂ ≡ ⊗₀-assoc x I y
-      assoc-eq = refl
-
     loop : x ⊗₀ y ≡ x ⊗₀ y
     loop = ⊗₀-repr-unique r₀¹ r₀²
 
     Uf : is-⊗₀-representable A ; Uf = (⊗₀-nrm x ⋉₀ ⊗₀-nrm I) ↝ ▾₀-idn A
     Vg : is-⊗₀-representable B ; Vg = (⊗₀-nrm I ⋉₀ ⊗₀-nrm y) ↝ ⊗₀-emb-idn-absorb y
 
-    s₀ s₁ s₂ : is-⊗₀-representable (A ▿₀ B)
-    s₀ = ⊗₀-nrm x ⋉₀ ⊗₀-nrm y   ;  s₁ = r₁ ↝ e₁  ;  s₂ = r₂ ↝ e₂
+    s₀ sl sr : is-⊗₀-representable (A ▿₀ B)
+    s₀ = ⊗₀-nrm x ⋉₀ ⊗₀-nrm y
+    sl = ⊗₀-nrm x ⋉₀ Vg          -- fst = x ⊗₀ (I ⊗₀ y)
+    sr = Uf ⋉₀ ⊗₀-nrm y          -- fst = (x ⊗₀ I) ⊗₀ y
 
-    Ĝr : is-⊗₀-representable A → is-⊗₀-representable (A ▿₀ B)
-    Ĝr u = u ⋉₀ ⊗₀-nrm y
+    -- opaque like assoc-σ⋉₀: the tree and the level-1 witness
+    -- families only ever read their boundaries off the types, and
+    -- the sealed heads keep the fiber comparisons syntactic; the
+    -- displaced mates are the σ̂-lines of triangle₁, sealed over
+    -- these exactly as assoc-σ⋉₁ over assoc-σ⋉₀
+    opaque
+      σₗᵣ : sl ≡ sr ; σₗᵣ = is-⊗₀-representable-prop _ sl sr
+      σᵣ₀ : sr ≡ s₀ ; σᵣ₀ = is-⊗₀-representable-prop _ sr s₀
+      σₗ₀ : sl ≡ s₀ ; σₗ₀ = is-⊗₀-representable-prop _ sl s₀
 
-    Ĝl : is-⊗₀-representable B → is-⊗₀-representable (A ▿₀ B)
-    Ĝl v = ⊗₀-nrm x ⋉₀ v
+    -- fst-constant lines from the bracketings to the pairings,
+    -- riding e₂/e₁: the ↝-fill slides of the two unit absorptions,
+    -- ⋉₀-whiskered on the untouched side
+    ρr : (m : Core.Base.I) → is-⊗₀-representable (e₂ m)
+    ρr m = ↝-fill (⊗₀-nrm x ⋉₀ ⊗₀-nrm I) (▾₀-idn A) m ⋉₀ ⊗₀-nrm y
 
-    private
-      W  = (⊗₀-nrm x ⋉₀ ⊗₀-nrm I) .snd ; X  = ⊗₀-emb-comp (x ⊗₀ I) y
-      W' = (⊗₀-nrm I ⋉₀ ⊗₀-nrm y) .snd ; X' = ⊗₀-emb-comp x (I ⊗₀ y)
+    ρl : (m : Core.Base.I) → is-⊗₀-representable (e₁ m)
+    ρl m = ⊗₀-nrm x ⋉₀ ↝-fill (⊗₀-nrm I ⋉₀ ⊗₀-nrm y) (⊗₀-emb-idn-absorb y) m
 
-      wr : s₂ .snd ≡ Ĝr Uf .snd
-      wr = sym (Path.assoc X (ap (_▿₀ B) W) e₂)
-         ∙ ap (X ∙_) (sym (ap-comp (_▿₀ B) W (▾₀-idn A)))
+    -- the unitor faces: squares in the one fiber, sides constant,
+    -- bottom the ⋉₀-whisker of the unitor σ-line — the shadow's
+    -- bottom edge is the whiskered unitor definitionally. Opaque
+    -- like fiber-pentagon: level-1 witness families project their
+    -- slices under generic interval binders, and the sealed heads
+    -- keep those comparisons syntactic; the boundary still reduces
+    -- by the type-directed rule
+    opaque
+      face-σr : SquareP (λ _ _ → is-⊗₀-representable (A ▿₀ B))
+                σᵣ₀ refl (λ i → unitr-σ⋉₀ x i ⋉₀ ⊗₀-nrm y) refl
+      face-σr = is-prop→SquareP (λ _ _ → is-⊗₀-representable-prop (A ▿₀ B))
+                  σᵣ₀ refl (λ i → unitr-σ⋉₀ x i ⋉₀ ⊗₀-nrm y) refl
 
-      wl : s₁ .snd ≡ Ĝl Vg .snd
-      wl = sym (Path.assoc X' (ap (A ▿₀_) W') e₁)
-         ∙ ap (X' ∙_) (sym (ap-comp (A ▿₀_) W' (⊗₀-emb-idn-absorb y)))
+      face-σl : SquareP (λ _ _ → is-⊗₀-representable (A ▿₀ B))
+                σₗ₀ refl (λ i → ⊗₀-nrm x ⋉₀ unitl-σ⋉₀ y i) refl
+      face-σl = is-prop→SquareP (λ _ _ → is-⊗₀-representable-prop (A ▿₀ B))
+                  σₗ₀ refl (λ i → ⊗₀-nrm x ⋉₀ unitl-σ⋉₀ y i) refl
 
-    face-r : ⊗₀-repr-unique s₂ s₀ ≡ ap (_⊗₀ y) (⊗₀-unitr x)
-    face-r = sym (⊗₀-repr-∙ s₂ (Ĝr Uf) s₀)
-           ∙ ap (_∙ ⊗₀-repr-unique (Ĝr Uf) s₀)
-                (⊗₀-repr-refl (s₂ .snd) (Ĝr Uf .snd) wr)
-           ∙ Path.unitl (⊗₀-repr-unique (Ĝr Uf) s₀)
-           ∙ ⊗₀-repr-ap Ĝr Uf (⊗₀-nrm x)
+    face-r : ap fst σᵣ₀ ≡ ap (_⊗₀ y) (⊗₀-unitr x)
+    face-r m i = face-σr m i .fst
 
-    face-l : ⊗₀-repr-unique s₁ s₀ ≡ ap (x ⊗₀_) (⊗₀-unitl y)
-    face-l = sym (⊗₀-repr-∙ s₁ (Ĝl Vg) s₀)
-           ∙ ap (_∙ ⊗₀-repr-unique (Ĝl Vg) s₀)
-                (⊗₀-repr-refl (s₁ .snd) (Ĝl Vg .snd) wl)
-           ∙ Path.unitl (⊗₀-repr-unique (Ĝl Vg) s₀)
-           ∙ ⊗₀-repr-ap Ĝl Vg (⊗₀-nrm y)
+    face-l : ap fst σₗ₀ ≡ ap (x ⊗₀_) (⊗₀-unitl y)
+    face-l m i = face-σl m i .fst
+
+    -- the associator face: the witness square over the transposed
+    -- coherence field, sides the ρ-lines, bottom the sealed
+    -- assoc-σ⋉₀ — its shadow lands on ⊗₀-assoc with no unfolding
+    opaque
+      face-σa
+        : (mid : is-monoidal-2-coherent M)
+        → SquareP (λ m i → is-⊗₀-representable
+                             (mid .is-monoidal-2-coherent.is-coh₀ x y (~ i) (~ m)))
+          σₗᵣ (λ m → ρl (~ m))
+          (assoc-σ⋉₀ (⊗₀-nrm x) (⊗₀-nrm I) (⊗₀-nrm y))
+          (λ m → ρr (~ m))
+      face-σa mid =
+        is-prop→SquareP
+          (λ m i → is-⊗₀-representable-prop
+                     (mid .is-monoidal-2-coherent.is-coh₀ x y (~ i) (~ m)))
+          σₗᵣ (λ m → ρl (~ m))
+          (assoc-σ⋉₀ (⊗₀-nrm x) (⊗₀-nrm I) (⊗₀-nrm y))
+          (λ m → ρr (~ m))
+
+    face-a : is-monoidal-2-coherent M → ap fst σₗᵣ ≡ ⊗₀-assoc x I y
+    face-a mid m i = face-σa mid m i .fst
+
+    -- opaque like fiber-pentagon: level-1 witness families project
+    -- its slices under generic interval binders; the boundary still
+    -- reduces by the type-directed rule
+    opaque
+      fiber-triangle : σₗᵣ ∙ σᵣ₀ ≡ σₗ₀
+      fiber-triangle = is-contr→is-set (⊗₀-rep-contr s₀) sl s₀ (σₗᵣ ∙ σᵣ₀) σₗ₀
+
+    -- the ∙-tree of the triangle, leaf by leaf: the associator and
+    -- unitr whiskers into the fiber, one ap-comp shuffle, the fiber
+    -- triangle's shadow, the unitl face out
+    step₁ = sym (ap-comp fst σₗᵣ σᵣ₀)
+    step₂ = ap (ap fst) fiber-triangle
+    whisker-r = ap (ap fst σₗᵣ ∙_) (sym face-r)
+
+    whisker-a
+      : (mid : is-monoidal-2-coherent M)
+      → ⊗₀-assoc x I y ∙ ap (_⊗₀ y) (⊗₀-unitr x)
+      ≡ ap fst σₗᵣ ∙ ap (_⊗₀ y) (⊗₀-unitr x)
+    whisker-a mid = ap (_∙ ap (_⊗₀ y) (⊗₀-unitr x)) (sym (face-a mid))
 
     triangle-weak
-      : ⊗₀-repr-unique s₁ s₂ ∙ ap (_⊗₀ y) (⊗₀-unitr x)
+      : ap fst σₗᵣ ∙ ap (_⊗₀ y) (⊗₀-unitr x)
       ≡ ap (x ⊗₀_) (⊗₀-unitl y)
-    triangle-weak =
-      ap (⊗₀-repr-unique s₁ s₂ ∙_) (sym face-r) ∙ ⊗₀-repr-∙ s₁ s₂ s₀ ∙ face-l
+    triangle-weak = whisker-r ∙ step₁ ∙ step₂ ∙ face-l
+
+    ⊗₀-triangle
+      : is-monoidal-2-coherent M
+      → ⊗₀-assoc x I y ∙ ap (_⊗₀ y) (⊗₀-unitr x) ≡ ap (x ⊗₀_) (⊗₀-unitl y)
+    ⊗₀-triangle mid = whisker-a mid ∙ triangle-weak
 
     -- the fiber square behind the loop: the canonical witness
     -- identification against the is-coh₀-transport line
@@ -334,21 +391,6 @@ strengthening the weak triangle to the standard one.
 
     loop-refl : is-monoidal-2-coherent M → loop ≡ refl
     loop-refl mid = ap (ap fst) (loop-sq mid)
-
-    opaque
-      unfolding assoc-σ⋉₀
-
-      face-a : is-monoidal-2-coherent M → ⊗₀-repr-unique s₁ s₂ ≡ ⊗₀-assoc x I y
-      face-a mid =
-          ap (λ t → ⊗₀-repr-unique (r₁ ↝ e₁) (r₂ ↝ t))
-             (mid .is-monoidal-2-coherent.is-coh₀ x y)
-        ∙ ↝-repr r₁ r₂ e₁
-
-    ⊗₀-triangle
-      : is-monoidal-2-coherent M
-      → ⊗₀-assoc x I y ∙ ap (_⊗₀ y) (⊗₀-unitr x) ≡ ap (x ⊗₀_) (⊗₀-unitl y)
-    ⊗₀-triangle mid =
-      ap (_∙ ap (_⊗₀ y) (⊗₀-unitr x)) (sym (face-a mid)) ∙ triangle-weak
 ```
 
 ## The displaced pentagon
@@ -639,17 +681,25 @@ definitional value of its neighbour's boundary.
 
 ## The displaced triangle
 
-The `⋉`-form of the triangle, one level up: `triangle₀`'s
-witnesses displace to `⊗₁-wit`s — the bracketings by `⋉₁` at
-normal witnesses, the transports by `↝̂` along the reversed
-absorption lines — and each face is the `⊗₁-wit-unique` line
-over its level-0 mate. The associator face is definitionally
-`⊗₁-assoc`, sealed exactly as at level 0. The loop closes with
-`is-coh₁`: over `loop-sq`, the displaced transports are joined
-by the `↝̂`-image of the coherence square, and `is-prop→SquareP`
-at the displaced witness family projects the displaced
-`loop-refl` — the hom shadow of the level-0 argument, riding
-the same fiber square.
+The triangle over `⊗₀-triangle`: a square of hom-lines whose top
+edge is the `comp-pathp₂`-composite of `⊗₁-assoc` and the
+whiskered `⊗₁-unitr`, bottom edge the whiskered `⊗₁-unitl`.
+Every level-0 cell was built as a wit-calculus projection, so
+every leaf displaces by the same construction one level up: the
+witnesses by `⋉₁`/`↝̂` at normal witnesses, the `ρ`-lines by
+`↝̂-fill`, each face square by `is-prop→SquareP` at the pointwise
+contractible `⊗₁-wit` family over its level-0 mate — the
+associator face riding `is-coh₁` exactly as its base rides
+`is-coh₀` — the shuffle by `comp-pathp₂-ap`, and the fiber
+triangle by the `⊗₁-wit-∙` glue of the `σ̂`-lines against the
+direct one. Every interface between consecutive leaves is
+definitional.
+
+The loop closes with `is-coh₁`: over `loop-sq`, the displaced
+transports are joined by the `↝̂`-image of the coherence square,
+and `is-prop→SquareP` at the displaced witness family projects
+the displaced `loop-refl` — the hom shadow of the level-0
+argument, riding the same fiber square.
 
 ```agda
   module triangle₁ {x x'} (φ : C.hom x x') {y y'} (ψ : C.hom y y') where
@@ -682,41 +732,284 @@ the same fiber square.
     r̂₀² : ⊗₁-wit T.r₀² T'.r₀² N
     r̂₀² = (⊗₁-wit-nrm φ ⋉₁ ⊗₁-wit-nrm ψ) ↝̂ (λ i → ê₂ (~ i))
 
-    ŝ₀ : ⊗₁-wit T.s₀ T'.s₀ (⊗₁-emb φ ▿₁ ⊗₁-emb ψ)
-    ŝ₀ = ⊗₁-wit-nrm φ ⋉₁ ⊗₁-wit-nrm ψ
-
-    ŝ₁ : ⊗₁-wit T.s₁ T'.s₁ (⊗₁-emb φ ▿₁ ⊗₁-emb ψ)
-    ŝ₁ = r̂₁ ↝̂ ê₁
-
-    ŝ₂ : ⊗₁-wit T.s₂ T'.s₂ (⊗₁-emb φ ▿₁ ⊗₁-emb ψ)
-    ŝ₂ = r̂₂ ↝̂ ê₂
-
-    opaque
-      unfolding assoc-σ⋉₀ assoc-σ⋉₁ T.assoc-eq T'.assoc-eq
-
-      assoc-eq₁
-        : PathP (λ k → PathP (λ i → C.hom (T.assoc-eq  k i)
-                                          (T'.assoc-eq k i))
-                       (φ ⊗₁ (ι ⊗₁ ψ)) ((φ ⊗₁ ι) ⊗₁ ψ))
-                (⊗₁-wit-unique r̂₁ r̂₂) (⊗₁-assoc φ ι ψ)
-      assoc-eq₁ _ = ⊗₁-wit-unique r̂₁ r̂₂
-
     loop₁ : PathP (λ i → C.hom (T.loop i) (T'.loop i)) (φ ⊗₁ ψ) (φ ⊗₁ ψ)
     loop₁ = ⊗₁-wit-unique r̂₀¹ r̂₀²
 
+    -- the displaced unitor witnesses: the endpoints of
+    -- unitr-σ⋉₁/unitl-σ⋉₁, the very pairs the unitors project
+    Ûf : ⊗₁-wit T.Uf T'.Uf (⊗₁-emb φ)
+    Ûf = (⊗₁-wit-nrm φ ⋉₁ ⊗₁-wit-nrm ι) ↝̂ ▾₁-idn (⊗₁-emb φ)
+
+    V̂g : ⊗₁-wit T.Vg T'.Vg (⊗₁-emb ψ)
+    V̂g = (⊗₁-wit-nrm ι ⋉₁ ⊗₁-wit-nrm ψ) ↝̂ ⊗₁-emb-idn-absorb ψ
+
+    ŝ₀ : ⊗₁-wit T.s₀ T'.s₀ (⊗₁-emb φ ▿₁ ⊗₁-emb ψ)
+    ŝ₀ = ⊗₁-wit-nrm φ ⋉₁ ⊗₁-wit-nrm ψ
+
+    ŝl : ⊗₁-wit T.sl T'.sl (⊗₁-emb φ ▿₁ ⊗₁-emb ψ)
+    ŝl = ⊗₁-wit-nrm φ ⋉₁ V̂g
+
+    ŝr : ⊗₁-wit T.sr T'.sr (⊗₁-emb φ ▿₁ ⊗₁-emb ψ)
+    ŝr = Ûf ⋉₁ ⊗₁-wit-nrm ψ
+
+    -- the displaced σ-lines, sealed over the level-0 seals exactly
+    -- as assoc-σ⋉₁ over assoc-σ⋉₀
+    opaque
+      unfolding T.σₗᵣ T.σᵣ₀ T.σₗ₀ T'.σₗᵣ T'.σᵣ₀ T'.σₗ₀
+
+      σ̂ₗᵣ : PathP (λ i → ⊗₁-wit (T.σₗᵣ i) (T'.σₗᵣ i)
+                                (⊗₁-emb φ ▿₁ ⊗₁-emb ψ))
+                  ŝl ŝr
+      σ̂ₗᵣ = ⊗₁-wit-σ ŝl ŝr
+
+      σ̂ᵣ₀ : PathP (λ i → ⊗₁-wit (T.σᵣ₀ i) (T'.σᵣ₀ i)
+                                (⊗₁-emb φ ▿₁ ⊗₁-emb ψ))
+                  ŝr ŝ₀
+      σ̂ᵣ₀ = ⊗₁-wit-σ ŝr ŝ₀
+
+      σ̂ₗ₀ : PathP (λ i → ⊗₁-wit (T.σₗ₀ i) (T'.σₗ₀ i)
+                                (⊗₁-emb φ ▿₁ ⊗₁-emb ψ))
+                  ŝl ŝ₀
+      σ̂ₗ₀ = ⊗₁-wit-σ ŝl ŝ₀
+
+    -- the displaced ρ-lines: ↝̂-fill slides, ⋉₁-whiskered as at
+    -- level 0, over exactly the level-0 slides
+    ρ̂r : (m : Core.Base.I) → ⊗₁-wit (T.ρr m) (T'.ρr m) (ê₂ m)
+    ρ̂r m = ↝̂-fill (⊗₁-wit-nrm φ ⋉₁ ⊗₁-wit-nrm ι) (▾₁-idn (⊗₁-emb φ)) m
+           ⋉₁ ⊗₁-wit-nrm ψ
+
+    ρ̂l : (m : Core.Base.I) → ⊗₁-wit (T.ρl m) (T'.ρl m) (ê₁ m)
+    ρ̂l m = ⊗₁-wit-nrm φ
+           ⋉₁ ↝̂-fill (⊗₁-wit-nrm ι ⋉₁ ⊗₁-wit-nrm ψ) (⊗₁-emb-idn-absorb ψ) m
+
     face₁-r
-      : PathP (λ i → C.hom (⊗₀-repr-unique T.s₂ T.s₀ i)
-                           (⊗₀-repr-unique T'.s₂ T'.s₀ i))
+      : PathP (λ i → C.hom (ap fst T.σᵣ₀ i) (ap fst T'.σᵣ₀ i))
               ((φ ⊗₁ ι) ⊗₁ ψ) (φ ⊗₁ ψ)
-    face₁-r = ⊗₁-wit-unique ŝ₂ ŝ₀
+    face₁-r i = σ̂ᵣ₀ i .fst
 
     face₁-l
-      : PathP (λ i → C.hom (⊗₀-repr-unique T.s₁ T.s₀ i)
-                           (⊗₀-repr-unique T'.s₁ T'.s₀ i))
-              (φ ⊗₁ (ι ⊗₁ ψ)) (φ ⊗₁ ψ)
-    face₁-l = ⊗₁-wit-unique ŝ₁ ŝ₀
+      : PathP (λ i → C.hom (ap fst T.σₗ₀ i) (ap fst T'.σₗ₀ i))
+              (φ ⊗₁ ι ⊗₁ ψ) (φ ⊗₁ ψ)
+    face₁-l i = σ̂ₗ₀ i .fst
+```
+
+The displaced unitor faces: `is-prop→SquareP` at the pointwise
+contractible witness family over the level-0 square, sides
+constant, bottom the `⋉₁`-whisker of the `unitr-σ⋉₁` resp.
+`unitl-σ⋉₁` line — the `fst`-shadow's bottom edge is the
+whiskered `⊗₁-unitr` resp. `⊗₁-unitl` definitionally.
+
+```agda
+    private
+      wit-prop-r
+        : (m i : Core.Base.I)
+        → is-prop (⊗₁-wit (T.face-σr m i) (T'.face-σr m i)
+                          (⊗₁-emb φ ▿₁ ⊗₁-emb ψ))
+      wit-prop-r m i =
+        is-contr→is-prop
+          (subst is-contr
+            (λ k → ⊗₁-wit (T.face-σr (m ∧ k) (i ∧ k))
+                          (T'.face-σr (m ∧ k) (i ∧ k))
+                          (⊗₁-emb φ ▿₁ ⊗₁-emb ψ))
+            (⊗₁-wit-contr ŝr))
+
+      wit-prop-l
+        : (m i : Core.Base.I)
+        → is-prop (⊗₁-wit (T.face-σl m i) (T'.face-σl m i)
+                          (⊗₁-emb φ ▿₁ ⊗₁-emb ψ))
+      wit-prop-l m i =
+        is-contr→is-prop
+          (subst is-contr
+            (λ k → ⊗₁-wit (T.face-σl (m ∧ k) (i ∧ k))
+                          (T'.face-σl (m ∧ k) (i ∧ k))
+                          (⊗₁-emb φ ▿₁ ⊗₁-emb ψ))
+            (⊗₁-wit-contr ŝl))
+
+    face-σ̂r
+      : PathP (λ m → PathP (λ i → ⊗₁-wit (T.face-σr m i) (T'.face-σr m i)
+                                         (⊗₁-emb φ ▿₁ ⊗₁-emb ψ))
+                     ŝr ŝ₀)
+              σ̂ᵣ₀
+              (λ i → unitr-σ⋉₁ φ i ⋉₁ ⊗₁-wit-nrm ψ)
+    face-σ̂r =
+      is-prop→SquareP wit-prop-r
+        σ̂ᵣ₀ refl
+        (λ i → unitr-σ⋉₁ φ i ⋉₁ ⊗₁-wit-nrm ψ) refl
+
+    face-r̂
+      : PathP (λ m → PathP (λ i → C.hom (T.face-r m i) (T'.face-r m i))
+                     ((φ ⊗₁ ι) ⊗₁ ψ) (φ ⊗₁ ψ))
+              face₁-r (λ i → ⊗₁-unitr φ i ⊗₁ ψ)
+    face-r̂ m i = face-σ̂r m i .fst
+
+    face-σ̂l
+      : PathP (λ m → PathP (λ i → ⊗₁-wit (T.face-σl m i) (T'.face-σl m i)
+                                         (⊗₁-emb φ ▿₁ ⊗₁-emb ψ))
+                     ŝl ŝ₀)
+              σ̂ₗ₀
+              (λ i → ⊗₁-wit-nrm φ ⋉₁ unitl-σ⋉₁ ψ i)
+    face-σ̂l =
+      is-prop→SquareP wit-prop-l
+        σ̂ₗ₀ refl
+        (λ i → ⊗₁-wit-nrm φ ⋉₁ unitl-σ⋉₁ ψ i) refl
+
+    face-l̂
+      : PathP (λ m → PathP (λ i → C.hom (T.face-l m i) (T'.face-l m i))
+                     (φ ⊗₁ ι ⊗₁ ψ) (φ ⊗₁ ψ))
+              face₁-l (λ i → φ ⊗₁ ⊗₁-unitl ψ i)
+    face-l̂ m i = face-σ̂l m i .fst
+```
+
+The displaced fiber triangle: the `⊗₁-wit-∙` glue of the two
+`⊗₁-wit-σ` lines against the direct one, over `fiber-triangle` —
+the glued edge's hom component is the `comp-pathp₂` of the
+`⊗₁-wit-unique` shadows by construction.
+
+```agda
+    top̂ : PathP (λ i → ⊗₁-wit ((T.σₗᵣ ∙ T.σᵣ₀) i) ((T'.σₗᵣ ∙ T'.σᵣ₀) i)
+                              (⊗₁-emb φ ▿₁ ⊗₁-emb ψ))
+                ŝl ŝ₀
+    top̂ = ⊗₁-wit-∙ T.σₗᵣ T.σᵣ₀ T'.σₗᵣ T'.σᵣ₀ σ̂ₗᵣ σ̂ᵣ₀
+
+    private
+      wit-prop-t
+        : (m i : Core.Base.I)
+        → is-prop (⊗₁-wit (T.fiber-triangle m i) (T'.fiber-triangle m i)
+                          (⊗₁-emb φ ▿₁ ⊗₁-emb ψ))
+      wit-prop-t m i =
+        is-contr→is-prop
+          (subst is-contr
+            (λ k → ⊗₁-wit (T.fiber-triangle (m ∧ k) (i ∧ k))
+                          (T'.fiber-triangle (m ∧ k) (i ∧ k))
+                          (⊗₁-emb φ ▿₁ ⊗₁-emb ψ))
+            (⊗₁-wit-contr ŝl))
+
+    fiber-triangle₁
+      : PathP (λ m → PathP (λ i → ⊗₁-wit (T.fiber-triangle m i)
+                                         (T'.fiber-triangle m i)
+                                         (⊗₁-emb φ ▿₁ ⊗₁-emb ψ))
+                     ŝl ŝ₀)
+              top̂ σ̂ₗ₀
+    fiber-triangle₁ = is-prop→SquareP wit-prop-t top̂ refl σ̂ₗ₀ refl
+```
+
+The chain of edges and the displaced leaves, glued along exactly
+the base tree; the associator face and the whisker that consumes
+it live under the coherence hypothesis, the rest is absolute.
+
+```agda
+    private
+      Fam : (x ⊗₀ I ⊗₀ y ≡ x ⊗₀ y) → (x' ⊗₀ I ⊗₀ y' ≡ x' ⊗₀ y') → Type h
+      Fam p p' = PathP (λ i → C.hom (p i) (p' i)) (φ ⊗₁ ι ⊗₁ ψ) (φ ⊗₁ ψ)
+
+    top₁ : Fam (⊗₀-assoc x I y ∙ ap (_⊗₀ y) (⊗₀-unitr x))
+               (⊗₀-assoc x' I y' ∙ ap (_⊗₀ y') (⊗₀-unitr x'))
+    top₁ =
+      comp-pathp₂ C.hom
+        (⊗₀-assoc x I y) (ap (_⊗₀ y) (⊗₀-unitr x))
+        (⊗₀-assoc x' I y') (ap (_⊗₀ y') (⊗₀-unitr x'))
+        (⊗₁-assoc φ ι ψ) (λ i → ⊗₁-unitr φ i ⊗₁ ψ)
+
+    bot₁ : Fam (ap (x ⊗₀_) (⊗₀-unitl y)) (ap (x' ⊗₀_) (⊗₀-unitl y'))
+    bot₁ i = φ ⊗₁ ⊗₁-unitl ψ i
+
+    private
+      E₁ = comp-pathp₂ C.hom
+             (ap fst T.σₗᵣ) (ap (_⊗₀ y) (⊗₀-unitr x))
+             (ap fst T'.σₗᵣ) (ap (_⊗₀ y') (⊗₀-unitr x'))
+             (λ i → σ̂ₗᵣ i .fst) (λ i → ⊗₁-unitr φ i ⊗₁ ψ)
+
+      E₂ = comp-pathp₂ C.hom
+             (ap fst T.σₗᵣ) (ap fst T.σᵣ₀)
+             (ap fst T'.σₗᵣ) (ap fst T'.σᵣ₀)
+             (λ i → σ̂ₗᵣ i .fst) face₁-r
+
+      E₃ : Fam (ap fst (T.σₗᵣ ∙ T.σᵣ₀)) (ap fst (T'.σₗᵣ ∙ T'.σᵣ₀))
+      E₃ i = top̂ i .fst
+
+    step̂₁ : PathP (λ m → Fam (T.step₁ m) (T'.step₁ m)) E₂ E₃
+    step̂₁ m =
+      comp-pathp₂-ap C.hom fst fst T.σₗᵣ T.σᵣ₀ T'.σₗᵣ T'.σᵣ₀
+        (λ i → σ̂ₗᵣ i .fst) face₁-r (~ m)
+
+    step̂₂ : PathP (λ m → Fam (T.step₂ m) (T'.step₂ m)) E₃ face₁-l
+    step̂₂ m i = fiber-triangle₁ m i .fst
+
+    whisker-r̂ : PathP (λ m → Fam (T.whisker-r m) (T'.whisker-r m)) E₁ E₂
+    whisker-r̂ m =
+      comp-pathp₂ C.hom
+        (ap fst T.σₗᵣ) (T.face-r (~ m))
+        (ap fst T'.σₗᵣ) (T'.face-r (~ m))
+        (λ i → σ̂ₗᵣ i .fst) (face-r̂ (~ m))
+
+    triangle-weak̂
+      : PathP (λ m → Fam (T.triangle-weak m) (T'.triangle-weak m)) E₁ bot₁
+    triangle-weak̂ =
+      comp-pathp₂ Fam T.whisker-r (T.step₁ ∙ T.step₂ ∙ T.face-l)
+                      T'.whisker-r (T'.step₁ ∙ T'.step₂ ∙ T'.face-l)
+        whisker-r̂
+        (comp-pathp₂ Fam T.step₁ (T.step₂ ∙ T.face-l)
+                         T'.step₁ (T'.step₂ ∙ T'.face-l)
+          step̂₁
+          (comp-pathp₂ Fam T.step₂ T.face-l T'.step₂ T'.face-l
+            step̂₂ face-l̂))
 
     module _ (mid : is-monoidal-2-coherent M) where
+      private
+        wit-prop-a
+          : (m i : Core.Base.I)
+          → is-prop (⊗₁-wit (T.face-σa mid m i) (T'.face-σa mid m i)
+                            (mid .is-monoidal-2-coherent.is-coh₁ φ ψ
+                              (~ i) (~ m)))
+        wit-prop-a m i =
+          is-contr→is-prop
+            (subst is-contr
+              (λ k → ⊗₁-wit (T.face-σa mid (m ∧ k) (i ∧ k))
+                            (T'.face-σa mid (m ∧ k) (i ∧ k))
+                            (mid .is-monoidal-2-coherent.is-coh₁ φ ψ
+                              (~ (i ∧ k)) (~ (m ∧ k))))
+              (⊗₁-wit-contr ŝl))
+
+      face-σ̂a
+        : PathP (λ m → PathP (λ i → ⊗₁-wit (T.face-σa mid m i)
+                                           (T'.face-σa mid m i)
+                                           (mid .is-monoidal-2-coherent.is-coh₁
+                                             φ ψ (~ i) (~ m)))
+                       (ρ̂l (~ m)) (ρ̂r (~ m)))
+                σ̂ₗᵣ
+                (assoc-σ⋉₁ (⊗₁-wit-nrm φ) (⊗₁-wit-nrm ι) (⊗₁-wit-nrm ψ))
+      face-σ̂a =
+        is-prop→SquareP wit-prop-a
+          σ̂ₗᵣ (λ m → ρ̂l (~ m))
+          (assoc-σ⋉₁ (⊗₁-wit-nrm φ) (⊗₁-wit-nrm ι) (⊗₁-wit-nrm ψ))
+          (λ m → ρ̂r (~ m))
+
+      face-â
+        : PathP (λ m → PathP (λ i → C.hom (T.face-a mid m i)
+                                          (T'.face-a mid m i))
+                       (φ ⊗₁ ι ⊗₁ ψ) ((φ ⊗₁ ι) ⊗₁ ψ))
+                (λ i → σ̂ₗᵣ i .fst) (⊗₁-assoc φ ι ψ)
+      face-â m i = face-σ̂a m i .fst
+
+      whisker-â
+        : PathP (λ m → Fam (T.whisker-a mid m) (T'.whisker-a mid m)) top₁ E₁
+      whisker-â m =
+        comp-pathp₂ C.hom
+          (T.face-a mid (~ m)) (ap (_⊗₀ y) (⊗₀-unitr x))
+          (T'.face-a mid (~ m)) (ap (_⊗₀ y') (⊗₀-unitr x'))
+          (face-â (~ m)) (λ i → ⊗₁-unitr φ i ⊗₁ ψ)
+
+      ⊗₁-triangle
+        : PathP (λ m → PathP (λ i → C.hom (T.⊗₀-triangle mid m i)
+                                          (T'.⊗₀-triangle mid m i))
+                       (φ ⊗₁ ι ⊗₁ ψ) (φ ⊗₁ ψ))
+                top₁ bot₁
+      ⊗₁-triangle =
+        comp-pathp₂ Fam
+          (T.whisker-a mid) T.triangle-weak
+          (T'.whisker-a mid) T'.triangle-weak
+          whisker-â triangle-weak̂
+
       private
         K  = T.loop-sq  mid
         K' = T'.loop-sq mid

@@ -367,6 +367,18 @@ module theory₀ {o h} {C : category o h} (M₀ : monoidal-axioms₀ C) where
       → is-⊗₀-representable F → F ≡ G → is-⊗₀-representable G
   (m , p) ↝ e = m , p ∙ e
 
+  -- a witness slid along its transport path by the composition
+  -- filler: the fst is constant, at m = i0 the slide is the witness
+  -- itself (path eta) and at m = i1 the transport U ↝ e (the fill's
+  -- lid) — both definitional, so a calculus projection applied along
+  -- the slide is a straightening square with strict endpoints, and
+  -- its displaced mate is the same slide one level up (↝̂-fill)
+  ↝-fill
+    : ∀ {F G : ⊗₀-composite}
+    → (U : is-⊗₀-representable F) (e : F ≡ G) (m : Core.Base.I)
+    → is-⊗₀-representable (e m)
+  ↝-fill (m₀ , p) e m = m₀ , λ i → cat.fill p e i m
+
   ↝-repr : ∀ {F G} (U V : is-⊗₀-representable F) (e : F ≡ G)
          → ⊗₀-repr-unique (U ↝ e) (V ↝ e) ≡ ⊗₀-repr-unique U V
   ↝-repr (m , p) (n , q) =
@@ -425,13 +437,27 @@ fiber.
   ⊗₀-assoc : ∀ x y z → x ⊗₀ (y ⊗₀ z) ≡ (x ⊗₀ y) ⊗₀ z
   ⊗₀-assoc x y z = assoc⋉₀ (⊗₀-nrm x) (⊗₀-nrm y) (⊗₀-nrm z)
 
+  -- the unitor σ-lines, sealed like assoc-σ⋉₀: consumers read the
+  -- boundary off the type, and level-1 witness families over these
+  -- lines compare as neutrals; the unitors are their fst-shadows
+  opaque
+    unitr-σ⋉₀
+      : ∀ x → ((⊗₀-nrm x ⋉₀ ⊗₀-nrm I) ↝ ▾₀-idn (⊗₀-emb x)) ≡ ⊗₀-nrm x
+    unitr-σ⋉₀ x =
+      is-⊗₀-representable-prop _
+        ((⊗₀-nrm x ⋉₀ ⊗₀-nrm I) ↝ ▾₀-idn (⊗₀-emb x)) (⊗₀-nrm x)
+
+    unitl-σ⋉₀
+      : ∀ x → ((⊗₀-nrm I ⋉₀ ⊗₀-nrm x) ↝ ⊗₀-emb-idn-absorb x) ≡ ⊗₀-nrm x
+    unitl-σ⋉₀ x =
+      is-⊗₀-representable-prop _
+        ((⊗₀-nrm I ⋉₀ ⊗₀-nrm x) ↝ ⊗₀-emb-idn-absorb x) (⊗₀-nrm x)
+
   ⊗₀-unitr : ∀ x → x ⊗₀ I ≡ x
-  ⊗₀-unitr x =
-    ⊗₀-repr-unique ((⊗₀-nrm x ⋉₀ ⊗₀-nrm I) ↝ ▾₀-idn (⊗₀-emb x)) (⊗₀-nrm x)
+  ⊗₀-unitr x = ap fst (unitr-σ⋉₀ x)
 
   ⊗₀-unitl : ∀ x → I ⊗₀ x ≡ x
-  ⊗₀-unitl x =
-    ⊗₀-repr-unique ((⊗₀-nrm I ⋉₀ ⊗₀-nrm x) ↝ ⊗₀-emb-idn-absorb x) (⊗₀-nrm x)
+  ⊗₀-unitl x = ap fst (unitl-σ⋉₀ x)
 ```
 
 ### Unit uniqueness and the demoted equivalences
