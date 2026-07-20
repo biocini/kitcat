@@ -117,11 +117,21 @@ restructure and Groupoid re-founding are not yet.
 The hexagon/braid ports consume the resulting shape, but they
 sit on unported dependencies and open record-shape rulings:
 
-1. `Cat.Monoidal.Indiscrete` port first — the instance that
-   builds a `monoidal` from contractible homs; it proves the ♭
-   fields directly, in the field's shape — the Groupoid
-   re-founding (conjugation by the witness lines) is the model,
-   not the Properties closures.
+1. `Cat.Monoidal.Indiscrete` port first — the builder
+   discharging a `monoidal` from `hom-contr`. **Ruled (Lane,
+   2026-07-20): the builder's interface takes the ♭ form itself**
+   — the caller supplies `⊗₀-interchange♭`, not a pointwise
+   `tint` for the builder to close. The field's shape is the one
+   interfaces target, all the way out: the record's field, an
+   instance's proof, and a builder's input are the same shape,
+   and the flat form is that shape. The Groupoid conjugation
+   model applies only where an instance has genuinely pointwise
+   *data* to conjugate (the March equation); Indiscrete has no
+   such data — its caller proves ♭ directly. The builder's own
+   job is purely the hom level: `⊗₁-interchange♭` is a PathP
+   into a contractible family, `⊗₁-spine-contr` a Σ of
+   contractibles, all from `hom-contr` (the old file's
+   `PathP-is-contr` moves).
 2. The braided record on the new spine: the old `braided` has a
    single field (the braid at the curried tensor); under the
    wit-calculus the braid should enter as a witness-line datum —
@@ -132,8 +142,12 @@ sit on unported dependencies and open record-shape rulings:
    `⊗₁-interchange-natural`; the old `absorb-coh` irreducibility
    gets re-examined against the naturality recipe.
 4. `Twist` last — it needs `Indiscrete` and consumes the
-   absorb-coh sides; the reduction theorem is `ap`-algebra and
-   should transcribe mechanically.
+   absorb-coh sides. Under the ♭-input builder its statement
+   reshapes: the loop family perturbs the ♭ field at witness
+   arguments, not `tint` pointwise — part of the absorb-coh
+   re-examination the plan already flags. The reduction theorem
+   itself is `ap`-algebra and should transcribe mechanically
+   once the statement is reshaped.
 
 Audit disciplines from the start, per the plan: sealed σ-heads
 for any new canonical identification a family will ride,
