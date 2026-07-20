@@ -23,9 +23,10 @@ contractibility.
 Instances are moral and checked-against, never routed through:
 `monoidal-axioms₁` over `monoidal-axioms₀` transcribes this record at
 the squared one-object base — `⊗₁-composite` is `composite[_]` with
-the fiber Σ's inlined, `⊗₁-spine` is `spineᴰ` verbatim,
-`⊗₁-interchange` the `nrm[_]` instance of `interchange♭ᴰ` — and
-`Cat.Type` itself is the instance over the point. The one
+the fiber Σ's inlined, `⊗₁-spine` is `spineᴰ` verbatim, `⊗₁-wit` is
+`is-representable[_]` at a pair of base witnesses, `⊗₁-interchange♭`
+is `interchange♭ᴰ` over it with `⊗₁-interchange` the `⊗₁-wit-nrm`
+instance — and `Cat.Type` itself is the instance over the point. The one
 `monoidal-axioms₁` field with no counterpart here is `⊗₁-emb-⨾`: its
 displayed homs carry an ambient vertical composition, and
 functoriality of the embedding for it is enrichment — data beyond

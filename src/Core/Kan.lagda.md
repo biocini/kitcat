@@ -918,6 +918,83 @@ cocone {x} p q i j = hcom (∂ i ∨ ~ j) λ where
   k (i = i1) → q (j ∧ k)
   k (k = i0) → p (~ i ∧ j)
 
+-- comp-pathp₂-rfill: the displaced cat.rfill for a binary family —
+-- sections over the two base rfill squares, glued along their hfil
+-- interiors. The composite side is comp-pathp₂ definitionally: at
+-- j = i1 the base rfill systems are pcom's systems for refl-headed
+-- composition, so the tower is comp-pathp₂'s com on the nose.
+comp-pathp₂-rfill
+  : ∀ {u v w} {X : Type u} {Y : Type v} (F : X → Y → Type w)
+    {a₀ a₁ a₂ : X} (pa : a₀ ≡ a₁) (qa : a₁ ≡ a₂)
+    {b₀ b₁ b₂ : Y} (pb : b₀ ≡ b₁) (qb : b₁ ≡ b₂)
+    {h₀ : F a₀ b₀} {h₁ : F a₁ b₁} {h₂ : F a₂ b₂}
+    (P : PathP (λ i → F (pa i) (pb i)) h₀ h₁)
+    (Q : PathP (λ i → F (qa i) (qb i)) h₁ h₂)
+  → SquareP (λ i j → F (cat.rfill pa qa i j) (cat.rfill pb qb i j))
+      (λ j → P (~ j)) Q (λ _ → h₂)
+      (comp-pathp₂ F pa qa pb qb P Q)
+comp-pathp₂-rfill {X = X} {Y = Y} F pa qa pb qb P Q i j =
+  com (λ k → F (hfil (∂ i ∨ ~ j) k sa) (hfil (∂ i ∨ ~ j) k sb))
+      (∂ i ∨ ~ j) λ where
+    k (j = i0) → Q (i ∧ k)
+    k (i = i0) → P (~ j)
+    k (i = i1) → Q k
+    k (k = i0) → P (i ∨ ~ j)
+  where
+    sa : Sys (∂ i ∨ ~ j) X
+    sa k (j = i0) = qa (i ∧ k)
+    sa k (i = i0) = pa (~ j)
+    sa k (i = i1) = qa k
+    sa k (k = i0) = pa (i ∨ ~ j)
+    sb : Sys (∂ i ∨ ~ j) Y
+    sb k (j = i0) = qb (i ∧ k)
+    sb k (i = i0) = pb (~ j)
+    sb k (i = i1) = qb k
+    sb k (k = i0) = pb (i ∨ ~ j)
+
+-- comp-pathp₂-commutes: the displaced Path.commutes for a binary
+-- family — a line of sections between the two comp-pathp₂
+-- composites, over the base commutes squares, glued along their
+-- hfil interiors; the i0 wall is comp-pathp₂-rfill, whose
+-- composite side lands the lid on comp-pathp₂ on the nose
+comp-pathp₂-commutes
+  : ∀ {u v w} {X : Type u} {Y : Type v} (F : X → Y → Type w)
+    {wa xa ya za : X} (pa : wa ≡ xa) (qa : xa ≡ za)
+    (ra : wa ≡ ya) (sa : ya ≡ za)
+    {wb xb yb zb : Y} (pb : wb ≡ xb) (qb : xb ≡ zb)
+    (rb : wb ≡ yb) (sb : yb ≡ zb)
+    (sqa : Square pa ra sa qa) (sqb : Square pb rb sb qb)
+    {h₀ : F wa wb} {hx : F xa xb} {hy : F ya yb} {h₁ : F za zb}
+    (P : PathP (λ i → F (pa i) (pb i)) h₀ hx)
+    (Q : PathP (λ i → F (qa i) (qb i)) hx h₁)
+    (R : PathP (λ i → F (ra i) (rb i)) h₀ hy)
+    (S : PathP (λ i → F (sa i) (sb i)) hy h₁)
+  → PathP (λ j → PathP (λ i → F (sqa j i) (sqb j i)) (R j) (Q j)) P S
+  → PathP (λ i → PathP (λ j → F (Path.commutes pa qa ra sa sqa i j)
+                                (Path.commutes pb qb rb sb sqb i j))
+                       h₀ h₁)
+          (comp-pathp₂ F pa qa pb qb P Q)
+          (comp-pathp₂ F ra sa rb sb R S)
+comp-pathp₂-commutes {X = X} {Y = Y} F pa qa ra sa pb qb rb sb sqa sqb
+  P Q R S SQ i j =
+  com (λ k → F (hfil (∂ j ∨ ~ i) k ca) (hfil (∂ j ∨ ~ i) k cb))
+      (∂ j ∨ ~ i) λ where
+    k (j = i0) → P (~ i ∧ ~ k)
+    k (j = i1) → S (~ i ∨ k)
+    k (i = i0) → comp-pathp₂-rfill F pa qa pb qb P Q j k
+    k (k = i0) → SQ j (~ i)
+  where
+    ca : Sys (∂ j ∨ ~ i) X
+    ca k (j = i0) = pa (~ i ∧ ~ k)
+    ca k (j = i1) = sa (~ i ∨ k)
+    ca k (i = i0) = cat.rfill pa qa j k
+    ca k (k = i0) = sqa j (~ i)
+    cb : Sys (∂ j ∨ ~ i) Y
+    cb k (j = i0) = pb (~ i ∧ ~ k)
+    cb k (j = i1) = sb (~ i ∨ k)
+    cb k (i = i0) = cat.rfill pb qb j k
+    cb k (k = i0) = sqb j (~ i)
+
 ```
 
 ## Chain Reasoning

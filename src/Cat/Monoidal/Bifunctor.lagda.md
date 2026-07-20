@@ -579,29 +579,12 @@ pre/post-composition of plain paths onto a `PathP`.
 
 ## The displaced witness calculus
 
-A displaced witness pairs a hom with the image of a level-0
-witness path: `⊗₁-wit U U' η` is the fiber of `⊗₁-emb`
-displaced along the witness paths of `U` and `U'`; at `⊗₀-nrm`
-endpoints the witness paths are constant and `⊗₁-wit-nrm` is
-the plain `⊗₁-nrm` fiber point. Contractibility needs no nest
-chains: sliding an inhabitant's characterization along its own
-base line connects the space to the plain image fiber, so any
+Contractibility of the displaced witness space `⊗₁-wit` needs no
+nest chains: sliding an inhabitant's characterization along its
+own base line connects the space to the plain image fiber, so any
 inhabitant contracts — the displaced `⊗₁-rep-contr`.
 
 ```agda
-  ⊗₁-wit
-    : ∀ {F F' : ⊗₀-composite}
-    → is-⊗₀-representable F → is-⊗₀-representable F'
-    → ⊗₁-composite F F' → Type (o ⊔ h)
-  ⊗₁-wit U U' η =
-    Σ σ ∶ C.hom (U .fst) (U' .fst) ,
-    PathP (λ i → ⊗₁-composite (U .snd i) (U' .snd i)) (⊗₁-emb σ) η
-
-  ⊗₁-wit-nrm
-    : ∀ {x x'} (φ : C.hom x x')
-    → ⊗₁-wit (⊗₀-nrm x) (⊗₀-nrm x') (⊗₁-emb φ)
-  ⊗₁-wit-nrm φ = φ , refl
-
   ⊗₁-wit-contr
     : ∀ {F F' : ⊗₀-composite}
         {U : is-⊗₀-representable F} {U' : is-⊗₀-representable F'}
@@ -615,12 +598,12 @@ inhabitant contracts — the displaced `⊗₁-rep-contr`.
       (⊗₁-emb-image-contr τ)
 ```
 
-`_●₁_` and `_↝̂_` mirror `_●₀_` and `_↝_` token-for-token, with
-`comp-pathp₂` in the role of `∙`: the pairing glues the spine
-comparison to the `▿₁`-paste of the factors' characterizations,
-and the transport glues the characterization to a level-1 line,
-each over exactly the `∙`-decomposition its level-0 mirror
-produces.
+`_●₁_`, `_○₁_`, and `_↝̂_` mirror `_●₀_`, `_○₀_`, and `_↝_`
+token-for-token, with `comp-pathp₂` in the role of `∙`: the
+pairings glue the spine comparisons to the `▿₁`/`▵₁`-pastes of
+the factors' characterizations, and the transport glues the
+characterization to a level-1 line, each over exactly the
+`∙`-decomposition its level-0 mirror produces.
 
 ```agda
   _●₁_
@@ -637,6 +620,20 @@ produces.
       (⊗₀-emb-comp m' n') (λ i → p' i ▿₀ q' i)
       (⊗₁-emb-comp σ τ) (λ i → P i ▿₁ Q i)
   infixr 40 _●₁_
+
+  _○₁_
+    : ∀ {F F' G G' : ⊗₀-composite}
+        {U : is-⊗₀-representable F} {U' : is-⊗₀-representable F'}
+        {V : is-⊗₀-representable G} {V' : is-⊗₀-representable G'}
+        {η : ⊗₁-composite F F'} {ζ : ⊗₁-composite G G'}
+    → ⊗₁-wit U U' η → ⊗₁-wit V V' ζ
+    → ⊗₁-wit (U ○₀ V) (U' ○₀ V') (η ▵₁ ζ)
+  _○₁_ {U = m , p} {m' , p'} {n , q} {n' , q'} (σ , P) (τ , Q) =
+    σ ⊗₁ τ ,
+    comp-pathp₂ ⊗₁-composite
+      (⊗₀-emb-comp-op m n) (λ i → p i ▵₀ q i)
+      (⊗₀-emb-comp-op m' n') (λ i → p' i ▵₀ q' i)
+      (⊗₁-emb-comp-op σ τ) (λ i → P i ▵₁ Q i)
 
   _↝̂_
     : ∀ {F F' G G' : ⊗₀-composite}

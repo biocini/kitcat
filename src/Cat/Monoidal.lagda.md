@@ -573,12 +573,14 @@ module tensor-virtual₁ {o h} (C : category o h) (I : category.ob C) where
 
 ## The displayed representable layer
 
-The representability predicate with its satisfaction relation
-and normal form, the unit-slot actions `⊗₁-pre`/`⊗₁-post` and
-the context substitutions `⊗₁-sub`/`⊗₁-cosub`, mirroring the
-object layer; the two one-sided composite operators `▾₁`/`▴₁`,
-the two ternary orders `▿₁`/`▵₁`, and the vertical composite
-`_⨾₁_`.
+The representability predicate with its satisfaction relation,
+normal form, and displaced witness space `⊗₁-wit`, the unit-slot
+actions `⊗₁-pre`/`⊗₁-post` and the context substitutions
+`⊗₁-sub`/`⊗₁-cosub`, mirroring the object layer; the two
+one-sided composite operators `▾₁`/`▴₁`, the two ternary orders
+`▿₁`/`▵₁`, the vertical composite `_⨾₁_`, and the closure
+`⊗₁-interchange♭-from` of a pointwise interchange over displaced
+witnesses.
 
 ```agda
 module tensor-representable₁ {o h} (C : category o h) (I : category.ob C)
@@ -620,6 +622,24 @@ module tensor-representable₁ {o h} (C : category o h) (I : category.ob C)
   ⊗₁-nrm : ∀ {x x'} (φ : C.hom x x') → is-⊗₁-representable (⊗₁-emb φ)
   ⊗₁-nrm φ = φ , refl
 
+  -- a displaced witness pairs a hom with the image of a level-0
+  -- witness path: ⊗₁-wit U U' η is the fiber of ⊗₁-emb displaced
+  -- along the witness paths of U and U'; at ⊗₀-nrm endpoints the
+  -- witness paths are constant and ⊗₁-wit-nrm is the plain ⊗₁-nrm
+  -- fiber point
+  ⊗₁-wit
+    : ∀ {F F' : ⊗₀-composite}
+    → is-⊗₀-representable F → is-⊗₀-representable F'
+    → ⊗₁-composite F F' → Type (o ⊔ h)
+  ⊗₁-wit U U' η =
+    Σ σ ∶ C.hom (U .fst) (U' .fst) ,
+    PathP (λ i → ⊗₁-composite (U .snd i) (U' .snd i)) (⊗₁-emb σ) η
+
+  ⊗₁-wit-nrm
+    : ∀ {x x'} (φ : C.hom x x')
+    → ⊗₁-wit (⊗₀-nrm x) (⊗₀-nrm x') (⊗₁-emb φ)
+  ⊗₁-wit-nrm φ = φ , refl
+
   _▾₁_ : ∀ {F F' : ⊗₀-composite} {y y'}
        → ⊗₁-composite F F' → C.hom y y'
        → ⊗₁-composite (F ▾₀ y) (F' ▾₀ y')
@@ -651,17 +671,61 @@ module tensor-representable₁ {o h} (C : category o h) (I : category.ob C)
        → ⊗₁-composite F F''
   (η ⨾₁ η') γ γ' δ = η $₁ δ Ct.⨾ η' $₁ ⊗₁-ctx-idn
   infixr 40 _⨾₁_
+
+  -- closure of the displaced ternary interchange over the total
+  -- fibers of ⊗₁-emb: one dependent J per side, over the witness's
+  -- base lines paired with its characterization; at ⊗₁-wit-nrm
+  -- endpoints it agrees with the input up to J-refl
+  ⊗₁-interchange♭-from
+    : (ι : ∀ {A B : ⊗₀-composite}
+         → is-⊗₀-representable A → is-⊗₀-representable B
+         → A ▿₀ B ≡ A ▵₀ B)
+    → (∀ {x x'} (φ : C.hom x x') {y y'} (ψ : C.hom y y')
+       → PathP (λ i → ⊗₁-composite (ι (⊗₀-nrm x) (⊗₀-nrm y) i)
+                                    (ι (⊗₀-nrm x') (⊗₀-nrm y') i))
+               (⊗₁-emb φ ▾₁ ψ) (φ ▴₁ ⊗₁-emb ψ))
+    → ∀ {A A' B B' : ⊗₀-composite}
+        {U : is-⊗₀-representable A} {U' : is-⊗₀-representable A'}
+        {V : is-⊗₀-representable B} {V' : is-⊗₀-representable B'}
+        {η : ⊗₁-composite A A'} {ζ : ⊗₁-composite B B'}
+    → ⊗₁-wit U U' η → ⊗₁-wit V V' ζ
+    → PathP (λ i → ⊗₁-composite (ι U V i) (ι U' V' i))
+            (η ▿₁ ζ) (η ▵₁ ζ)
+  ⊗₁-interchange♭-from ι ι₁
+    {U = m , p} {m' , p'} {n , q} {n' , q'} {ζ = ζ} (σ , P) (τ , Q) =
+    J {A = Σ T ∶ ⊗₀-composite × ⊗₀-composite , ⊗₁-composite (T .fst) (T .snd)}
+      (λ T t →
+        PathP (λ i → ⊗₁-composite (ι (m , λ j → t j .fst .fst) (n , q) i)
+                                   (ι (m' , λ j → t j .fst .snd) (n' , q') i))
+              (T .snd ▿₁ ζ) (T .snd ▵₁ ζ))
+      (J {A = Σ T ∶ ⊗₀-composite × ⊗₀-composite , ⊗₁-composite (T .fst) (T .snd)}
+         (λ T t →
+           PathP (λ i → ⊗₁-composite (ι (⊗₀-nrm m) (n , λ j → t j .fst .fst) i)
+                                      (ι (⊗₀-nrm m') (n' , λ j → t j .fst .snd) i))
+                 (⊗₁-emb σ ▿₁ T .snd) (⊗₁-emb σ ▵₁ T .snd))
+         (ι₁ σ τ)
+         (λ i → (q i , q' i) , Q i))
+      (λ i → (p i , p' i) , P i)
 ```
 
 ## `monoidal-axioms₁`
 
 The displayed copy of the axiom shape, over a chosen
-`monoidal-axioms₀`: `⊗₁-emb`, `⊗₁-interchange`, `⊗₁-spine-contr`,
+`monoidal-axioms₀`: `⊗₁-emb`, `⊗₁-interchange♭`, `⊗₁-spine-contr`,
 `⊗₁-unit`, plus the one field with no object-level shadow — the
 enrichment law `⊗₁-emb-⨾`, preserving the whole composition of
 the context category. The characterizations are single `PathP`s
 between morphism-composites, displaced over the object operator
 paths.
+
+Interchange enters flat, exactly as at level 0: the field takes
+displaced witnesses to a `PathP` over the `⊗₀-interchange♭` lines
+of both sides, relating the ternary orders, so it applies at a
+generic interval point of any level-0 witness line — the shape
+the naturality cube of the interchange coherence projects.
+Pointwise `⊗₁-interchange` is its `⊗₁-wit-nrm` shadow: at normal
+forms the base lines collapse to `⊗₀-interchange` and the ternary
+orders to the one-sided composites, all definitionally.
 
 ```agda
 record monoidal-axioms₁ {o h} {C : category o h}
@@ -677,12 +741,23 @@ record monoidal-axioms₁ {o h} {C : category o h}
   open tensor-representable₁ C I ⊗₀-emb ⊗₁-emb public
 
   field
-    ⊗₁-interchange
-      : ∀ {x x'} (φ : C.hom x x') {y y'} (ψ : C.hom y y')
-      → PathP (λ i → ⊗₁-composite (⊗₀-interchange x y i)
-                                   (⊗₀-interchange x' y' i))
-              (⊗₁-emb φ ▾₁ ψ)
-              (φ ▴₁ ⊗₁-emb ψ)
+    ⊗₁-interchange♭
+      : ∀ {A A' B B' : ⊗₀-composite}
+          {U : is-⊗₀-representable A} {U' : is-⊗₀-representable A'}
+          {V : is-⊗₀-representable B} {V' : is-⊗₀-representable B'}
+          {η : ⊗₁-composite A A'} {ζ : ⊗₁-composite B B'}
+      → ⊗₁-wit U U' η → ⊗₁-wit V V' ζ
+      → PathP (λ i → ⊗₁-composite (⊗₀-interchange♭ U V i)
+                                   (⊗₀-interchange♭ U' V' i))
+              (η ▿₁ ζ) (η ▵₁ ζ)
+
+  ⊗₁-interchange
+    : ∀ {x x'} (φ : C.hom x x') {y y'} (ψ : C.hom y y')
+    → PathP (λ i → ⊗₁-composite (⊗₀-interchange x y i)
+                                 (⊗₀-interchange x' y' i))
+            (⊗₁-emb φ ▾₁ ψ)
+            (φ ▴₁ ⊗₁-emb ψ)
+  ⊗₁-interchange φ ψ = ⊗₁-interchange♭ (⊗₁-wit-nrm φ) (⊗₁-wit-nrm ψ)
 
   ⊗₁-spine : ∀ {x x'} (φ : C.hom x x') {y y'} (ψ : C.hom y y')
           → Type (o ⊔ h)

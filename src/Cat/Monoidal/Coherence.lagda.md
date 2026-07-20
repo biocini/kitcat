@@ -85,18 +85,42 @@ The two witness pairings agree over the interchange: the fibers
 are propositional, so the `●₀`/`○₀` images of the same pair are
 joined by a `PathP` over `⊗₀-interchange♭`, and naturality of the
 interchange in its first pair is the `Path.commutes` reading of
-that square.
+that square. `ι-mult-r₀`/`ι-mult-l₀` state multiplicativity of
+the flat interchange in each slot — 3-coherence hypotheses,
+consumed rather than proved, well-typed by the strict mixed
+associativity of the ternary orders.
 
 ```agda
-  ●₀-coh
-    : ∀ {F G : ⊗₀-composite}
+  ι-mult-r₀
+    : ∀ {F G H : ⊗₀-composite}
       (U : is-⊗₀-representable F) (V : is-⊗₀-representable G)
-    → PathP (λ i → is-⊗₀-representable (⊗₀-interchange♭ U V i))
-            (U ●₀ V) (U ○₀ V)
-  ●₀-coh U V =
-    is-prop→PathP
-      (λ i → is-⊗₀-representable-prop (⊗₀-interchange♭ U V i))
-      (U ●₀ V) (U ○₀ V)
+      (W : is-⊗₀-representable H)
+    → Type o
+  ι-mult-r₀ {H = H} U V W =
+    ap (λ X → X ▿₀ H) (⊗₀-interchange♭ U V) ≡ ⊗₀-interchange♭ U (V ●₀ W)
+
+  ι-mult-l₀
+    : ∀ {F G H : ⊗₀-composite}
+      (U : is-⊗₀-representable F) (V : is-⊗₀-representable G)
+      (W : is-⊗₀-representable H)
+    → Type o
+  ι-mult-l₀ {F = F} U V W =
+    ap (λ X → F ▵₀ X) (⊗₀-interchange♭ V W) ≡ ⊗₀-interchange♭ (U ○₀ V) W
+
+  -- opaque like assoc-σ●₀: the naturality cube's type family
+  -- projects this line at generic interval points, at both grades;
+  -- the sealed head keeps those comparisons neutral, and the
+  -- endpoints still reduce by the type-directed rule
+  opaque
+    ●₀-coh
+      : ∀ {F G : ⊗₀-composite}
+        (U : is-⊗₀-representable F) (V : is-⊗₀-representable G)
+      → PathP (λ i → is-⊗₀-representable (⊗₀-interchange♭ U V i))
+              (U ●₀ V) (U ○₀ V)
+    ●₀-coh U V =
+      is-prop→PathP
+        (λ i → is-⊗₀-representable-prop (⊗₀-interchange♭ U V i))
+        (U ●₀ V) (U ○₀ V)
 
   ⊗₀-interchange-natural
     : ∀ {F G H : ⊗₀-composite}
@@ -109,6 +133,115 @@ that square.
       (ap (λ X → X ▿₀ H) (⊗₀-interchange♭ U V)) (⊗₀-interchange♭ (U ○₀ V) W)
       (⊗₀-interchange♭ (U ●₀ V) W) (ap (λ X → X ▵₀ H) (⊗₀-interchange♭ U V))
       (λ j i → ⊗₀-interchange♭ (●₀-coh U V i) W j)
+```
+
+One grade up, the same four shapes displace over their level-0
+mates. The `ι-mult` statements become squares of hom-composite
+lines over the level-0 statements; `●₁-coh` is the
+`is-prop→PathP` at the displaced witness family over the flat
+line, contractibility transported from the inhabited end along
+the connection as in `⊗₁-wit-σ[_,_]`; and
+`⊗₁-interchange-natural` is `comp-pathp₂-commutes` on the
+interchange cube — the displaced `Path.commutes` at the
+`comp-pathp₂` composites, over the level-0 naturality square on
+both sides.
+
+```agda
+  ι-mult-r₁
+    : ∀ {F F' G G' H H' : ⊗₀-composite}
+        {U : is-⊗₀-representable F} {U' : is-⊗₀-representable F'}
+        {V : is-⊗₀-representable G} {V' : is-⊗₀-representable G'}
+        {W : is-⊗₀-representable H} {W' : is-⊗₀-representable H'}
+        {η : ⊗₁-composite F F'} {ζ : ⊗₁-composite G G'}
+        {θ : ⊗₁-composite H H'}
+      (mr : ι-mult-r₀ U V W) (mr' : ι-mult-r₀ U' V' W')
+      (Û : ⊗₁-wit U U' η) (V̂ : ⊗₁-wit V V' ζ) (Ŵ : ⊗₁-wit W W' θ)
+    → Type (o ⊔ h)
+  ι-mult-r₁ {η = η} {ζ} {θ} mr mr' Û V̂ Ŵ =
+    PathP (λ k → PathP (λ i → ⊗₁-composite (mr k i) (mr' k i))
+                       (η ▿₁ ζ ▿₁ θ) (η ▵₁ ζ ▿₁ θ))
+          (λ i → ⊗₁-interchange♭ Û V̂ i ▿₁ θ)
+          (⊗₁-interchange♭ Û (V̂ ●₁ Ŵ))
+
+  ι-mult-l₁
+    : ∀ {F F' G G' H H' : ⊗₀-composite}
+        {U : is-⊗₀-representable F} {U' : is-⊗₀-representable F'}
+        {V : is-⊗₀-representable G} {V' : is-⊗₀-representable G'}
+        {W : is-⊗₀-representable H} {W' : is-⊗₀-representable H'}
+        {η : ⊗₁-composite F F'} {ζ : ⊗₁-composite G G'}
+        {θ : ⊗₁-composite H H'}
+      (ml : ι-mult-l₀ U V W) (ml' : ι-mult-l₀ U' V' W')
+      (Û : ⊗₁-wit U U' η) (V̂ : ⊗₁-wit V V' ζ) (Ŵ : ⊗₁-wit W W' θ)
+    → Type (o ⊔ h)
+  ι-mult-l₁ {η = η} {ζ} {θ} ml ml' Û V̂ Ŵ =
+    PathP (λ k → PathP (λ i → ⊗₁-composite (ml k i) (ml' k i))
+                       (η ▵₁ ζ ▿₁ θ) (η ▵₁ ζ ▵₁ θ))
+          (λ i → η ▵₁ ⊗₁-interchange♭ V̂ Ŵ i)
+          (⊗₁-interchange♭ (Û ○₁ V̂) Ŵ)
+
+  opaque
+    ●₁-coh
+      : ∀ {F F' G G' : ⊗₀-composite}
+          {U : is-⊗₀-representable F} {U' : is-⊗₀-representable F'}
+          {V : is-⊗₀-representable G} {V' : is-⊗₀-representable G'}
+          {η : ⊗₁-composite F F'} {ζ : ⊗₁-composite G G'}
+        (Û : ⊗₁-wit U U' η) (V̂ : ⊗₁-wit V V' ζ)
+      → PathP (λ i → ⊗₁-wit (●₀-coh U V i) (●₀-coh U' V' i)
+                            (⊗₁-interchange♭ Û V̂ i))
+              (Û ●₁ V̂) (Û ○₁ V̂)
+    ●₁-coh {U = U} {U'} {V} {V'} Û V̂ =
+      is-prop→PathP
+        (λ i → is-contr→is-prop
+          (subst is-contr
+            (λ k → ⊗₁-wit (●₀-coh U V (i ∧ k)) (●₀-coh U' V' (i ∧ k))
+                          (⊗₁-interchange♭ Û V̂ (i ∧ k)))
+            (⊗₁-wit-contr (Û ●₁ V̂))))
+        (Û ●₁ V̂) (Û ○₁ V̂)
+
+  ⊗₁-interchange-natural
+    : ∀ {F F' G G' H H' : ⊗₀-composite}
+        {U : is-⊗₀-representable F} {U' : is-⊗₀-representable F'}
+        {V : is-⊗₀-representable G} {V' : is-⊗₀-representable G'}
+        {W : is-⊗₀-representable H} {W' : is-⊗₀-representable H'}
+        {η : ⊗₁-composite F F'} {ζ : ⊗₁-composite G G'}
+        {θ : ⊗₁-composite H H'}
+      (Û : ⊗₁-wit U U' η) (V̂ : ⊗₁-wit V V' ζ) (Ŵ : ⊗₁-wit W W' θ)
+    → PathP (λ k → PathP (λ i → ⊗₁-composite
+                                  (⊗₀-interchange-natural U V W k i)
+                                  (⊗₀-interchange-natural U' V' W' k i))
+                         (η ▿₁ ζ ▿₁ θ) (η ▵₁ ζ ▵₁ θ))
+            (comp-pathp₂ ⊗₁-composite
+              (ap (λ X → X ▿₀ H) (⊗₀-interchange♭ U V))
+              (⊗₀-interchange♭ (U ○₀ V) W)
+              (ap (λ X → X ▿₀ H') (⊗₀-interchange♭ U' V'))
+              (⊗₀-interchange♭ (U' ○₀ V') W')
+              (λ i → ⊗₁-interchange♭ Û V̂ i ▿₁ θ)
+              (⊗₁-interchange♭ (Û ○₁ V̂) Ŵ))
+            (comp-pathp₂ ⊗₁-composite
+              (⊗₀-interchange♭ (U ●₀ V) W)
+              (ap (λ X → X ▵₀ H) (⊗₀-interchange♭ U V))
+              (⊗₀-interchange♭ (U' ●₀ V') W')
+              (ap (λ X → X ▵₀ H') (⊗₀-interchange♭ U' V'))
+              (⊗₁-interchange♭ (Û ●₁ V̂) Ŵ)
+              (λ i → ⊗₁-interchange♭ Û V̂ i ▵₁ θ))
+  ⊗₁-interchange-natural {H = H} {H'} {U = U} {U'} {V} {V'} {W} {W'}
+    {θ = θ} Û V̂ Ŵ =
+    comp-pathp₂-commutes ⊗₁-composite
+      (ap (λ X → X ▿₀ H) (⊗₀-interchange♭ U V))
+      (⊗₀-interchange♭ (U ○₀ V) W)
+      (⊗₀-interchange♭ (U ●₀ V) W)
+      (ap (λ X → X ▵₀ H) (⊗₀-interchange♭ U V))
+      (ap (λ X → X ▿₀ H') (⊗₀-interchange♭ U' V'))
+      (⊗₀-interchange♭ (U' ○₀ V') W')
+      (⊗₀-interchange♭ (U' ●₀ V') W')
+      (ap (λ X → X ▵₀ H') (⊗₀-interchange♭ U' V'))
+      (λ j i → ⊗₀-interchange♭ (●₀-coh U V i) W j)
+      (λ j i → ⊗₀-interchange♭ (●₀-coh U' V' i) W' j)
+      (λ i → ⊗₁-interchange♭ Û V̂ i ▿₁ θ)
+      (⊗₁-interchange♭ (Û ○₁ V̂) Ŵ)
+      (⊗₁-interchange♭ (Û ●₁ V̂) Ŵ)
+      (λ i → ⊗₁-interchange♭ Û V̂ i ▵₁ θ)
+      (λ j i → ⊗₁-interchange♭ (●₁-coh Û V̂ i) Ŵ j)
 ```
 
 ## The pentagon
