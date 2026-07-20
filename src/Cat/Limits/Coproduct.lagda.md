@@ -34,7 +34,7 @@ open import Cat.Type
 open import Cat.Op
 open import Cat.Base
 open import Cat.Morphism
-open import Cat.Morphism.Iso
+open import Cat.Iso
 open import Cat.Limits.Product
 
 module _ {o h} (C : category o h) where

@@ -2,19 +2,25 @@ Lane Biocini
 July 2026
 
 Isomorphisms over a `Cat.Type` category: the inverse pair, identity
-and composition of isomorphisms, uniqueness of inverses, and the
-biinvertibility comparison.
+and composition of isomorphisms, uniqueness of inverses, the
+biinvertibility comparison, and the path bridge — object paths as
+isomorphisms and hom-`PathP`s as classical squares, native cubical
+throughout. There is no J anywhere in the bridge: the transported
+identity is a transp-filler package whose laws are lines, so
+nothing ever eliminates at `refl` and no `idtoiso-refl` patch
+lemma exists to need.
 
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
 
-module Cat.Morphism.Iso where
+module Cat.Iso where
 
 open import Core.Type
 open import Core.Base
 open import Core.Data.Sigma
 open import Core.Kan
 open import Core.Path.Base
+open import Core.Transport.Base using (coe01; coe-filler)
 
 open import Cat.Type
 open import Cat.Base
@@ -152,4 +158,67 @@ retraction agree by `inv-unique`.
         r ⨾ (f ⨾ s)   ≡⟨ r ◃ fs ⟩
         r ⨾ idn _     ≡⟨ unitr r ⟩
         r ∎
+```
+
+## The path bridge
+
+An object path carries an isomorphism: the transported identity
+in each direction, with the transp-fillers kept first-class —
+`to-fill` has the fil cap at `i0` and the com at `i1`, both
+definitional, so every law about `to` is stated and proved as a
+line and the `refl` case is never special. The left inverse law
+runs in the constant family `hom x x` — the pointwise composite
+of the two fillers, closed by the unit — and the right inverse
+law compares the pointwise composite against the identity
+diagonal over `λ i → hom (p i) (p i)` by `pathp-ends`.
+
+```agda
+  module path-iso {x y : ob} (p : x ≡ y) where
+    to : hom x y
+    to = coe01 (λ i → hom x (p i)) (idn x)
+
+    to-fill : PathP (λ i → hom x (p i)) (idn x) to
+    to-fill = coe-filler (λ i → hom x (p i)) (idn x)
+
+    from : hom y x
+    from = coe01 (λ i → hom (p i) x) (idn x)
+
+    from-fill : PathP (λ i → hom (p i) x) (idn x) from
+    from-fill = coe-filler (λ i → hom (p i) x) (idn x)
+
+    to-from : to ⨾ from ≡ idn x
+    to-from = sym (λ i → to-fill i ⨾ from-fill i) ∙ unitl (idn x)
+
+    from-to : from ⨾ to ≡ idn y
+    from-to =
+      pathp-ends {A = λ i → hom (p i) (p i)}
+        (λ i → from-fill i ⨾ to-fill i)
+        (λ i → idn (p i))
+        (unitl (idn x))
+
+    path→iso : x ≅ y
+    path→iso = to , from , to-from , from-to
+```
+
+## Dependent paths as squares
+
+A `PathP` of homs over object paths reads as the classical
+commuting square through the transported identities: the two
+whiskers `f ⨾ to-fill(q)` and `to-fill(p) ⨾ P` run in the one
+family `hom x (q i)`, the unit laws join their `i0`-ends, and
+`pathp-ends` closes the square. This is the map consumers use;
+the equivalence between the two presentations is comparison
+material for a Properties module, if ever wanted.
+
+```agda
+  hom-pathp→square
+    : ∀ {x x' y y'} (p : x ≡ x') (q : y ≡ y')
+      {f : hom x y} {g : hom x' y'}
+    → PathP (λ i → hom (p i) (q i)) f g
+    → f ⨾ path-iso.to q ≡ path-iso.to p ⨾ g
+  hom-pathp→square p q {f} P =
+    pathp-ends {A = λ i → hom _ (q i)}
+      (λ i → f ⨾ path-iso.to-fill q i)
+      (λ i → path-iso.to-fill p i ⨾ P i)
+      (unitr f ∙ sym (unitl f))
 ```

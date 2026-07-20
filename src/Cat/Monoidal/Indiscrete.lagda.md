@@ -30,11 +30,13 @@ module Cat.Monoidal.Indiscrete where
 open import Core.Type
 open import Core.Base hiding (I)
 open import Core.Data.Nat.Type using (Z)
-open import Core.Kan using (is-contr→is-prop)
+open import Core.Kan using (is-contr→is-prop; _∙_)
 open import Core.HLevel.Base using (PathP-is-contr; Π-is-hlevel; Σ-is-hlevel)
 
 open import Cat.Type
 open import Cat.Monoidal
+open import Cat.Monoidal.Braid
+open import Cat.Monoidal.Hexagon
 ```
 
 ## The builder
@@ -46,6 +48,7 @@ module _ {o h} {C : category o h}
   where
 
   open monoidal-axioms₀ M₀
+  open theory₀ M₀
   open tensor-virtual₁ C I
   private module C = category C
 
@@ -74,4 +77,58 @@ module _ {o h} {C : category o h}
   indiscrete-monoidal : monoidal C
   indiscrete-monoidal .monoidal.axioms₀ = M₀
   indiscrete-monoidal .monoidal.axioms₁ = indiscrete-axioms₁
+```
+
+## The braided builders
+
+The same discipline one structure out: the caller's data is the
+field's own shape — the object-tier flank swap, then the two
+object-tier hexagons stated on the derived `⊗₀-braid♭` — and
+every morphism-grade field is a center of a (nested) `PathP`
+into the contractible `⊗₁-composite` family. Nothing else is
+asked: the displaced flank swap rides its level-0 lines, and the
+displaced hexagons are squares into contractible fibers, the
+`⊗₁-spine-contr` idiom.
+
+```agda
+  module _
+    (⊗₀-flank-swap♭
+      : ∀ {A B : ⊗₀-composite}
+      → is-⊗₀-representable A → is-⊗₀-representable B
+      → A ▵₀ B ≡ B ▿₀ A)
+    where
+
+    indiscrete-braided : braided indiscrete-monoidal
+    indiscrete-braided .braided.⊗₀-flank-swap♭ = ⊗₀-flank-swap♭
+    indiscrete-braided .braided.⊗₁-flank-swap♭ Û V̂ =
+      PathP-is-contr ⊗₁-composite-contr _ _ .center
+
+    open braided indiscrete-braided using (⊗₀-braid♭)
+
+    module _
+      (⊗₀-hexagon-r♭
+        : ∀ {F G H : ⊗₀-composite}
+          (U : is-⊗₀-representable F) (V : is-⊗₀-representable G)
+          (W : is-⊗₀-representable H)
+        → ⊗₀-braid♭ U (V ●₀ W)
+        ≡ ap (λ X → X ▿₀ H) (⊗₀-braid♭ U V)
+          ∙ ap (λ X → G ▿₀ X) (⊗₀-braid♭ U W))
+      (⊗₀-hexagon-l♭
+        : ∀ {F G H : ⊗₀-composite}
+          (U : is-⊗₀-representable F) (V : is-⊗₀-representable G)
+          (W : is-⊗₀-representable H)
+        → ⊗₀-braid♭ (U ●₀ V) W
+        ≡ ap (λ X → F ▿₀ X) (⊗₀-braid♭ V W)
+          ∙ ap (λ X → X ▿₀ G) (⊗₀-braid♭ U W))
+      where
+
+      indiscrete-braided-coherent : braided-coherent indiscrete-braided
+      indiscrete-braided-coherent .braided-coherent.⊗₀-hexagon-r♭ =
+        ⊗₀-hexagon-r♭
+      indiscrete-braided-coherent .braided-coherent.⊗₁-hexagon-r♭ Û V̂ Ŵ =
+        PathP-is-contr (PathP-is-contr ⊗₁-composite-contr _ _) _ _ .center
+      indiscrete-braided-coherent .braided-coherent.⊗₀-hexagon-l♭ =
+        ⊗₀-hexagon-l♭
+      indiscrete-braided-coherent .braided-coherent.⊗₁-hexagon-l♭ Û V̂ Ŵ =
+        PathP-is-contr (PathP-is-contr ⊗₁-composite-contr _ _) _ _ .center
 ```

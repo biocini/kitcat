@@ -767,6 +767,21 @@ comp-pathp₂-over F G pa qa pb qb {h₀ = h₀} P Q {g₀ = g₀} P' Q' i =
         j (i = i1) → Q j
         j (j = i0) → P i
 
+-- pathp-ends: two PathPs over one line whose i0-ends are
+-- identified have identified i1-ends — the com over the shared
+-- family, walls the two lines, base the identification. The
+-- workhorse for comparing a whiskered filler line against a
+-- stated diagonal without eliminating either base path.
+pathp-ends
+  : ∀ {u} {A : I → Type u}
+    {a₀ b₀ : A i0} {a₁ b₁ : A i1}
+  → PathP A a₀ a₁ → PathP A b₀ b₁
+  → a₀ ≡ b₀ → a₁ ≡ b₁
+pathp-ends {A = A} P Q e j = com A (∂ j) λ where
+  i (j = i0) → P i
+  i (j = i1) → Q i
+  i (i = i0) → e j
+
 -- pcom→∙ bridges the ternary composite pcom (sym p) q r to the
 -- binary chain p ∙ q ∙ r, via pcom.unique against cat.lcoh.
 pcom→∙
@@ -951,6 +966,25 @@ comp-pathp₂-rfill {X = X} {Y = Y} F pa qa pb qb P Q i j =
     sb k (i = i0) = pb (~ j)
     sb k (i = i1) = qb k
     sb k (k = i0) = pb (i ∨ ~ j)
+
+-- comp-pathp₂-unitl: the displaced Path.unitl for a binary
+-- family — the refl-headed comp-pathp₂ collapses to its second
+-- line over the base unitl squares. Path.unitl is the transposed
+-- cat.rfill at a refl head, so the displaced mate is the
+-- transposed comp-pathp₂-rfill at the refl-headed instance; every
+-- boundary is definitional (the inner PathP endpoints are the
+-- rfill square's left and right columns).
+comp-pathp₂-unitl
+  : ∀ {u v w} {X : Type u} {Y : Type v} (F : X → Y → Type w)
+    {a₀ a₁ : X} (p : a₀ ≡ a₁) {b₀ b₁ : Y} (q : b₀ ≡ b₁)
+    {h₀ : F a₀ b₀} {h₁ : F a₁ b₁}
+    (Q : PathP (λ i → F (p i) (q i)) h₀ h₁)
+  → PathP (λ m → PathP (λ i → F (Path.unitl p m i) (Path.unitl q m i))
+                 h₀ h₁)
+          (comp-pathp₂ F refl p refl q refl Q)
+          Q
+comp-pathp₂-unitl F p q Q m i =
+  comp-pathp₂-rfill F refl p refl q refl Q i (~ m)
 
 -- comp-pathp₂-commutes: the displaced Path.commutes for a binary
 -- family — a line of sections between the two comp-pathp₂

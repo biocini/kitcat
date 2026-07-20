@@ -28,7 +28,7 @@ open import Core.Transport.Base using (contr-ind)
 open import Cat.Type
 open import Cat.Base
 open import Cat.Morphism
-open import Cat.Morphism.Iso
+open import Cat.Iso
 
 module _ {o h} (C : category o h) where
   open category C

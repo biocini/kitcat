@@ -9,24 +9,33 @@ in one step, and braiding past each factor separately — are two
 genuinely distinct paths between the same ternary operations,
 and their identification is an axiom. Strict associativity of
 the ternary orders collapses the old formulation's re-nesting
-entirely: the field is one 2-path between a braid and a
+entirely: each field is one 2-path between a braid and a
 composite of whiskered braids, at witness arguments, with its
 morphism-grade displacement over it.
 
-The object-level hexagon derives by the fiber projection idiom:
+Each object-level hexagon derives by the fiber projection idiom:
 six witnesses in the one propositional fiber over the braided
 target, the σ-lines between them shadowing the named associators
 and braidings, the field entering as a `fst`-constant move — the
 one link contractibility alone would leave a possibly nontrivial
 loop on the object — and `is-contr→is-set` closing the tree.
 
-Only the first hexagon H1 is recorded here: the braiding of `x`
-past the composite `y ⊗₀ z`. The second hexagon H2 — braiding
-the composite past one object — is neither a field nor a theorem
-yet; whether it derives from H1 by symmetry or requires its own
-field is open, and its interchange side is where the displaced
-`ι-mult`/`⊗₁-interchange-natural` cells of
-`Cat.Monoidal.Coherence` will be consumed.
+Both hexagons are fields, mirror images at both grades, named by
+the slot carrying the pairing as `ι-mult-r₀`/`ι-mult-l₀` are:
+`-r` braids one object past the pairing in the braid's right
+slot, `-l` braids the pairing in its left slot past one object.
+Neither derives from the other: on a skeletal strict model the
+two are multiplicativity of the braiding in its right and left
+slots separately, and braidings multiplicative in one slot only
+exist. The identification of braid orientations that would make
+one hexagon imply the other is the symmetric axiom — a future
+layer, not this record. Nor does the `-l` field shrink to its
+swap-half with the ι-half discharged through the interchange
+coherences: a `▿₀`-block in a `▵₀`-flank moves only along
+interchange lines — there is no strict redistribution into
+single-factor flanks — so the swap-half form carries six
+interchange conjugators, and the braid statement is the minimal
+clean datum.
 
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
@@ -37,7 +46,7 @@ open import Core.Type
 open import Core.Base hiding (I)
 open import Core.Data.Sigma
 open import Core.Kan
-open import Core.Path.Base using (ap-comp)
+open import Core.Path.Base using (ap-comp; ap-merge)
 
 open import Cat.Type
 open import Cat.Monoidal
@@ -48,13 +57,14 @@ open import Cat.Monoidal.Braid
 
 ## The braided-coherent record
 
-One field per grade. At the object grade the two traversals of
-`F ▿₀ G ▿₀ H` agree: the one-step braid past the pairing
-`V ●₀ W` equals the `▿₀`-whiskers of the two single braids,
-composable and parallel by strict associativity of the ternary
-orders. The morphism grade is the same square one level up, the
-`comp-pathp₂`-composite of the whiskered `⊗₁-braid♭` lines over
-the object-grade sides.
+Two mirror fields per grade. At the object grade the two
+traversals of the triple agree: the one-step braid past the
+pairing equals the `▿₀`-whiskers of the two single braids — the
+pairing in the braid's right slot for `-r`, in its left for
+`-l` — composable and parallel by strict associativity of the
+ternary orders. The morphism grade is the same square one level
+up, the `comp-pathp₂`-composite of the whiskered `⊗₁-braid♭`
+lines over the object-grade sides.
 
 ```agda
 record braided-coherent {o h} {C : category o h} {M : monoidal C}
@@ -65,7 +75,7 @@ record braided-coherent {o h} {C : category o h} {M : monoidal C}
   private module C = category C
 
   field
-    ⊗₀-hexagon♭
+    ⊗₀-hexagon-r♭
       : ∀ {F G H : ⊗₀-composite}
         (U : is-⊗₀-representable F) (V : is-⊗₀-representable G)
         (W : is-⊗₀-representable H)
@@ -73,7 +83,7 @@ record braided-coherent {o h} {C : category o h} {M : monoidal C}
       ≡ ap (λ X → X ▿₀ H) (⊗₀-braid♭ U V)
         ∙ ap (λ X → G ▿₀ X) (⊗₀-braid♭ U W)
 
-    ⊗₁-hexagon♭
+    ⊗₁-hexagon-r♭
       : ∀ {F F' G G' H H' : ⊗₀-composite}
           {U : is-⊗₀-representable F} {U' : is-⊗₀-representable F'}
           {V : is-⊗₀-representable G} {V' : is-⊗₀-representable G'}
@@ -82,8 +92,8 @@ record braided-coherent {o h} {C : category o h} {M : monoidal C}
           {θ : ⊗₁-composite H H'}
         (Û : ⊗₁-wit U U' η) (V̂ : ⊗₁-wit V V' ζ) (Ŵ : ⊗₁-wit W W' θ)
       → PathP (λ k → PathP (λ i → ⊗₁-composite
-                                    (⊗₀-hexagon♭ U V W k i)
-                                    (⊗₀-hexagon♭ U' V' W' k i))
+                                    (⊗₀-hexagon-r♭ U V W k i)
+                                    (⊗₀-hexagon-r♭ U' V' W' k i))
                      (η ▿₁ ζ ▿₁ θ) (ζ ▿₁ θ ▿₁ η))
               (⊗₁-braid♭ Û (V̂ ●₁ Ŵ))
               (comp-pathp₂ ⊗₁-composite
@@ -93,6 +103,35 @@ record braided-coherent {o h} {C : category o h} {M : monoidal C}
                 (ap (λ X → G' ▿₀ X) (⊗₀-braid♭ U' W'))
                 (λ i → ⊗₁-braid♭ Û V̂ i ▿₁ θ)
                 (λ i → ζ ▿₁ ⊗₁-braid♭ Û Ŵ i))
+
+    ⊗₀-hexagon-l♭
+      : ∀ {F G H : ⊗₀-composite}
+        (U : is-⊗₀-representable F) (V : is-⊗₀-representable G)
+        (W : is-⊗₀-representable H)
+      → ⊗₀-braid♭ (U ●₀ V) W
+      ≡ ap (λ X → F ▿₀ X) (⊗₀-braid♭ V W)
+        ∙ ap (λ X → X ▿₀ G) (⊗₀-braid♭ U W)
+
+    ⊗₁-hexagon-l♭
+      : ∀ {F F' G G' H H' : ⊗₀-composite}
+          {U : is-⊗₀-representable F} {U' : is-⊗₀-representable F'}
+          {V : is-⊗₀-representable G} {V' : is-⊗₀-representable G'}
+          {W : is-⊗₀-representable H} {W' : is-⊗₀-representable H'}
+          {η : ⊗₁-composite F F'} {ζ : ⊗₁-composite G G'}
+          {θ : ⊗₁-composite H H'}
+        (Û : ⊗₁-wit U U' η) (V̂ : ⊗₁-wit V V' ζ) (Ŵ : ⊗₁-wit W W' θ)
+      → PathP (λ k → PathP (λ i → ⊗₁-composite
+                                    (⊗₀-hexagon-l♭ U V W k i)
+                                    (⊗₀-hexagon-l♭ U' V' W' k i))
+                     (η ▿₁ ζ ▿₁ θ) (θ ▿₁ η ▿₁ ζ))
+              (⊗₁-braid♭ (Û ●₁ V̂) Ŵ)
+              (comp-pathp₂ ⊗₁-composite
+                (ap (λ X → F ▿₀ X) (⊗₀-braid♭ V W))
+                (ap (λ X → X ▿₀ G) (⊗₀-braid♭ U W))
+                (ap (λ X → F' ▿₀ X) (⊗₀-braid♭ V' W'))
+                (ap (λ X → X ▿₀ G') (⊗₀-braid♭ U' W'))
+                (λ i → η ▿₁ ⊗₁-braid♭ V̂ Ŵ i)
+                (λ i → ⊗₁-braid♭ Û Ŵ i ▿₁ ζ))
 ```
 
 ## The derived theory
@@ -123,7 +162,7 @@ normal form with strict endpoints.
     braid●₀ (nrm-slide₀ U m) (nrm-slide₀ V m)
 ```
 
-## The hexagon fiber
+## The hexagon-r fiber
 
 All the work happens in the one propositional fiber over the
 braided target `G ▿₀ H ▿₀ F`. The left traversal is three
@@ -137,7 +176,7 @@ whiskered base line with the `●₀`-whisker of the transported
 pairing, pure `∙`/`ap` algebra on the characterization.
 
 ```agda
-  module hexagon₀ (x y z : C.ob) where
+  module hexagon-r₀ (x y z : C.ob) where
     F = ⊗₀-emb x
     G = ⊗₀-emb y
     H = ⊗₀-emb z
@@ -193,9 +232,9 @@ compound `braid●₀`.
 ```
 
 The right traversal. `μ` carries the field: the transport of
-`n₁` along the one-step braid is rebent along `⊗₀-hexagon♭` to
-the two-step composite, the transport split across the `∙` and
-the whisker pushed inside the pairing — all on the
+`n₁` along the one-step braid is rebent along `⊗₀-hexagon-r♭`
+to the two-step composite, the transport split across the `∙`
+and the whisker pushed inside the pairing — all on the
 characterization side, `fst` constant throughout.
 
 ```agda
@@ -208,13 +247,11 @@ characterization side, `fst` constant throughout.
         f = λ X → X ▿₀ H
 
         inner : n₁ .snd ∙ β₁ ≡ E ∙ ap f (B₀ .snd ∙ bxy)
-        inner =
-            sym (Path.assoc E (ap f (B₀ .snd)) (ap f bxy))
-          ∙ ap (E ∙_) (sym (ap-comp f (B₀ .snd) bxy))
+        inner = ap-merge f E (B₀ .snd) bxy
 
         κ : n₁ .snd ∙ βc ≡ c₁ .snd
         κ = ap (n₁ .snd ∙_)
-               (⊗₀-hexagon♭ (⊗₀-nrm x) (⊗₀-nrm y) (⊗₀-nrm z))
+               (⊗₀-hexagon-r♭ (⊗₀-nrm x) (⊗₀-nrm y) (⊗₀-nrm z))
           ∙ Path.assoc (n₁ .snd) β₁ β₂
           ∙ ap (_∙ β₂) inner
 
@@ -233,8 +270,7 @@ characterization side, `fst` constant throughout.
         g = λ X → G ▿₀ X
 
         θ : c₆ .snd ≡ c₇ .snd
-        θ = sym (Path.assoc E' (ap g (XZ .snd)) (ap g bxz))
-          ∙ ap (E' ∙_) (sym (ap-comp g (XZ .snd) bxz))
+        θ = ap-merge g E' (XZ .snd) bxz
 
     r-braid₂ : c₇ ≡ a₄
     r-braid₂ i = ⊗₀-nrm y ●₀ braid-σ●₀ (⊗₀-nrm x) (⊗₀-nrm z) i
@@ -256,7 +292,7 @@ rule.
           (μ ∙ r-braid₁ ∙ r-assoc ∙ ρ ∙ r-braid₂)
 ```
 
-## The object hexagon
+## The object hexagon-r
 
 The shadow tree: `ap-comp` splits each side's composite, the
 σ-line shadows land on the named associators and braidings
@@ -305,14 +341,198 @@ discharge by `Path.unitl`, and the compound braid straightens by
               ( ap-comp fst ρ r-braid₂
               ∙ Path.unitl (ap fst r-braid₂) ) )
 
-    ⊗₀-hexagon
+    ⊗₀-hexagon-r
       : sym (⊗₀-assoc x y z)
         ∙ ⊗₀-braid x (y ⊗₀ z)
         ∙ sym (⊗₀-assoc y z x)
       ≡ ap (_⊗₀ z) (⊗₀-braid x y)
         ∙ sym (⊗₀-assoc y x z)
         ∙ ap (y ⊗₀_) (⊗₀-braid x z)
-    ⊗₀-hexagon =
+    ⊗₀-hexagon-r =
+        sym (step-l₁ ∙ step-l₂)
+      ∙ ap (ap fst) fiber-hexagon
+      ∙ step-r₁ ∙ step-r₂
+```
+
+## The hexagon-l fiber
+
+The mirror, in the one propositional fiber over the braided
+target `H ▿₀ F ▿₀ G`. Every link is the slot-mirror of its `-r`
+mate: the left traversal runs the associator forward to the
+compound-first bracketing, the braid σ-line at the compound
+pairing, and the associator again on the braided side; on the
+right, `μ` rebends the transport along `⊗₀-hexagon-l♭` with the
+whisker pushed into the pairing's *second* slot, and `ρ`
+reconciles on the first.
+
+```agda
+  module hexagon-l₀ (x y z : C.ob) where
+    F = ⊗₀-emb x
+    G = ⊗₀-emb y
+    H = ⊗₀-emb z
+
+    βc : F ▿₀ G ▿₀ H ≡ H ▿₀ F ▿₀ G
+    βc = ⊗₀-braid♭ (⊗₀-nrm x ●₀ ⊗₀-nrm y) (⊗₀-nrm z)
+
+    β₁ : F ▿₀ G ▿₀ H ≡ F ▿₀ H ▿₀ G
+    β₁ = ap (λ X → F ▿₀ X) (⊗₀-braid♭ (⊗₀-nrm y) (⊗₀-nrm z))
+
+    β₂ : F ▿₀ H ▿₀ G ≡ H ▿₀ F ▿₀ G
+    β₂ = ap (λ X → X ▿₀ G) (⊗₀-braid♭ (⊗₀-nrm x) (⊗₀-nrm z))
+
+    n₁ n₂ : is-⊗₀-representable (F ▿₀ G ▿₀ H)
+    n₁ = (⊗₀-nrm x ●₀ ⊗₀-nrm y) ●₀ ⊗₀-nrm z
+    n₂ = ⊗₀-nrm x ●₀ (⊗₀-nrm y ●₀ ⊗₀-nrm z)
+
+    -- the stations: left traversal down the a-line, right
+    -- traversal down the c-line, meeting at a₄
+    a₁ a₂ a₃ a₄ : is-⊗₀-representable (H ▿₀ F ▿₀ G)
+    a₁ = n₂ ↝ βc
+    a₂ = n₁ ↝ βc
+    a₃ = ⊗₀-nrm z ●₀ (⊗₀-nrm x ●₀ ⊗₀-nrm y)
+    a₄ = (⊗₀-nrm z ●₀ ⊗₀-nrm x) ●₀ ⊗₀-nrm y
+
+    c₁ c₅ c₆ c₇ : is-⊗₀-representable (H ▿₀ F ▿₀ G)
+    c₁ = (⊗₀-nrm x ●₀ ((⊗₀-nrm y ●₀ ⊗₀-nrm z)
+           ↝ ⊗₀-braid♭ (⊗₀-nrm y) (⊗₀-nrm z))) ↝ β₂
+    c₅ = (⊗₀-nrm x ●₀ (⊗₀-nrm z ●₀ ⊗₀-nrm y)) ↝ β₂
+    c₆ = ((⊗₀-nrm x ●₀ ⊗₀-nrm z) ●₀ ⊗₀-nrm y) ↝ β₂
+    c₇ = ((⊗₀-nrm x ●₀ ⊗₀-nrm z)
+           ↝ ⊗₀-braid♭ (⊗₀-nrm x) (⊗₀-nrm z)) ●₀ ⊗₀-nrm y
+
+    T-contr : is-contr (is-⊗₀-representable (H ▿₀ F ▿₀ G))
+    T-contr .center = a₃
+    T-contr .paths  = is-⊗₀-representable-prop _ a₃
+```
+
+The left traversal's σ-lines, shadows definitional as in `-r`:
+the associators land forward, the braid line on the compound
+`braid●₀`.
+
+```agda
+    ℓ-assoc₁ : a₁ ≡ a₂
+    ℓ-assoc₁ i = assoc-σ●₀ (⊗₀-nrm x) (⊗₀-nrm y) (⊗₀-nrm z) i ↝ βc
+
+    ℓ-braid : a₂ ≡ a₃
+    ℓ-braid = braid-σ●₀ (⊗₀-nrm x ●₀ ⊗₀-nrm y) (⊗₀-nrm z)
+
+    ℓ-assoc₂ : a₃ ≡ a₄
+    ℓ-assoc₂ = assoc-σ●₀ (⊗₀-nrm z) (⊗₀-nrm x) (⊗₀-nrm y)
+```
+
+The right traversal. `μ` carries the field: the transport of
+`n₂` along the one-step braid is rebent along `⊗₀-hexagon-l♭`
+to the two-step composite, the transport split across the `∙`
+and the whisker pushed inside the pairing — all on the
+characterization side, `fst` constant throughout.
+
+```agda
+    μ : a₁ ≡ c₁
+    μ i = x ⊗₀ (y ⊗₀ z) , κ i
+      where
+        B₀ = ⊗₀-nrm y ●₀ ⊗₀-nrm z
+        byz = ⊗₀-braid♭ (⊗₀-nrm y) (⊗₀-nrm z)
+        E = ⊗₀-emb-comp x (y ⊗₀ z)
+        g = λ X → F ▿₀ X
+
+        inner : n₂ .snd ∙ β₁ ≡ E ∙ ap g (B₀ .snd ∙ byz)
+        inner = ap-merge g E (B₀ .snd) byz
+
+        κ : n₂ .snd ∙ βc ≡ c₁ .snd
+        κ = ap (n₂ .snd ∙_)
+               (⊗₀-hexagon-l♭ (⊗₀-nrm x) (⊗₀-nrm y) (⊗₀-nrm z))
+          ∙ Path.assoc (n₂ .snd) β₁ β₂
+          ∙ ap (_∙ β₂) inner
+
+    r-braid₁ : c₁ ≡ c₅
+    r-braid₁ i = (⊗₀-nrm x ●₀ braid-σ●₀ (⊗₀-nrm y) (⊗₀-nrm z) i) ↝ β₂
+
+    r-assoc : c₅ ≡ c₆
+    r-assoc i = assoc-σ●₀ (⊗₀-nrm x) (⊗₀-nrm z) (⊗₀-nrm y) i ↝ β₂
+
+    ρ : c₆ ≡ c₇
+    ρ i = (x ⊗₀ z) ⊗₀ y , θ i
+      where
+        XZ = ⊗₀-nrm x ●₀ ⊗₀-nrm z
+        bxz = ⊗₀-braid♭ (⊗₀-nrm x) (⊗₀-nrm z)
+        E' = ⊗₀-emb-comp (x ⊗₀ z) y
+        f = λ X → X ▿₀ G
+
+        θ : c₆ .snd ≡ c₇ .snd
+        θ = ap-merge f E' (XZ .snd) bxz
+
+    r-braid₂ : c₇ ≡ a₄
+    r-braid₂ i = braid-σ●₀ (⊗₀-nrm x) (⊗₀-nrm z) i ●₀ ⊗₀-nrm y
+```
+
+The fiber hexagon, opaque as in `-r`.
+
+```agda
+    opaque
+      fiber-hexagon
+        : ℓ-assoc₁ ∙ ℓ-braid ∙ ℓ-assoc₂
+        ≡ μ ∙ r-braid₁ ∙ r-assoc ∙ ρ ∙ r-braid₂
+      fiber-hexagon =
+        is-contr→is-set T-contr a₁ a₄
+          (ℓ-assoc₁ ∙ ℓ-braid ∙ ℓ-assoc₂)
+          (μ ∙ r-braid₁ ∙ r-assoc ∙ ρ ∙ r-braid₂)
+```
+
+## The object hexagon-l
+
+The same shadow tree as `⊗₀-hexagon-r`'s, with plain associators
+where the right hexagon had `sym`s — the mirror runs the other
+way round the triple.
+
+```agda
+    step-l₁
+      : ap fst (ℓ-assoc₁ ∙ ℓ-braid ∙ ℓ-assoc₂)
+      ≡ ⊗₀-assoc x y z
+        ∙ braid●₀ (⊗₀-nrm x ●₀ ⊗₀-nrm y) (⊗₀-nrm z)
+        ∙ ⊗₀-assoc z x y
+    step-l₁ =
+        ap-comp fst ℓ-assoc₁ (ℓ-braid ∙ ℓ-assoc₂)
+      ∙ ap (⊗₀-assoc x y z ∙_) (ap-comp fst ℓ-braid ℓ-assoc₂)
+
+    step-l₂
+      : ⊗₀-assoc x y z
+        ∙ braid●₀ (⊗₀-nrm x ●₀ ⊗₀-nrm y) (⊗₀-nrm z)
+        ∙ ⊗₀-assoc z x y
+      ≡ ⊗₀-assoc x y z
+        ∙ ⊗₀-braid (x ⊗₀ y) z
+        ∙ ⊗₀-assoc z x y
+    step-l₂ =
+      ap (λ t → ⊗₀-assoc x y z ∙ t ∙ ⊗₀-assoc z x y)
+         (braid●₀-nrm (⊗₀-nrm x ●₀ ⊗₀-nrm y) (⊗₀-nrm z))
+
+    step-r₁
+      : ap fst (μ ∙ r-braid₁ ∙ r-assoc ∙ ρ ∙ r-braid₂)
+      ≡ ap fst (r-braid₁ ∙ r-assoc ∙ ρ ∙ r-braid₂)
+    step-r₁ =
+        ap-comp fst μ (r-braid₁ ∙ r-assoc ∙ ρ ∙ r-braid₂)
+      ∙ Path.unitl (ap fst (r-braid₁ ∙ r-assoc ∙ ρ ∙ r-braid₂))
+
+    step-r₂
+      : ap fst (r-braid₁ ∙ r-assoc ∙ ρ ∙ r-braid₂)
+      ≡ ap (x ⊗₀_) (⊗₀-braid y z)
+        ∙ ⊗₀-assoc x z y
+        ∙ ap (_⊗₀ y) (⊗₀-braid x z)
+    step-r₂ =
+        ap-comp fst r-braid₁ (r-assoc ∙ ρ ∙ r-braid₂)
+      ∙ ap (ap (x ⊗₀_) (⊗₀-braid y z) ∙_)
+          ( ap-comp fst r-assoc (ρ ∙ r-braid₂)
+          ∙ ap (⊗₀-assoc x z y ∙_)
+              ( ap-comp fst ρ r-braid₂
+              ∙ Path.unitl (ap fst r-braid₂) ) )
+
+    ⊗₀-hexagon-l
+      : ⊗₀-assoc x y z
+        ∙ ⊗₀-braid (x ⊗₀ y) z
+        ∙ ⊗₀-assoc z x y
+      ≡ ap (x ⊗₀_) (⊗₀-braid y z)
+        ∙ ⊗₀-assoc x z y
+        ∙ ap (_⊗₀ y) (⊗₀-braid x z)
+    ⊗₀-hexagon-l =
         sym (step-l₁ ∙ step-l₂)
       ∙ ap (ap fst) fiber-hexagon
       ∙ step-r₁ ∙ step-r₂
