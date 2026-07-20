@@ -203,6 +203,18 @@ The following lemmas depend on unit
   _↝_ : ∀ {x y} {A B : composite x y} → is-representable A → A ≡ B → is-representable B
   (m , p) ↝ e = m , p ∙ e
 
+  -- a witness slid along its transport path by the composition
+  -- filler: the fst is constant, at m = i0 the slide is the witness
+  -- itself (path eta) and at m = i1 the transport U ↝ e (the fill's
+  -- lid) — both definitional, so a calculus projection applied along
+  -- the slide is a straightening square with strict endpoints, and
+  -- its displaced mate is the same slide one level up
+  ↝-fill
+    : ∀ {x y} {A B : composite x y}
+    → (U : is-representable A) (e : A ≡ B) (m : I)
+    → is-representable (e m)
+  ↝-fill (m₀ , p) e m = m₀ , λ i → cat.fill p e i m
+
   ↝-repr : ∀ {x y} {α β : composite x y} (U V : is-representable α) (e : α ≡ β)
          → repr-unique (U ↝ e) (V ↝ e) ≡ repr-unique U V
   ↝-repr (m , p) (n , q) =
@@ -257,9 +269,25 @@ Associativity can be recovered through the strictness of composite composition
         → f ⨾ (g ⨾ h) ≡ (f ⨾ g) ⨾ h
   assoc f g h = assoc● (nrm f) (nrm g) (nrm h)
 
+  -- the unitor σ-lines, sealed like assoc-σ●: consumers read the
+  -- boundary off the type, and witness families over these lines
+  -- compare as neutrals; the unitors are their fst-shadows
+  opaque
+    unitr-σ● : ∀ {x y} (f : hom x y)
+             → ((nrm f ● nrm (idn y)) ↝ ▾-idn (emb f)) ≡ nrm f
+    unitr-σ● f =
+      is-representable-prop _
+        ((nrm f ● nrm (idn _)) ↝ ▾-idn (emb f)) (nrm f)
+
+    unitl-σ● : ∀ {x y} (f : hom x y)
+             → ((nrm (idn x) ● nrm f) ↝ emb-idn-absorb f) ≡ nrm f
+    unitl-σ● f =
+      is-representable-prop _
+        ((nrm (idn _) ● nrm f) ↝ emb-idn-absorb f) (nrm f)
+
   unitr : ∀ {x y} (f : hom x y) → f ⨾ idn y ≡ f
-  unitr f = repr-unique ((nrm f ● nrm (idn _)) ↝ ▾-idn (emb f)) (nrm f)
+  unitr f = ap fst (unitr-σ● f)
 
   unitl : ∀ {x y} (f : hom x y) → idn x ⨾ f ≡ f
-  unitl f = repr-unique ((nrm (idn _) ● nrm f) ↝ emb-idn-absorb f) (nrm f)
+  unitl f = ap fst (unitl-σ● f)
 ```

@@ -12,7 +12,7 @@ open import Core.Data.Sigma
 open import Core.Kan
 open import Core.Path.Base
 open import Core.Transport.Base using (is-prop→PathP)
-open import Core.Transport.Properties using (is-contr-is-prop)
+open import Core.Transport.Properties using (is-contr-is-prop; is-prop→SquareP)
 open import Core.Transport.J using (J; subst)
 open import Core.Equiv.Base using (iso→equiv; _≃_; is-equiv)
 open import Core.Function.Embedding
@@ -154,8 +154,21 @@ module _ {o h} (C : category o h) where
 
 The triangle
 
-```
+The unit composite `A ▿ B` carries the plain pairing `s₀` and the
+two unitor-bearing pairings `sl`/`sr` — the `●`-whiskers of the
+transported one-sided witnesses `Vg`/`Uf` — and every face of the
+triangle is the `fst`-shadow of a propositional witness square with
+wit-calculus edges. The unitor faces are squares in the one fiber,
+sides constant; the associator face rides the coherence field
+itself — its base square is `is-coh` transposed, its sides the
+`ρ`-lines: `↝-fill` slides of the two unit absorptions,
+`●`-whiskered, connecting the bracketings `r₁`/`r₂` to `sl`/`sr`
+with constant `fst`. The fiber triangle is one `is-contr→is-set`,
+and the tree glues shadow-by-shadow exactly as the pentagon's, so
+every leaf displaces by construction. The elementary transport-only
+faces live in `Cat.Coherence.Gloss`.
 
+```agda
   module triangle {x y z} (f : hom x y) (g : hom y z) where
     A = emb f
     E = emb (idn y)
@@ -175,68 +188,127 @@ The triangle
     T-contr .center = r₁
     T-contr .paths  = is-representable-prop _ r₁
 
-    opaque
-      unfolding assoc-σ●
-
-      assoc-eq : repr-unique r₁ r₂ ≡ assoc f (idn y) g
-      assoc-eq = refl
-
     loop : f ⨾ g ≡ f ⨾ g
     loop = repr-unique r₀¹ r₀²
 
     Uf : is-representable A ; Uf = (nrm f ● nrm (idn y)) ↝ ▾-idn A
     Vg : is-representable B ; Vg = (nrm (idn y) ● nrm g) ↝ emb-idn-absorb g
 
-    s₀ s₁ s₂ : is-representable (A ▿ B)
-    s₀ = nrm f ● nrm g          ;  s₁ = r₁ ↝ e₁  ;  s₂ = r₂ ↝ e₂
+    s₀ sl sr : is-representable (A ▿ B)
+    s₀ = nrm f ● nrm g
+    sl = nrm f ● Vg              -- fst = f ⨾ (idn y ⨾ g)
+    sr = Uf ● nrm g              -- fst = (f ⨾ idn y) ⨾ g
 
-    Ĝr : is-representable A → is-representable (A ▿ B) ; Ĝr u = u ● nrm g
-    Ĝl : is-representable B → is-representable (A ▿ B) ; Ĝl v = nrm f ● v
-
-    private
-      W  = (nrm f ● nrm (idn y)) .snd ; X  = emb-comp (f ⨾ idn y) g
-      W' = (nrm (idn y) ● nrm g) .snd ; X' = emb-comp f (idn y ⨾ g)
-
-      wr : s₂ .snd ≡ Ĝr Uf .snd
-      wr = sym (Path.assoc X (ap (_▿ B) W) e₂)
-         ∙ ap (X ∙_) (sym (ap-comp (_▿ B) W (▾-idn A)))
-
-      wl : s₁ .snd ≡ Ĝl Vg .snd
-      wl = sym (Path.assoc X' (ap (A ▿_) W') e₁)
-         ∙ ap (X' ∙_) (sym (ap-comp (A ▿_) W' (emb-idn-absorb g)))
-
-    face-r : repr-unique s₂ s₀ ≡ ap (_⨾ g) (unitr f)
-    face-r = sym (repr-∙ s₂ (Ĝr Uf) s₀)
-           ∙ ap (_∙ repr-unique (Ĝr Uf) s₀) (repr-refl (s₂ .snd) (Ĝr Uf .snd) wr)
-           ∙ Path.unitl (repr-unique (Ĝr Uf) s₀)
-           ∙ repr-ap Ĝr Uf (nrm f)
-
-    face-l : repr-unique s₁ s₀ ≡ ap (f ⨾_) (unitl g)
-    face-l = sym (repr-∙ s₁ (Ĝl Vg) s₀)
-           ∙ ap (_∙ repr-unique (Ĝl Vg) s₀) (repr-refl (s₁ .snd) (Ĝl Vg .snd) wl)
-           ∙ Path.unitl (repr-unique (Ĝl Vg) s₀)
-           ∙ repr-ap Ĝl Vg (nrm g)
-
-    triangle-weak : repr-unique s₁ s₂ ∙ ap (_⨾ g) (unitr f) ≡ ap (f ⨾_) (unitl g)
-    triangle-weak = ap (repr-unique s₁ s₂ ∙_) (sym face-r) ∙ repr-∙ s₁ s₂ s₀ ∙ face-l
-
-    loop-refl : is-2-coherent C → loop ≡ refl
-    loop-refl mid = ap (ap fst)
-      (is-contr→is-set T-contr r₀¹ r₀² (is-representable-prop _ r₀¹ r₀²)
-         (ap ((nrm f ● nrm g) ↝_) (ap sym (sym (mid .is-2-coherent.is-coh f g)))))
-
-
+    -- opaque like assoc-σ●: the tree and the displayed witness
+    -- families only ever read their boundaries off the types, and
+    -- the sealed heads keep the fiber comparisons syntactic; the
+    -- displaced mates seal over these exactly as assoc-σ●ᴰ over
+    -- assoc-σ●
     opaque
-      unfolding assoc-σ●
+      σₗᵣ : sl ≡ sr ; σₗᵣ = is-representable-prop _ sl sr
+      σᵣ₀ : sr ≡ s₀ ; σᵣ₀ = is-representable-prop _ sr s₀
+      σₗ₀ : sl ≡ s₀ ; σₗ₀ = is-representable-prop _ sl s₀
 
-      face-a : is-2-coherent C → repr-unique s₁ s₂ ≡ assoc f (idn y) g
-      face-a mid = ap (λ t → repr-unique (r₁ ↝ e₁) (r₂ ↝ t)) (mid .is-2-coherent.is-coh f g) ∙ ↝-repr r₁ r₂ e₁
+    -- fst-constant lines from the bracketings to the pairings,
+    -- riding e₂/e₁: the ↝-fill slides of the two unit absorptions,
+    -- ●-whiskered on the untouched side
+    ρr : (m : I) → is-representable (e₂ m)
+    ρr m = ↝-fill (nrm f ● nrm (idn y)) (▾-idn A) m ● nrm g
+
+    ρl : (m : I) → is-representable (e₁ m)
+    ρl m = nrm f ● ↝-fill (nrm (idn y) ● nrm g) (emb-idn-absorb g) m
+
+    -- the unitor faces: squares in the one fiber, sides constant,
+    -- bottom the ●-whisker of the unitor σ-line — the shadow's
+    -- bottom edge is the whiskered unitor definitionally. Opaque
+    -- like fiber-pentagon: displayed witness families project their
+    -- slices under generic interval binders, and the sealed heads
+    -- keep those comparisons syntactic; the boundary still reduces
+    -- by the type-directed rule
+    opaque
+      face-σr : SquareP (λ _ _ → is-representable (A ▿ B))
+                σᵣ₀ refl (λ i → unitr-σ● f i ● nrm g) refl
+      face-σr = is-prop→SquareP (λ _ _ → is-representable-prop (A ▿ B))
+                  σᵣ₀ refl (λ i → unitr-σ● f i ● nrm g) refl
+
+      face-σl : SquareP (λ _ _ → is-representable (A ▿ B))
+                σₗ₀ refl (λ i → nrm f ● unitl-σ● g i) refl
+      face-σl = is-prop→SquareP (λ _ _ → is-representable-prop (A ▿ B))
+                  σₗ₀ refl (λ i → nrm f ● unitl-σ● g i) refl
+
+    face-r : ap fst σᵣ₀ ≡ ap (_⨾ g) (unitr f)
+    face-r m i = face-σr m i .fst
+
+    face-l : ap fst σₗ₀ ≡ ap (f ⨾_) (unitl g)
+    face-l m i = face-σl m i .fst
+
+    -- the associator face: the witness square over the transposed
+    -- coherence field, sides the ρ-lines, bottom the sealed
+    -- assoc-σ● — its shadow lands on assoc with no unfolding
+    opaque
+      face-σa
+        : (mid : is-2-coherent C)
+        → SquareP (λ m i → is-representable
+                             (mid .is-2-coherent.is-coh f g (~ i) (~ m)))
+          σₗᵣ (λ m → ρl (~ m))
+          (assoc-σ● (nrm f) (nrm (idn y)) (nrm g))
+          (λ m → ρr (~ m))
+      face-σa mid =
+        is-prop→SquareP
+          (λ m i → is-representable-prop
+                     (mid .is-2-coherent.is-coh f g (~ i) (~ m)))
+          σₗᵣ (λ m → ρl (~ m))
+          (assoc-σ● (nrm f) (nrm (idn y)) (nrm g))
+          (λ m → ρr (~ m))
+
+    face-a : is-2-coherent C → ap fst σₗᵣ ≡ assoc f (idn y) g
+    face-a mid m i = face-σa mid m i .fst
+
+    -- opaque like fiber-pentagon: displayed witness families project
+    -- its slices under generic interval binders; the boundary still
+    -- reduces by the type-directed rule
+    opaque
+      fiber-triangle : σₗᵣ ∙ σᵣ₀ ≡ σₗ₀
+      fiber-triangle = is-contr→is-set (rep-contr s₀) sl s₀ (σₗᵣ ∙ σᵣ₀) σₗ₀
+
+    -- the ∙-tree of the triangle, leaf by leaf: the associator and
+    -- unitr whiskers into the fiber, one ap-comp shuffle, the fiber
+    -- triangle's shadow, the unitl face out
+    step₁ = sym (ap-comp fst σₗᵣ σᵣ₀)
+    step₂ = ap (ap fst) fiber-triangle
+    whisker-r = ap (ap fst σₗᵣ ∙_) (sym face-r)
+
+    whisker-a
+      : (mid : is-2-coherent C)
+      → assoc f (idn y) g ∙ ap (_⨾ g) (unitr f)
+      ≡ ap fst σₗᵣ ∙ ap (_⨾ g) (unitr f)
+    whisker-a mid = ap (_∙ ap (_⨾ g) (unitr f)) (sym (face-a mid))
+
+    triangle-weak : ap fst σₗᵣ ∙ ap (_⨾ g) (unitr f) ≡ ap (f ⨾_) (unitl g)
+    triangle-weak = whisker-r ∙ step₁ ∙ step₂ ∙ face-l
 
     triangle : is-2-coherent C
              → assoc f (idn y) g ∙ ap (_⨾ g) (unitr f) ≡ ap (f ⨾_) (unitl g)
-    triangle mid = ap (_∙ ap (_⨾ g) (unitr f)) (sym (face-a mid)) ∙ triangle-weak
+    triangle mid = whisker-a mid ∙ triangle-weak
 
+    -- the fiber square behind the loop: the canonical witness
+    -- identification against the is-coh-transport line
+    loop-sq
+      : (mid : is-2-coherent C)
+      → is-representable-prop _ r₀¹ r₀²
+      ≡ ap ((nrm f ● nrm g) ↝_)
+           (ap sym (sym (mid .is-2-coherent.is-coh f g)))
+    loop-sq mid =
+      is-contr→is-set T-contr r₀¹ r₀²
+        (is-representable-prop _ r₀¹ r₀²)
+        (ap ((nrm f ● nrm g) ↝_)
+            (ap sym (sym (mid .is-2-coherent.is-coh f g))))
 
+    loop-refl : is-2-coherent C → loop ≡ refl
+    loop-refl mid = ap (ap fst) (loop-sq mid)
+```
+
+```agda
   ▾-idn-▿ : ∀ {x y z} (A : composite x y) (B : composite y z)
            → ▾-idn (A ▿ B) ≡ ap (A ▿_) (▾-idn B)
   ▾-idn-▿ A B = refl
@@ -378,36 +450,47 @@ module op-coh {o h} (C : category o h) where
            → sym (repr-unique U V) ≡ repr-unique V U
   repr-sym U V = repr-lc (sym (is-representable-prop _ U V))
 
-  unitr-op : ∀ {x y} (f : Cᵒ.hom x y) → Tᵒ.unitr f ≡ unitl f
-  unitr-op {x} {y} f =
-      repr-op P₁ (nrm f)
-    ∙ sym (repr-∙ P₁ P₂ (nrm f))
-    ∙ ap (_∙ repr-unique P₂ (nrm f)) (repr-refl (P₁ .snd) (P₂ .snd) wit)
-    ∙ Path.unitl (repr-unique P₂ (nrm f))
-    where
-      Q₀ = emb-comp-op (idn y) f ; Q = emb-comp (idn y) f
-      ι  = interchange (idn y) f ; U = idn-▴ (emb f)
+  -- the op-bridge computes through the unitor bodies: the chain's
+  -- endpoints are the two unitors' defining witness identifications
+  opaque
+    unfolding unitr-σ● unitl-σ●
 
-      P₁ : is-representable (emb f)
-      P₁ = rep-op' ((Cᵒ.nrm f Tᵒ.● Cᵒ.nrm (idn y)) Tᵒ.↝ Tᵒ.▾-idn (Cᵒ.emb f))
-      P₂ : is-representable (emb f)
-      P₂ = (nrm (idn y) ● nrm f) ↝ emb-idn-absorb f
+    unitr-op : ∀ {x y} (f : Cᵒ.hom x y) → Tᵒ.unitr f ≡ unitl f
+    unitr-op {x} {y} f =
+        repr-op P₁ (nrm f)
+      ∙ sym (repr-∙ P₁ P₂ (nrm f))
+      ∙ ap (_∙ repr-unique P₂ (nrm f)) (repr-refl (P₁ .snd) (P₂ .snd) wit)
+      ∙ Path.unitl (repr-unique P₂ (nrm f))
+      where
+        Q₀ : emb (idn y ⨾ f) ≡ idn y ▴ emb f
+        Q₀ = emb-comp-op (idn y) f
+        Q : emb (idn y ⨾ f) ≡ emb (idn y) ▾ f
+        Q = emb-comp (idn y) f
+        ι : emb (idn y) ▾ f ≡ idn y ▴ emb f
+        ι = interchange (idn y) f
+        U : idn y ▴ emb f ≡ emb f
+        U = idn-▴ (emb f)
 
-      wit : P₁ .snd ≡ P₂ .snd
-      wit =
-        begin
-          ap ⟳ ((ap ⟲ Q₀ ∙ refl) ∙ Tᵒ.▾-idn (Cᵒ.emb f))
-            ≡⟨ ap (λ t → ap ⟳ ((ap ⟲ Q₀ ∙ refl) ∙ t)) (bridge-l f) ⟩
-          ap ⟳ ((ap ⟲ Q₀ ∙ refl) ∙ ap ⟲ U)
-            ≡⟨ ap-comp ⟳ (ap ⟲ Q₀ ∙ refl) (ap ⟲ U) ⟩
-          ap ⟳ (ap ⟲ Q₀ ∙ refl) ∙ U
-            ≡⟨ ap (_∙ U) (ap-comp ⟳ (ap ⟲ Q₀) refl) ⟩
-          (Q₀ ∙ refl) ∙ U      ≡⟨ ap (_∙ U) (Path.unitr Q₀) ⟩
-          Q₀ ∙ U               ≡˘⟨ ap (_∙ U) (coh→∙ (idn y) f) ⟩
-          (Q ∙ ι) ∙ U          ≡˘⟨ Path.assoc Q ι U ⟩
-          Q ∙ (ι ∙ U)          ≡˘⟨ ap (_∙ (ι ∙ U)) (Path.unitr Q) ⟩
-          (Q ∙ refl) ∙ (ι ∙ U)
-        ∎
+        P₁ : is-representable (emb f)
+        P₁ = rep-op' ((Cᵒ.nrm f Tᵒ.● Cᵒ.nrm (idn y)) Tᵒ.↝ Tᵒ.▾-idn (Cᵒ.emb f))
+        P₂ : is-representable (emb f)
+        P₂ = (nrm (idn y) ● nrm f) ↝ emb-idn-absorb f
+
+        wit : P₁ .snd ≡ P₂ .snd
+        wit =
+          begin
+            ap ⟳ ((ap ⟲ Q₀ ∙ refl) ∙ Tᵒ.▾-idn (Cᵒ.emb f))
+              ≡⟨ ap (λ t → ap ⟳ ((ap ⟲ Q₀ ∙ refl) ∙ t)) (bridge-l f) ⟩
+            ap ⟳ ((ap ⟲ Q₀ ∙ refl) ∙ ap ⟲ U)
+              ≡⟨ ap-comp ⟳ (ap ⟲ Q₀ ∙ refl) (ap ⟲ U) ⟩
+            ap ⟳ (ap ⟲ Q₀ ∙ refl) ∙ U
+              ≡⟨ ap (_∙ U) (ap-comp ⟳ (ap ⟲ Q₀) refl) ⟩
+            (Q₀ ∙ refl) ∙ U      ≡⟨ ap (_∙ U) (Path.unitr Q₀) ⟩
+            Q₀ ∙ U               ≡˘⟨ ap (_∙ U) (coh→∙ (idn y) f) ⟩
+            (Q ∙ ι) ∙ U          ≡˘⟨ Path.assoc Q ι U ⟩
+            Q ∙ (ι ∙ U)          ≡˘⟨ ap (_∙ (ι ∙ U)) (Path.unitr Q) ⟩
+            (Q ∙ refl) ∙ (ι ∙ U)
+          ∎
 
   ⟲-∙ : ∀ {x y} {α β γ : composite y x} (p : α ≡ β) (q : β ≡ γ)
       → ap ⟲ (p ∙ q) ≡ ap ⟲ p ∙ ap ⟲ q
@@ -529,3 +612,4 @@ record category-3-coherent {o h} (C : category o h) : Type (o ⊔ h) where
     ∙ ap (λ t → ap (λ X → X ▿ Cc) (interchange♭ U V) ∙ t)
          (interchange-lcomp U V W)
     ∙ interchange-natural U V W
+```

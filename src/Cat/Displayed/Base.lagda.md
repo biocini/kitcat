@@ -281,9 +281,9 @@ pointwise `funext`.
 
 `ap emb (unitl f)` computes, in pure base theory, to the
 `∙`-decomposition through `emb-comp-op (idn x) f` and the funext
-absorption — `ap-fst-fiber` at `unitl`'s defining witness path, the
-`∙ refl` redexes of `nrm`/`●`/`↝` discharged by `Path.unitr`, and
-the spine's 2-cell `coh→∙`. `sq-from-∙` packages the decomposition
+absorption — `ap-fst-fiber` at the unitor's σ-line, the `∙ refl`
+redexes of `nrm`/`●`/`↝` discharged by `Path.unitr`, and the
+spine's 2-cell `coh→∙`. `sq-from-∙` packages the decomposition
 as a square; the square bounds a line of displayed fibers from the
 push fiber at the identity to the plain displayed image fiber, and
 contractibility rides across.
@@ -306,7 +306,7 @@ contractibility rides across.
         V = nrm f
 
         κ₀ : U ≡ V
-        κ₀ = is-representable-prop _ U V
+        κ₀ = unitl-σ● f
 
     -- the straightening square: top ap emb (unitl f), left
     -- emb-comp-op (idn x) f, bottom idn-▴, right constant
@@ -467,19 +467,36 @@ over the base identity.
             (f' ⨾ᴰ (g' ⨾ᴰ k')) ((f' ⨾ᴰ g') ⨾ᴰ k')
   assocᴰ f' g' k' = assoc●ᴰ nrm[ f' ] nrm[ g' ] nrm[ k' ]
 
+  opaque
+    unfolding unitr-σ● unitl-σ●
+
+    unitr-σ●ᴰ
+      : ∀ {x y} {f : hom x y} {x' y'} (f' : hom[ f ] x' y')
+      → PathP (λ i → is-representable[ unitr-σ● f i ] (emb[ f' ]))
+              ((nrm[ f' ] ●ᴰ nrm[ idn[ y' ] ]) ↝ᴰ ▾-idnᴰ (emb[ f' ]))
+              nrm[ f' ]
+    unitr-σ●ᴰ {y' = y'} f' =
+      repr-σᴰ ((nrm[ f' ] ●ᴰ nrm[ idn[ y' ] ]) ↝ᴰ ▾-idnᴰ (emb[ f' ]))
+              nrm[ f' ]
+
+    unitl-σ●ᴰ
+      : ∀ {x y} {f : hom x y} {x' y'} (f' : hom[ f ] x' y')
+      → PathP (λ i → is-representable[ unitl-σ● f i ] (emb[ f' ]))
+              ((nrm[ idn[ x' ] ] ●ᴰ nrm[ f' ]) ↝ᴰ emb-idn-absorbᴰ f')
+              nrm[ f' ]
+    unitl-σ●ᴰ {x' = x'} f' =
+      repr-σᴰ ((nrm[ idn[ x' ] ] ●ᴰ nrm[ f' ]) ↝ᴰ emb-idn-absorbᴰ f')
+              nrm[ f' ]
+
   unitrᴰ
     : ∀ {x y} {f : hom x y} {x' y'} (f' : hom[ f ] x' y')
     → PathP (λ i → hom[ unitr f i ] x' y') (f' ⨾ᴰ idn[ y' ]) f'
-  unitrᴰ {y' = y'} f' =
-    repr-uniqueᴰ ((nrm[ f' ] ●ᴰ nrm[ idn[ y' ] ]) ↝ᴰ ▾-idnᴰ (emb[ f' ]))
-                 nrm[ f' ]
+  unitrᴰ f' i = unitr-σ●ᴰ f' i .fst
 
   unitlᴰ
     : ∀ {x y} {f : hom x y} {x' y'} (f' : hom[ f ] x' y')
     → PathP (λ i → hom[ unitl f i ] x' y') (idn[ x' ] ⨾ᴰ f') f'
-  unitlᴰ {x' = x'} f' =
-    repr-uniqueᴰ ((nrm[ idn[ x' ] ] ●ᴰ nrm[ f' ]) ↝ᴰ emb-idn-absorbᴰ f')
-                 nrm[ f' ]
+  unitlᴰ f' i = unitl-σ●ᴰ f' i .fst
 ```
 
 ## Cartesianness and fibrations
