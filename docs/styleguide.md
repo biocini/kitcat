@@ -367,7 +367,40 @@ face = is-prop→SquareP B-prop top refl bot refl
 
 Measured 14× on a face whose implicits carry fibered witness
 structure. Faces whose terms are small elaborate cheaply either
-way and may stay inline — profile before churning.
+way and may stay inline — profile before churning. Side faces
+count the same as bottoms: an η-wrapped reversal of a named line
+(`λ m → ρ (~ m)`) is still an inline face, elaborated in the
+ascription and again in the fill (measured 240 ms → 37 ms + two
+~30 ms named sides, and see the attribution norm below).
+
+**Keep Kan fillers out of head position.** If a composition
+operation plugs its left operand in head position — `(β ▿ α) γ =
+β (… α …)` — then a filler slid into the β slot is an `hcom`
+applied at function type: every conversion pushes the argument
+into each face of the filler. In the α slot the same filler is
+compared as a subterm. Measured on mirror whiskers of the same
+slide: fill-left 74 ms against fill-right 23 ms, rising to
+450 ms when the slid path is an `∙`-chain rather than a record
+field. When the construction leaves a mirror choice, whisker
+fills on the argument side; when the endpoints force the
+orientation, accept the cost — naming the filled operand and
+generalizing the whisker into a combinator both measured null.
+
+**Project the propositionality path; do not transport by J.**
+When the goal equates `fst`-shadows of proofs in a propositional
+fiber and the operation in play preserves `fst` definitionally,
+whisker the fiber's propositionality path by the operation and
+project, instead of doing J on an endpoint:
+
+```agda
+slide-shadow : ∀ U V e
+             → shadow (U ↝ e) (V ↝ e) ≡ shadow U V
+slide-shadow U V e =
+  sym (shadow-lc (λ i → Fib-prop c U V i ↝ e))
+  -- not: J (λ _ e' → …) (…) — the J-form re-elaborates the
+  -- family at the transported index (measured 278 → 169 ms at a
+  -- two-sided family; the projection form is also J-free)
+```
 
 **Argument-position nesting is not the same disease.** A term
 that occurs once, as an argument, with its expected type
@@ -394,6 +427,23 @@ agda --profile=definitions src/Some/Module.lagda.md   # invalidate
 definition. Every seal and every naming is justified by a
 before/after profile; an experiment that moves nothing is
 reverted, not kept on principle.
+
+Two rules for reading the numbers. A conversion is billed to the
+definition that first forces it, not to the one that owns it: an
+inline face in a later fill re-bills the re-elaboration of the
+lines it applies to those lines themselves (a slide read 264 ms
+until the fill's sides were named; it then read 74 ms with no
+change of its own), and fixing a hotspot can surface a new one
+downstream that is the same conserved work under a new account.
+So per-definition numbers rank suspects, but only the module
+`Total` over repeated cold runs confirms a fix — totals here are
+stable to ~1% between runs while individual attributions
+reshuffle freely. And `Miscellaneous` is not import overhead:
+the import floor is just deserialization (~0.3 s here, measured
+by cold-checking a trivial module with the same imports); the
+rest is the module's own signature elaboration, section
+application, occurs checks, record positivity, and interface
+serialization — `--profile=internal` decomposes it.
 
 ## Rulings
 
