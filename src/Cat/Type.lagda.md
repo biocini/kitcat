@@ -22,7 +22,6 @@ open import Core.Base
 open import Core.Data.Sigma
 open import Core.Kan
 open import Core.Path.Base
-open import Core.Transport.J using (J)
 ```
 
 First we start with the data of a reflexive graph.
@@ -176,17 +175,6 @@ module representable {o h}
   _▵_ : ∀ {x y z} → composite x y → composite y z → composite x z
   _▵_ {y = y} β α γ = α ((γ .fst .fst , β (γ .fst , un-idn y)) , γ .snd)
   infixl 30 _▵_
-
-  -- closure of the ternary interchange over the fibers of emb;
-  -- at nrm endpoints it agrees with the input up to J-refl
-  interchange♭-from
-    : (∀ {x y z} (f : hom x y) (g : hom y z) → emb f ▾ g ≡ f ▴ emb g)
-    → ∀ {x y z} {A : composite x y} {B : composite y z}
-    → is-representable A → is-representable B → A ▿ B ≡ A ▵ B
-  interchange♭-from ι {B = B} (m , p) (n , q) =
-    J (λ F' _ → F' ▿ B ≡ F' ▵ B)
-      (J (λ G' _ → emb m ▿ G' ≡ emb m ▵ G') (ι m n) q)
-      p
 
 record category-axioms {o h} (S : reflexive-graph o h) : Type (o ⊔ h) where
   open virtual S

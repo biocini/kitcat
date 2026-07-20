@@ -143,10 +143,12 @@ operator calculus displaces token-for-token; the `res[_]`
 computations that make each clause typecheck are the same
 definitional computations as in the base, so `_▾ᴰ_` collapses to
 `_▿ᴰ_` against an embedded factor exactly as `_▾_` does to `_▿_`.
-The displaced closure `interchange♭-fromᴰ` — instance sugar, a
-double dependent J over the total fibers — is deferred with the
-J-straightening cluster; the axiom field below takes the ♭ form
-directly, so nothing routes through it.
+The axiom field below takes the ♭ form directly, and instances
+prove it in that shape. The pointwise-to-♭ closure — a J-tower
+over the total fibers, agreeing with its input at `nrm`s only
+propositionally — is presentation-comparison material and lives
+off the spine, in the `Properties` modules; nothing routes
+through it.
 
 ```agda
 module representableᴰ {o h o' h'}

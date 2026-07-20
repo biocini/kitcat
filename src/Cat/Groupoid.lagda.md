@@ -28,7 +28,6 @@ open import Core.Data.Sigma
 open import Core.Sub
 open import Core.Kan
 open import Core.Path.Base
-open import Core.Transport.J using (J)
 open import Core.Equiv.Base using (is-equiv; eqv-fibers; iso→equiv)
 open import Core.Equiv.Properties using (comp-equiv)
 open import Core.Function.Embedding
@@ -137,11 +136,14 @@ module _ {u} (A : Type u) where
       gpd-interchange f g
         (γ .fst .fst) (γ .fst .snd) (γ .snd .fst) (γ .snd .snd)
 
-    -- closure of ι over the fibers; at nrm endpoints this is how the
-    -- record computes its derived `interchange` from the field we supply
+    -- the field, proven in its own shape: the March equation at the
+    -- representing paths, conjugated by the ▿/▵ lines of the witness
+    -- identifications — the one-sided composites in ι's type collapse
+    -- to the ternary orders against the embedded factors
     ι♭ : ∀ {x y z : A} {F : composite x y} {G : composite y z}
        → fiber gpd-emb F → fiber gpd-emb G → F ▿ G ≡ F ▵ G
-    ι♭ = interchange♭-from ι
+    ι♭ (m , p) (n , q) =
+      sym (λ i → p i ▿ q i) ∙ ι m n ∙ (λ i → p i ▵ q i)
 
     -- the record's `spine`, with `interchange f g` computed from `ι♭`
     Spine : ∀ {x y z : A} (f : x ≡ y) (g : y ≡ z) → Type u

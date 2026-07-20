@@ -117,18 +117,6 @@ module tensor-representable {o h} (C : category o h) (I : category.ob C)
   _▵₀_ : ⊗₀-composite → ⊗₀-composite → ⊗₀-composite
   (F ▵₀ G) γ = G (F (γ .fst , I) , γ .snd)
   infixl 30 _▵₀_
-
-  -- closure of the ternary interchange over the fibers of ⊗₀-emb;
-  -- at ⊗₀-nrm endpoints it agrees with the input up to J-refl
-  ⊗₀-interchange♭-from
-    : ((x y : C.ob) → ⊗₀-emb x ▾₀ y ≡ x ▴₀ ⊗₀-emb y)
-    → {A B : ⊗₀-composite}
-    → is-⊗₀-representable A → is-⊗₀-representable B
-    → A ▿₀ B ≡ A ▵₀ B
-  ⊗₀-interchange♭-from ι {B = B} (m , p) (n , q) =
-    J (λ F' _ → F' ▿₀ B ≡ F' ▵₀ B)
-      (J (λ G' _ → ⊗₀-emb m ▿₀ G' ≡ ⊗₀-emb m ▵₀ G') (ι m n) q)
-      p
 ```
 
 ## `monoidal-axioms₀`
@@ -578,9 +566,7 @@ normal form, and displaced witness space `⊗₁-wit`, the unit-slot
 actions `⊗₁-pre`/`⊗₁-post` and the context substitutions
 `⊗₁-sub`/`⊗₁-cosub`, mirroring the object layer; the two
 one-sided composite operators `▾₁`/`▴₁`, the two ternary orders
-`▿₁`/`▵₁`, the vertical composite `_⨾₁_`, and the closure
-`⊗₁-interchange♭-from` of a pointwise interchange over displaced
-witnesses.
+`▿₁`/`▵₁`, and the vertical composite `_⨾₁_`.
 
 ```agda
 module tensor-representable₁ {o h} (C : category o h) (I : category.ob C)
@@ -671,41 +657,6 @@ module tensor-representable₁ {o h} (C : category o h) (I : category.ob C)
        → ⊗₁-composite F F''
   (η ⨾₁ η') γ γ' δ = η $₁ δ Ct.⨾ η' $₁ ⊗₁-ctx-idn
   infixr 40 _⨾₁_
-
-  -- closure of the displaced ternary interchange over the total
-  -- fibers of ⊗₁-emb: one dependent J per side, over the witness's
-  -- base lines paired with its characterization; at ⊗₁-wit-nrm
-  -- endpoints it agrees with the input up to J-refl
-  ⊗₁-interchange♭-from
-    : (ι : ∀ {A B : ⊗₀-composite}
-         → is-⊗₀-representable A → is-⊗₀-representable B
-         → A ▿₀ B ≡ A ▵₀ B)
-    → (∀ {x x'} (φ : C.hom x x') {y y'} (ψ : C.hom y y')
-       → PathP (λ i → ⊗₁-composite (ι (⊗₀-nrm x) (⊗₀-nrm y) i)
-                                    (ι (⊗₀-nrm x') (⊗₀-nrm y') i))
-               (⊗₁-emb φ ▾₁ ψ) (φ ▴₁ ⊗₁-emb ψ))
-    → ∀ {A A' B B' : ⊗₀-composite}
-        {U : is-⊗₀-representable A} {U' : is-⊗₀-representable A'}
-        {V : is-⊗₀-representable B} {V' : is-⊗₀-representable B'}
-        {η : ⊗₁-composite A A'} {ζ : ⊗₁-composite B B'}
-    → ⊗₁-wit U U' η → ⊗₁-wit V V' ζ
-    → PathP (λ i → ⊗₁-composite (ι U V i) (ι U' V' i))
-            (η ▿₁ ζ) (η ▵₁ ζ)
-  ⊗₁-interchange♭-from ι ι₁
-    {U = m , p} {m' , p'} {n , q} {n' , q'} {ζ = ζ} (σ , P) (τ , Q) =
-    J {A = Σ T ∶ ⊗₀-composite × ⊗₀-composite , ⊗₁-composite (T .fst) (T .snd)}
-      (λ T t →
-        PathP (λ i → ⊗₁-composite (ι (m , λ j → t j .fst .fst) (n , q) i)
-                                   (ι (m' , λ j → t j .fst .snd) (n' , q') i))
-              (T .snd ▿₁ ζ) (T .snd ▵₁ ζ))
-      (J {A = Σ T ∶ ⊗₀-composite × ⊗₀-composite , ⊗₁-composite (T .fst) (T .snd)}
-         (λ T t →
-           PathP (λ i → ⊗₁-composite (ι (⊗₀-nrm m) (n , λ j → t j .fst .fst) i)
-                                      (ι (⊗₀-nrm m') (n' , λ j → t j .fst .snd) i))
-                 (⊗₁-emb σ ▿₁ T .snd) (⊗₁-emb σ ▵₁ T .snd))
-         (ι₁ σ τ)
-         (λ i → (q i , q' i) , Q i))
-      (λ i → (p i , p' i) , P i)
 ```
 
 ## `monoidal-axioms₁`
