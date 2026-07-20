@@ -97,40 +97,54 @@ module _ {o h} (C : category o h) where
     fiber-pentagon : σ₅₃ ∙ σ₃₂ ∙ σ₂₁ ≡ σ₅₄ ∙ σ₄₁
     fiber-pentagon = is-contr→is-set T-contr p₅ p₁ (σ₅₃ ∙ σ₃₂ ∙ σ₂₁) (σ₅₄ ∙ σ₄₁)
 
+    -- the ∙-tree of the fiber pentagon's hom shadow, leaf by leaf:
+    -- two ap-comp shuffles into the shadow, the shadow itself, one
+    -- shuffle out — named so a displaced pentagon can glue over
+    -- each leaf separately
+    step₁ = sym (ap (ap fst σ₅₃ ∙_) (ap-comp fst σ₃₂ σ₂₁))
+    step₂ = sym (ap-comp fst σ₅₃ (σ₃₂ ∙ σ₂₁))
+    step₃ = ap (ap fst) fiber-pentagon
+    step₄ = ap-comp fst σ₅₄ σ₄₁
+
     pentagon⋉
       : ap (U .fst ⨾_) (assoc⋉ V W X) ∙ assoc⋉ U (V ⋉ W) X ∙ ap (_⨾ X .fst) (assoc⋉ U V W)
       ≡ assoc⋉ U V (W ⋉ X) ∙ assoc⋉ (U ⋉ V) W X
-    pentagon⋉ =
-        sym (ap (ap fst σ₅₃ ∙_) (ap-comp fst σ₃₂ σ₂₁))
-      ∙ sym (ap-comp fst σ₅₃ (σ₃₂ ∙ σ₂₁))
-      ∙ ap (ap fst) fiber-pentagon
-      ∙ ap-comp fst σ₅₄ σ₄₁
+    pentagon⋉ = step₁ ∙ step₂ ∙ step₃ ∙ step₄
+
+  -- a witness slid back along its own path: at m = i0 the slide is
+  -- the witness itself (path eta), at m = i1 the normal form (the
+  -- witness path's typed boundary) — both definitional, so any
+  -- calculus projection applied along the slide is a nrm-
+  -- straightening square with strict endpoints, and its displaced
+  -- mate is the same slide one level up. The elementary transport-
+  -- only form of the straightening lives in Cat.Coherence.Gloss.
+  nrm-slide
+    : ∀ {x y} {A : composite x y} (U : is-representable A) (m : I)
+    → is-representable (U .snd (~ m))
+  nrm-slide U m = U .fst , λ k → U .snd (k ∧ ~ m)
 
   assoc⋉-nrm
     : ∀ {x y z w} {A : composite x y} {B : composite y z} {C : composite z w}
       (U : is-representable A) (V : is-representable B) (W : is-representable C)
     → assoc⋉ U V W ≡ assoc (U .fst) (V .fst) (W .fst)
-  assoc⋉-nrm (m , p) (n , q) (o , r) =
-      J (λ _ r' → assoc⋉ (m , p) (n , q) (o , r') ≡ assoc⋉ (m , p) (n , q) (nrm o)) refl r
-    ∙ J (λ _ q' → assoc⋉ (m , p) (n , q') (nrm o) ≡ assoc⋉ (m , p) (nrm n) (nrm o)) refl q
-    ∙ J (λ _ p' → assoc⋉ (m , p') (nrm n) (nrm o) ≡ assoc⋉ (nrm m) (nrm n) (nrm o)) refl p
+  assoc⋉-nrm U V W m = assoc⋉ (nrm-slide U m) (nrm-slide V m) (nrm-slide W m)
 
-  module _ {x y z w v} (f : hom x y) (g : hom y z) (h : hom z w) (k : hom w v) where
-    open pentagon⋉ (nrm f) (nrm g) (nrm h) (nrm k)
+  module pentagon {x y z w v} (f : hom x y) (g : hom y z) (h : hom z w) (k : hom w v) where
+    open pentagon⋉ (nrm f) (nrm g) (nrm h) (nrm k) public
 
-    private
-      A₁ = assoc⋉-nrm (nrm f ⋉ nrm g) (nrm h) (nrm k)   -- ≡ assoc (f ⨾ g) h k
-      A₂ = assoc⋉-nrm (nrm f) (nrm g) (nrm h ⋉ nrm k)   -- ≡ assoc f g (h ⨾ k)
-      A₃ = assoc⋉-nrm (nrm f) (nrm g ⋉ nrm h) (nrm k)   -- ≡ assoc f (g ⨾ h) k
+    A₁ = assoc⋉-nrm (nrm f ⋉ nrm g) (nrm h) (nrm k)   -- ≡ assoc (f ⨾ g) h k
+    A₂ = assoc⋉-nrm (nrm f) (nrm g) (nrm h ⋉ nrm k)   -- ≡ assoc f g (h ⨾ k)
+    A₃ = assoc⋉-nrm (nrm f) (nrm g ⋉ nrm h) (nrm k)   -- ≡ assoc f (g ⨾ h) k
+
+    whisker₃ = ap (λ t → ap (f ⨾_) (assoc g h k)
+                         ∙ (t ∙ ap (_⨾ k) (assoc f g h))) (sym A₃)
+    whisker₂ = ap (λ t → t ∙ assoc⋉ (nrm f ⋉ nrm g) (nrm h) (nrm k)) A₂
+    whisker₁ = ap (assoc f g (h ⨾ k) ∙_) A₁
 
     pentagon
       : ap (f ⨾_) (assoc g h k) ∙ assoc f (g ⨾ h) k ∙ ap (_⨾ k) (assoc f g h)
       ≡ assoc f g (h ⨾ k) ∙ assoc (f ⨾ g) h k
-    pentagon =
-        ap (λ t → ap (f ⨾_) (assoc g h k) ∙ (t ∙ ap (_⨾ k) (assoc f g h))) (sym A₃)
-      ∙ pentagon⋉
-      ∙ ap (λ t → t ∙ assoc⋉ (nrm f ⋉ nrm g) (nrm h) (nrm k)) A₂
-      ∙ ap (assoc f g (h ⨾ k) ∙_) A₁
+    pentagon = whisker₃ ∙ pentagon⋉ ∙ whisker₂ ∙ whisker₁
 ```
 
 The triangle
