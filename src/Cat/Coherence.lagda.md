@@ -188,8 +188,16 @@ faces live in `Cat.Coherence.Gloss`.
     T-contr .center = r₁
     T-contr .paths  = is-representable-prop _ r₁
 
+    -- the loop σ-line, sealed like the unitor σ-lines: the loop is
+    -- its fst-shadow, and the fiber square behind loop-refl gets
+    -- sealed faces — families over that square never expose the
+    -- propositionality body
+    opaque
+      σ-loop : r₀¹ ≡ r₀²
+      σ-loop = is-representable-prop _ r₀¹ r₀²
+
     loop : f ⨾ g ≡ f ⨾ g
-    loop = repr-unique r₀¹ r₀²
+    loop = ap fst σ-loop
 
     Uf : is-representable A ; Uf = (nrm f ● nrm (idn y)) ↝ ▾-idn A
     Vg : is-representable B ; Vg = (nrm (idn y) ● nrm g) ↝ emb-idn-absorb g
@@ -202,8 +210,8 @@ faces live in `Cat.Coherence.Gloss`.
     -- opaque like assoc-σ●: the tree and the displayed witness
     -- families only ever read their boundaries off the types, and
     -- the sealed heads keep the fiber comparisons syntactic; the
-    -- displaced mates seal over these exactly as assoc-σ●ᴰ over
-    -- assoc-σ●
+    -- displaced mates are repr-σᴰ[_] instances at these sealed
+    -- lines, no unfolding
     opaque
       σₗᵣ : sl ≡ sr ; σₗᵣ = is-representable-prop _ sl sr
       σᵣ₀ : sr ≡ s₀ ; σᵣ₀ = is-representable-prop _ sr s₀
@@ -291,18 +299,20 @@ faces live in `Cat.Coherence.Gloss`.
              → assoc f (idn y) g ∙ ap (_⨾ g) (unitr f) ≡ ap (f ⨾_) (unitl g)
     triangle mid = whisker-a mid ∙ triangle-weak
 
-    -- the fiber square behind the loop: the canonical witness
-    -- identification against the is-coh-transport line
-    loop-sq
-      : (mid : is-2-coherent C)
-      → is-representable-prop _ r₀¹ r₀²
-      ≡ ap ((nrm f ● nrm g) ↝_)
-           (ap sym (sym (mid .is-2-coherent.is-coh f g)))
-    loop-sq mid =
-      is-contr→is-set T-contr r₀¹ r₀²
-        (is-representable-prop _ r₀¹ r₀²)
-        (ap ((nrm f ● nrm g) ↝_)
-            (ap sym (sym (mid .is-2-coherent.is-coh f g))))
+    -- the fiber square behind the loop: the σ-line against the
+    -- is-coh-transport line. Opaque like fiber-triangle: displayed
+    -- witness families project its slices under generic interval
+    -- binders; the boundary still reduces by the type-directed rule
+    opaque
+      loop-sq
+        : (mid : is-2-coherent C)
+        → σ-loop
+        ≡ ap ((nrm f ● nrm g) ↝_)
+             (ap sym (sym (mid .is-2-coherent.is-coh f g)))
+      loop-sq mid =
+        is-contr→is-set T-contr r₀¹ r₀² σ-loop
+          (ap ((nrm f ● nrm g) ↝_)
+              (ap sym (sym (mid .is-2-coherent.is-coh f g))))
 
     loop-refl : is-2-coherent C → loop ≡ refl
     loop-refl mid = ap (ap fst) (loop-sq mid)

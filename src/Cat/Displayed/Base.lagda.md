@@ -18,14 +18,16 @@ contracts by straightening the push fiber along `unitl` — the
 `sq-from-∙` square of `ap emb (unitl f)`'s decomposition, whose
 computation is pure base theory. From there the displaced witness
 calculus is uniform: `repr-contrᴰ` slides any inhabitant's
-characterization along its own base line, `repr-σᴰ` threads two
-witnesses through the pointwise-contractible line over the base
-propositionality path (opaque, so consumers' families keep its
-projections neutral), and every displaced identity is the calculus
-projection at normal witnesses — one construction each, never two
-constructions and a bridge: `assocᴰ` is `assoc●ᴰ` at `nrm[_]`s
-exactly as `assoc` is `assoc●` at `nrm`s, and the unitors are
-`repr-uniqueᴰ` at the `↝ᴰ`-transports of the normal pairings.
+characterization along its own base line, `repr-σᴰ[_]` threads two
+witnesses through the pointwise-contractible line over an arbitrary
+base identification (opaque, so consumers' families keep its
+projections neutral, and sealed base σ-lines are consumed as
+neutral families — no unfolding), and every displaced identity is
+the calculus projection at normal witnesses — one construction
+each, never two constructions and a bridge: `assocᴰ` is `assoc●ᴰ`
+at `nrm[_]`s exactly as `assoc` is `assoc●` at `nrm`s, and the
+unitors are the hom shadows of `repr-σᴰ[_]` at the sealed unitor
+σ-lines.
 
 Deferred, with the square-level calculus: the displaced
 `repr-lc`/`repr-refl`/`repr-ap`/`repr-∙`/`↝-repr` (2-cell
@@ -334,10 +336,16 @@ contractibility rides across.
 
 Contractibility over an arbitrary base witness needs no chains:
 sliding an inhabitant's characterization along its own base line
-connects the space to the plain displayed image fiber. `repr-σᴰ` is
-the displaced propositionality path — opaque, so a consumer's family
-projects neutrals — and `repr-uniqueᴰ` its hom component, the
-displaced `repr-unique`. `_●ᴰ_` and `_↝ᴰ_` mirror `_●_` and `_↝_`
+connects the space to the plain displayed image fiber. `repr-σᴰ[_]`
+is the displaced line over an arbitrary identification of base
+witnesses: the base fiber is propositional, so every σ lifts —
+contractibility transported along σ's connection, `is-prop→PathP`
+threading any two inhabitants. It is opaque, so a consumer's family
+projects neutrals, and it consumes its base line as a neutral
+family, so instances at sealed σ-lines need no unfolding. `repr-σᴰ`
+is its instance at the canonical propositionality path and
+`repr-uniqueᴰ` that instance's hom component, the displaced
+`repr-unique`. `_●ᴰ_` and `_↝ᴰ_` mirror `_●_` and `_↝_`
 with `comp-pathp₁` in the role of `∙`. `●ᴰ-∙` glues witness lines
 over composite fiber paths, with `comp-pathp₁-over` supplying the
 characterization over the hom-level `comp-pathp₁`: the hom component
@@ -357,19 +365,27 @@ the pair is assembled, never projected.
       (emb-image-contrᴰ m')
 
   opaque
-    repr-σᴰ
+    repr-σᴰ[_]
       : ∀ {x y} {α : composite x y} {x' y'}
-          {U V : is-representable α} {α' : composite[ α ] x' y'}
-        (U' : is-representable[ U ] α') (V' : is-representable[ V ] α')
-      → PathP (λ i → is-representable[ is-representable-prop α U V i ] α')
-              U' V'
-    repr-σᴰ {α = α} {U = U} {V} {α'} U' V' =
+          {u₀ u₁ : is-representable α} (σ : u₀ ≡ u₁)
+          {α' : composite[ α ] x' y'}
+        (U' : is-representable[ u₀ ] α') (V' : is-representable[ u₁ ] α')
+      → PathP (λ i → is-representable[ σ i ] α') U' V'
+    repr-σᴰ[_] σ {α'} U' V' =
       is-prop→PathP
         (λ i → is-contr→is-prop
           (subst is-contr
-            (λ k → is-representable[ is-representable-prop α U V (i ∧ k) ] α')
+            (λ k → is-representable[ σ (i ∧ k) ] α')
             (repr-contrᴰ U')))
         U' V'
+
+  repr-σᴰ
+    : ∀ {x y} {α : composite x y} {x' y'}
+        {U V : is-representable α} {α' : composite[ α ] x' y'}
+      (U' : is-representable[ U ] α') (V' : is-representable[ V ] α')
+    → PathP (λ i → is-representable[ is-representable-prop α U V i ] α')
+            U' V'
+  repr-σᴰ {α = α} {U = U} {V} = repr-σᴰ[ is-representable-prop α U V ]
 
   repr-uniqueᴰ
     : ∀ {x y} {α : composite x y} {x' y'}
@@ -402,6 +418,22 @@ the pair is assembled, never projected.
   _↝ᴰ_ {x' = x'} {y'} {U = m , p} {e = e} (m' , P) ê =
     m' , comp-pathp₁ (λ t → composite[ t ] x' y') p e P ê
 
+  -- the displaced ↝-fill: the same slide one level up, with
+  -- comp-pathp₁-fill in the role of cat.fill — the hom is constant,
+  -- at m = i0 the slide is U' (the fil cap), at m = i1 the
+  -- transport U' ↝ᴰ ê (the com), both definitional
+  ↝ᴰ-fill
+    : ∀ {x y} {A B : composite x y} {x' y'}
+        {U : is-representable A}
+        {α' : composite[ A ] x' y'} {β' : composite[ B ] x' y'}
+        {e : A ≡ B}
+      (U' : is-representable[ U ] α')
+      (ê : PathP (λ i → composite[ e i ] x' y') α' β')
+      (m : I)
+    → is-representable[ ↝-fill U e m ] (ê m)
+  ↝ᴰ-fill {x' = x'} {y'} {U = m₀ , p} {e = e} (m' , P) ê m =
+    m' , comp-pathp₁-fill (λ t → composite[ t ] x' y') p e P ê m
+
   ●ᴰ-∙
     : ∀ {x y} {α : composite x y} {x' y'} {α' : composite[ α ] x' y'}
         {u₀ u₁ u₂ : is-representable α}
@@ -429,22 +461,20 @@ Naturality is the type: one `PathP` between the displayed composites
 over the base identity.
 
 ```agda
-  opaque
-    unfolding assoc-σ●
-
-    assoc-σ●ᴰ
-      : ∀ {w x y z} {A : composite w x} {B : composite x y}
-          {E : composite y z} {w' x' y' z'}
-          {U : is-representable A} {V : is-representable B}
-          {W : is-representable E}
-          {A' : composite[ A ] w' x'} {B' : composite[ B ] x' y'}
-          {E' : composite[ E ] y' z'}
-        (U' : is-representable[ U ] A') (V' : is-representable[ V ] B')
-        (W' : is-representable[ W ] E')
-      → PathP (λ i → is-representable[ assoc-σ● U V W i ]
-                       (A' ▿ᴰ (B' ▿ᴰ E')))
-              (U' ●ᴰ (V' ●ᴰ W')) ((U' ●ᴰ V') ●ᴰ W')
-    assoc-σ●ᴰ U' V' W' = repr-σᴰ (U' ●ᴰ (V' ●ᴰ W')) ((U' ●ᴰ V') ●ᴰ W')
+  assoc-σ●ᴰ
+    : ∀ {w x y z} {A : composite w x} {B : composite x y}
+        {E : composite y z} {w' x' y' z'}
+        {U : is-representable A} {V : is-representable B}
+        {W : is-representable E}
+        {A' : composite[ A ] w' x'} {B' : composite[ B ] x' y'}
+        {E' : composite[ E ] y' z'}
+      (U' : is-representable[ U ] A') (V' : is-representable[ V ] B')
+      (W' : is-representable[ W ] E')
+    → PathP (λ i → is-representable[ assoc-σ● U V W i ]
+                     (A' ▿ᴰ (B' ▿ᴰ E')))
+            (U' ●ᴰ (V' ●ᴰ W')) ((U' ●ᴰ V') ●ᴰ W')
+  assoc-σ●ᴰ {U = U} {V} {W} U' V' W' =
+    repr-σᴰ[ assoc-σ● U V W ] (U' ●ᴰ (V' ●ᴰ W')) ((U' ●ᴰ V') ●ᴰ W')
 
   assoc●ᴰ
     : ∀ {w x y z} {A : composite w x} {B : composite x y}
@@ -467,26 +497,25 @@ over the base identity.
             (f' ⨾ᴰ (g' ⨾ᴰ k')) ((f' ⨾ᴰ g') ⨾ᴰ k')
   assocᴰ f' g' k' = assoc●ᴰ nrm[ f' ] nrm[ g' ] nrm[ k' ]
 
-  opaque
-    unfolding unitr-σ● unitl-σ●
+  unitr-σ●ᴰ
+    : ∀ {x y} {f : hom x y} {x' y'} (f' : hom[ f ] x' y')
+    → PathP (λ i → is-representable[ unitr-σ● f i ] (emb[ f' ]))
+            ((nrm[ f' ] ●ᴰ nrm[ idn[ y' ] ]) ↝ᴰ ▾-idnᴰ (emb[ f' ]))
+            nrm[ f' ]
+  unitr-σ●ᴰ {f = f} {y' = y'} f' =
+    repr-σᴰ[ unitr-σ● f ]
+      ((nrm[ f' ] ●ᴰ nrm[ idn[ y' ] ]) ↝ᴰ ▾-idnᴰ (emb[ f' ]))
+      nrm[ f' ]
 
-    unitr-σ●ᴰ
-      : ∀ {x y} {f : hom x y} {x' y'} (f' : hom[ f ] x' y')
-      → PathP (λ i → is-representable[ unitr-σ● f i ] (emb[ f' ]))
-              ((nrm[ f' ] ●ᴰ nrm[ idn[ y' ] ]) ↝ᴰ ▾-idnᴰ (emb[ f' ]))
-              nrm[ f' ]
-    unitr-σ●ᴰ {y' = y'} f' =
-      repr-σᴰ ((nrm[ f' ] ●ᴰ nrm[ idn[ y' ] ]) ↝ᴰ ▾-idnᴰ (emb[ f' ]))
-              nrm[ f' ]
-
-    unitl-σ●ᴰ
-      : ∀ {x y} {f : hom x y} {x' y'} (f' : hom[ f ] x' y')
-      → PathP (λ i → is-representable[ unitl-σ● f i ] (emb[ f' ]))
-              ((nrm[ idn[ x' ] ] ●ᴰ nrm[ f' ]) ↝ᴰ emb-idn-absorbᴰ f')
-              nrm[ f' ]
-    unitl-σ●ᴰ {x' = x'} f' =
-      repr-σᴰ ((nrm[ idn[ x' ] ] ●ᴰ nrm[ f' ]) ↝ᴰ emb-idn-absorbᴰ f')
-              nrm[ f' ]
+  unitl-σ●ᴰ
+    : ∀ {x y} {f : hom x y} {x' y'} (f' : hom[ f ] x' y')
+    → PathP (λ i → is-representable[ unitl-σ● f i ] (emb[ f' ]))
+            ((nrm[ idn[ x' ] ] ●ᴰ nrm[ f' ]) ↝ᴰ emb-idn-absorbᴰ f')
+            nrm[ f' ]
+  unitl-σ●ᴰ {f = f} {x' = x'} f' =
+    repr-σᴰ[ unitl-σ● f ]
+      ((nrm[ idn[ x' ] ] ●ᴰ nrm[ f' ]) ↝ᴰ emb-idn-absorbᴰ f')
+      nrm[ f' ]
 
   unitrᴰ
     : ∀ {x y} {f : hom x y} {x' y'} (f' : hom[ f ] x' y')
