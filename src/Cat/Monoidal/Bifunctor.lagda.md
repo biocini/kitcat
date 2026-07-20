@@ -463,14 +463,14 @@ on paths, and the total-space equivalence.
     → is-⊗₁-representable η → η ≡ ζ → is-⊗₁-representable ζ
   (m , p) ↝₁ e = m , p ∙ e
 
+  -- ↝₁ preserves fst definitionally, so the slid line's shadow is
+  -- the shadow of the slid propositionality path — no transport
   ↝₁-repr
     : ∀ {x x'} {η ζ : ⊗₁-composite (⊗₀-emb x) (⊗₀-emb x')}
       (U V : is-⊗₁-representable η) (e : η ≡ ζ)
     → ⊗₁-repr-unique (U ↝₁ e) (V ↝₁ e) ≡ ⊗₁-repr-unique U V
-  ↝₁-repr (m , p) (n , q) =
-    J (λ _ e' → ⊗₁-repr-unique ((m , p) ↝₁ e') ((n , q) ↝₁ e')
-              ≡ ⊗₁-repr-unique (m , p) (n , q))
-      (λ i → ⊗₁-repr-unique (m , Path.unitr p i) (n , Path.unitr q i))
+  ↝₁-repr {η = η} U V e =
+    sym (⊗₁-repr-lc (λ i → is-⊗₁-representable-prop η U V i ↝₁ e))
 
   ap-⊗₁-emb-lc
     : ∀ {x x'} {m n : C.hom x x'} {r s : m ≡ n}

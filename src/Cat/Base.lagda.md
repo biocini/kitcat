@@ -215,11 +215,12 @@ The following lemmas depend on unit
     → is-representable (e m)
   ↝-fill (m₀ , p) e m = m₀ , λ i → cat.fill p e i m
 
+  -- ↝ preserves fst definitionally, so the slid line's shadow is
+  -- the shadow of the slid propositionality path — no transport
   ↝-repr : ∀ {x y} {α β : composite x y} (U V : is-representable α) (e : α ≡ β)
          → repr-unique (U ↝ e) (V ↝ e) ≡ repr-unique U V
-  ↝-repr (m , p) (n , q) =
-    J (λ _ e' → repr-unique ((m , p) ↝ e') ((n , q) ↝ e') ≡ repr-unique (m , p) (n , q))
-      (λ i → repr-unique (m , Path.unitr p i) (n , Path.unitr q i))
+  ↝-repr {α = α} U V e =
+    sym (repr-lc (λ i → is-representable-prop α U V i ↝ e))
 
   ap-emb-lc : ∀ {x y} {m n : hom x y} {r s : m ≡ n} → ap emb r ≡ ap emb s → r ≡ s
   ap-emb-lc {n = n} {r} {s} h =

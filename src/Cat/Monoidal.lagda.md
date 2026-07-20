@@ -379,12 +379,12 @@ module theory₀ {o h} {C : category o h} (M₀ : monoidal-axioms₀ C) where
     → is-⊗₀-representable (e m)
   ↝-fill (m₀ , p) e m = m₀ , λ i → cat.fill p e i m
 
+  -- ↝ preserves fst definitionally, so the slid line's shadow is
+  -- the shadow of the slid propositionality path — no transport
   ↝-repr : ∀ {F G} (U V : is-⊗₀-representable F) (e : F ≡ G)
          → ⊗₀-repr-unique (U ↝ e) (V ↝ e) ≡ ⊗₀-repr-unique U V
-  ↝-repr (m , p) (n , q) =
-    J (λ _ e' → ⊗₀-repr-unique ((m , p) ↝ e') ((n , q) ↝ e')
-              ≡ ⊗₀-repr-unique (m , p) (n , q))
-      (λ i → ⊗₀-repr-unique (m , Path.unitr p i) (n , Path.unitr q i))
+  ↝-repr {F} U V e =
+    sym (⊗₀-repr-lc (λ i → is-⊗₀-representable-prop F U V i ↝ e))
 
   ap-⊗₀-emb-lc : ∀ {m n : C.ob} {r s : m ≡ n}
               → ap ⊗₀-emb r ≡ ap ⊗₀-emb s → r ≡ s
