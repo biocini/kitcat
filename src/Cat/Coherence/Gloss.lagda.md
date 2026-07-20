@@ -2,7 +2,7 @@ Lane Biocini
 July 2026
 
 A gloss on `Cat.Coherence`: the elementary form of the
-nrm-straightening. The main line proves `assoc⋉-nrm` by the
+nrm-straightening. The main line proves `assoc●-nrm` by the
 `nrm-slide` connection — each witness rides its own path back to
 normal form along an `∧`-connection, so both endpoints of the
 straightening are definitional and its displaced mate is the same
@@ -18,7 +18,7 @@ form, every other leaf of the pentagon's `∙`-tree (`ap-comp`,
 object-level coherence suite transfers to MLTT verbatim. The cost
 the slide avoids shows up here as computation: the `J`s reduce
 only propositionally (`J-refl`), so neither endpoint is strict,
-and the `∙ refl` tails of the `⋉`-witnesses survive to be
+and the `∙ refl` tails of the `●`-witnesses survive to be
 discharged by whoever consumes the endpoints.
 
 The two constructions share their type and are interchangeable
@@ -46,12 +46,12 @@ module _ {o h} (C : category o h) where
   open category C
   open theory C
 
-  assoc⋉-nrm
+  assoc●-nrm
     : ∀ {x y z w} {A : composite x y} {B : composite y z} {C : composite z w}
       (U : is-representable A) (V : is-representable B) (W : is-representable C)
-    → assoc⋉ U V W ≡ assoc (U .fst) (V .fst) (W .fst)
-  assoc⋉-nrm (m , p) (n , q) (o , r) =
-      J (λ _ r' → assoc⋉ (m , p) (n , q) (o , r') ≡ assoc⋉ (m , p) (n , q) (nrm o)) refl r
-    ∙ J (λ _ q' → assoc⋉ (m , p) (n , q') (nrm o) ≡ assoc⋉ (m , p) (nrm n) (nrm o)) refl q
-    ∙ J (λ _ p' → assoc⋉ (m , p') (nrm n) (nrm o) ≡ assoc⋉ (nrm m) (nrm n) (nrm o)) refl p
+    → assoc● U V W ≡ assoc (U .fst) (V .fst) (W .fst)
+  assoc●-nrm (m , p) (n , q) (o , r) =
+      J (λ _ r' → assoc● (m , p) (n , q) (o , r') ≡ assoc● (m , p) (n , q) (nrm o)) refl r
+    ∙ J (λ _ q' → assoc● (m , p) (n , q') (nrm o) ≡ assoc● (m , p) (nrm n) (nrm o)) refl q
+    ∙ J (λ _ p' → assoc● (m , p') (nrm n) (nrm o) ≡ assoc● (nrm m) (nrm n) (nrm o)) refl p
 ```

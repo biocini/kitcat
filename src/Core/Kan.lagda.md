@@ -650,6 +650,33 @@ comp-pathp₁ F pa qa {h₀ = h₀} P Q i =
     j (i = i1) → Q j
     j (j = i0) → P i
 
+-- comp-pathp₁-over: a section over comp-pathp₁ — the unary sibling
+-- of comp-pathp₂-over, glued over the com filler of comp-pathp₁
+-- itself, whose lid at j = i1 is comp-pathp₁ definitionally
+comp-pathp₁-over
+  : ∀ {u w w'} {X : Type u}
+    (F : X → Type w) (G : ∀ x → F x → Type w')
+    {a₀ a₁ a₂ : X} (pa : a₀ ≡ a₁) (qa : a₁ ≡ a₂)
+    {h₀ : F a₀} {h₁ : F a₁} {h₂ : F a₂}
+    (P : PathP (λ i → F (pa i)) h₀ h₁)
+    (Q : PathP (λ i → F (qa i)) h₁ h₂)
+    {g₀ : G a₀ h₀} {g₁ : G a₁ h₁} {g₂ : G a₂ h₂}
+  → PathP (λ i → G (pa i) (P i)) g₀ g₁
+  → PathP (λ i → G (qa i) (Q i)) g₁ g₂
+  → PathP (λ i → G ((pa ∙ qa) i) (comp-pathp₁ F pa qa P Q i)) g₀ g₂
+comp-pathp₁-over F G pa qa {h₀ = h₀} P Q {g₀ = g₀} P' Q' i =
+  com (λ j → G (cat.fill pa qa i j) (base j)) (∂ i) λ where
+    j (i = i0) → g₀
+    j (i = i1) → Q' j
+    j (j = i0) → P' i
+  where
+    base : (j : I) → F (cat.fill pa qa i j)
+    base j =
+      fil (λ j → F (cat.fill pa qa i j)) (∂ i) j λ where
+        j (i = i0) → h₀
+        j (i = i1) → Q j
+        j (j = i0) → P i
+
 -- comp-pathp₂: the two-base-path version, for a binary family —
 -- the line is F of two object paths, so the filler is taken
 -- pointwise along the cat.fill fillers of the two base composites

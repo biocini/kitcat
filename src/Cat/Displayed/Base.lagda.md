@@ -23,16 +23,15 @@ witnesses through the pointwise-contractible line over the base
 propositionality path (opaque, so consumers' families keep its
 projections neutral), and every displaced identity is the calculus
 projection at normal witnesses — one construction each, never two
-constructions and a bridge: `assocᴰ` is `assoc⋉ᴰ` at `nrm[_]`s
-exactly as `assoc` is `assoc⋉` at `nrm`s, and the unitors are
+constructions and a bridge: `assocᴰ` is `assoc●ᴰ` at `nrm[_]`s
+exactly as `assoc` is `assoc●` at `nrm`s, and the unitors are
 `repr-uniqueᴰ` at the `↝ᴰ`-transports of the normal pairings.
 
 Deferred, with the square-level calculus: the displaced
 `repr-lc`/`repr-refl`/`repr-ap`/`repr-∙`/`↝-repr` (2-cell
-displacements over the base repr algebra), the witness-line gluer
-`⋉ᴰ-∙` (needs `comp-pathp₁`'s `-over` sibling), and the total
-category `∫` — its Σ-reshuffle `split` is the construction's one
-genuine obligation and gets its own spike first.
+displacements over the base repr algebra) and the total category
+`∫` — its Σ-reshuffle `split` is the construction's one genuine
+obligation and gets its own spike first.
 
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
@@ -283,7 +282,7 @@ pointwise `funext`.
 `ap emb (unitl f)` computes, in pure base theory, to the
 `∙`-decomposition through `emb-comp-op (idn x) f` and the funext
 absorption — `ap-fst-fiber` at `unitl`'s defining witness path, the
-`∙ refl` redexes of `nrm`/`⋉`/`↝` discharged by `Path.unitr`, and
+`∙ refl` redexes of `nrm`/`●`/`↝` discharged by `Path.unitr`, and
 the spine's 2-cell `coh→∙`. `sq-from-∙` packages the decomposition
 as a square; the square bounds a line of displayed fibers from the
 push fiber at the identity to the plain displayed image fiber, and
@@ -303,7 +302,7 @@ contractibility rides across.
       ∙ ap (_∙ idn-▴ (emb f)) (coh→∙ (idn x) f)
       where
         U V : is-representable (emb f)
-        U = (nrm (idn x) ⋉ nrm f) ↝ emb-idn-absorb f
+        U = (nrm (idn x) ● nrm f) ↝ emb-idn-absorb f
         V = nrm f
 
         κ₀ : U ≡ V
@@ -338,8 +337,13 @@ sliding an inhabitant's characterization along its own base line
 connects the space to the plain displayed image fiber. `repr-σᴰ` is
 the displaced propositionality path — opaque, so a consumer's family
 projects neutrals — and `repr-uniqueᴰ` its hom component, the
-displaced `repr-unique`. `_⋉ᴰ_` and `_↝ᴰ_` mirror `_⋉_` and `_↝_`
-with `comp-pathp₁` in the role of `∙`.
+displaced `repr-unique`. `_●ᴰ_` and `_↝ᴰ_` mirror `_●_` and `_↝_`
+with `comp-pathp₁` in the role of `∙`. `●ᴰ-∙` glues witness lines
+over composite fiber paths, with `comp-pathp₁-over` supplying the
+characterization over the hom-level `comp-pathp₁`: the hom component
+of the glue is the `comp-pathp₁` of the hom components by
+construction — `hcom` at a Σ-type does not project componentwise, so
+the pair is assembled, never projected.
 
 ```agda
   repr-contrᴰ
@@ -374,18 +378,18 @@ with `comp-pathp₁` in the role of `∙`.
     → PathP (λ i → hom[ repr-unique U V i ] x' y') (U' .fst) (V' .fst)
   repr-uniqueᴰ U' V' i = repr-σᴰ U' V' i .fst
 
-  _⋉ᴰ_
+  _●ᴰ_
     : ∀ {x y z} {A : composite x y} {B : composite y z} {x' y' z'}
         {U : is-representable A} {V : is-representable B}
         {A' : composite[ A ] x' y'} {B' : composite[ B ] y' z'}
     → is-representable[ U ] A' → is-representable[ V ] B'
-    → is-representable[ U ⋉ V ] (A' ▿ᴰ B')
-  _⋉ᴰ_ {x' = x'} {z' = z'} {U = m , p} {n , q} (m' , P) (n' , Q) =
+    → is-representable[ U ● V ] (A' ▿ᴰ B')
+  _●ᴰ_ {x' = x'} {z' = z'} {U = m , p} {n , q} (m' , P) (n' , Q) =
     m' ⨾ᴰ n' ,
     comp-pathp₁ (λ t → composite[ t ] x' z')
       (emb-comp m n) (λ i → p i ▿ q i)
       (emb-compᴰ m' n') (λ i → P i ▿ᴰ Q i)
-  infixr 40 _⋉ᴰ_
+  infixr 40 _●ᴰ_
 
   _↝ᴰ_
     : ∀ {x y} {A B : composite x y} {x' y'}
@@ -397,6 +401,24 @@ with `comp-pathp₁` in the role of `∙`.
     → is-representable[ U ↝ e ] β'
   _↝ᴰ_ {x' = x'} {y'} {U = m , p} {e = e} (m' , P) ê =
     m' , comp-pathp₁ (λ t → composite[ t ] x' y') p e P ê
+
+  ●ᴰ-∙
+    : ∀ {x y} {α : composite x y} {x' y'} {α' : composite[ α ] x' y'}
+        {u₀ u₁ u₂ : is-representable α}
+      (σa : u₀ ≡ u₁) (σb : u₁ ≡ u₂)
+      {û₀ : is-representable[ u₀ ] α'} {û₁ : is-representable[ u₁ ] α'}
+      {û₂ : is-representable[ u₂ ] α'}
+    → PathP (λ i → is-representable[ σa i ] α') û₀ û₁
+    → PathP (λ i → is-representable[ σb i ] α') û₁ û₂
+    → PathP (λ i → is-representable[ (σa ∙ σb) i ] α') û₀ û₂
+  ●ᴰ-∙ {x' = x'} {y'} {α' = α'} σa σb P̂ Q̂ i =
+      comp-pathp₁ (λ u → hom[ u .fst ] x' y') σa σb
+        (λ j → P̂ j .fst) (λ j → Q̂ j .fst) i
+    , comp-pathp₁-over (λ u → hom[ u .fst ] x' y')
+        (λ u σ → PathP (λ k → composite[ u .snd k ] x' y') (emb[ σ ]) α')
+        σa σb
+        (λ j → P̂ j .fst) (λ j → Q̂ j .fst)
+        (λ j → P̂ j .snd) (λ j → Q̂ j .snd) i
 ```
 
 ## Associativity and the unit laws
@@ -407,21 +429,24 @@ Naturality is the type: one `PathP` between the displayed composites
 over the base identity.
 
 ```agda
-  assoc-σ⋉ᴰ
-    : ∀ {w x y z} {A : composite w x} {B : composite x y}
-        {E : composite y z} {w' x' y' z'}
-        {U : is-representable A} {V : is-representable B}
-        {W : is-representable E}
-        {A' : composite[ A ] w' x'} {B' : composite[ B ] x' y'}
-        {E' : composite[ E ] y' z'}
-      (U' : is-representable[ U ] A') (V' : is-representable[ V ] B')
-      (W' : is-representable[ W ] E')
-    → PathP (λ i → is-representable[ assoc-σ⋉ U V W i ]
-                     (A' ▿ᴰ (B' ▿ᴰ E')))
-            (U' ⋉ᴰ (V' ⋉ᴰ W')) ((U' ⋉ᴰ V') ⋉ᴰ W')
-  assoc-σ⋉ᴰ U' V' W' = repr-σᴰ (U' ⋉ᴰ (V' ⋉ᴰ W')) ((U' ⋉ᴰ V') ⋉ᴰ W')
+  opaque
+    unfolding assoc-σ●
 
-  assoc⋉ᴰ
+    assoc-σ●ᴰ
+      : ∀ {w x y z} {A : composite w x} {B : composite x y}
+          {E : composite y z} {w' x' y' z'}
+          {U : is-representable A} {V : is-representable B}
+          {W : is-representable E}
+          {A' : composite[ A ] w' x'} {B' : composite[ B ] x' y'}
+          {E' : composite[ E ] y' z'}
+        (U' : is-representable[ U ] A') (V' : is-representable[ V ] B')
+        (W' : is-representable[ W ] E')
+      → PathP (λ i → is-representable[ assoc-σ● U V W i ]
+                       (A' ▿ᴰ (B' ▿ᴰ E')))
+              (U' ●ᴰ (V' ●ᴰ W')) ((U' ●ᴰ V') ●ᴰ W')
+    assoc-σ●ᴰ U' V' W' = repr-σᴰ (U' ●ᴰ (V' ●ᴰ W')) ((U' ●ᴰ V') ●ᴰ W')
+
+  assoc●ᴰ
     : ∀ {w x y z} {A : composite w x} {B : composite x y}
         {E : composite y z} {w' x' y' z'}
         {U : is-representable A} {V : is-representable B}
@@ -430,9 +455,9 @@ over the base identity.
         {E' : composite[ E ] y' z'}
       (U' : is-representable[ U ] A') (V' : is-representable[ V ] B')
       (W' : is-representable[ W ] E')
-    → PathP (λ i → hom[ assoc⋉ U V W i ] w' z')
-            ((U' ⋉ᴰ (V' ⋉ᴰ W')) .fst) (((U' ⋉ᴰ V') ⋉ᴰ W') .fst)
-  assoc⋉ᴰ U' V' W' i = assoc-σ⋉ᴰ U' V' W' i .fst
+    → PathP (λ i → hom[ assoc● U V W i ] w' z')
+            ((U' ●ᴰ (V' ●ᴰ W')) .fst) (((U' ●ᴰ V') ●ᴰ W') .fst)
+  assoc●ᴰ U' V' W' i = assoc-σ●ᴰ U' V' W' i .fst
 
   assocᴰ
     : ∀ {w x y z} {f : hom w x} {g : hom x y} {k : hom y z}
@@ -440,20 +465,20 @@ over the base identity.
         (k' : hom[ k ] y' z')
     → PathP (λ i → hom[ assoc f g k i ] w' z')
             (f' ⨾ᴰ (g' ⨾ᴰ k')) ((f' ⨾ᴰ g') ⨾ᴰ k')
-  assocᴰ f' g' k' = assoc⋉ᴰ nrm[ f' ] nrm[ g' ] nrm[ k' ]
+  assocᴰ f' g' k' = assoc●ᴰ nrm[ f' ] nrm[ g' ] nrm[ k' ]
 
   unitrᴰ
     : ∀ {x y} {f : hom x y} {x' y'} (f' : hom[ f ] x' y')
     → PathP (λ i → hom[ unitr f i ] x' y') (f' ⨾ᴰ idn[ y' ]) f'
   unitrᴰ {y' = y'} f' =
-    repr-uniqueᴰ ((nrm[ f' ] ⋉ᴰ nrm[ idn[ y' ] ]) ↝ᴰ ▾-idnᴰ (emb[ f' ]))
+    repr-uniqueᴰ ((nrm[ f' ] ●ᴰ nrm[ idn[ y' ] ]) ↝ᴰ ▾-idnᴰ (emb[ f' ]))
                  nrm[ f' ]
 
   unitlᴰ
     : ∀ {x y} {f : hom x y} {x' y'} (f' : hom[ f ] x' y')
     → PathP (λ i → hom[ unitl f i ] x' y') (idn[ x' ] ⨾ᴰ f') f'
   unitlᴰ {x' = x'} f' =
-    repr-uniqueᴰ ((nrm[ idn[ x' ] ] ⋉ᴰ nrm[ f' ]) ↝ᴰ emb-idn-absorbᴰ f')
+    repr-uniqueᴰ ((nrm[ idn[ x' ] ] ●ᴰ nrm[ f' ]) ↝ᴰ emb-idn-absorbᴰ f')
                  nrm[ f' ]
 ```
 

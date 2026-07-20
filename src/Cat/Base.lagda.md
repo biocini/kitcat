@@ -55,13 +55,13 @@ module theory {o h} (C : category o h) where
   emb-comp-op : ∀ {x y z} (f : hom x y) (g : hom y z) → emb (f ⨾ g) ≡ f ▴ emb g
   emb-comp-op  f g = spine-contr f g .center .snd .snd .fst
 
-  _⋉_ : ∀ {x y z} {A : composite x y} {B : composite y z}
+  _●_ : ∀ {x y z} {A : composite x y} {B : composite y z}
       → is-representable A → is-representable B → is-representable (A ▿ B)
-  (m , p) ⋉ (n , q) = m ⨾ n , emb-comp m n ∙ (λ i → p i ▿ q i)
+  (m , p) ● (n , q) = m ⨾ n , emb-comp m n ∙ (λ i → p i ▿ q i)
 
-  _⋊_ : ∀ {x y z} {A : composite x y} {B : composite y z}
+  _○_ : ∀ {x y z} {A : composite x y} {B : composite y z}
         → is-representable A → is-representable B → is-representable (A ▵ B)
-  (m , p) ⋊ (n , q) = m ⨾ n , emb-comp-op m n ∙ (λ i → p i ▵ q i)
+  (m , p) ○ (n , q) = m ⨾ n , emb-comp-op m n ∙ (λ i → p i ▵ q i)
 
   private
     fwd : ∀ {x y z} (f : hom x y) (g : hom y z) → fiber emb (emb f ▾ g) → spine f g
@@ -239,23 +239,27 @@ Associativity can be recovered through the strictness of composite composition
          → α ▾ (g ⨾ h) ≡ (α ▾ g) ▾ h
   ▾-comp α g h = ap (α ▿_) (emb-comp g h)
 
-  assoc-σ⋉ : ∀ {w x y z} {A : composite w x} {B : composite x y} {C : composite y z}
-           → (U : is-representable A) (V : is-representable B) (W : is-representable C)
-           → U ⋉ (V ⋉ W) ≡ (U ⋉ V) ⋉ W
-  assoc-σ⋉ U V W = is-representable-prop _ (U ⋉ (V ⋉ W)) ((U ⋉ V) ⋉ W)
+  -- opaque: consumers' families project its slices at generic
+  -- interval points, and the sealed head keeps those comparisons
+  -- syntactic; the boundary still reduces by the type-directed rule
+  opaque
+    assoc-σ● : ∀ {w x y z} {A : composite w x} {B : composite x y} {C : composite y z}
+             → (U : is-representable A) (V : is-representable B) (W : is-representable C)
+             → U ● (V ● W) ≡ (U ● V) ● W
+    assoc-σ● U V W = is-representable-prop _ (U ● (V ● W)) ((U ● V) ● W)
 
-  assoc⋉ : ∀ {w x y z} {A : composite w x} {B : composite x y} {C : composite y z}
+  assoc● : ∀ {w x y z} {A : composite w x} {B : composite x y} {C : composite y z}
          → (U : is-representable A) (V : is-representable B) (W : is-representable C)
-         → fst (U ⋉ (V ⋉ W)) ≡ fst ((U ⋉ V) ⋉ W)
-  assoc⋉ U V W = ap fst (assoc-σ⋉ U V W)
+         → fst (U ● (V ● W)) ≡ fst ((U ● V) ● W)
+  assoc● U V W = ap fst (assoc-σ● U V W)
 
   assoc : ∀ {x y z w} (f : hom x y) (g : hom y z) (h : hom z w)
         → f ⨾ (g ⨾ h) ≡ (f ⨾ g) ⨾ h
-  assoc f g h = assoc⋉ (nrm f) (nrm g) (nrm h)
+  assoc f g h = assoc● (nrm f) (nrm g) (nrm h)
 
   unitr : ∀ {x y} (f : hom x y) → f ⨾ idn y ≡ f
-  unitr f = repr-unique ((nrm f ⋉ nrm (idn _)) ↝ ▾-idn (emb f)) (nrm f)
+  unitr f = repr-unique ((nrm f ● nrm (idn _)) ↝ ▾-idn (emb f)) (nrm f)
 
   unitl : ∀ {x y} (f : hom x y) → idn x ⨾ f ≡ f
-  unitl f = repr-unique ((nrm (idn _) ⋉ nrm f) ↝ emb-idn-absorb f) (nrm f)
+  unitl f = repr-unique ((nrm (idn _) ● nrm f) ↝ emb-idn-absorb f) (nrm f)
 ```

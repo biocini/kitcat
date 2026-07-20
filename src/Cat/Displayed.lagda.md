@@ -37,7 +37,7 @@ Naming. Bracket names carry the base index when naming a type family
 naming an operation (`idn[_]`, `emb[_]`, `ev[_]`, `nrm[_]`,
 `pre[_]`, `sub[_]`) — the bracket is notation only where an argument
 fills it. Everything else takes the `ᴰ` suffix: records, modules,
-lemmas, and the displaced infix operators (`_▾ᴰ_`, `_⨾ᴰ_`, `_⋉ᴰ_`),
+lemmas, and the displaced infix operators (`_▾ᴰ_`, `_⨾ᴰ_`, `_●ᴰ_`),
 whose base mates they shadow glyph for glyph. `_$ᴰ_` applies a
 displayed composite with the base context read off the displayed
 context's type.

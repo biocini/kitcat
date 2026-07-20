@@ -37,6 +37,30 @@ ap-∘ : ∀ {u v w} {A : Type u} {B : Type v} {C : Type w}
      → ap (λ a → g (f a)) p ≡ ap g (ap f p)
 ap-∘ g f p = refl
 
+-- comp-pathp₁-ap: the displaced ap-comp at a unary family — one
+-- coherence cube instead of two. The com is retaken along the
+-- HComposite coherence between ap-comp's two fillers, whose
+-- i0/i1 slices are the two comp-pathp₁ lines definitionally.
+comp-pathp₁-ap
+  : ∀ {uA u w} {A : Type uA} {X : Type u}
+    (F : X → Type w) (f : A → X)
+    {a₀ a₁ a₂ : A} (pa : a₀ ≡ a₁) (qa : a₁ ≡ a₂)
+    {h₀ : F (f a₀)} {h₁ : F (f a₁)} {h₂ : F (f a₂)}
+    (P : PathP (λ i → F (f (pa i))) h₀ h₁)
+    (Q : PathP (λ i → F (f (qa i))) h₁ h₂)
+  → PathP (λ m → PathP (λ i → F (ap-comp f pa qa m i)) h₀ h₂)
+          (comp-pathp₁ (λ a → F (f a)) pa qa P Q)
+          (comp-pathp₁ F (ap f pa) (ap f qa) P Q)
+comp-pathp₁-ap F f pa qa {h₀ = h₀} P Q m i =
+  com (λ t → F (coh m i t)) (∂ i) λ where
+    t (i = i0) → h₀
+    t (i = i1) → Q t
+    t (t = i0) → P i
+  where
+    coh = HComposite.coh refl (ap f pa) (ap f qa)
+            (ap f (pa ∙ qa) , λ i j → f (cat.fill pa qa i j))
+            (ap f pa ∙ ap f qa , cat.fill (ap f pa) (ap f qa))
+
 -- comp-pathp₂-ap: the displaced ap-comp. A comp-pathp₂ at a
 -- reindexed binary family agrees with the comp-pathp₂ at the base
 -- family over the ap-images, as a square over the two ap-comp

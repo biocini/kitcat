@@ -203,16 +203,16 @@ module theory₀ {o h} {C : category o h} (M₀ : monoidal-axioms₀ C) where
   open monoidal-axioms₀ M₀
   private module C = category C
 
-  _⋉₀_ : ∀ {F G : ⊗₀-composite}
+  _●₀_ : ∀ {F G : ⊗₀-composite}
       → is-⊗₀-representable F → is-⊗₀-representable G
       → is-⊗₀-representable (F ▿₀ G)
-  (m , p) ⋉₀ (n , q) = m ⊗₀ n , ⊗₀-emb-comp m n ∙ (λ i → p i ▿₀ q i)
-  infixr 40 _⋉₀_
+  (m , p) ●₀ (n , q) = m ⊗₀ n , ⊗₀-emb-comp m n ∙ (λ i → p i ▿₀ q i)
+  infixr 40 _●₀_
 
-  _⋊₀_ : ∀ {F G : ⊗₀-composite}
+  _○₀_ : ∀ {F G : ⊗₀-composite}
         → is-⊗₀-representable F → is-⊗₀-representable G
         → is-⊗₀-representable (F ▵₀ G)
-  (m , p) ⋊₀ (n , q) = m ⊗₀ n , ⊗₀-emb-comp-op m n ∙ (λ i → p i ▵₀ q i)
+  (m , p) ○₀ (n , q) = m ⊗₀ n , ⊗₀-emb-comp-op m n ∙ (λ i → p i ▵₀ q i)
 
   private
     fwd : ∀ x y → fiber ⊗₀-emb (⊗₀-emb x ▾₀ y) → ⊗₀-spine x y
@@ -422,42 +422,42 @@ fiber.
   -- neutrals instead of normalizing the embedding proof at a
   -- generic interval point
   opaque
-    assoc-σ⋉₀ : ∀ {F G H : ⊗₀-composite}
+    assoc-σ●₀ : ∀ {F G H : ⊗₀-composite}
              → (U : is-⊗₀-representable F) (V : is-⊗₀-representable G)
                (W : is-⊗₀-representable H)
-             → U ⋉₀ (V ⋉₀ W) ≡ (U ⋉₀ V) ⋉₀ W
-    assoc-σ⋉₀ U V W = is-⊗₀-representable-prop _ (U ⋉₀ (V ⋉₀ W)) ((U ⋉₀ V) ⋉₀ W)
+             → U ●₀ (V ●₀ W) ≡ (U ●₀ V) ●₀ W
+    assoc-σ●₀ U V W = is-⊗₀-representable-prop _ (U ●₀ (V ●₀ W)) ((U ●₀ V) ●₀ W)
 
-  assoc⋉₀ : ∀ {F G H : ⊗₀-composite}
+  assoc●₀ : ∀ {F G H : ⊗₀-composite}
          → (U : is-⊗₀-representable F) (V : is-⊗₀-representable G)
            (W : is-⊗₀-representable H)
-         → fst (U ⋉₀ (V ⋉₀ W)) ≡ fst ((U ⋉₀ V) ⋉₀ W)
-  assoc⋉₀ U V W = ap fst (assoc-σ⋉₀ U V W)
+         → fst (U ●₀ (V ●₀ W)) ≡ fst ((U ●₀ V) ●₀ W)
+  assoc●₀ U V W = ap fst (assoc-σ●₀ U V W)
 
   ⊗₀-assoc : ∀ x y z → x ⊗₀ (y ⊗₀ z) ≡ (x ⊗₀ y) ⊗₀ z
-  ⊗₀-assoc x y z = assoc⋉₀ (⊗₀-nrm x) (⊗₀-nrm y) (⊗₀-nrm z)
+  ⊗₀-assoc x y z = assoc●₀ (⊗₀-nrm x) (⊗₀-nrm y) (⊗₀-nrm z)
 
-  -- the unitor σ-lines, sealed like assoc-σ⋉₀: consumers read the
+  -- the unitor σ-lines, sealed like assoc-σ●₀: consumers read the
   -- boundary off the type, and level-1 witness families over these
   -- lines compare as neutrals; the unitors are their fst-shadows
   opaque
-    unitr-σ⋉₀
-      : ∀ x → ((⊗₀-nrm x ⋉₀ ⊗₀-nrm I) ↝ ▾₀-idn (⊗₀-emb x)) ≡ ⊗₀-nrm x
-    unitr-σ⋉₀ x =
+    unitr-σ●₀
+      : ∀ x → ((⊗₀-nrm x ●₀ ⊗₀-nrm I) ↝ ▾₀-idn (⊗₀-emb x)) ≡ ⊗₀-nrm x
+    unitr-σ●₀ x =
       is-⊗₀-representable-prop _
-        ((⊗₀-nrm x ⋉₀ ⊗₀-nrm I) ↝ ▾₀-idn (⊗₀-emb x)) (⊗₀-nrm x)
+        ((⊗₀-nrm x ●₀ ⊗₀-nrm I) ↝ ▾₀-idn (⊗₀-emb x)) (⊗₀-nrm x)
 
-    unitl-σ⋉₀
-      : ∀ x → ((⊗₀-nrm I ⋉₀ ⊗₀-nrm x) ↝ ⊗₀-emb-idn-absorb x) ≡ ⊗₀-nrm x
-    unitl-σ⋉₀ x =
+    unitl-σ●₀
+      : ∀ x → ((⊗₀-nrm I ●₀ ⊗₀-nrm x) ↝ ⊗₀-emb-idn-absorb x) ≡ ⊗₀-nrm x
+    unitl-σ●₀ x =
       is-⊗₀-representable-prop _
-        ((⊗₀-nrm I ⋉₀ ⊗₀-nrm x) ↝ ⊗₀-emb-idn-absorb x) (⊗₀-nrm x)
+        ((⊗₀-nrm I ●₀ ⊗₀-nrm x) ↝ ⊗₀-emb-idn-absorb x) (⊗₀-nrm x)
 
   ⊗₀-unitr : ∀ x → x ⊗₀ I ≡ x
-  ⊗₀-unitr x = ap fst (unitr-σ⋉₀ x)
+  ⊗₀-unitr x = ap fst (unitr-σ●₀ x)
 
   ⊗₀-unitl : ∀ x → I ⊗₀ x ≡ x
-  ⊗₀-unitl x = ap fst (unitl-σ⋉₀ x)
+  ⊗₀-unitl x = ap fst (unitl-σ●₀ x)
 ```
 
 ### Unit uniqueness and the demoted equivalences
