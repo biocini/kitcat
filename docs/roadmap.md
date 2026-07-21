@@ -81,15 +81,42 @@ checks these triggers each session and edits only when one fires.
      `Cat.*` replacement, not on Chir — they receive the same
      tensor-level alignment as the rest of the Monoidal subtree
      (pre/post, tensor-`·`, `Virtual`→`category`) as part of finishing
-     the refactor, and do NOT wait for targets 3–4.
+     the refactor, and do NOT wait for targets 3–4. **LANDED
+     2026-07-20** on the new spine (`Braid`, `Hexagon`,
+     `Indiscrete`, `Twist`, `Iso`, the hexagon displacement, and
+     the swap-half presentation equivalence in
+     `Cat.Monoidal.Properties`); the ribbon side continues as
+     project 3 below.
    - **Chir-GATED remainder (still behind targets 3–4):** the T16
      monoidal-side mechanization, if ruled a deliverable.
-3. **Chir.*** — single-carrier polarity-as-representability;
+3. **The ribbon-dialogue arc — BUMPED UP (Lane, 2026-07-20): a
+   central motivation of the construction.** The path to modeling
+   Melliès' ribbon tensorial logic — the internal logic of
+   balanced dialogue categories (`resources/
+   mellies-braided-dialogue`, Def. 12; coherence in *Ribbon
+   Tensorial Logic*, LICS 2018). Staged map and open rulings in
+   `notes/2026-07-20-ribbon-arc.md`: the balanced/twist layer
+   over `braided` minted together with its loop-space instance
+   exemplar (`∞-groupoid (Ω² Y)`, flank swap = Eckmann–Hilton,
+   twist candidate the self-braiding — the first non-indiscrete
+   braided instances); then the dialogue layer (tensorial pole +
+   negations as representability — its own design session; the
+   attic's representable-distributor hypothesis re-derived on the
+   new spine); then `balanced-dialogue` with the
+   dialogical-twist/ribbon-twist agreement as its first theorem.
+   Duals are NOT on the critical path (the balanced dialogue
+   category needs none); the symmetric layer stays deliberately
+   out. Evidence tier (S²/Hopf nontriviality) parallel, not
+   gating.
+4. **Chir.*** — single-carrier polarity-as-representability;
    parked pending Lane's five rulings; Spikes A/B/C specced with
-   kill criteria (memory: chirality record).
-4. **Framed syntax instance** — the syntax instance targeting the
+   kill criteria (memory: chirality record — NOTE the memory file
+   was pruned in the workflow port; the surviving design summary
+   is `.attic/handoff.md`, to be re-externalized before Chir
+   opens).
+5. **Framed syntax instance** — the syntax instance targeting the
    plain record; the braid/twist layer follows.
-5. **Workflow suite, next phases** — the memory-externalization
+6. **Workflow suite, next phases** — the memory-externalization
    sweep into canonical repo homes (gloss.md, session logs, roadmap;
    memory left as pointers, per R10 — never gitignored working
    memory), now explicitly including **pre-registered design memos**
@@ -109,7 +136,7 @@ checks these triggers each session and edits only when one fires.
    Lane 2026-07-13, kelly's discretion open; T16 and T15 both
    lifted under the audit-keyed rule — no ⚠️
    source-identifications remain.
-6. **Housekeeping** — the styleguide conformance
+7. **Housekeeping** — the styleguide conformance
    sweeps (ruled GO, Lane 2026-07-13; docs/styleguide.md
    "Rulings"): the **frontmatter
    sweep** — convert every tracked `.lagda.md` to the YAML
