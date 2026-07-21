@@ -550,9 +550,7 @@ way round the triple.
       ap (λ t → ⊗₀-assoc x y z ∙ t ∙ ⊗₀-assoc z x y)
          (braid●₀-nrm (⊗₀-nrm x ●₀ ⊗₀-nrm y) (⊗₀-nrm z))
 
-    step-r₁
-      : ap fst (rc)
-      ≡ ap fst (rt₁)
+    step-r₁ : ap fst (rc) ≡ ap fst (rt₁)
     step-r₁ =
         ap-comp fst μ (rt₁)
       ∙ Path.unitl (ap fst (rt₁))
@@ -1443,44 +1441,23 @@ The traversal glues and the fiber square.
       sr  = Q.sr
       sr' = Q'.sr
 
-      ẑ : PathP (λ i → ⊗₁-wit ((ℓt) i)
-                              ((ℓt') i) N₁)
-                â₂ â₄
-      ẑ = ⊗₁-wit-∙ Q.ℓ-braid Q.ℓ-assoc₂ Q'.ℓ-braid Q'.ℓ-assoc₂
-            ℓ̂-braid ℓ̂-assoc₂
+      ẑ : PathP (λ i → ⊗₁-wit ((ℓt) i) ((ℓt') i) N₁) â₂ â₄
+      ẑ = ⊗₁-wit-∙ Q.ℓ-braid Q.ℓ-assoc₂ Q'.ℓ-braid Q'.ℓ-assoc₂ ℓ̂-braid ℓ̂-assoc₂
 
-      ŵ₃ : PathP (λ i → ⊗₁-wit ((rt₃) i)
-                               ((rt₃') i) N₁)
-                 ĉ₆ â₄
+      ŵ₃ : PathP (λ i → ⊗₁-wit ((rt₃) i) ((rt₃') i) N₁) ĉ₆ â₄
       ŵ₃ = ⊗₁-wit-∙ Q.ρ Q.r-braid₂ Q'.ρ Q'.r-braid₂ ρ̂ r̂-braid₂
 
-      ŵ₂ : PathP (λ i → ⊗₁-wit ((rt₂) i)
-                               ((rt₂') i) N₁)
-                 ĉ₅ â₄
-      ŵ₂ = ⊗₁-wit-∙ Q.r-assoc (rt₃)
-             Q'.r-assoc (rt₃') r̂-assoc ŵ₃
+      ŵ₂ : PathP (λ i → ⊗₁-wit ((rt₂) i) ((rt₂') i) N₁) ĉ₅ â₄
+      ŵ₂ = ⊗₁-wit-∙ Q.r-assoc (rt₃) Q'.r-assoc (rt₃') r̂-assoc ŵ₃
 
-      ŵ₁ : PathP (λ i → ⊗₁-wit ((rt₁) i)
-                               ((rt₁') i)
-                               N₁)
-                 ĉ₁ â₄
-      ŵ₁ = ⊗₁-wit-∙ Q.r-braid₁ (rt₂)
-             Q'.r-braid₁ (rt₂') r̂-braid₁ ŵ₂
+      ŵ₁ : PathP (λ i → ⊗₁-wit ((rt₁) i) ((rt₁') i) N₁) ĉ₁ â₄
+      ŵ₁ = ⊗₁-wit-∙ Q.r-braid₁ (rt₂) Q'.r-braid₁ (rt₂') r̂-braid₁ ŵ₂
 
-    top̂ : PathP (λ i → ⊗₁-wit ((ℓc) i)
-                              ((ℓc') i) N₁)
-                â₁ â₄
-    top̂ = ⊗₁-wit-∙ Q.ℓ-assoc₁ (ℓt)
-                   Q'.ℓ-assoc₁ (ℓt')
-            ℓ̂-assoc₁ ẑ
+    top̂ : PathP (λ i → ⊗₁-wit (ℓc i) (ℓc' i) N₁) â₁ â₄
+    top̂ = ⊗₁-wit-∙ Q.ℓ-assoc₁ (ℓt) Q'.ℓ-assoc₁ (ℓt') ℓ̂-assoc₁ ẑ
 
-    bot̂ : PathP (λ i → ⊗₁-wit ((rc) i)
-                              ((rc') i)
-                              N₁)
-                â₁ â₄
-    bot̂ = ⊗₁-wit-∙ Q.μ (rt₁)
-                   Q'.μ (rt₁')
-            μ̂ ŵ₁
+    bot̂ : PathP (λ i → ⊗₁-wit ((rc) i) ((rc') i) N₁) â₁ â₄
+    bot̂ = ⊗₁-wit-∙ Q.μ (rt₁) Q'.μ (rt₁') μ̂ ŵ₁
 
     wit-prop
       : (j i : Core.Base.I)
@@ -1825,9 +1802,11 @@ One displaced leaf per base leaf.
           split-r̂₂ whisk-braid̂
 
     ⊗₁-hexagon-l
-      : PathP (λ m → PathP (λ i → C.hom (Q.⊗₀-hexagon-l m i)
-                                        (Q'.⊗₀-hexagon-l m i))
-                     (φ ⊗₁ (ψ ⊗₁ χ)) ((χ ⊗₁ φ) ⊗₁ ψ))
+      : PathP (λ m →
+          PathP (λ i →
+            C.hom (Q.⊗₀-hexagon-l m i)
+              (Q'.⊗₀-hexagon-l m i))
+            (φ ⊗₁ (ψ ⊗₁ χ)) ((χ ⊗₁ φ) ⊗₁ ψ))
               top₁ bot₁
     ⊗₁-hexagon-l =
       comp-pathp₂ Fam
