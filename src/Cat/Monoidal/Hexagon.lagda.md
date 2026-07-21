@@ -298,14 +298,27 @@ project its slices, and the boundary reduces by the type-directed
 rule.
 
 ```agda
+    ℓt : a₂ ≡ a₄
+    ℓt = ℓ-braid ∙ ℓ-assoc₂
+
+    ℓc : a₁ ≡ a₄
+    ℓc = ℓ-assoc₁ ∙ ℓt
+
+    rt₃ : c₆ ≡ a₄
+    rt₃ = ρ ∙ r-braid₂
+
+    rt₂ : c₅ ≡ a₄
+    rt₂ = r-assoc ∙ rt₃
+
+    rt₁ : c₁ ≡ a₄
+    rt₁ = r-braid₁ ∙ rt₂
+
+    rc : a₁ ≡ a₄
+    rc = μ ∙ rt₁
+
     opaque
-      fiber-hexagon
-        : ℓ-assoc₁ ∙ ℓ-braid ∙ ℓ-assoc₂
-        ≡ μ ∙ r-braid₁ ∙ r-assoc ∙ ρ ∙ r-braid₂
-      fiber-hexagon =
-        is-contr→is-set T-contr a₁ a₄
-          (ℓ-assoc₁ ∙ ℓ-braid ∙ ℓ-assoc₂)
-          (μ ∙ r-braid₁ ∙ r-assoc ∙ ρ ∙ r-braid₂)
+      fiber-hexagon : ℓc ≡ rc
+      fiber-hexagon = is-contr→is-set T-contr a₁ a₄ ℓc rc
 ```
 
 ## The object hexagon-r
@@ -318,12 +331,12 @@ discharge by `Path.unitl`, and the compound braid straightens by
 
 ```agda
     step-l₁
-      : ap fst (ℓ-assoc₁ ∙ ℓ-braid ∙ ℓ-assoc₂)
+      : ap fst (ℓc)
       ≡ sym (⊗₀-assoc x y z)
         ∙ braid●₀ (⊗₀-nrm x) (⊗₀-nrm y ●₀ ⊗₀-nrm z)
         ∙ sym (⊗₀-assoc y z x)
     step-l₁ =
-        ap-comp fst ℓ-assoc₁ (ℓ-braid ∙ ℓ-assoc₂)
+        ap-comp fst ℓ-assoc₁ (ℓt)
       ∙ ap (sym (⊗₀-assoc x y z) ∙_) (ap-comp fst ℓ-braid ℓ-assoc₂)
 
     step-l₂
@@ -338,24 +351,27 @@ discharge by `Path.unitl`, and the compound braid straightens by
          (braid●₀-nrm (⊗₀-nrm x) (⊗₀-nrm y ●₀ ⊗₀-nrm z))
 
     step-r₁
-      : ap fst (μ ∙ r-braid₁ ∙ r-assoc ∙ ρ ∙ r-braid₂)
-      ≡ ap fst (r-braid₁ ∙ r-assoc ∙ ρ ∙ r-braid₂)
+      : ap fst (rc)
+      ≡ ap fst (rt₁)
     step-r₁ =
-        ap-comp fst μ (r-braid₁ ∙ r-assoc ∙ ρ ∙ r-braid₂)
-      ∙ Path.unitl (ap fst (r-braid₁ ∙ r-assoc ∙ ρ ∙ r-braid₂))
+        ap-comp fst μ (rt₁)
+      ∙ Path.unitl (ap fst (rt₁))
 
     step-r₂
-      : ap fst (r-braid₁ ∙ r-assoc ∙ ρ ∙ r-braid₂)
+      : ap fst (rt₁)
       ≡ ap (_⊗₀ z) (⊗₀-braid x y)
         ∙ sym (⊗₀-assoc y x z)
         ∙ ap (y ⊗₀_) (⊗₀-braid x z)
     step-r₂ =
-        ap-comp fst r-braid₁ (r-assoc ∙ ρ ∙ r-braid₂)
+        ap-comp fst r-braid₁ (rt₂)
       ∙ ap (ap (_⊗₀ z) (⊗₀-braid x y) ∙_)
-          ( ap-comp fst r-assoc (ρ ∙ r-braid₂)
+          ( ap-comp fst r-assoc (rt₃)
           ∙ ap (sym (⊗₀-assoc y x z) ∙_)
               ( ap-comp fst ρ r-braid₂
               ∙ Path.unitl (ap fst r-braid₂) ) )
+
+    sl = step-l₁ ∙ step-l₂
+    sr = step-r₁ ∙ step-r₂
 
     ⊗₀-hexagon-r
       : sym (⊗₀-assoc x y z)
@@ -365,9 +381,9 @@ discharge by `Path.unitl`, and the compound braid straightens by
         ∙ sym (⊗₀-assoc y x z)
         ∙ ap (y ⊗₀_) (⊗₀-braid x z)
     ⊗₀-hexagon-r =
-        sym (step-l₁ ∙ step-l₂)
+        sym (sl)
       ∙ ap (ap fst) fiber-hexagon
-      ∙ step-r₁ ∙ step-r₂
+      ∙ sr
 ```
 
 ## The hexagon-l fiber
@@ -484,14 +500,27 @@ characterization side, `fst` constant throughout.
 The fiber hexagon, opaque as in `-r`.
 
 ```agda
+    ℓt : a₂ ≡ a₄
+    ℓt = ℓ-braid ∙ ℓ-assoc₂
+
+    ℓc : a₁ ≡ a₄
+    ℓc = ℓ-assoc₁ ∙ ℓt
+
+    rt₃ : c₆ ≡ a₄
+    rt₃ = ρ ∙ r-braid₂
+
+    rt₂ : c₅ ≡ a₄
+    rt₂ = r-assoc ∙ rt₃
+
+    rt₁ : c₁ ≡ a₄
+    rt₁ = r-braid₁ ∙ rt₂
+
+    rc : a₁ ≡ a₄
+    rc = μ ∙ rt₁
+
     opaque
-      fiber-hexagon
-        : ℓ-assoc₁ ∙ ℓ-braid ∙ ℓ-assoc₂
-        ≡ μ ∙ r-braid₁ ∙ r-assoc ∙ ρ ∙ r-braid₂
-      fiber-hexagon =
-        is-contr→is-set T-contr a₁ a₄
-          (ℓ-assoc₁ ∙ ℓ-braid ∙ ℓ-assoc₂)
-          (μ ∙ r-braid₁ ∙ r-assoc ∙ ρ ∙ r-braid₂)
+      fiber-hexagon : ℓc ≡ rc
+      fiber-hexagon = is-contr→is-set T-contr a₁ a₄ ℓc rc
 ```
 
 ## The object hexagon-l
@@ -502,12 +531,12 @@ way round the triple.
 
 ```agda
     step-l₁
-      : ap fst (ℓ-assoc₁ ∙ ℓ-braid ∙ ℓ-assoc₂)
+      : ap fst (ℓc)
       ≡ ⊗₀-assoc x y z
         ∙ braid●₀ (⊗₀-nrm x ●₀ ⊗₀-nrm y) (⊗₀-nrm z)
         ∙ ⊗₀-assoc z x y
     step-l₁ =
-        ap-comp fst ℓ-assoc₁ (ℓ-braid ∙ ℓ-assoc₂)
+        ap-comp fst ℓ-assoc₁ (ℓt)
       ∙ ap (⊗₀-assoc x y z ∙_) (ap-comp fst ℓ-braid ℓ-assoc₂)
 
     step-l₂
@@ -522,24 +551,27 @@ way round the triple.
          (braid●₀-nrm (⊗₀-nrm x ●₀ ⊗₀-nrm y) (⊗₀-nrm z))
 
     step-r₁
-      : ap fst (μ ∙ r-braid₁ ∙ r-assoc ∙ ρ ∙ r-braid₂)
-      ≡ ap fst (r-braid₁ ∙ r-assoc ∙ ρ ∙ r-braid₂)
+      : ap fst (rc)
+      ≡ ap fst (rt₁)
     step-r₁ =
-        ap-comp fst μ (r-braid₁ ∙ r-assoc ∙ ρ ∙ r-braid₂)
-      ∙ Path.unitl (ap fst (r-braid₁ ∙ r-assoc ∙ ρ ∙ r-braid₂))
+        ap-comp fst μ (rt₁)
+      ∙ Path.unitl (ap fst (rt₁))
 
     step-r₂
-      : ap fst (r-braid₁ ∙ r-assoc ∙ ρ ∙ r-braid₂)
+      : ap fst (rt₁)
       ≡ ap (x ⊗₀_) (⊗₀-braid y z)
         ∙ ⊗₀-assoc x z y
         ∙ ap (_⊗₀ y) (⊗₀-braid x z)
     step-r₂ =
-        ap-comp fst r-braid₁ (r-assoc ∙ ρ ∙ r-braid₂)
+        ap-comp fst r-braid₁ (rt₂)
       ∙ ap (ap (x ⊗₀_) (⊗₀-braid y z) ∙_)
-          ( ap-comp fst r-assoc (ρ ∙ r-braid₂)
+          ( ap-comp fst r-assoc (rt₃)
           ∙ ap (⊗₀-assoc x z y ∙_)
               ( ap-comp fst ρ r-braid₂
               ∙ Path.unitl (ap fst r-braid₂) ) )
+
+    sl = step-l₁ ∙ step-l₂
+    sr = step-r₁ ∙ step-r₂
 
     ⊗₀-hexagon-l
       : ⊗₀-assoc x y z
@@ -549,9 +581,9 @@ way round the triple.
         ∙ ⊗₀-assoc x z y
         ∙ ap (_⊗₀ y) (⊗₀-braid x z)
     ⊗₀-hexagon-l =
-        sym (step-l₁ ∙ step-l₂)
+        sym (sl)
       ∙ ap (ap fst) fiber-hexagon
-      ∙ step-r₁ ∙ step-r₂
+      ∙ sr
 ```
 
 ## The displaced hexagon-r
@@ -678,14 +710,25 @@ tree — the field whisker, the displaced assoc, and the
         Famc p p' = PathP (λ t → ⊗₁-composite (p t) (p' t))
                           (⊗₁-emb ((φ ⊗₁ ψ) ⊗₁ χ)) N₁
 
+        mid₁ : Famc (Q.n₁ .snd ∙ Q.β₁ ∙ Q.β₂) (Q'.n₁ .snd ∙ Q'.β₁ ∙ Q'.β₂)
+        mid₁ =
+          comp-pathp₂ ⊗₁-composite
+            (Q.n₁ .snd) (Q.β₁ ∙ Q.β₂) (Q'.n₁ .snd) (Q'.β₁ ∙ Q'.β₂)
+            (n̂₁ .snd)
+            (comp-pathp₂ ⊗₁-composite Q.β₁ Q.β₂ Q'.β₁ Q'.β₂ β̂₁ β̂₂)
+
+        mid₂ : Famc ((Q.n₁ .snd ∙ Q.β₁) ∙ Q.β₂) ((Q'.n₁ .snd ∙ Q'.β₁) ∙ Q'.β₂)
+        mid₂ =
+          comp-pathp₂ ⊗₁-composite
+            (Q.n₁ .snd ∙ Q.β₁) Q.β₂ (Q'.n₁ .snd ∙ Q'.β₁) Q'.β₂
+            (comp-pathp₂ ⊗₁-composite
+              (Q.n₁ .snd) Q.β₁ (Q'.n₁ .snd) Q'.β₁ (n̂₁ .snd) β̂₁)
+            β̂₂
+
         Θ-field
           : PathP (λ m → Famc (ap (Q.n₁ .snd ∙_) H♭ m)
                               (ap (Q'.n₁ .snd ∙_) H♭' m))
-              (â₁ .snd)
-              (comp-pathp₂ ⊗₁-composite
-                (Q.n₁ .snd) (Q.β₁ ∙ Q.β₂) (Q'.n₁ .snd) (Q'.β₁ ∙ Q'.β₂)
-                (n̂₁ .snd)
-                (comp-pathp₂ ⊗₁-composite Q.β₁ Q.β₂ Q'.β₁ Q'.β₂ β̂₁ β̂₂))
+              (â₁ .snd) mid₁
         Θ-field m =
           comp-pathp₂ ⊗₁-composite
             (Q.n₁ .snd) (H♭ m) (Q'.n₁ .snd) (H♭' m)
@@ -694,15 +737,7 @@ tree — the field whisker, the displaced assoc, and the
         Θ-assoc
           : PathP (λ m → Famc (Path.assoc (Q.n₁ .snd) Q.β₁ Q.β₂ m)
                               (Path.assoc (Q'.n₁ .snd) Q'.β₁ Q'.β₂ m))
-              (comp-pathp₂ ⊗₁-composite
-                (Q.n₁ .snd) (Q.β₁ ∙ Q.β₂) (Q'.n₁ .snd) (Q'.β₁ ∙ Q'.β₂)
-                (n̂₁ .snd)
-                (comp-pathp₂ ⊗₁-composite Q.β₁ Q.β₂ Q'.β₁ Q'.β₂ β̂₁ β̂₂))
-              (comp-pathp₂ ⊗₁-composite
-                (Q.n₁ .snd ∙ Q.β₁) Q.β₂ (Q'.n₁ .snd ∙ Q'.β₁) Q'.β₂
-                (comp-pathp₂ ⊗₁-composite
-                  (Q.n₁ .snd) Q.β₁ (Q'.n₁ .snd) Q'.β₁ (n̂₁ .snd) β̂₁)
-                β̂₂)
+              mid₁ mid₂
         Θ-assoc =
           comp-pathp₂-assoc ⊗₁-composite (Q.n₁ .snd) Q.β₁ Q.β₂
             (Q'.n₁ .snd) Q'.β₁ Q'.β₂ (n̂₁ .snd) β̂₁ β̂₂
@@ -710,12 +745,7 @@ tree — the field whisker, the displaced assoc, and the
         Θ-merge
           : PathP (λ m → Famc (ap (_∙ Q.β₂) inner m)
                               (ap (_∙ Q'.β₂) inner' m))
-              (comp-pathp₂ ⊗₁-composite
-                (Q.n₁ .snd ∙ Q.β₁) Q.β₂ (Q'.n₁ .snd ∙ Q'.β₁) Q'.β₂
-                (comp-pathp₂ ⊗₁-composite
-                  (Q.n₁ .snd) Q.β₁ (Q'.n₁ .snd) Q'.β₁ (n̂₁ .snd) β̂₁)
-                β̂₂)
-              (ĉ₁ .snd)
+              mid₂ (ĉ₁ .snd)
         Θ-merge m =
           comp-pathp₂ ⊗₁-composite (inner m) Q.β₂ (inner' m) Q'.β₂
             (comp-pathp₂-merge-map ⊗₁-composite ⊗₁-composite f f' ω
@@ -766,43 +796,60 @@ closing move.
 
 ```agda
     private
-      ẑ : PathP (λ i → ⊗₁-wit ((Q.ℓ-braid ∙ Q.ℓ-assoc₂) i)
-                              ((Q'.ℓ-braid ∙ Q'.ℓ-assoc₂) i) N₁)
+      ℓt  = Q.ℓt
+      ℓt' = Q'.ℓt
+      ℓc  = Q.ℓc
+      ℓc' = Q'.ℓc
+      rt₃  = Q.rt₃
+      rt₃' = Q'.rt₃
+      rt₂  = Q.rt₂
+      rt₂' = Q'.rt₂
+      rt₁  = Q.rt₁
+      rt₁' = Q'.rt₁
+      rc  = Q.rc
+      rc' = Q'.rc
+      sl  = Q.sl
+      sl' = Q'.sl
+      sr  = Q.sr
+      sr' = Q'.sr
+
+      ẑ : PathP (λ i → ⊗₁-wit ((ℓt) i)
+                              ((ℓt') i) N₁)
                 â₂ â₄
       ẑ = ⊗₁-wit-∙ Q.ℓ-braid Q.ℓ-assoc₂ Q'.ℓ-braid Q'.ℓ-assoc₂
             ℓ̂-braid ℓ̂-assoc₂
 
-      ŵ₃ : PathP (λ i → ⊗₁-wit ((Q.ρ ∙ Q.r-braid₂) i)
-                               ((Q'.ρ ∙ Q'.r-braid₂) i) N₁)
+      ŵ₃ : PathP (λ i → ⊗₁-wit ((rt₃) i)
+                               ((rt₃') i) N₁)
                  ĉ₆ â₄
       ŵ₃ = ⊗₁-wit-∙ Q.ρ Q.r-braid₂ Q'.ρ Q'.r-braid₂ ρ̂ r̂-braid₂
 
-      ŵ₂ : PathP (λ i → ⊗₁-wit ((Q.r-assoc ∙ Q.ρ ∙ Q.r-braid₂) i)
-                               ((Q'.r-assoc ∙ Q'.ρ ∙ Q'.r-braid₂) i) N₁)
+      ŵ₂ : PathP (λ i → ⊗₁-wit ((rt₂) i)
+                               ((rt₂') i) N₁)
                  ĉ₅ â₄
-      ŵ₂ = ⊗₁-wit-∙ Q.r-assoc (Q.ρ ∙ Q.r-braid₂)
-             Q'.r-assoc (Q'.ρ ∙ Q'.r-braid₂) r̂-assoc ŵ₃
+      ŵ₂ = ⊗₁-wit-∙ Q.r-assoc (rt₃)
+             Q'.r-assoc (rt₃') r̂-assoc ŵ₃
 
-      ŵ₁ : PathP (λ i → ⊗₁-wit ((Q.r-braid₁ ∙ Q.r-assoc ∙ Q.ρ ∙ Q.r-braid₂) i)
-                               ((Q'.r-braid₁ ∙ Q'.r-assoc ∙ Q'.ρ ∙ Q'.r-braid₂) i)
+      ŵ₁ : PathP (λ i → ⊗₁-wit ((rt₁) i)
+                               ((rt₁') i)
                                N₁)
                  ĉ₁ â₄
-      ŵ₁ = ⊗₁-wit-∙ Q.r-braid₁ (Q.r-assoc ∙ Q.ρ ∙ Q.r-braid₂)
-             Q'.r-braid₁ (Q'.r-assoc ∙ Q'.ρ ∙ Q'.r-braid₂) r̂-braid₁ ŵ₂
+      ŵ₁ = ⊗₁-wit-∙ Q.r-braid₁ (rt₂)
+             Q'.r-braid₁ (rt₂') r̂-braid₁ ŵ₂
 
-    top̂ : PathP (λ i → ⊗₁-wit ((Q.ℓ-assoc₁ ∙ Q.ℓ-braid ∙ Q.ℓ-assoc₂) i)
-                              ((Q'.ℓ-assoc₁ ∙ Q'.ℓ-braid ∙ Q'.ℓ-assoc₂) i) N₁)
+    top̂ : PathP (λ i → ⊗₁-wit ((ℓc) i)
+                              ((ℓc') i) N₁)
                 â₁ â₄
-    top̂ = ⊗₁-wit-∙ Q.ℓ-assoc₁ (Q.ℓ-braid ∙ Q.ℓ-assoc₂)
-                   Q'.ℓ-assoc₁ (Q'.ℓ-braid ∙ Q'.ℓ-assoc₂)
+    top̂ = ⊗₁-wit-∙ Q.ℓ-assoc₁ (ℓt)
+                   Q'.ℓ-assoc₁ (ℓt')
             ℓ̂-assoc₁ ẑ
 
-    bot̂ : PathP (λ i → ⊗₁-wit ((Q.μ ∙ Q.r-braid₁ ∙ Q.r-assoc ∙ Q.ρ ∙ Q.r-braid₂) i)
-                              ((Q'.μ ∙ Q'.r-braid₁ ∙ Q'.r-assoc ∙ Q'.ρ ∙ Q'.r-braid₂) i)
+    bot̂ : PathP (λ i → ⊗₁-wit ((rc) i)
+                              ((rc') i)
                               N₁)
                 â₁ â₄
-    bot̂ = ⊗₁-wit-∙ Q.μ (Q.r-braid₁ ∙ Q.r-assoc ∙ Q.ρ ∙ Q.r-braid₂)
-                   Q'.μ (Q'.r-braid₁ ∙ Q'.r-assoc ∙ Q'.ρ ∙ Q'.r-braid₂)
+    bot̂ = ⊗₁-wit-∙ Q.μ (rt₁)
+                   Q'.μ (rt₁')
             μ̂ ŵ₁
 
     wit-prop
@@ -883,13 +930,13 @@ half-straightened forms.
 
 ```agda
     private
-      E₀ : Fam (ap fst (Q.ℓ-assoc₁ ∙ Q.ℓ-braid ∙ Q.ℓ-assoc₂))
-               (ap fst (Q'.ℓ-assoc₁ ∙ Q'.ℓ-braid ∙ Q'.ℓ-assoc₂))
+      E₀ : Fam (ap fst (ℓc))
+               (ap fst (ℓc'))
       E₀ i = top̂ i .fst
 
       E₁ = comp-pathp₂ C.hom
-             (ap fst Q.ℓ-assoc₁) (ap fst (Q.ℓ-braid ∙ Q.ℓ-assoc₂))
-             (ap fst Q'.ℓ-assoc₁) (ap fst (Q'.ℓ-braid ∙ Q'.ℓ-assoc₂))
+             (ap fst Q.ℓ-assoc₁) (ap fst (ℓt))
+             (ap fst Q'.ℓ-assoc₁) (ap fst (ℓt'))
              (λ i → ℓ̂-assoc₁ i .fst) (λ i → ẑ i .fst)
 
       E₂ = comp-pathp₂ C.hom
@@ -901,24 +948,24 @@ half-straightened forms.
                (ap fst Q'.ℓ-braid) (ap fst Q'.ℓ-assoc₂)
                (λ i → ℓ̂-braid i .fst) (λ i → ℓ̂-assoc₂ i .fst))
 
-      R₀ : Fam (ap fst (Q.μ ∙ Q.r-braid₁ ∙ Q.r-assoc ∙ Q.ρ ∙ Q.r-braid₂))
-               (ap fst (Q'.μ ∙ Q'.r-braid₁ ∙ Q'.r-assoc ∙ Q'.ρ ∙ Q'.r-braid₂))
+      R₀ : Fam (ap fst (rc))
+               (ap fst (rc'))
       R₀ i = bot̂ i .fst
 
       R₁ = comp-pathp₂ C.hom
              (ap fst Q.μ)
-             (ap fst (Q.r-braid₁ ∙ Q.r-assoc ∙ Q.ρ ∙ Q.r-braid₂))
+             (ap fst (rt₁))
              (ap fst Q'.μ)
-             (ap fst (Q'.r-braid₁ ∙ Q'.r-assoc ∙ Q'.ρ ∙ Q'.r-braid₂))
+             (ap fst (rt₁'))
              (λ i → μ̂ i .fst) (λ i → ŵ₁ i .fst)
 
-      R₂ : Fam (ap fst (Q.r-braid₁ ∙ Q.r-assoc ∙ Q.ρ ∙ Q.r-braid₂))
-               (ap fst (Q'.r-braid₁ ∙ Q'.r-assoc ∙ Q'.ρ ∙ Q'.r-braid₂))
+      R₂ : Fam (ap fst (rt₁))
+               (ap fst (rt₁'))
       R₂ i = ŵ₁ i .fst
 
       R₃ = comp-pathp₂ C.hom
-             (ap fst Q.r-braid₁) (ap fst (Q.r-assoc ∙ Q.ρ ∙ Q.r-braid₂))
-             (ap fst Q'.r-braid₁) (ap fst (Q'.r-assoc ∙ Q'.ρ ∙ Q'.r-braid₂))
+             (ap fst Q.r-braid₁) (ap fst (rt₂))
+             (ap fst Q'.r-braid₁) (ap fst (rt₂'))
              (λ i → r̂-braid₁ i .fst) (λ i → ŵ₂ i .fst)
 ```
 
@@ -928,13 +975,13 @@ whiskers do.
 
 ```agda
       split-l̂
-        : PathP (λ m → Fam (ap-comp fst Q.ℓ-assoc₁ (Q.ℓ-braid ∙ Q.ℓ-assoc₂) m)
-                           (ap-comp fst Q'.ℓ-assoc₁ (Q'.ℓ-braid ∙ Q'.ℓ-assoc₂) m))
+        : PathP (λ m → Fam (ap-comp fst Q.ℓ-assoc₁ (ℓt) m)
+                           (ap-comp fst Q'.ℓ-assoc₁ (ℓt') m))
                 E₀ E₁
       split-l̂ m =
         comp-pathp₂-ap C.hom fst fst
-          Q.ℓ-assoc₁ (Q.ℓ-braid ∙ Q.ℓ-assoc₂)
-          Q'.ℓ-assoc₁ (Q'.ℓ-braid ∙ Q'.ℓ-assoc₂)
+          Q.ℓ-assoc₁ (ℓt)
+          Q'.ℓ-assoc₁ (ℓt')
           (λ i → ℓ̂-assoc₁ i .fst) (λ i → ẑ i .fst) m
 
       whisk-l̂
@@ -955,9 +1002,9 @@ whiskers do.
       step-l̂₁ : PathP (λ m → Fam (Q.step-l₁ m) (Q'.step-l₁ m)) E₀ E₂
       step-l̂₁ =
         comp-pathp₂ Fam
-          (ap-comp fst Q.ℓ-assoc₁ (Q.ℓ-braid ∙ Q.ℓ-assoc₂))
+          (ap-comp fst Q.ℓ-assoc₁ (ℓt))
           (ap (sym (⊗₀-assoc x y z) ∙_) (ap-comp fst Q.ℓ-braid Q.ℓ-assoc₂))
-          (ap-comp fst Q'.ℓ-assoc₁ (Q'.ℓ-braid ∙ Q'.ℓ-assoc₂))
+          (ap-comp fst Q'.ℓ-assoc₁ (ℓt'))
           (ap (sym (⊗₀-assoc x' y' z') ∙_) (ap-comp fst Q'.ℓ-braid Q'.ℓ-assoc₂))
           split-l̂ whisk-l̂
 
@@ -979,11 +1026,16 @@ whiskers do.
             (braid●₁-nrm Û (V̂ ●₁ Ŵ) m)
             (λ i → ⊗₁-assoc ψ χ φ (~ i)))
 
-      left̂ : PathP (λ m → Fam ((Q.step-l₁ ∙ Q.step-l₂) m)
-                              ((Q'.step-l₁ ∙ Q'.step-l₂) m))
+      left̂ : PathP (λ m → Fam ((sl) m)
+                              ((sl') m))
                    E₀ top₁
       left̂ = comp-pathp₂ Fam Q.step-l₁ Q.step-l₂ Q'.step-l₁ Q'.step-l₂
                step-l̂₁ step-l̂₂
+
+      left̂⁻ : PathP (λ m → Fam (sym (sl) m)
+                               (sym (sl') m))
+                    top₁ E₀
+      left̂⁻ m = left̂ (~ m)
 
       hex̂● : PathP (λ m → Fam (ap (ap fst) Q.fiber-hexagon m)
                               (ap (ap fst) Q'.fiber-hexagon m))
@@ -992,35 +1044,35 @@ whiskers do.
 
       split-r̂
         : PathP (λ m → Fam (ap-comp fst Q.μ
-                              (Q.r-braid₁ ∙ Q.r-assoc ∙ Q.ρ ∙ Q.r-braid₂) m)
+                              (rt₁) m)
                            (ap-comp fst Q'.μ
-                              (Q'.r-braid₁ ∙ Q'.r-assoc ∙ Q'.ρ ∙ Q'.r-braid₂) m))
+                              (rt₁') m))
                 R₀ R₁
       split-r̂ m =
         comp-pathp₂-ap C.hom fst fst
-          Q.μ (Q.r-braid₁ ∙ Q.r-assoc ∙ Q.ρ ∙ Q.r-braid₂)
-          Q'.μ (Q'.r-braid₁ ∙ Q'.r-assoc ∙ Q'.ρ ∙ Q'.r-braid₂)
+          Q.μ (rt₁)
+          Q'.μ (rt₁')
           (λ i → μ̂ i .fst) (λ i → ŵ₁ i .fst) m
 
       unitl̂-r
         : PathP (λ m → Fam (Path.unitl
-                              (ap fst (Q.r-braid₁ ∙ Q.r-assoc ∙ Q.ρ ∙ Q.r-braid₂)) m)
+                              (ap fst (rt₁)) m)
                            (Path.unitl
-                              (ap fst (Q'.r-braid₁ ∙ Q'.r-assoc ∙ Q'.ρ ∙ Q'.r-braid₂)) m))
+                              (ap fst (rt₁')) m))
                 R₁ R₂
       unitl̂-r m =
         comp-pathp₂-unitl C.hom
-          (ap fst (Q.r-braid₁ ∙ Q.r-assoc ∙ Q.ρ ∙ Q.r-braid₂))
-          (ap fst (Q'.r-braid₁ ∙ Q'.r-assoc ∙ Q'.ρ ∙ Q'.r-braid₂))
+          (ap fst (rt₁))
+          (ap fst (rt₁'))
           (λ i → ŵ₁ i .fst) m
 
       step-r̂₁ : PathP (λ m → Fam (Q.step-r₁ m) (Q'.step-r₁ m)) R₀ R₂
       step-r̂₁ =
         comp-pathp₂ Fam
-          (ap-comp fst Q.μ (Q.r-braid₁ ∙ Q.r-assoc ∙ Q.ρ ∙ Q.r-braid₂))
-          (Path.unitl (ap fst (Q.r-braid₁ ∙ Q.r-assoc ∙ Q.ρ ∙ Q.r-braid₂)))
-          (ap-comp fst Q'.μ (Q'.r-braid₁ ∙ Q'.r-assoc ∙ Q'.ρ ∙ Q'.r-braid₂))
-          (Path.unitl (ap fst (Q'.r-braid₁ ∙ Q'.r-assoc ∙ Q'.ρ ∙ Q'.r-braid₂)))
+          (ap-comp fst Q.μ (rt₁))
+          (Path.unitl (ap fst (rt₁)))
+          (ap-comp fst Q'.μ (rt₁'))
+          (Path.unitl (ap fst (rt₁')))
           split-r̂ unitl̂-r
 ```
 
@@ -1041,13 +1093,13 @@ lands on the μ̂-link's.
       FamII p p' = PathP (λ i → C.hom (p i) (p' i))
                          (ψ ⊗₁ (φ ⊗₁ χ)) (ψ ⊗₁ (χ ⊗₁ φ))
 
-      S₀ : FamI (ap fst (Q.r-assoc ∙ Q.ρ ∙ Q.r-braid₂))
-                (ap fst (Q'.r-assoc ∙ Q'.ρ ∙ Q'.r-braid₂))
+      S₀ : FamI (ap fst (rt₂))
+                (ap fst (rt₂'))
       S₀ i = ŵ₂ i .fst
 
       S₁ = comp-pathp₂ C.hom
-             (ap fst Q.r-assoc) (ap fst (Q.ρ ∙ Q.r-braid₂))
-             (ap fst Q'.r-assoc) (ap fst (Q'.ρ ∙ Q'.r-braid₂))
+             (ap fst Q.r-assoc) (ap fst (rt₃))
+             (ap fst Q'.r-assoc) (ap fst (rt₃'))
              (λ i → r̂-assoc i .fst) (λ i → ŵ₃ i .fst)
 
       S₂ = comp-pathp₂ C.hom
@@ -1056,7 +1108,7 @@ lands on the μ̂-link's.
              (λ i → ⊗₁-assoc ψ φ χ (~ i))
              (λ i → ψ ⊗₁ ⊗₁-braid φ χ i)
 
-      T₀ : FamII (ap fst (Q.ρ ∙ Q.r-braid₂)) (ap fst (Q'.ρ ∙ Q'.r-braid₂))
+      T₀ : FamII (ap fst (rt₃)) (ap fst (rt₃'))
       T₀ i = ŵ₃ i .fst
 
       T₁ = comp-pathp₂ C.hom
@@ -1066,6 +1118,9 @@ lands on the μ̂-link's.
 
       T₂ : FamII (ap fst Q.r-braid₂) (ap fst Q'.r-braid₂)
       T₂ i = r̂-braid₂ i .fst
+
+      uρ  = ap-comp fst Q.ρ Q.r-braid₂ ∙ Path.unitl (ap fst Q.r-braid₂)
+      uρ' = ap-comp fst Q'.ρ Q'.r-braid₂ ∙ Path.unitl (ap fst Q'.r-braid₂)
 
       split-ρ̂
         : PathP (λ m → FamII (ap-comp fst Q.ρ Q.r-braid₂ m)
@@ -1085,11 +1140,7 @@ lands on the μ̂-link's.
           (λ i → r̂-braid₂ i .fst) m
 
       inner̂₂
-        : PathP (λ m → FamII ((ap-comp fst Q.ρ Q.r-braid₂
-                               ∙ Path.unitl (ap fst Q.r-braid₂)) m)
-                             ((ap-comp fst Q'.ρ Q'.r-braid₂
-                               ∙ Path.unitl (ap fst Q'.r-braid₂)) m))
-                T₀ T₂
+        : PathP (λ m → FamII (uρ m) (uρ' m)) T₀ T₂
       inner̂₂ =
         comp-pathp₂ FamII
           (ap-comp fst Q.ρ Q.r-braid₂) (Path.unitl (ap fst Q.r-braid₂))
@@ -1097,103 +1148,68 @@ lands on the μ̂-link's.
           split-ρ̂ unitl̂-ρ
 
       split-assoĉ
-        : PathP (λ m → FamI (ap-comp fst Q.r-assoc (Q.ρ ∙ Q.r-braid₂) m)
-                            (ap-comp fst Q'.r-assoc (Q'.ρ ∙ Q'.r-braid₂) m))
+        : PathP (λ m → FamI (ap-comp fst Q.r-assoc (rt₃) m)
+                            (ap-comp fst Q'.r-assoc (rt₃') m))
                 S₀ S₁
       split-assoĉ m =
         comp-pathp₂-ap C.hom fst fst
-          Q.r-assoc (Q.ρ ∙ Q.r-braid₂) Q'.r-assoc (Q'.ρ ∙ Q'.r-braid₂)
+          Q.r-assoc (rt₃) Q'.r-assoc (rt₃')
           (λ i → r̂-assoc i .fst) (λ i → ŵ₃ i .fst) m
 
+      vα  = ap-comp fst Q.r-assoc (rt₃)
+              ∙ ap (sym (⊗₀-assoc y x z) ∙_) uρ
+      vα' = ap-comp fst Q'.r-assoc (rt₃')
+              ∙ ap (sym (⊗₀-assoc y' x' z') ∙_) uρ'
+
       whisk-r̂₂
-        : PathP (λ m → FamI (ap (sym (⊗₀-assoc y x z) ∙_)
-                               (ap-comp fst Q.ρ Q.r-braid₂
-                                ∙ Path.unitl (ap fst Q.r-braid₂)) m)
-                            (ap (sym (⊗₀-assoc y' x' z') ∙_)
-                               (ap-comp fst Q'.ρ Q'.r-braid₂
-                                ∙ Path.unitl (ap fst Q'.r-braid₂)) m))
+        : PathP (λ m → FamI (ap (sym (⊗₀-assoc y x z) ∙_) uρ m)
+                            (ap (sym (⊗₀-assoc y' x' z') ∙_) uρ' m))
                 S₁ S₂
       whisk-r̂₂ m =
         comp-pathp₂ C.hom
-          (ap fst Q.r-assoc)
-          ((ap-comp fst Q.ρ Q.r-braid₂ ∙ Path.unitl (ap fst Q.r-braid₂)) m)
-          (ap fst Q'.r-assoc)
-          ((ap-comp fst Q'.ρ Q'.r-braid₂ ∙ Path.unitl (ap fst Q'.r-braid₂)) m)
+          (ap fst Q.r-assoc) (uρ m)
+          (ap fst Q'.r-assoc) (uρ' m)
           (λ i → r̂-assoc i .fst) (inner̂₂ m)
 
       inner̂₁
-        : PathP (λ m → FamI ((ap-comp fst Q.r-assoc (Q.ρ ∙ Q.r-braid₂)
-                              ∙ ap (sym (⊗₀-assoc y x z) ∙_)
-                                  (ap-comp fst Q.ρ Q.r-braid₂
-                                   ∙ Path.unitl (ap fst Q.r-braid₂))) m)
-                            ((ap-comp fst Q'.r-assoc (Q'.ρ ∙ Q'.r-braid₂)
-                              ∙ ap (sym (⊗₀-assoc y' x' z') ∙_)
-                                  (ap-comp fst Q'.ρ Q'.r-braid₂
-                                   ∙ Path.unitl (ap fst Q'.r-braid₂))) m))
-                S₀ S₂
+        : PathP (λ m → FamI (vα m) (vα' m)) S₀ S₂
       inner̂₁ =
         comp-pathp₂ FamI
-          (ap-comp fst Q.r-assoc (Q.ρ ∙ Q.r-braid₂))
-          (ap (sym (⊗₀-assoc y x z) ∙_)
-            (ap-comp fst Q.ρ Q.r-braid₂ ∙ Path.unitl (ap fst Q.r-braid₂)))
-          (ap-comp fst Q'.r-assoc (Q'.ρ ∙ Q'.r-braid₂))
-          (ap (sym (⊗₀-assoc y' x' z') ∙_)
-            (ap-comp fst Q'.ρ Q'.r-braid₂ ∙ Path.unitl (ap fst Q'.r-braid₂)))
+          (ap-comp fst Q.r-assoc (rt₃))
+          (ap (sym (⊗₀-assoc y x z) ∙_) uρ)
+          (ap-comp fst Q'.r-assoc (rt₃'))
+          (ap (sym (⊗₀-assoc y' x' z') ∙_) uρ')
           split-assoĉ whisk-r̂₂
 
       whisk-braid̂
-        : PathP (λ m → Fam (ap (ap (_⊗₀ z) (⊗₀-braid x y) ∙_)
-                              (ap-comp fst Q.r-assoc (Q.ρ ∙ Q.r-braid₂)
-                               ∙ ap (sym (⊗₀-assoc y x z) ∙_)
-                                   (ap-comp fst Q.ρ Q.r-braid₂
-                                    ∙ Path.unitl (ap fst Q.r-braid₂))) m)
-                           (ap (ap (_⊗₀ z') (⊗₀-braid x' y') ∙_)
-                              (ap-comp fst Q'.r-assoc (Q'.ρ ∙ Q'.r-braid₂)
-                               ∙ ap (sym (⊗₀-assoc y' x' z') ∙_)
-                                   (ap-comp fst Q'.ρ Q'.r-braid₂
-                                    ∙ Path.unitl (ap fst Q'.r-braid₂))) m))
+        : PathP (λ m → Fam (ap (ap (_⊗₀ z) (⊗₀-braid x y) ∙_) vα m)
+                           (ap (ap (_⊗₀ z') (⊗₀-braid x' y') ∙_) vα' m))
                 R₃ bot₁
       whisk-braid̂ m =
         comp-pathp₂ C.hom
-          (ap fst Q.r-braid₁)
-          ((ap-comp fst Q.r-assoc (Q.ρ ∙ Q.r-braid₂)
-            ∙ ap (sym (⊗₀-assoc y x z) ∙_)
-                (ap-comp fst Q.ρ Q.r-braid₂
-                 ∙ Path.unitl (ap fst Q.r-braid₂))) m)
-          (ap fst Q'.r-braid₁)
-          ((ap-comp fst Q'.r-assoc (Q'.ρ ∙ Q'.r-braid₂)
-            ∙ ap (sym (⊗₀-assoc y' x' z') ∙_)
-                (ap-comp fst Q'.ρ Q'.r-braid₂
-                 ∙ Path.unitl (ap fst Q'.r-braid₂))) m)
+          (ap fst Q.r-braid₁) (vα m)
+          (ap fst Q'.r-braid₁) (vα' m)
           (λ i → r̂-braid₁ i .fst) (inner̂₁ m)
 
       split-r̂₂
         : PathP (λ m → Fam (ap-comp fst Q.r-braid₁
-                              (Q.r-assoc ∙ Q.ρ ∙ Q.r-braid₂) m)
+                              (rt₂) m)
                            (ap-comp fst Q'.r-braid₁
-                              (Q'.r-assoc ∙ Q'.ρ ∙ Q'.r-braid₂) m))
+                              (rt₂') m))
                 R₂ R₃
       split-r̂₂ m =
         comp-pathp₂-ap C.hom fst fst
-          Q.r-braid₁ (Q.r-assoc ∙ Q.ρ ∙ Q.r-braid₂)
-          Q'.r-braid₁ (Q'.r-assoc ∙ Q'.ρ ∙ Q'.r-braid₂)
+          Q.r-braid₁ (rt₂)
+          Q'.r-braid₁ (rt₂')
           (λ i → r̂-braid₁ i .fst) (λ i → ŵ₂ i .fst) m
 
       step-r̂₂ : PathP (λ m → Fam (Q.step-r₂ m) (Q'.step-r₂ m)) R₂ bot₁
       step-r̂₂ =
         comp-pathp₂ Fam
-          (ap-comp fst Q.r-braid₁ (Q.r-assoc ∙ Q.ρ ∙ Q.r-braid₂))
-          (ap (ap (_⊗₀ z) (⊗₀-braid x y) ∙_)
-            (ap-comp fst Q.r-assoc (Q.ρ ∙ Q.r-braid₂)
-             ∙ ap (sym (⊗₀-assoc y x z) ∙_)
-                 (ap-comp fst Q.ρ Q.r-braid₂
-                  ∙ Path.unitl (ap fst Q.r-braid₂))))
-          (ap-comp fst Q'.r-braid₁ (Q'.r-assoc ∙ Q'.ρ ∙ Q'.r-braid₂))
-          (ap (ap (_⊗₀ z') (⊗₀-braid x' y') ∙_)
-            (ap-comp fst Q'.r-assoc (Q'.ρ ∙ Q'.r-braid₂)
-             ∙ ap (sym (⊗₀-assoc y' x' z') ∙_)
-                 (ap-comp fst Q'.ρ Q'.r-braid₂
-                  ∙ Path.unitl (ap fst Q'.r-braid₂))))
+          (ap-comp fst Q.r-braid₁ (rt₂))
+          (ap (ap (_⊗₀ z) (⊗₀-braid x y) ∙_) vα)
+          (ap-comp fst Q'.r-braid₁ (rt₂'))
+          (ap (ap (_⊗₀ z') (⊗₀-braid x' y') ∙_) vα')
           split-r̂₂ whisk-braid̂
 
     ⊗₁-hexagon-r
@@ -1203,14 +1219,14 @@ lands on the μ̂-link's.
               top₁ bot₁
     ⊗₁-hexagon-r =
       comp-pathp₂ Fam
-        (sym (Q.step-l₁ ∙ Q.step-l₂))
-        (ap (ap fst) Q.fiber-hexagon ∙ Q.step-r₁ ∙ Q.step-r₂)
-        (sym (Q'.step-l₁ ∙ Q'.step-l₂))
-        (ap (ap fst) Q'.fiber-hexagon ∙ Q'.step-r₁ ∙ Q'.step-r₂)
-        (λ m → left̂ (~ m))
+        (sym (sl))
+        (ap (ap fst) Q.fiber-hexagon ∙ sr)
+        (sym (sl'))
+        (ap (ap fst) Q'.fiber-hexagon ∙ sr')
+        left̂⁻
         (comp-pathp₂ Fam
-          (ap (ap fst) Q.fiber-hexagon) (Q.step-r₁ ∙ Q.step-r₂)
-          (ap (ap fst) Q'.fiber-hexagon) (Q'.step-r₁ ∙ Q'.step-r₂)
+          (ap (ap fst) Q.fiber-hexagon) (sr)
+          (ap (ap fst) Q'.fiber-hexagon) (sr')
           hex̂●
           (comp-pathp₂ Fam Q.step-r₁ Q.step-r₂ Q'.step-r₁ Q'.step-r₂
             step-r̂₁ step-r̂₂))
@@ -1326,14 +1342,25 @@ whisker pushed into the pairing's second slot.
         Famc p p' = PathP (λ t → ⊗₁-composite (p t) (p' t))
                           (⊗₁-emb (φ ⊗₁ (ψ ⊗₁ χ))) N₁
 
+        mid₁ : Famc (Q.n₂ .snd ∙ Q.β₁ ∙ Q.β₂) (Q'.n₂ .snd ∙ Q'.β₁ ∙ Q'.β₂)
+        mid₁ =
+          comp-pathp₂ ⊗₁-composite
+            (Q.n₂ .snd) (Q.β₁ ∙ Q.β₂) (Q'.n₂ .snd) (Q'.β₁ ∙ Q'.β₂)
+            (n̂₂ .snd)
+            (comp-pathp₂ ⊗₁-composite Q.β₁ Q.β₂ Q'.β₁ Q'.β₂ β̂₁ β̂₂)
+
+        mid₂ : Famc ((Q.n₂ .snd ∙ Q.β₁) ∙ Q.β₂) ((Q'.n₂ .snd ∙ Q'.β₁) ∙ Q'.β₂)
+        mid₂ =
+          comp-pathp₂ ⊗₁-composite
+            (Q.n₂ .snd ∙ Q.β₁) Q.β₂ (Q'.n₂ .snd ∙ Q'.β₁) Q'.β₂
+            (comp-pathp₂ ⊗₁-composite
+              (Q.n₂ .snd) Q.β₁ (Q'.n₂ .snd) Q'.β₁ (n̂₂ .snd) β̂₁)
+            β̂₂
+
         Θ-field
           : PathP (λ m → Famc (ap (Q.n₂ .snd ∙_) H♭ m)
                               (ap (Q'.n₂ .snd ∙_) H♭' m))
-              (â₁ .snd)
-              (comp-pathp₂ ⊗₁-composite
-                (Q.n₂ .snd) (Q.β₁ ∙ Q.β₂) (Q'.n₂ .snd) (Q'.β₁ ∙ Q'.β₂)
-                (n̂₂ .snd)
-                (comp-pathp₂ ⊗₁-composite Q.β₁ Q.β₂ Q'.β₁ Q'.β₂ β̂₁ β̂₂))
+              (â₁ .snd) mid₁
         Θ-field m =
           comp-pathp₂ ⊗₁-composite
             (Q.n₂ .snd) (H♭ m) (Q'.n₂ .snd) (H♭' m)
@@ -1342,15 +1369,7 @@ whisker pushed into the pairing's second slot.
         Θ-assoc
           : PathP (λ m → Famc (Path.assoc (Q.n₂ .snd) Q.β₁ Q.β₂ m)
                               (Path.assoc (Q'.n₂ .snd) Q'.β₁ Q'.β₂ m))
-              (comp-pathp₂ ⊗₁-composite
-                (Q.n₂ .snd) (Q.β₁ ∙ Q.β₂) (Q'.n₂ .snd) (Q'.β₁ ∙ Q'.β₂)
-                (n̂₂ .snd)
-                (comp-pathp₂ ⊗₁-composite Q.β₁ Q.β₂ Q'.β₁ Q'.β₂ β̂₁ β̂₂))
-              (comp-pathp₂ ⊗₁-composite
-                (Q.n₂ .snd ∙ Q.β₁) Q.β₂ (Q'.n₂ .snd ∙ Q'.β₁) Q'.β₂
-                (comp-pathp₂ ⊗₁-composite
-                  (Q.n₂ .snd) Q.β₁ (Q'.n₂ .snd) Q'.β₁ (n̂₂ .snd) β̂₁)
-                β̂₂)
+              mid₁ mid₂
         Θ-assoc =
           comp-pathp₂-assoc ⊗₁-composite (Q.n₂ .snd) Q.β₁ Q.β₂
             (Q'.n₂ .snd) Q'.β₁ Q'.β₂ (n̂₂ .snd) β̂₁ β̂₂
@@ -1358,12 +1377,7 @@ whisker pushed into the pairing's second slot.
         Θ-merge
           : PathP (λ m → Famc (ap (_∙ Q.β₂) inner m)
                               (ap (_∙ Q'.β₂) inner' m))
-              (comp-pathp₂ ⊗₁-composite
-                (Q.n₂ .snd ∙ Q.β₁) Q.β₂ (Q'.n₂ .snd ∙ Q'.β₁) Q'.β₂
-                (comp-pathp₂ ⊗₁-composite
-                  (Q.n₂ .snd) Q.β₁ (Q'.n₂ .snd) Q'.β₁ (n̂₂ .snd) β̂₁)
-                β̂₂)
-              (ĉ₁ .snd)
+              mid₂ (ĉ₁ .snd)
         Θ-merge m =
           comp-pathp₂ ⊗₁-composite (inner m) Q.β₂ (inner' m) Q'.β₂
             (comp-pathp₂-merge-map ⊗₁-composite ⊗₁-composite g g' ω
@@ -1412,43 +1426,60 @@ The traversal glues and the fiber square.
 
 ```agda
     private
-      ẑ : PathP (λ i → ⊗₁-wit ((Q.ℓ-braid ∙ Q.ℓ-assoc₂) i)
-                              ((Q'.ℓ-braid ∙ Q'.ℓ-assoc₂) i) N₁)
+      ℓt  = Q.ℓt
+      ℓt' = Q'.ℓt
+      ℓc  = Q.ℓc
+      ℓc' = Q'.ℓc
+      rt₃  = Q.rt₃
+      rt₃' = Q'.rt₃
+      rt₂  = Q.rt₂
+      rt₂' = Q'.rt₂
+      rt₁  = Q.rt₁
+      rt₁' = Q'.rt₁
+      rc  = Q.rc
+      rc' = Q'.rc
+      sl  = Q.sl
+      sl' = Q'.sl
+      sr  = Q.sr
+      sr' = Q'.sr
+
+      ẑ : PathP (λ i → ⊗₁-wit ((ℓt) i)
+                              ((ℓt') i) N₁)
                 â₂ â₄
       ẑ = ⊗₁-wit-∙ Q.ℓ-braid Q.ℓ-assoc₂ Q'.ℓ-braid Q'.ℓ-assoc₂
             ℓ̂-braid ℓ̂-assoc₂
 
-      ŵ₃ : PathP (λ i → ⊗₁-wit ((Q.ρ ∙ Q.r-braid₂) i)
-                               ((Q'.ρ ∙ Q'.r-braid₂) i) N₁)
+      ŵ₃ : PathP (λ i → ⊗₁-wit ((rt₃) i)
+                               ((rt₃') i) N₁)
                  ĉ₆ â₄
       ŵ₃ = ⊗₁-wit-∙ Q.ρ Q.r-braid₂ Q'.ρ Q'.r-braid₂ ρ̂ r̂-braid₂
 
-      ŵ₂ : PathP (λ i → ⊗₁-wit ((Q.r-assoc ∙ Q.ρ ∙ Q.r-braid₂) i)
-                               ((Q'.r-assoc ∙ Q'.ρ ∙ Q'.r-braid₂) i) N₁)
+      ŵ₂ : PathP (λ i → ⊗₁-wit ((rt₂) i)
+                               ((rt₂') i) N₁)
                  ĉ₅ â₄
-      ŵ₂ = ⊗₁-wit-∙ Q.r-assoc (Q.ρ ∙ Q.r-braid₂)
-             Q'.r-assoc (Q'.ρ ∙ Q'.r-braid₂) r̂-assoc ŵ₃
+      ŵ₂ = ⊗₁-wit-∙ Q.r-assoc (rt₃)
+             Q'.r-assoc (rt₃') r̂-assoc ŵ₃
 
-      ŵ₁ : PathP (λ i → ⊗₁-wit ((Q.r-braid₁ ∙ Q.r-assoc ∙ Q.ρ ∙ Q.r-braid₂) i)
-                               ((Q'.r-braid₁ ∙ Q'.r-assoc ∙ Q'.ρ ∙ Q'.r-braid₂) i)
+      ŵ₁ : PathP (λ i → ⊗₁-wit ((rt₁) i)
+                               ((rt₁') i)
                                N₁)
                  ĉ₁ â₄
-      ŵ₁ = ⊗₁-wit-∙ Q.r-braid₁ (Q.r-assoc ∙ Q.ρ ∙ Q.r-braid₂)
-             Q'.r-braid₁ (Q'.r-assoc ∙ Q'.ρ ∙ Q'.r-braid₂) r̂-braid₁ ŵ₂
+      ŵ₁ = ⊗₁-wit-∙ Q.r-braid₁ (rt₂)
+             Q'.r-braid₁ (rt₂') r̂-braid₁ ŵ₂
 
-    top̂ : PathP (λ i → ⊗₁-wit ((Q.ℓ-assoc₁ ∙ Q.ℓ-braid ∙ Q.ℓ-assoc₂) i)
-                              ((Q'.ℓ-assoc₁ ∙ Q'.ℓ-braid ∙ Q'.ℓ-assoc₂) i) N₁)
+    top̂ : PathP (λ i → ⊗₁-wit ((ℓc) i)
+                              ((ℓc') i) N₁)
                 â₁ â₄
-    top̂ = ⊗₁-wit-∙ Q.ℓ-assoc₁ (Q.ℓ-braid ∙ Q.ℓ-assoc₂)
-                   Q'.ℓ-assoc₁ (Q'.ℓ-braid ∙ Q'.ℓ-assoc₂)
+    top̂ = ⊗₁-wit-∙ Q.ℓ-assoc₁ (ℓt)
+                   Q'.ℓ-assoc₁ (ℓt')
             ℓ̂-assoc₁ ẑ
 
-    bot̂ : PathP (λ i → ⊗₁-wit ((Q.μ ∙ Q.r-braid₁ ∙ Q.r-assoc ∙ Q.ρ ∙ Q.r-braid₂) i)
-                              ((Q'.μ ∙ Q'.r-braid₁ ∙ Q'.r-assoc ∙ Q'.ρ ∙ Q'.r-braid₂) i)
+    bot̂ : PathP (λ i → ⊗₁-wit ((rc) i)
+                              ((rc') i)
                               N₁)
                 â₁ â₄
-    bot̂ = ⊗₁-wit-∙ Q.μ (Q.r-braid₁ ∙ Q.r-assoc ∙ Q.ρ ∙ Q.r-braid₂)
-                   Q'.μ (Q'.r-braid₁ ∙ Q'.r-assoc ∙ Q'.ρ ∙ Q'.r-braid₂)
+    bot̂ = ⊗₁-wit-∙ Q.μ (rt₁)
+                   Q'.μ (rt₁')
             μ̂ ŵ₁
 
     wit-prop
@@ -1519,13 +1550,13 @@ The chain of edges.
 
 ```agda
     private
-      E₀ : Fam (ap fst (Q.ℓ-assoc₁ ∙ Q.ℓ-braid ∙ Q.ℓ-assoc₂))
-               (ap fst (Q'.ℓ-assoc₁ ∙ Q'.ℓ-braid ∙ Q'.ℓ-assoc₂))
+      E₀ : Fam (ap fst (ℓc))
+               (ap fst (ℓc'))
       E₀ i = top̂ i .fst
 
       E₁ = comp-pathp₂ C.hom
-             (ap fst Q.ℓ-assoc₁) (ap fst (Q.ℓ-braid ∙ Q.ℓ-assoc₂))
-             (ap fst Q'.ℓ-assoc₁) (ap fst (Q'.ℓ-braid ∙ Q'.ℓ-assoc₂))
+             (ap fst Q.ℓ-assoc₁) (ap fst (ℓt))
+             (ap fst Q'.ℓ-assoc₁) (ap fst (ℓt'))
              (λ i → ℓ̂-assoc₁ i .fst) (λ i → ẑ i .fst)
 
       E₂ = comp-pathp₂ C.hom
@@ -1537,24 +1568,24 @@ The chain of edges.
                (ap fst Q'.ℓ-braid) (ap fst Q'.ℓ-assoc₂)
                (λ i → ℓ̂-braid i .fst) (λ i → ℓ̂-assoc₂ i .fst))
 
-      R₀ : Fam (ap fst (Q.μ ∙ Q.r-braid₁ ∙ Q.r-assoc ∙ Q.ρ ∙ Q.r-braid₂))
-               (ap fst (Q'.μ ∙ Q'.r-braid₁ ∙ Q'.r-assoc ∙ Q'.ρ ∙ Q'.r-braid₂))
+      R₀ : Fam (ap fst (rc))
+               (ap fst (rc'))
       R₀ i = bot̂ i .fst
 
       R₁ = comp-pathp₂ C.hom
              (ap fst Q.μ)
-             (ap fst (Q.r-braid₁ ∙ Q.r-assoc ∙ Q.ρ ∙ Q.r-braid₂))
+             (ap fst (rt₁))
              (ap fst Q'.μ)
-             (ap fst (Q'.r-braid₁ ∙ Q'.r-assoc ∙ Q'.ρ ∙ Q'.r-braid₂))
+             (ap fst (rt₁'))
              (λ i → μ̂ i .fst) (λ i → ŵ₁ i .fst)
 
-      R₂ : Fam (ap fst (Q.r-braid₁ ∙ Q.r-assoc ∙ Q.ρ ∙ Q.r-braid₂))
-               (ap fst (Q'.r-braid₁ ∙ Q'.r-assoc ∙ Q'.ρ ∙ Q'.r-braid₂))
+      R₂ : Fam (ap fst (rt₁))
+               (ap fst (rt₁'))
       R₂ i = ŵ₁ i .fst
 
       R₃ = comp-pathp₂ C.hom
-             (ap fst Q.r-braid₁) (ap fst (Q.r-assoc ∙ Q.ρ ∙ Q.r-braid₂))
-             (ap fst Q'.r-braid₁) (ap fst (Q'.r-assoc ∙ Q'.ρ ∙ Q'.r-braid₂))
+             (ap fst Q.r-braid₁) (ap fst (rt₂))
+             (ap fst Q'.r-braid₁) (ap fst (rt₂'))
              (λ i → r̂-braid₁ i .fst) (λ i → ŵ₂ i .fst)
 ```
 
@@ -1562,13 +1593,13 @@ One displaced leaf per base leaf.
 
 ```agda
       split-l̂
-        : PathP (λ m → Fam (ap-comp fst Q.ℓ-assoc₁ (Q.ℓ-braid ∙ Q.ℓ-assoc₂) m)
-                           (ap-comp fst Q'.ℓ-assoc₁ (Q'.ℓ-braid ∙ Q'.ℓ-assoc₂) m))
+        : PathP (λ m → Fam (ap-comp fst Q.ℓ-assoc₁ (ℓt) m)
+                           (ap-comp fst Q'.ℓ-assoc₁ (ℓt') m))
                 E₀ E₁
       split-l̂ m =
         comp-pathp₂-ap C.hom fst fst
-          Q.ℓ-assoc₁ (Q.ℓ-braid ∙ Q.ℓ-assoc₂)
-          Q'.ℓ-assoc₁ (Q'.ℓ-braid ∙ Q'.ℓ-assoc₂)
+          Q.ℓ-assoc₁ (ℓt)
+          Q'.ℓ-assoc₁ (ℓt')
           (λ i → ℓ̂-assoc₁ i .fst) (λ i → ẑ i .fst) m
 
       whisk-l̂
@@ -1589,9 +1620,9 @@ One displaced leaf per base leaf.
       step-l̂₁ : PathP (λ m → Fam (Q.step-l₁ m) (Q'.step-l₁ m)) E₀ E₂
       step-l̂₁ =
         comp-pathp₂ Fam
-          (ap-comp fst Q.ℓ-assoc₁ (Q.ℓ-braid ∙ Q.ℓ-assoc₂))
+          (ap-comp fst Q.ℓ-assoc₁ (ℓt))
           (ap (⊗₀-assoc x y z ∙_) (ap-comp fst Q.ℓ-braid Q.ℓ-assoc₂))
-          (ap-comp fst Q'.ℓ-assoc₁ (Q'.ℓ-braid ∙ Q'.ℓ-assoc₂))
+          (ap-comp fst Q'.ℓ-assoc₁ (ℓt'))
           (ap (⊗₀-assoc x' y' z' ∙_) (ap-comp fst Q'.ℓ-braid Q'.ℓ-assoc₂))
           split-l̂ whisk-l̂
 
@@ -1613,11 +1644,16 @@ One displaced leaf per base leaf.
             (braid●₁-nrm (Û ●₁ V̂) Ŵ m)
             (⊗₁-assoc χ φ ψ))
 
-      left̂ : PathP (λ m → Fam ((Q.step-l₁ ∙ Q.step-l₂) m)
-                              ((Q'.step-l₁ ∙ Q'.step-l₂) m))
+      left̂ : PathP (λ m → Fam ((sl) m)
+                              ((sl') m))
                    E₀ top₁
       left̂ = comp-pathp₂ Fam Q.step-l₁ Q.step-l₂ Q'.step-l₁ Q'.step-l₂
                step-l̂₁ step-l̂₂
+
+      left̂⁻ : PathP (λ m → Fam (sym (sl) m)
+                               (sym (sl') m))
+                    top₁ E₀
+      left̂⁻ m = left̂ (~ m)
 
       hex̂● : PathP (λ m → Fam (ap (ap fst) Q.fiber-hexagon m)
                               (ap (ap fst) Q'.fiber-hexagon m))
@@ -1626,35 +1662,35 @@ One displaced leaf per base leaf.
 
       split-r̂
         : PathP (λ m → Fam (ap-comp fst Q.μ
-                              (Q.r-braid₁ ∙ Q.r-assoc ∙ Q.ρ ∙ Q.r-braid₂) m)
+                              (rt₁) m)
                            (ap-comp fst Q'.μ
-                              (Q'.r-braid₁ ∙ Q'.r-assoc ∙ Q'.ρ ∙ Q'.r-braid₂) m))
+                              (rt₁') m))
                 R₀ R₁
       split-r̂ m =
         comp-pathp₂-ap C.hom fst fst
-          Q.μ (Q.r-braid₁ ∙ Q.r-assoc ∙ Q.ρ ∙ Q.r-braid₂)
-          Q'.μ (Q'.r-braid₁ ∙ Q'.r-assoc ∙ Q'.ρ ∙ Q'.r-braid₂)
+          Q.μ (rt₁)
+          Q'.μ (rt₁')
           (λ i → μ̂ i .fst) (λ i → ŵ₁ i .fst) m
 
       unitl̂-r
         : PathP (λ m → Fam (Path.unitl
-                              (ap fst (Q.r-braid₁ ∙ Q.r-assoc ∙ Q.ρ ∙ Q.r-braid₂)) m)
+                              (ap fst (rt₁)) m)
                            (Path.unitl
-                              (ap fst (Q'.r-braid₁ ∙ Q'.r-assoc ∙ Q'.ρ ∙ Q'.r-braid₂)) m))
+                              (ap fst (rt₁')) m))
                 R₁ R₂
       unitl̂-r m =
         comp-pathp₂-unitl C.hom
-          (ap fst (Q.r-braid₁ ∙ Q.r-assoc ∙ Q.ρ ∙ Q.r-braid₂))
-          (ap fst (Q'.r-braid₁ ∙ Q'.r-assoc ∙ Q'.ρ ∙ Q'.r-braid₂))
+          (ap fst (rt₁))
+          (ap fst (rt₁'))
           (λ i → ŵ₁ i .fst) m
 
       step-r̂₁ : PathP (λ m → Fam (Q.step-r₁ m) (Q'.step-r₁ m)) R₀ R₂
       step-r̂₁ =
         comp-pathp₂ Fam
-          (ap-comp fst Q.μ (Q.r-braid₁ ∙ Q.r-assoc ∙ Q.ρ ∙ Q.r-braid₂))
-          (Path.unitl (ap fst (Q.r-braid₁ ∙ Q.r-assoc ∙ Q.ρ ∙ Q.r-braid₂)))
-          (ap-comp fst Q'.μ (Q'.r-braid₁ ∙ Q'.r-assoc ∙ Q'.ρ ∙ Q'.r-braid₂))
-          (Path.unitl (ap fst (Q'.r-braid₁ ∙ Q'.r-assoc ∙ Q'.ρ ∙ Q'.r-braid₂)))
+          (ap-comp fst Q.μ (rt₁))
+          (Path.unitl (ap fst (rt₁)))
+          (ap-comp fst Q'.μ (rt₁'))
+          (Path.unitl (ap fst (rt₁')))
           split-r̂ unitl̂-r
 
       FamI : x ⊗₀ (z ⊗₀ y) ≡ (z ⊗₀ x) ⊗₀ y
@@ -1669,13 +1705,13 @@ One displaced leaf per base leaf.
       FamII p p' = PathP (λ i → C.hom (p i) (p' i))
                          ((φ ⊗₁ χ) ⊗₁ ψ) ((χ ⊗₁ φ) ⊗₁ ψ)
 
-      S₀ : FamI (ap fst (Q.r-assoc ∙ Q.ρ ∙ Q.r-braid₂))
-                (ap fst (Q'.r-assoc ∙ Q'.ρ ∙ Q'.r-braid₂))
+      S₀ : FamI (ap fst (rt₂))
+                (ap fst (rt₂'))
       S₀ i = ŵ₂ i .fst
 
       S₁ = comp-pathp₂ C.hom
-             (ap fst Q.r-assoc) (ap fst (Q.ρ ∙ Q.r-braid₂))
-             (ap fst Q'.r-assoc) (ap fst (Q'.ρ ∙ Q'.r-braid₂))
+             (ap fst Q.r-assoc) (ap fst (rt₃))
+             (ap fst Q'.r-assoc) (ap fst (rt₃'))
              (λ i → r̂-assoc i .fst) (λ i → ŵ₃ i .fst)
 
       S₂ = comp-pathp₂ C.hom
@@ -1684,7 +1720,7 @@ One displaced leaf per base leaf.
              (⊗₁-assoc φ χ ψ)
              (λ i → ⊗₁-braid φ χ i ⊗₁ ψ)
 
-      T₀ : FamII (ap fst (Q.ρ ∙ Q.r-braid₂)) (ap fst (Q'.ρ ∙ Q'.r-braid₂))
+      T₀ : FamII (ap fst (rt₃)) (ap fst (rt₃'))
       T₀ i = ŵ₃ i .fst
 
       T₁ = comp-pathp₂ C.hom
@@ -1694,6 +1730,9 @@ One displaced leaf per base leaf.
 
       T₂ : FamII (ap fst Q.r-braid₂) (ap fst Q'.r-braid₂)
       T₂ i = r̂-braid₂ i .fst
+
+      uρ  = ap-comp fst Q.ρ Q.r-braid₂ ∙ Path.unitl (ap fst Q.r-braid₂)
+      uρ' = ap-comp fst Q'.ρ Q'.r-braid₂ ∙ Path.unitl (ap fst Q'.r-braid₂)
 
       split-ρ̂
         : PathP (λ m → FamII (ap-comp fst Q.ρ Q.r-braid₂ m)
@@ -1713,11 +1752,7 @@ One displaced leaf per base leaf.
           (λ i → r̂-braid₂ i .fst) m
 
       inner̂₂
-        : PathP (λ m → FamII ((ap-comp fst Q.ρ Q.r-braid₂
-                               ∙ Path.unitl (ap fst Q.r-braid₂)) m)
-                             ((ap-comp fst Q'.ρ Q'.r-braid₂
-                               ∙ Path.unitl (ap fst Q'.r-braid₂)) m))
-                T₀ T₂
+        : PathP (λ m → FamII (uρ m) (uρ' m)) T₀ T₂
       inner̂₂ =
         comp-pathp₂ FamII
           (ap-comp fst Q.ρ Q.r-braid₂) (Path.unitl (ap fst Q.r-braid₂))
@@ -1725,103 +1760,68 @@ One displaced leaf per base leaf.
           split-ρ̂ unitl̂-ρ
 
       split-assoĉ
-        : PathP (λ m → FamI (ap-comp fst Q.r-assoc (Q.ρ ∙ Q.r-braid₂) m)
-                            (ap-comp fst Q'.r-assoc (Q'.ρ ∙ Q'.r-braid₂) m))
+        : PathP (λ m → FamI (ap-comp fst Q.r-assoc (rt₃) m)
+                            (ap-comp fst Q'.r-assoc (rt₃') m))
                 S₀ S₁
       split-assoĉ m =
         comp-pathp₂-ap C.hom fst fst
-          Q.r-assoc (Q.ρ ∙ Q.r-braid₂) Q'.r-assoc (Q'.ρ ∙ Q'.r-braid₂)
+          Q.r-assoc (rt₃) Q'.r-assoc (rt₃')
           (λ i → r̂-assoc i .fst) (λ i → ŵ₃ i .fst) m
 
+      vα  = ap-comp fst Q.r-assoc (rt₃)
+              ∙ ap (⊗₀-assoc x z y ∙_) uρ
+      vα' = ap-comp fst Q'.r-assoc (rt₃')
+              ∙ ap (⊗₀-assoc x' z' y' ∙_) uρ'
+
       whisk-r̂₂
-        : PathP (λ m → FamI (ap (⊗₀-assoc x z y ∙_)
-                               (ap-comp fst Q.ρ Q.r-braid₂
-                                ∙ Path.unitl (ap fst Q.r-braid₂)) m)
-                            (ap (⊗₀-assoc x' z' y' ∙_)
-                               (ap-comp fst Q'.ρ Q'.r-braid₂
-                                ∙ Path.unitl (ap fst Q'.r-braid₂)) m))
+        : PathP (λ m → FamI (ap (⊗₀-assoc x z y ∙_) uρ m)
+                            (ap (⊗₀-assoc x' z' y' ∙_) uρ' m))
                 S₁ S₂
       whisk-r̂₂ m =
         comp-pathp₂ C.hom
-          (ap fst Q.r-assoc)
-          ((ap-comp fst Q.ρ Q.r-braid₂ ∙ Path.unitl (ap fst Q.r-braid₂)) m)
-          (ap fst Q'.r-assoc)
-          ((ap-comp fst Q'.ρ Q'.r-braid₂ ∙ Path.unitl (ap fst Q'.r-braid₂)) m)
+          (ap fst Q.r-assoc) (uρ m)
+          (ap fst Q'.r-assoc) (uρ' m)
           (λ i → r̂-assoc i .fst) (inner̂₂ m)
 
       inner̂₁
-        : PathP (λ m → FamI ((ap-comp fst Q.r-assoc (Q.ρ ∙ Q.r-braid₂)
-                              ∙ ap (⊗₀-assoc x z y ∙_)
-                                  (ap-comp fst Q.ρ Q.r-braid₂
-                                   ∙ Path.unitl (ap fst Q.r-braid₂))) m)
-                            ((ap-comp fst Q'.r-assoc (Q'.ρ ∙ Q'.r-braid₂)
-                              ∙ ap (⊗₀-assoc x' z' y' ∙_)
-                                  (ap-comp fst Q'.ρ Q'.r-braid₂
-                                   ∙ Path.unitl (ap fst Q'.r-braid₂))) m))
-                S₀ S₂
+        : PathP (λ m → FamI (vα m) (vα' m)) S₀ S₂
       inner̂₁ =
         comp-pathp₂ FamI
-          (ap-comp fst Q.r-assoc (Q.ρ ∙ Q.r-braid₂))
-          (ap (⊗₀-assoc x z y ∙_)
-            (ap-comp fst Q.ρ Q.r-braid₂ ∙ Path.unitl (ap fst Q.r-braid₂)))
-          (ap-comp fst Q'.r-assoc (Q'.ρ ∙ Q'.r-braid₂))
-          (ap (⊗₀-assoc x' z' y' ∙_)
-            (ap-comp fst Q'.ρ Q'.r-braid₂ ∙ Path.unitl (ap fst Q'.r-braid₂)))
+          (ap-comp fst Q.r-assoc (rt₃))
+          (ap (⊗₀-assoc x z y ∙_) uρ)
+          (ap-comp fst Q'.r-assoc (rt₃'))
+          (ap (⊗₀-assoc x' z' y' ∙_) uρ')
           split-assoĉ whisk-r̂₂
 
       whisk-braid̂
-        : PathP (λ m → Fam (ap (ap (x ⊗₀_) (⊗₀-braid y z) ∙_)
-                              (ap-comp fst Q.r-assoc (Q.ρ ∙ Q.r-braid₂)
-                               ∙ ap (⊗₀-assoc x z y ∙_)
-                                   (ap-comp fst Q.ρ Q.r-braid₂
-                                    ∙ Path.unitl (ap fst Q.r-braid₂))) m)
-                           (ap (ap (x' ⊗₀_) (⊗₀-braid y' z') ∙_)
-                              (ap-comp fst Q'.r-assoc (Q'.ρ ∙ Q'.r-braid₂)
-                               ∙ ap (⊗₀-assoc x' z' y' ∙_)
-                                   (ap-comp fst Q'.ρ Q'.r-braid₂
-                                    ∙ Path.unitl (ap fst Q'.r-braid₂))) m))
+        : PathP (λ m → Fam (ap (ap (x ⊗₀_) (⊗₀-braid y z) ∙_) vα m)
+                           (ap (ap (x' ⊗₀_) (⊗₀-braid y' z') ∙_) vα' m))
                 R₃ bot₁
       whisk-braid̂ m =
         comp-pathp₂ C.hom
-          (ap fst Q.r-braid₁)
-          ((ap-comp fst Q.r-assoc (Q.ρ ∙ Q.r-braid₂)
-            ∙ ap (⊗₀-assoc x z y ∙_)
-                (ap-comp fst Q.ρ Q.r-braid₂
-                 ∙ Path.unitl (ap fst Q.r-braid₂))) m)
-          (ap fst Q'.r-braid₁)
-          ((ap-comp fst Q'.r-assoc (Q'.ρ ∙ Q'.r-braid₂)
-            ∙ ap (⊗₀-assoc x' z' y' ∙_)
-                (ap-comp fst Q'.ρ Q'.r-braid₂
-                 ∙ Path.unitl (ap fst Q'.r-braid₂))) m)
+          (ap fst Q.r-braid₁) (vα m)
+          (ap fst Q'.r-braid₁) (vα' m)
           (λ i → r̂-braid₁ i .fst) (inner̂₁ m)
 
       split-r̂₂
         : PathP (λ m → Fam (ap-comp fst Q.r-braid₁
-                              (Q.r-assoc ∙ Q.ρ ∙ Q.r-braid₂) m)
+                              (rt₂) m)
                            (ap-comp fst Q'.r-braid₁
-                              (Q'.r-assoc ∙ Q'.ρ ∙ Q'.r-braid₂) m))
+                              (rt₂') m))
                 R₂ R₃
       split-r̂₂ m =
         comp-pathp₂-ap C.hom fst fst
-          Q.r-braid₁ (Q.r-assoc ∙ Q.ρ ∙ Q.r-braid₂)
-          Q'.r-braid₁ (Q'.r-assoc ∙ Q'.ρ ∙ Q'.r-braid₂)
+          Q.r-braid₁ (rt₂)
+          Q'.r-braid₁ (rt₂')
           (λ i → r̂-braid₁ i .fst) (λ i → ŵ₂ i .fst) m
 
       step-r̂₂ : PathP (λ m → Fam (Q.step-r₂ m) (Q'.step-r₂ m)) R₂ bot₁
       step-r̂₂ =
         comp-pathp₂ Fam
-          (ap-comp fst Q.r-braid₁ (Q.r-assoc ∙ Q.ρ ∙ Q.r-braid₂))
-          (ap (ap (x ⊗₀_) (⊗₀-braid y z) ∙_)
-            (ap-comp fst Q.r-assoc (Q.ρ ∙ Q.r-braid₂)
-             ∙ ap (⊗₀-assoc x z y ∙_)
-                 (ap-comp fst Q.ρ Q.r-braid₂
-                  ∙ Path.unitl (ap fst Q.r-braid₂))))
-          (ap-comp fst Q'.r-braid₁ (Q'.r-assoc ∙ Q'.ρ ∙ Q'.r-braid₂))
-          (ap (ap (x' ⊗₀_) (⊗₀-braid y' z') ∙_)
-            (ap-comp fst Q'.r-assoc (Q'.ρ ∙ Q'.r-braid₂)
-             ∙ ap (⊗₀-assoc x' z' y' ∙_)
-                 (ap-comp fst Q'.ρ Q'.r-braid₂
-                  ∙ Path.unitl (ap fst Q'.r-braid₂))))
+          (ap-comp fst Q.r-braid₁ (rt₂))
+          (ap (ap (x ⊗₀_) (⊗₀-braid y z) ∙_) vα)
+          (ap-comp fst Q'.r-braid₁ (rt₂'))
+          (ap (ap (x' ⊗₀_) (⊗₀-braid y' z') ∙_) vα')
           split-r̂₂ whisk-braid̂
 
     ⊗₁-hexagon-l
@@ -1831,14 +1831,14 @@ One displaced leaf per base leaf.
               top₁ bot₁
     ⊗₁-hexagon-l =
       comp-pathp₂ Fam
-        (sym (Q.step-l₁ ∙ Q.step-l₂))
-        (ap (ap fst) Q.fiber-hexagon ∙ Q.step-r₁ ∙ Q.step-r₂)
-        (sym (Q'.step-l₁ ∙ Q'.step-l₂))
-        (ap (ap fst) Q'.fiber-hexagon ∙ Q'.step-r₁ ∙ Q'.step-r₂)
-        (λ m → left̂ (~ m))
+        (sym (sl))
+        (ap (ap fst) Q.fiber-hexagon ∙ sr)
+        (sym (sl'))
+        (ap (ap fst) Q'.fiber-hexagon ∙ sr')
+        left̂⁻
         (comp-pathp₂ Fam
-          (ap (ap fst) Q.fiber-hexagon) (Q.step-r₁ ∙ Q.step-r₂)
-          (ap (ap fst) Q'.fiber-hexagon) (Q'.step-r₁ ∙ Q'.step-r₂)
+          (ap (ap fst) Q.fiber-hexagon) (sr)
+          (ap (ap fst) Q'.fiber-hexagon) (sr')
           hex̂●
           (comp-pathp₂ Fam Q.step-r₁ Q.step-r₂ Q'.step-r₁ Q'.step-r₂
             step-r̂₁ step-r̂₂))

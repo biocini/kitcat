@@ -295,6 +295,13 @@ opaque
                             -- over sq normalize the body anyway
 ```
 
+Second corollary: sealing pays only where a consumer would
+otherwise normalize the interior. A square consumed solely by
+`fst`-projection at generic interval points, with type-directed
+boundaries, measures null under a seal — its attribution is
+first-forcer boundary conversion, which the seal cannot move
+(measured on the displaced fiber squares).
+
 The fix is structural, not another seal — state the square
 against the sealed face, so every face a family can extract is
 neutral:
@@ -373,6 +380,25 @@ count the same as bottoms: an η-wrapped reversal of a named line
 ascription and again in the fill (measured 240 ms → 37 ms + two
 ~30 ms named sides, and see the attribution norm below).
 
+**Name the chain every family rides.** A path composite that
+indexes families in more than one type ascription — a fiber's
+traversal chain, a glue tree's base composite — is a named
+definition, and a displaced module aliases the level-0 name
+(`ℓc = Q.ℓc`) instead of re-spelling the composite one level up.
+Every inline spelling is elaborated at its site and compared
+against its neighbours' by full structural conversion; on the
+name, those comparisons short-circuit, and the cross-level
+aliases align the displaced boundaries with the level-0
+statements by name. This was the displaced hexagon's dominant
+cost, not its Kan machinery: 13,723 → 8,628 ms cold in three
+confirmed steps (−660 naming the glue subtrees, −2,934 the
+level-1 chains, −1,024 the level-0 chains with aliases), and
+−456 ms collecting the same move in the pentagon. Chains are
+named at level 0 from the start in every new module; the
+displaced layer never re-spells them. (Provenance:
+`notes/2026-07-20-displaced-optimization.md`, all numbers
+median-of-3 cold totals.)
+
 **Keep Kan fillers out of head position.** If a composition
 operation plugs its left operand in head position — `(β ▿ α) γ =
 β (… α …)` — then a filler slid into the β slot is an `hcom`
@@ -415,6 +441,13 @@ glue = comp-pathp F p (q ∙ r) P    -- the nested glue occurs
 
 Naming sub-terms here measured slightly *worse* (the same
 endpoint conversions, plus the ascriptions). Do not churn these.
+Recurrence does not change the diagnosis: a small projection
+lambda (`λ i → ŵ i .fst`) repeated across half a dozen fills is
+still argument-position — the expected type is elaborated
+per-site either way, so the naming saves a five-token term and
+pays a signature (measured worse at twelve named shadows per
+mirror). The naming norms above are for ascription positions;
+what recurs in argument position stays inline.
 
 **Profile, then keep only what pays.**
 

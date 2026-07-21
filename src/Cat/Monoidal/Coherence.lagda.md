@@ -282,17 +282,25 @@ straightened to `⊗₀-assoc` endpoints by `assoc●₀-nrm`.
     -- at generic interval points, and the sealed head keeps those
     -- comparisons syntactic; the boundary still reduces by the
     -- type-directed rule
+    ℓt : p₃ ≡ p₁
+    ℓt = σ₃₂ ∙ σ₂₁
+
+    ℓc : p₅ ≡ p₁
+    ℓc = σ₅₃ ∙ ℓt
+
+    rc : p₅ ≡ p₁
+    rc = σ₅₄ ∙ σ₄₁
+
     opaque
-      fiber-pentagon : σ₅₃ ∙ σ₃₂ ∙ σ₂₁ ≡ σ₅₄ ∙ σ₄₁
-      fiber-pentagon =
-        is-contr→is-set T-contr p₅ p₁ (σ₅₃ ∙ σ₃₂ ∙ σ₂₁) (σ₅₄ ∙ σ₄₁)
+      fiber-pentagon : ℓc ≡ rc
+      fiber-pentagon = is-contr→is-set T-contr p₅ p₁ ℓc rc
 
     -- the ∙-tree of the fiber pentagon's hom shadow, leaf by leaf:
     -- two ap-comp shuffles into the shadow, the shadow itself, one
     -- shuffle out — named so the displaced pentagon can glue over
     -- each leaf separately
     step₁ = sym (ap (ap fst σ₅₃ ∙_) (ap-comp fst σ₃₂ σ₂₁))
-    step₂ = sym (ap-comp fst σ₅₃ (σ₃₂ ∙ σ₂₁))
+    step₂ = sym (ap-comp fst σ₅₃ ℓt)
     step₃ = ap (ap fst) fiber-pentagon
     step₄ = ap-comp fst σ₅₄ σ₄₁
 
@@ -596,13 +604,12 @@ of `pentagon●₀`'s core.
     σ̂₅₄ : PathP (λ i → ⊗₁-wit (P.σ₅₄ i) (P'.σ₅₄ i) N₁) p̂₅ p̂₄
     σ̂₅₄ = assoc-σ●₁ Û V̂ (Ŵ ●₁ X̂)
 
-    top̂ : PathP (λ i → ⊗₁-wit ((P.σ₅₃ ∙ P.σ₃₂ ∙ P.σ₂₁) i)
-                              ((P'.σ₅₃ ∙ P'.σ₃₂ ∙ P'.σ₂₁) i) N₁)
+    top̂ : PathP (λ i → ⊗₁-wit (P.ℓc i) (P'.ℓc i) N₁)
                 p̂₅ p̂₁
-    top̂ = ⊗₁-wit-∙ P.σ₅₃ (P.σ₃₂ ∙ P.σ₂₁) P'.σ₅₃ (P'.σ₃₂ ∙ P'.σ₂₁)
+    top̂ = ⊗₁-wit-∙ P.σ₅₃ P.ℓt P'.σ₅₃ P'.ℓt
             σ̂₅₃ (⊗₁-wit-∙ P.σ₃₂ P.σ₂₁ P'.σ₃₂ P'.σ₂₁ σ̂₃₂ σ̂₂₁)
 
-    bot̂ : PathP (λ i → ⊗₁-wit ((P.σ₅₄ ∙ P.σ₄₁) i) ((P'.σ₅₄ ∙ P'.σ₄₁) i) N₁)
+    bot̂ : PathP (λ i → ⊗₁-wit (P.rc i) (P'.rc i) N₁)
                 p̂₅ p̂₁
     bot̂ = ⊗₁-wit-∙ P.σ₅₄ P.σ₄₁ P'.σ₅₄ P'.σ₄₁ σ̂₅₄ σ̂₄₁
 
@@ -719,15 +726,14 @@ bottom edge.
                (λ i → P₁.σ̂₃₂ i .fst) (λ i → P₁.σ̂₂₁ i .fst))
 
       E₂ = comp-pathp₂ C.hom
-             (ap fst Q.σ₅₃) (ap fst (Q.σ₃₂ ∙ Q.σ₂₁))
-             (ap fst Q'.σ₅₃) (ap fst (Q'.σ₃₂ ∙ Q'.σ₂₁))
+             (ap fst Q.σ₅₃) (ap fst Q.ℓt)
+             (ap fst Q'.σ₅₃) (ap fst Q'.ℓt)
              (λ i → P₁.σ̂₅₃ i .fst) (λ i → ẑ i .fst)
 
-      E₃ : Fam (ap fst (Q.σ₅₃ ∙ Q.σ₃₂ ∙ Q.σ₂₁))
-               (ap fst (Q'.σ₅₃ ∙ Q'.σ₃₂ ∙ Q'.σ₂₁))
+      E₃ : Fam (ap fst Q.ℓc) (ap fst Q'.ℓc)
       E₃ i = P₁.top̂ i .fst
 
-      E₄ : Fam (ap fst (Q.σ₅₄ ∙ Q.σ₄₁)) (ap fst (Q'.σ₅₄ ∙ Q'.σ₄₁))
+      E₄ : Fam (ap fst Q.rc) (ap fst Q'.rc)
       E₄ i = P₁.bot̂ i .fst
 
       E₅ = comp-pathp₂ C.hom
@@ -771,7 +777,7 @@ definitional value of its neighbour's boundary.
       step̂₂ : PathP (λ m → Fam (Q.step₂ m) (Q'.step₂ m)) E₂ E₃
       step̂₂ m =
         comp-pathp₂-ap C.hom fst fst
-          Q.σ₅₃ (Q.σ₃₂ ∙ Q.σ₂₁) Q'.σ₅₃ (Q'.σ₃₂ ∙ Q'.σ₂₁)
+          Q.σ₅₃ Q.ℓt Q'.σ₅₃ Q'.ℓt
           (λ i → P₁.σ̂₅₃ i .fst) (λ i → ẑ i .fst) (~ m)
 
       step̂₄ : PathP (λ m → Fam (Q.step₄ m) (Q'.step₄ m)) E₄ E₅

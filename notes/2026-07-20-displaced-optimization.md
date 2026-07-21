@@ -1,92 +1,120 @@
-# Plan — 2026-07-20 — the displaced-layer optimization pass
+# Session log — 2026-07-20 — the displaced-layer optimization pass
 
-Ruling (Lane): before any further module work — the Properties
-comparisons wait — the next session is an optimization audit of
-the displaced coherence layer, in the mold of the 07-20
-refinement audit. Trigger: `Hexagon` cold-checks at 13,250 ms
-(single run) against its 866 ms level-0-only baseline, and
-`Coherence` at ~6.3 s. The displaced hexagons were written to the
-execution map faster than to the styleguide's profiling norms,
-and the layer is about to become the template for everything
-above it — the cost discipline has to land here first.
+Objective (ruling, Lane): before any further module work, an
+optimization audit of the displaced coherence layer in the mold
+of the 07-20 refinement audit. Trigger: `Cat.Monoidal.Hexagon`
+cold-checking at 13,250 ms (single run) against its 866 ms
+level-0 baseline, `Coherence` at ~6.3 s. Protocol: per-definition
+profiles rank suspects, median-of-3 cold module totals are the
+only confirmation, every change semantics-preserving, wins and
+nulls both recorded.
 
-## Baselines to establish first
+Branch: `monoidal-visible-frames`.
 
-Median-of-3 cold totals (the audit's rule: totals are ~1%-stable,
-per-definition attributions reshuffle freely and bill the first
-forcer) for `Cat.Monoidal.Hexagon`, `Cat.Monoidal.Coherence`,
-`Cat.Monoidal.{Braid,Indiscrete,Iso,Twist}`. Single-run
-reference points from the landing session: Hexagon 13,250 ms
-(Miscellaneous 3,818 ms), Coherence 6,297 ms (post-audit ruling
-was 5,913 ms neutral — re-establish before touching).
-`--profile=internal` decomposes the Misc bucket (expect ~0.3 s
-import floor + signatures, occurs, positivity — `braided-coherent`
-shows 119 ms — serialization, and now two level-0 section
-applications per displaced module).
+## Baselines (median-of-3 cold, this machine, this session)
 
-## Suspects, ranked by the styleguide's own rules
+`Hexagon` 13,723 ms · `Coherence` 6,516 ms · `Braid` 493 ·
+`Indiscrete` 449 · `Iso` 311 · `Twist` 469 ·
+`Core.Path.Base` 735.
 
-1. **The η-wrapped reversed side, verbatim.** Both canonical
-   trees consume `(λ m → left̂ (~ m))` inline — the styleguide's
-   exact inline-face pattern (measured 240→37 ms at `face-σ̂a`).
-   Name the reversed line (`left̂⁻` or state `left̂` in the
-   reversed orientation to begin with) in `-r` and `-l`.
-2. **The l/r asymmetries as first-forcer markers.** Structurally
-   identical mirrors with 3–4× cost spreads: `Θ-assoc` 418 (l)
-   vs 113 (r), `fiber-hexagon₁` 865 (l) vs 559 (r), `inner̂₁`
-   347 (r) vs 110 (l), `Θ` 295 (r) vs 144 (l). The spread is
-   attribution, and attribution marks where conversion is forced
-   first — each pair is a probe site for a missing named face or
-   a cheaper stated form. Only module totals confirm.
-3. **Sealing `fiber-hexagon₁` (and `fiber-pentagon₁`).** The
-   level-0 fiber squares are opaque with type-directed
-   boundaries; their displaced mates are transparent. The only
-   consumer is the generic-point projection (`hex̂●`), whose
-   endpoints are the stated `E₀`/`R₀` — available by the typed
-   rule without the interior. `top̂`/`bot̂` must stay transparent
-   (the `ap-comp` leaves convert `E₀`/`R₀` against the
-   reindexed-glue reading, which unfolds `⊗₁-wit-∙`'s fst).
-4. **The μ̂ where-block mid-spellings.** `Θ-field`'s stated RHS,
-   `Θ-assoc`'s LHS/RHS, and `Θ-merge`'s LHS re-spell the two mid
-   composites; naming each mid once and referencing it from both
-   ascriptions is the named-face norm applied to the Θ chain.
-   Risk: this is argument-position-adjacent (the styleguide's
-   "not the same disease") — measure, keep only what pays.
-5. **The repeated inline `fst`-shadow lambdas.**
-   `(λ i → ℓ̂-assoc₁ i .fst)` and kin recur across E-chain,
-   split-, whisk-, and unitl̂-cells (each definition pays its own
-   elaboration). The pentagon precedent says naming glue-seam
-   subterms measured null — but those were single-occurrence
-   argument positions; these recur across half a dozen
-   definitions. One module-level named shadow per σ̂-line, then
-   measure.
-6. **`wit-prop`/`is-prop→SquareP` interior.** 865 ms on the `-l`
-   square; the family re-elaborates the opaque fiber square at
-   `(j ∧ k, i ∧ k)` per point. Check whether the subst family's
-   shape (the `∧`-connection form) has a cheaper mirror before
-   ruling it the hexagon's floor.
-7. **`comp-pathp₂-merge-map`'s hcom cap at the use sites** —
-   `θ̂` costs 165–171 ms per link; the cap re-states both merge
-   endpoints inside the hcom faces. If naming the cap faces in
-   `Core.Path.Base` pays there, all four links collect it.
+## The decisive finding: name the chain, not the leaves
 
-## Ruled structural last time — do not re-litigate blind
+The dominant cost of the displaced hexagon was not the Kan
+machinery — it was the *spelling*. The traversal composites
+(`ℓ-assoc₁ ∙ ℓ-braid ∙ ℓ-assoc₂`, `μ ∙ r-braid₁ ∙ r-assoc ∙ ρ ∙
+r-braid₂`, and their tails) were re-spelled inline in every
+ascription that indexes a family by them — the `⊗₁-wit-∙` glue
+chain, the `E`/`R`/`S`/`T` ladder, `top̂`/`bot̂`, the canonical
+trees — and each spelling is elaborated at its site and compared
+by full structural conversion against its neighbours'. Binding
+each composite once (level 0: `ℓt`/`ℓc`/`rt₃`/`rt₂`/`rt₁`/`rc`/
+`sl`/`sr` in `hexagon-r₀`/`-l₀`; level 1: private aliases onto
+the `Q.`-names so cross-level boundaries align by name) lets
+every family comparison short-circuit on the name. Applied in
+three steps, each confirmed by cold totals:
 
-The pentagon glue seams (`pentagon̂●` 609 ms, `⊗₁-pentagon`),
-the compound `assoc-σ●` instances (`σ̂₄₁`/`σ̂₃₂`/`σ̂₅₄`), the
-monoidal loop boundary (`ĉ`), record positivity under `--safe`.
-The hexagon inherits the same classes: after the suspects above
-are cleared, the remainder is expected to be the same seams one
-level up — record the floor honestly rather than churning
-(naming single-occurrence argument-position nesting measured
-*worse*).
+- the `step-r₂` base subtrees (`uρ`, `vα` per mirror):
+  12,586 ms, **−660**;
+- the traversal chains at level 1: 9,652 ms, **−2,934**;
+- the chains at level 0 plus the cross-level aliases:
+  8,628 ms, **−1,024**.
 
-## Method and gates
+The same move collected in the pentagon (`ℓt`/`ℓc`/`rc` in
+`pentagon●₀`, propagated through `pentagon₀`'s public re-export;
+`top̂`/`bot̂`/`E₂`–`E₄`/`step̂₂` restated on the names):
+`Coherence` 6,516 → **6,060 ms**.
 
-The audit's protocol: per-definition profile ranks suspects;
-probes in `src/Test` isolate (a definition's in-situ number is
-not its own cost); median-of-3 cold module totals are the only
-confirmation; every change is semantics-preserving — boundaries
-stay definitional, `Indiscrete` and all consumers re-check
-untouched, `just lint changed` clean; wins and nulls both get
-recorded (the styleguide gains any new rule the session proves).
+Two smaller wins of the same ascription-respelling class:
+
+- **The μ̂ Θ-chain mids.** `Θ-field`'s RHS, `Θ-assoc`'s LHS/RHS,
+  and `Θ-merge`'s LHS re-spelled the two mid `comp-pathp₂`
+  composites; naming them (`mid₁`/`mid₂` per mirror) measured
+  13,246 against 13,559, **−313**.
+- **The η-wrapped reversed side.** Both canonical trees consumed
+  `(λ m → left̂ (~ m))` inline; naming it (`left̂⁻`) measured
+  −165 — marginal here, kept as the styleguide's existing
+  named-side norm.
+
+## Ruled null or worse — reverted, on the record
+
+- **Sealing `fiber-hexagon₁` opaque** (level-0 precedent):
+  no change. The displaced fiber square's billed cost is not
+  interior unfolding — its only consumer projects `fst` at
+  generic points and every boundary is type-directed — so the
+  attribution on it is first-forcer conversion of its
+  boundaries, which a seal cannot move.
+- **Naming the recurring `fst`-shadow lambdas** (`(λ i →
+  ℓ̂-assoc₁ i .fst)` and kin, 12 per mirror, type-ascribed):
+  measured *worse* (~+250). Recurrence across definitions does
+  not upgrade argument positions to the named-face disease when
+  the terms are small projections: the expected types are
+  elaborated per-site regardless, so the naming saves a
+  five-token lambda and pays 24 signatures.
+- **Naming the `comp-pathp₂-merge-map` cap faces** in
+  `Core.Path.Base`: Path.Base +57 ms, Hexagon unmoved. The four
+  links' cost is instance conversion at the use sites, not the
+  cap's spelling.
+- **The transport-free fiber square.** The square's stated type
+  is a nested `PathP`, and each `j`-slice's `i1` fiber is
+  `⊗₁-wit` at the stated stations by the boundary rule — so
+  `is-prop→PathP` at `PathP-is-contr (⊗₁-wit-contr â₄)` closes
+  it with *no transported contractibility at all*. Measured
+  ~170 ms worse pooled: the `coe` of a whole `PathP`-space plus
+  the `PathP-is-hlevel` subst tower costs more than the
+  `∧`-subst `wit-prop` it replaces. The `is-prop→SquareP` idiom
+  stands.
+
+## Measured, final (median-of-3 cold)
+
+`Cat.Monoidal.Hexagon` 13,723 → **8,743 ms** (−36%);
+`Cat.Monoidal.Coherence` 6,516 → **6,060 ms** (−7%);
+`Braid` 484, `Indiscrete` 428, `Iso` 301, `Twist` 466 — all
+unchanged within noise; `Core.Path.Base` untouched. Net ≈
+−5.4 s cold across the displaced layer. The remaining ≥150 ms
+classes are the ones the plan fenced and the audit already ruled
+structural one level down: the `⊗₁-wit-∙` glue chain
+(`top̂`/`bot̂`/`ŵᵢ`, which must stay transparent for the
+reindexed-glue conversions), the `θ̂`/`Θ` merge instances, the
+`wit-prop`/`fiber-hexagon₁` interior, and the `Miscellaneous`
+bucket (~4 s: signatures, occurs, `braided-coherent` positivity
+under `--safe`, serialization, two level-0 section applications
+per displaced module).
+
+## Verification state
+
+Full non-WIP library re-checks clean (`--safe
+--erased-cubical`, Agda 2.9.0) via `All.lagda.md`; `just lint
+changed` clean. `Data.Thin.Category` and the `All.lagda.md`
+sync stay queued with the deferred chores. The styleguide gains
+the chain-naming norm and the recurrence caveat to the
+argument-position rule.
+
+## Next steps
+
+1. The module queue resumes: the `Properties` comparisons ruled
+   waiting on this pass.
+2. The chain-naming norm is standing discipline for every module
+   above the displaced layer — chains named at level 0 from the
+   start, displaced modules aliasing them, never re-spelling.
+3. Deferred chores unchanged (fence tagging, lint sweep,
+   `Data.Thin.Category`, `All.lagda.md` sync).
