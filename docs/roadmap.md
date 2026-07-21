@@ -14,17 +14,42 @@ Update it when a project lands (its gate satisfied), is added
 ordering changed by a ruling) — not per session: the `/log` close
 checks these triggers each session and edits only when one fires.
 
-1. **Bimodule record spike (B1–B3)** — the record, regular
-   filling, emb-parity (B4 struck — refuted). Opens on the
-   pre-registered design block in the 2026-07-13 prove-shakedown
-   session log; the Kelly entry (audited) grounds its
-   unit-coherence framing. (Its predecessor, the faithful-stratum
-   substrate spike A1–A3, LANDED 2026-07-13: all three checks
-   green, extract-agree's irreducibility enshrined as T21 /
-   `Gloss.ExtractAgreeIndependence`; the A1/A2/A3 ledger-entry
-   promotions EXECUTED 2026-07-13 as ratified — T22
-   `Gloss.TautologicalFilling`, T23 `Gloss.InterchangeCircularity`,
-   T24 📐 citing the tracked spike @ dde1f57.)
+1. **The LB certification program — THE CHIEF MOTIVATION (Lane,
+   2026-07-20).** Formalizing the LB/∂LB apparatus (the braided,
+   polarized, linear/dependent type theory implemented at
+   `~/src/ocaml/lb`) is what kitcat's development is for at this
+   time. The program map — the kernel/spine correspondence audit,
+   eight phases, and the certificate→ledger targets — is
+   `notes/2026-07-20-lb-certification-program.md`; the currency
+   is certificates: every phase ships a named kitcat theorem or
+   instance that upgrades a ∂LB claim-ledger row
+   (`[~] → [✓-Agda]`, commit-pinned) or discharges an audit
+   finding. Phases in brief: **0** anchor (the certificate
+   convention; `End(I)` commutative by Eckmann–Hilton; the
+   ruling batch) → **1** the centre (Müger transparency,
+   silent-exchange soundness) → **2** balanced + the S¹ no-UIP
+   model (`Id(a,a) ≅ ℤ`; the ribbon-arc stages A/C1 with their
+   consumers named; the filler-first eliminator study in
+   parallel) → **3** dialogue (negation as representability,
+   `∗`-autonomous specialization, balanced-dialogue, dialogical =
+   ribbon twist; **Chir re-gated here** — Lane, 2026-07-20: it
+   folds in as the two-sided presentation, the
+   dialogue-chiralities equivalence as a Properties comparison;
+   its former standalone slot is retired, the attic design
+   re-derived in place) → **4** duploids + braided
+   Hasegawa–Thielecke (⟨open-1⟩ machine-checked) → **5** the
+   free instance and kernel soundness (absorbs the former
+   "framed syntax instance" project: `Gₙ` in Agda + the
+   three-way oracle pin, the LB MA-core free instance, claim 15,
+   `Gn.equal` certified as deciding the free hom-equality) →
+   **6** modalities/additives (consumer-gated spine extensions:
+   `⊕`/`&`, the braided cofree comonoid/Seely) → **7** the
+   fenced frontier (gluing-style normalization completeness, the
+   universe ω-limit, the infinitary server — non-gating).
+   Phases 0→4 are structure-ordered; 5(a) may open in parallel
+   after 0. The ribbon-arc plan
+   (`notes/2026-07-20-ribbon-arc.md`) and its six open rulings
+   carry over inside phases 2–5.
 2. **THE REFACTOR** — the re-founding of the `Cat.*` tree over
    `Cat.Codep`'s `hcategory`. **OPENED 2026-07-14 (Lane): the core
    record replacement is active, sequenced AHEAD of Chir.** The
@@ -85,38 +110,24 @@ checks these triggers each session and edits only when one fires.
      2026-07-20** on the new spine (`Braid`, `Hexagon`,
      `Indiscrete`, `Twist`, `Iso`, the hexagon displacement, and
      the swap-half presentation equivalence in
-     `Cat.Monoidal.Properties`); the ribbon side continues as
-     project 3 below.
+     `Cat.Monoidal.Properties`); the ribbon side continues inside
+     project 1 (the LB certification program, phases 2–5).
    - **Chir-GATED remainder (still behind targets 3–4):** the T16
      monoidal-side mechanization, if ruled a deliverable.
-3. **The ribbon-dialogue arc — BUMPED UP (Lane, 2026-07-20): a
-   central motivation of the construction.** The path to modeling
-   Melliès' ribbon tensorial logic — the internal logic of
-   balanced dialogue categories (`resources/
-   mellies-braided-dialogue`, Def. 12; coherence in *Ribbon
-   Tensorial Logic*, LICS 2018). Staged map and open rulings in
-   `notes/2026-07-20-ribbon-arc.md`: the balanced/twist layer
-   over `braided` minted together with its loop-space instance
-   exemplar (`∞-groupoid (Ω² Y)`, flank swap = Eckmann–Hilton,
-   twist candidate the self-braiding — the first non-indiscrete
-   braided instances); then the dialogue layer (tensorial pole +
-   negations as representability — its own design session; the
-   attic's representable-distributor hypothesis re-derived on the
-   new spine); then `balanced-dialogue` with the
-   dialogical-twist/ribbon-twist agreement as its first theorem.
-   Duals are NOT on the critical path (the balanced dialogue
-   category needs none); the symmetric layer stays deliberately
-   out. Evidence tier (S²/Hopf nontriviality) parallel, not
-   gating.
-4. **Chir.*** — single-carrier polarity-as-representability;
-   parked pending Lane's five rulings; Spikes A/B/C specced with
-   kill criteria (memory: chirality record — NOTE the memory file
-   was pruned in the workflow port; the surviving design summary
-   is `.attic/handoff.md`, to be re-externalized before Chir
-   opens).
-5. **Framed syntax instance** — the syntax instance targeting the
-   plain record; the braid/twist layer follows.
-6. **Workflow suite, next phases** — the memory-externalization
+3. **Bimodule record spike (B1–B3)** — the record, regular
+   filling, emb-parity (B4 struck — refuted). Opens on the
+   pre-registered design block in the 2026-07-13 prove-shakedown
+   session log; the Kelly entry (audited) grounds its
+   unit-coherence framing; yields priority to the certification
+   program's phases 0–1 (Lane, 2026-07-20). (Its predecessor,
+   the faithful-stratum substrate spike A1–A3, LANDED
+   2026-07-13: all three checks green, extract-agree's
+   irreducibility enshrined as T21 /
+   `Gloss.ExtractAgreeIndependence`; the A1/A2/A3 ledger-entry
+   promotions EXECUTED 2026-07-13 as ratified — T22
+   `Gloss.TautologicalFilling`, T23 `Gloss.InterchangeCircularity`,
+   T24 📐 citing the tracked spike @ dde1f57.)
+4. **Workflow suite, next phases** — the memory-externalization
    sweep into canonical repo homes (gloss.md, session logs, roadmap;
    memory left as pointers, per R10 — never gitignored working
    memory), now explicitly including **pre-registered design memos**
@@ -136,7 +147,7 @@ checks these triggers each session and edits only when one fires.
    Lane 2026-07-13, kelly's discretion open; T16 and T15 both
    lifted under the audit-keyed rule — no ⚠️
    source-identifications remain.
-7. **Housekeeping** — the styleguide conformance
+5. **Housekeeping** — the styleguide conformance
    sweeps (ruled GO, Lane 2026-07-13; docs/styleguide.md
    "Rulings"): the **frontmatter
    sweep** — convert every tracked `.lagda.md` to the YAML

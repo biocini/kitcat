@@ -128,3 +128,14 @@ LICS 2018) is far-future.
 6. **Sequencing vs the standing queue**: this arc vs the
    Properties backlog items 3–4 and the roadmap's earlier
    numbered projects.
+
+## Absorbed into the LB certification program (2026-07-20)
+
+This arc's stages are Phases 2–5 of
+`notes/2026-07-20-lb-certification-program.md`, each with its
+∂LB consumer named there. Two stage additions ruled in with the
+program: the **centrality/transparency layer** (Müger centre,
+silent-exchange soundness) runs ahead of stage A as the
+program's Phase 1, and stage B gains the **`∗`-autonomous
+specialization** (the pole dualizing — LB's involutive
+boundary). The six open rulings above stand unchanged.
