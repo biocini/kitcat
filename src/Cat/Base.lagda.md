@@ -29,8 +29,7 @@ open import Cat.Type
 module theory {o h} (C : category o h) where
   open category C
 
-  hom≃total-representable
-    : ∀ {x y} → hom x y ≃ (Σ α ∶ composite x y , is-representable α)
+  hom≃total-representable : ∀ {x y} → hom x y ≃ (Σ α ∶ composite x y , is-representable α)
   hom≃total-representable {x} {y} = iso→equiv fwd bwd hom-ret rep-sec
     where
       fwd : hom x y → Σ F ∶ composite x y , is-representable F
@@ -68,8 +67,7 @@ module theory {o h} (C : category o h) where
     fwd f g (h , r) = h , r , r ∙ interchange f g , transpose (cat.fill r (interchange f g))
 
     bwd : ∀ {x y z} (f : hom x y) (g : hom y z) → fiber emb (f ▴ emb g) → spine f g
-    bwd f g (h , r) =
-      h , r ∙ sym ι , r , sym (transpose (cat.fill r (sym ι)))
+    bwd f g (h , r) = h , r ∙ sym ι , r , sym (transpose (cat.fill r (sym ι)))
       where ι = interchange f g
 
   pull-contr : ∀ {x y z} (f : hom x y) (g : hom y z) → is-contr (fiber emb (emb f ▾ g))
@@ -91,19 +89,17 @@ module theory {o h} (C : category o h) where
   cast-path
     : ∀ {x y z} {f : hom x y} {g : hom y z} {s : hom x z}
     → f ⨾ g => s → f ⨾ g ≡ s
-  cast-path {f = f} {g} {s} α =
-    ap fst (pull-contr f g .paths (s , α))
+  cast-path {f = f} {g} {s} α = ap fst (pull-contr f g .paths (s , α))
 
   cast-path⁻¹
     : ∀ {x y z} {f : hom x y} {g : hom y z} {s : hom x z}
     → f ⨾ g ≡ s → f ⨾ g => s
-  cast-path⁻¹ {f = f} {g} {s} p =
-    ap emb (sym p) ∙ emb-comp f g
+  cast-path⁻¹ {f = f} {g} {s} p = ap emb (sym p) ∙ emb-comp f g
 ```
 
 The following lemmas depend on unit
 
-```
+```agda
   comp-eq-ev : ∀ {x y z} (f : hom x y) (g : hom y z) → f ⨾ g ≡ ev (emb f ▾ g)
   comp-eq-ev f g = sym (unit (f ⨾ g)) ∙ ap (λ α → ev α) (emb-comp f g)
 
@@ -219,8 +215,7 @@ The following lemmas depend on unit
   -- the shadow of the slid propositionality path — no transport
   ↝-repr : ∀ {x y} {α β : composite x y} (U V : is-representable α) (e : α ≡ β)
          → repr-unique (U ↝ e) (V ↝ e) ≡ repr-unique U V
-  ↝-repr {α = α} U V e =
-    sym (repr-lc (λ i → is-representable-prop α U V i ↝ e))
+  ↝-repr {α = α} U V e = sym (repr-lc (λ i → is-representable-prop α U V i ↝ e))
 
   ap-emb-lc : ∀ {x y} {m n : hom x y} {r s : m ≡ n} → ap emb r ≡ ap emb s → r ≡ s
   ap-emb-lc {n = n} {r} {s} h =
@@ -246,7 +241,7 @@ The following lemmas depend on unit
 
 Associativity can be recovered through the strictness of composite composition
 
-```
+```agda
 
   ▾-comp : ∀ {x y z w} (α : composite x y) (g : hom y z) (h : hom z w)
          → α ▾ (g ⨾ h) ≡ (α ▾ g) ▾ h

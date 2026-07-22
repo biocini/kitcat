@@ -79,8 +79,7 @@ module _ {u} (A : Type u) where
       → (∀ w → w ≡ x → ∀ v → y ≡ v → w ≡ v)
       → (γ : (Σ w ∶ A , w ≡ x) × (Σ v ∶ A , y ≡ v))
       → γ .fst .fst ≡ γ .snd .fst
-    uncurryE G γ =
-      G (γ .fst .fst) (γ .fst .snd) (γ .snd .fst) (γ .snd .snd)
+    uncurryE G γ = G (γ .fst .fst) (γ .fst .snd) (γ .snd .fst) (γ .snd .snd)
 
     curryE : {x y : A}
       → ((γ : (Σ w ∶ A , w ≡ x) × (Σ v ∶ A , y ≡ v))
@@ -89,8 +88,7 @@ module _ {u} (A : Type u) where
     curryE F w a v b = F ((w , a) , (v , b))
 
     uncurryE-equiv : {x y : A} → is-equiv (uncurryE {x} {y})
-    uncurryE-equiv =
-      iso→equiv uncurryE curryE (λ _ → refl) (λ _ → refl) .snd
+    uncurryE-equiv = iso→equiv uncurryE curryE (λ _ → refl) (λ _ → refl) .snd
 
     emb-equiv : {x y : A}
       → is-equiv (λ (f : x ≡ y) → uncurryE (E f))
@@ -142,8 +140,7 @@ module _ {u} (A : Type u) where
     -- to the ternary orders against the embedded factors
     ι♭ : ∀ {x y z : A} {F : composite x y} {G : composite y z}
        → fiber gpd-emb F → fiber gpd-emb G → F ▿ G ≡ F ▵ G
-    ι♭ (m , p) (n , q) =
-      sym (λ i → p i ▿ q i) ∙ ι m n ∙ (λ i → p i ▵ q i)
+    ι♭ (m , p) (n , q) = sym (λ i → p i ▿ q i) ∙ ι m n ∙ (λ i → p i ▵ q i)
 
     -- the record's `spine`, with `interchange f g` computed from `ι♭`
     Spine : ∀ {x y z : A} (f : x ≡ y) (g : y ≡ z) → Type u
@@ -153,8 +150,7 @@ module _ {u} (A : Type u) where
       Σ q ∶ (gpd-emb k ≡ f ▴ gpd-emb g) ,
         PathP (λ i → gpd-emb k ≡ ι♭ (nrm f) (nrm g) i) p q
 
-    spine-contr-impl
-      : ∀ {x y z : A} (f : x ≡ y) (g : y ≡ z) → is-contr (Spine f g)
+    spine-contr-impl : ∀ {x y z : A} (f : x ≡ y) (g : y ≡ z) → is-contr (Spine f g)
     spine-contr-impl f g = reshape c
       where
         c = Σ-contr-contr (eqv-fibers emb-equiv (gpd-emb f ▾ g))

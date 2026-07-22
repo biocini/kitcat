@@ -32,7 +32,7 @@ whole bundle and not an artifact of level 0.
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
 
-module Cat.Monoidal.Twist where
+module Cat.Monoidal.Legacy.Twist where
 
 open import Core.Type
 open import Core.Base hiding (I)
@@ -42,8 +42,8 @@ open import Core.Path.Base using (ap-comp; conj-cancel)
 
 open import Cat.Type
 open import Cat.Groupoid using (spine-tail)
-open import Cat.Monoidal
-open import Cat.Monoidal.Indiscrete
+open import Cat.Monoidal.Legacy
+open import Cat.Monoidal.Legacy.Indiscrete
 ```
 
 ## The two absorption coherence sides

@@ -14,7 +14,7 @@ fall out with no intermediate naturality cell.
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
 
-module Cat.Monoidal.Iso where
+module Cat.Monoidal.Legacy.Iso where
 
 open import Core.Type
 open import Core.Base using (_≡_)
@@ -23,9 +23,9 @@ open import Core.Data.Sigma using (fst)
 open import Cat.Type
 open import Cat.Base
 open import Cat.Iso
-open import Cat.Monoidal
-open import Cat.Monoidal.Bifunctor
-open import Cat.Monoidal.Braid
+open import Cat.Monoidal.Legacy
+open import Cat.Monoidal.Legacy.Bifunctor
+open import Cat.Monoidal.Legacy.Braid
 
 module monoidal-iso {o h} {C : category o h} (M : monoidal C) where
   open monoidal M
@@ -75,14 +75,12 @@ same path, so each square lands on its stated boundary.
   ⊗-unitor-l-natural
     : ∀ {x x'} (φ : C.hom x x')
     → (C.idn I ⊗₁ φ) ⨾ ⊗-unitor-l x' .fst ≡ ⊗-unitor-l x .fst ⨾ φ
-  ⊗-unitor-l-natural {x} {x'} φ =
-    hom-pathp→square (⊗₀-unitl x) (⊗₀-unitl x') (⊗₁-unitl φ)
+  ⊗-unitor-l-natural {x} {x'} φ = hom-pathp→square (⊗₀-unitl x) (⊗₀-unitl x') (⊗₁-unitl φ)
 
   ⊗-unitor-r-natural
     : ∀ {x x'} (φ : C.hom x x')
     → (φ ⊗₁ C.idn I) ⨾ ⊗-unitor-r x' .fst ≡ ⊗-unitor-r x .fst ⨾ φ
-  ⊗-unitor-r-natural {x} {x'} φ =
-    hom-pathp→square (⊗₀-unitr x) (⊗₀-unitr x') (⊗₁-unitr φ)
+  ⊗-unitor-r-natural {x} {x'} φ = hom-pathp→square (⊗₀-unitr x) (⊗₀-unitr x') (⊗₁-unitr φ)
 ```
 
 ## The braiding

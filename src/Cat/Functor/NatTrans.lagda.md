@@ -65,8 +65,7 @@ nat-id {D = D} F = nt where
 
   nt : nat-trans F F
   nt .nat-trans.component x = D.idn (F.map x)
-  nt .nat-trans.natural f =
-    Dt.unitr (F.hmap f) ∙ sym (Dt.unitl (F.hmap f))
+  nt .nat-trans.natural f = Dt.unitr (F.hmap f) ∙ sym (Dt.unitl (F.hmap f))
 ```
 
 Vertical composition of natural transformations composes the
@@ -90,8 +89,7 @@ nat-comp {D = D} {F} {G} {H} α β = αβ where
   module β  = nat-trans β
 
   αβ : nat-trans F H
-  αβ .nat-trans.component x =
-    α.component x Dt.⨾ β.component x
+  αβ .nat-trans.component x = α.component x Dt.⨾ β.component x
   αβ .nat-trans.natural {x} {y} f =
     F.hmap f Dt.⨾ (α.component y Dt.⨾ β.component y)
       ≡⟨ Dt.assoc (F.hmap f)

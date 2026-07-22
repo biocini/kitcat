@@ -10,6 +10,7 @@ contents: Path algebra — symmetry, concatenation, squares, and coherences.
 module Core.Path.Base where
 
 open import Core.Transport.Base
+open import Core.Transport.J using (J)
 open import Core.Base
 open import Core.Type
 open import Core.Data.Sigma
@@ -218,7 +219,9 @@ conjugation cancellation: a loop `ζ` conjugated into a composite
 that agrees with the plain composite must be trivial. `move-r`
 leans on the definitional involution `sym (sym q) ≐ q` to convert
 the cancellation endpoint (the involution is pinned by
-`Core.Groupoid.op-invol`).
+`Core.Groupoid.op-invol`). `ap-retr` reads `ap f`, for `f`
+homotopic to the identity, as conjugation of the path by the
+homotopy.
 
 ```agda
 cancell
@@ -261,4 +264,11 @@ conj-cancel p q ζ h =
       sym (cancell p q)
       ∙ ap (sym p ∙_) h
       ∙ cancell p (ζ ∙ q)
+
+ap-retr
+  : ∀ {u} {A : Type u} {f : A → A} (H : ∀ x → f x ≡ x) {x y : A}
+  → (p : x ≡ y) → ap f p ≡ H x ∙ p ∙ sym (H y)
+ap-retr {f = f} H {x = x} =
+  J (λ y' p' → ap f p' ≡ H x ∙ p' ∙ sym (H y'))
+    (sym (ap (H x ∙_) (Path.unitl (sym (H x))) ∙ Path.invr (H x)))
 ```

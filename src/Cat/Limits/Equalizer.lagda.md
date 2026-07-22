@@ -30,8 +30,7 @@ module _ {o h} (C : category o h) where
   equalizer-cone
     : ∀ {A E : ob} → hom E A
     → (X : ob) → hom X A → Type (o ⊔ h)
-  equalizer-cone {E = E} e X h' =
-    Sigma (hom X E) λ m → m ⨾ e => h'
+  equalizer-cone {E = E} e X h' = Sigma (hom X E) λ m → m ⨾ e => h'
 
   is-equalizer
     : ∀ {A B E : ob}
@@ -80,6 +79,5 @@ module _ {o h} (C : category o h) where
       → (m : hom X E)
       → m ⨾ e => h'
       → eq-med h' p ≡ m
-    eq-η h' p =
-      eq-ind h' p (λ m _ → eq-med h' p ≡ m) refl
+    eq-η h' p = eq-ind h' p (λ m _ → eq-med h' p ≡ m) refl
 ```

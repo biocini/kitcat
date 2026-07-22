@@ -173,8 +173,7 @@ shape, on both levels at once.
                    ((U' .fst ⨾ᴰ V' .fst) ⨾ᴰ W' .fst))
             (assoc●ᴰ U' V' W')
             (assocᴰ (U' .fst) (V' .fst) (W' .fst))
-  assoc●ᴰ-nrm U' V' W' m =
-    assoc●ᴰ (nrm-slideᴰ U' m) (nrm-slideᴰ V' m) (nrm-slideᴰ W' m)
+  assoc●ᴰ-nrm U' V' W' m = assoc●ᴰ (nrm-slideᴰ U' m) (nrm-slideᴰ V' m) (nrm-slideᴰ W' m)
 ```
 
 ## The canonical displayed pentagon
@@ -630,8 +629,7 @@ it live under the coherence hypotheses, the rest is absolute.
         (ap fst T.σₗᵣ) (T.face-r (~ m))
         (λ i → σ̂ₗᵣ i .fst) (face-r̂ (~ m))
 
-    triangle-weak̂
-      : PathP (λ m → Fam (T.triangle-weak m)) E₁ botᴰ
+    triangle-weak̂ : PathP (λ m → Fam (T.triangle-weak m)) E₁ botᴰ
     triangle-weak̂ =
       comp-pathp₁ Fam T.whisker-r (T.step₁ ∙ T.step₂ ∙ T.face-l)
         whisker-r̂
@@ -686,8 +684,7 @@ it live under the coherence hypotheses, the rest is absolute.
                 (λ i → σ̂ₗᵣ i .fst) (assocᴰ φ ι' ψ)
       face-â m i = face-σ̂a m i .fst
 
-      whisker-â
-        : PathP (λ m → Fam (T.whisker-a mid m)) topᴰ E₁
+      whisker-â : PathP (λ m → Fam (T.whisker-a mid m)) topᴰ E₁
       whisker-â m =
         comp-pathp₁ Hom
           (T.face-a mid (~ m)) (ap (_⨾ g) (unitr f))

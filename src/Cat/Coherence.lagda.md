@@ -40,14 +40,12 @@ module interchange-coh {o h} (C : category o h) where
   ι-mult-r : ∀ {x y z w} {A : composite x y} {B : composite y z} {Cc : composite z w}
              (U : is-representable A) (V : is-representable B) (W : is-representable Cc)
            → Type (o ⊔ h)
-  ι-mult-r {Cc = Cc} U V W =
-    ap (λ X → X ▿ Cc) (interchange♭ U V) ≡ interchange♭ U (V ● W)
+  ι-mult-r {Cc = Cc} U V W = ap (λ X → X ▿ Cc) (interchange♭ U V) ≡ interchange♭ U (V ● W)
 
   ι-mult-l : ∀ {x y z w} {A : composite x y} {B : composite y z} {Cc : composite z w}
              (U : is-representable A) (V : is-representable B) (W : is-representable Cc)
            → Type (o ⊔ h)
-  ι-mult-l {A = A} U V W =
-    ap (λ X → A ▵ X) (interchange♭ V W) ≡ interchange♭ (U ○ V) W
+  ι-mult-l {A = A} U V W = ap (λ X → A ▵ X) (interchange♭ V W) ≡ interchange♭ (U ○ V) W
 
   ●-coh : ∀ {x y z} {A : composite x y} {B : composite y z}
           (U : is-representable A) (V : is-representable B)
@@ -368,8 +366,7 @@ module op-coh {o h} (C : category o h) where
   emb-▴-idn {y = y} f = sym (interchange f (idn y)) ∙ ▾-idn (emb f)
 
   is-2-coherent'' : ∀ {x y z} (f : hom x y) (g : hom y z) → Type (o ⊔ h)
-  is-2-coherent'' {y = y} f g =
-    ap (emb f ▵_) (idn-▴ (emb g)) ≡ ap (_▵ emb g) (emb-▴-idn f)
+  is-2-coherent'' {y = y} f g = ap (emb f ▵_) (idn-▴ (emb g)) ≡ ap (_▵ emb g) (emb-▴-idn f)
 
   private
     ⨾-op : ∀ {x y z} (f : hom x y) (g : hom y z) → (g Tᵒ.⨾ f) ≡ (f ⨾ g)
@@ -410,8 +407,7 @@ module op-coh {o h} (C : category o h) where
   absorb-l-op {x} b = ap (_∙ unit b) (pip-op b (idn x))
 
   absorb-r-op : ∀ {w x} (a : Cᵒ.hom w x) → Tᵒ.absorb-r a ≡ absorb-l a
-  absorb-r-op {x = x} a =
-    ap (_∙ unit a) (ap sym (pip-op (idn x) a) ∙ refl)
+  absorb-r-op {x = x} a = ap (_∙ unit a) (ap sym (pip-op (idn x) a) ∙ refl)
 
   bridge-l : ∀ {y z} (g : hom y z) → Tᵒ.▾-idn (Cᵒ.emb g) ≡ ap ⟲ (idn-▴ (emb g))
   bridge-l g i = funext λ γ →

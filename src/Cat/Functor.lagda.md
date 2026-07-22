@@ -89,8 +89,7 @@ _∘F_ {C = C} {D} {E} G F = FGF where
   FGF .functor.preserves-comp f g =
     ap G.hmap (F.preserves-comp f g)
     ∙ G.preserves-comp (F.hmap f) (F.hmap g)
-  FGF .functor.preserves-neutral n =
-    G.preserves-neutral (F.preserves-neutral n)
+  FGF .functor.preserves-neutral n = G.preserves-neutral (F.preserves-neutral n)
 
 infixr 30 _∘F_
 ```

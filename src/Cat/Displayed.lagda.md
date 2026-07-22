@@ -130,8 +130,7 @@ module virtualᴰ {o h o' h'} {S : reflexive-graph o h}
 
   ev[_] : ∀ {x y} {α : composite x y} {x' y'}
         → composite[ α ] x' y' → hom[ ev α ] x' y'
-  ev[_] {x} {y} {x' = x'} {y'} α' =
-    α' (ov-idn x , un-idn y) (ov-idn[ x' ] , un-idn[ y' ])
+  ev[_] {x} {y} {x' = x'} {y'} α' = α' (ov-idn x , un-idn y) (ov-idn[ x' ] , un-idn[ y' ])
 ```
 
 ## The displaced representable layer

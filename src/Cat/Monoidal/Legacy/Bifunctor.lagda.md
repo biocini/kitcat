@@ -1,7 +1,7 @@
 Lane Biocini
 July 2026
 
-`theory₁`: the morphism-level derived theory of a `Cat.Monoidal`
+`theory₁`: the morphism-level derived theory of a `Cat.Monoidal.Legacy`
 category — functoriality of the derived 2-cell tensor `_⊗₁_` in
 vertical composition, the displaced unit and composite
 comparisons, and naturality of the associator and unitors.
@@ -17,7 +17,7 @@ projection from `⊗₁-spine-contr`, and the interchange law is the
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
 
-module Cat.Monoidal.Bifunctor where
+module Cat.Monoidal.Legacy.Bifunctor where
 
 open import Core.Type
 open import Core.Base hiding (I)
@@ -33,7 +33,7 @@ open import Core.Function.Embedding
 
 open import Cat.Type
 open import Cat.Base
-open import Cat.Monoidal
+open import Cat.Monoidal.Legacy
 
 module theory₁ {o h} {C : category o h} (M : monoidal C) where
   open monoidal M
@@ -102,10 +102,8 @@ square.
     extend-θ pc i j = lid pc i j
 
     pull-contr : is-contr (Σ σ ∶ C.hom (x ⊗₀ y) (x' ⊗₀ y') , p-char σ)
-    pull-contr .center =
-      (φ ⊗₁ ψ) , ⊗₁-emb-comp φ ψ
-    pull-contr .paths (σ , pc) i =
-      Φ i .fst , Φ i .snd .fst
+    pull-contr .center = (φ ⊗₁ ψ) , ⊗₁-emb-comp φ ψ
+    pull-contr .paths (σ , pc) i = Φ i .fst , Φ i .snd .fst
       where
         Φ : ⊗₁-spine-contr φ ψ .center ≡ (σ , pc , extend-q pc , extend-θ pc)
         Φ = ⊗₁-spine-contr φ ψ .paths (σ , pc , extend-q pc , extend-θ pc)
@@ -146,10 +144,8 @@ contraction.
     extend-θ⁻ qc i j = rlid qc (~ i) j
 
     push-contr : is-contr (Σ σ ∶ C.hom (x ⊗₀ y) (x' ⊗₀ y') , q-char σ)
-    push-contr .center =
-      (φ ⊗₁ ψ) , ⊗₁-emb-comp-op φ ψ
-    push-contr .paths (σ , qc) i =
-      Φ i .fst , Φ i .snd .snd .fst
+    push-contr .center = (φ ⊗₁ ψ) , ⊗₁-emb-comp-op φ ψ
+    push-contr .paths (σ , qc) i = Φ i .fst , Φ i .snd .snd .fst
       where
         Φ : ⊗₁-spine-contr φ ψ .center ≡ (σ , extend-p qc , qc , extend-θ⁻ qc)
         Φ = ⊗₁-spine-contr φ ψ .paths (σ , extend-p qc , qc , extend-θ⁻ qc)
@@ -172,8 +168,7 @@ exactly as `Cat.Base`'s `cast-path` pair.
     : ∀ {x x'} {φ : C.hom x x'} {y y'} {ψ : C.hom y y'}
         {σ : C.hom (x ⊗₀ y) (x' ⊗₀ y')}
     → ⊗₁-hfiber.p-char φ ψ σ → φ ⊗₁ ψ ≡ σ
-  ⊗₁-cast-path {φ = φ} {ψ = ψ} {σ} pc =
-    ap fst (⊗₁-hfiber.pull-contr φ ψ .paths (σ , pc))
+  ⊗₁-cast-path {φ = φ} {ψ = ψ} {σ} pc = ap fst (⊗₁-hfiber.pull-contr φ ψ .paths (σ , pc))
 
   -- a plain equation transports the center's characterization
   -- across it: cap the spine's PathP with the ap-rewrite
@@ -181,8 +176,7 @@ exactly as `Cat.Base`'s `cast-path` pair.
     : ∀ {x x'} {φ : C.hom x x'} {y y'} {ψ : C.hom y y'}
         {σ : C.hom (x ⊗₀ y) (x' ⊗₀ y')}
     → φ ⊗₁ ψ ≡ σ → ⊗₁-hfiber.p-char φ ψ σ
-  ⊗₁-cast-path⁻¹ {φ = φ} {ψ = ψ} p =
-    pcom (ap ⊗₁-emb p) (⊗₁-emb-comp φ ψ) refl
+  ⊗₁-cast-path⁻¹ {φ = φ} {ψ = ψ} p = pcom (ap ⊗₁-emb p) (⊗₁-emb-comp φ ψ) refl
 ```
 
 ## The displaced unit chain
@@ -369,8 +363,7 @@ of `theory₀`'s calculus.
     unitl-sq x j i = sq-from-∙ (unitl-ap x) i j
 
     -- the line of displaced fibers along ⊗₀-unitl
-    unitl-line
-      : ∀ {x x'} (φ : C.hom x x') → Core.Base.I → Type (o ⊔ h)
+    unitl-line : ∀ {x x'} (φ : C.hom x x') → Core.Base.I → Type (o ⊔ h)
     unitl-line {x} {x'} φ j =
       Σ χ ∶ C.hom (⊗₀-unitl x j) (⊗₀-unitl x' j) ,
       PathP (λ i → ⊗₁-composite (unitl-sq x j i) (unitl-sq x' j i))
@@ -388,14 +381,12 @@ characterizing PathP is over a constant line — a plain path.
   ⊗₁-emb-image-contr
     : ∀ {x x'} (φ : C.hom x x')
     → is-contr (is-⊗₁-representable (⊗₁-emb φ))
-  ⊗₁-emb-image-contr {x} {x'} φ =
-    subst is-contr (λ j → unitl-line φ j) (⊗₁-push-contr (C.idn I) φ)
+  ⊗₁-emb-image-contr {x} {x'} φ = subst is-contr (λ j → unitl-line φ j) (⊗₁-push-contr (C.idn I) φ)
 
   is-⊗₁-representable-prop
     : ∀ {x x'} (η : ⊗₁-composite (⊗₀-emb x) (⊗₀-emb x'))
     → is-prop (is-⊗₁-representable η)
-  is-⊗₁-representable-prop =
-    image-fibers-contr→is-embedding (λ φ → ⊗₁-emb-image-contr φ)
+  is-⊗₁-representable-prop = image-fibers-contr→is-embedding (λ φ → ⊗₁-emb-image-contr φ)
 ```
 
 From here the calculus is verbatim `Cat.Base` under the
@@ -445,8 +436,7 @@ on paths, and the total-space equivalence.
       (U V : is-⊗₁-representable η)
     → ⊗₁-repr-unique (Ĝ U) (Ĝ V)
     ≡ ap (λ u → Ĝ u .fst) (is-⊗₁-representable-prop η U V)
-  ⊗₁-repr-ap Ĝ U V =
-    sym (⊗₁-repr-lc (λ i → Ĝ (is-⊗₁-representable-prop _ U V i)))
+  ⊗₁-repr-ap Ĝ U V = sym (⊗₁-repr-lc (λ i → Ĝ (is-⊗₁-representable-prop _ U V i)))
 
   ⊗₁-repr-∙
     : ∀ {x x'} {η : ⊗₁-composite (⊗₀-emb x) (⊗₀-emb x')}
@@ -469,8 +459,7 @@ on paths, and the total-space equivalence.
     : ∀ {x x'} {η ζ : ⊗₁-composite (⊗₀-emb x) (⊗₀-emb x')}
       (U V : is-⊗₁-representable η) (e : η ≡ ζ)
     → ⊗₁-repr-unique (U ↝₁ e) (V ↝₁ e) ≡ ⊗₁-repr-unique U V
-  ↝₁-repr {η = η} U V e =
-    sym (⊗₁-repr-lc (λ i → is-⊗₁-representable-prop η U V i ↝₁ e))
+  ↝₁-repr {η = η} U V e = sym (⊗₁-repr-lc (λ i → is-⊗₁-representable-prop η U V i ↝₁ e))
 
   ap-⊗₁-emb-lc
     : ∀ {x x'} {m n : C.hom x x'} {r s : m ≡ n}

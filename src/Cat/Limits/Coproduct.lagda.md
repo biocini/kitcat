@@ -46,8 +46,7 @@ module _ {o h} (C : category o h) where
   coproduct-cocone
     : ∀ {A B S : ob} → hom A S → hom B S
     → (X : ob) → hom A X → hom B X → Type (o ⊔ h)
-  coproduct-cocone {S = S} ι₁ ι₂ X f g =
-    Sigma (hom S X) λ m → (ι₁ ⨾ m => f) × (ι₂ ⨾ m => g)
+  coproduct-cocone {S = S} ι₁ ι₂ X f g = Sigma (hom S X) λ m → (ι₁ ⨾ m => f) × (ι₂ ⨾ m => g)
 
   is-coproduct
     : ∀ {A B S : ob}
@@ -128,8 +127,7 @@ through each injection as itself, since `ι ⨾ idn => ι` is
       idn-cofactors₂ = sym (▾-idn (emb ι₂))
 
     copair-η-idn : copair ι₁ ι₂ ≡ idn S
-    copair-η-idn =
-      copair-η ι₁ ι₂ (idn S) idn-cofactors₁ idn-cofactors₂
+    copair-η-idn = copair-η ι₁ ι₂ (idn S) idn-cofactors₁ idn-cofactors₂
 ```
 
 ## Coproduct uniqueness up to isomorphism
@@ -225,14 +223,12 @@ module dual {o h} (C : category o h) where
     : ∀ {A B S X : ob} (ι₁ : hom A S) (ι₂ : hom B S)
       (f : hom A X) (g : hom B X)
     → coproduct-cocone C ι₁ ι₂ X f g ≃ product-cone (op C) ι₁ ι₂ X f g
-  cone-dual ι₁ ι₂ f g =
-    Σ-equiv-snd λ m → ×-cong (wit-equiv ι₁ m f) (wit-equiv ι₂ m g)
+  cone-dual ι₁ ι₂ f g = Σ-equiv-snd λ m → ×-cong (wit-equiv ι₁ m f) (wit-equiv ι₂ m g)
 
   is-coproduct-dual
     : ∀ {A B S : ob} (ι₁ : hom A S) (ι₂ : hom B S)
     → is-coproduct C ι₁ ι₂ ≃ is-product (op C) ι₁ ι₂
-  is-coproduct-dual ι₁ ι₂ =
-    iso→equiv fwd bwd (λ _ → coprod-prop _ _) (λ _ → prod-prop _ _)
+  is-coproduct-dual ι₁ ι₂ = iso→equiv fwd bwd (λ _ → coprod-prop _ _) (λ _ → prod-prop _ _)
     where
       fwd : is-coproduct C ι₁ ι₂ → is-product (op C) ι₁ ι₂
       fwd cp {X} f g = is-contr-equiv (esym (cone-dual ι₁ ι₂ f g)) (cp f g)
@@ -241,12 +237,10 @@ module dual {o h} (C : category o h) where
       bwd pd {X} f g = is-contr-equiv (cone-dual ι₁ ι₂ f g) (pd f g)
 
       coprod-prop : is-prop (is-coproduct C ι₁ ι₂)
-      coprod-prop p q i {X} f g =
-        is-contr-is-prop _ (p {X} f g) (q {X} f g) i
+      coprod-prop p q i {X} f g = is-contr-is-prop _ (p {X} f g) (q {X} f g) i
 
       prod-prop : is-prop (is-product (op C) ι₁ ι₂)
-      prod-prop p q i {X} f g =
-        is-contr-is-prop _ (p {X} f g) (q {X} f g) i
+      prod-prop p q i {X} f g = is-contr-is-prop _ (p {X} f g) (q {X} f g) i
 
 module _ {o h} (C : category o h) where
   open category C

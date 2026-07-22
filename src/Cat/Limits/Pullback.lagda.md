@@ -66,15 +66,13 @@ module _ {o h} (C : category o h) where
       : ∀ {X} (h₁ : hom X A) (h₂ : hom X B)
         (q : h₁ ⨾ f ≡ h₂ ⨾ g)
       → pb-med h₁ h₂ q ⨾ p₁ => h₁
-    pb-factors₁ h₁ h₂ q =
-      pb .snd h₁ h₂ q .center .snd .fst
+    pb-factors₁ h₁ h₂ q = pb .snd h₁ h₂ q .center .snd .fst
 
     pb-factors₂
       : ∀ {X} (h₁ : hom X A) (h₂ : hom X B)
         (q : h₁ ⨾ f ≡ h₂ ⨾ g)
       → pb-med h₁ h₂ q ⨾ p₂ => h₂
-    pb-factors₂ h₁ h₂ q =
-      pb .snd h₁ h₂ q .center .snd .snd
+    pb-factors₂ h₁ h₂ q = pb .snd h₁ h₂ q .center .snd .snd
 
     pb-ind
       : ∀ {u X} (h₁ : hom X A) (h₂ : hom X B)

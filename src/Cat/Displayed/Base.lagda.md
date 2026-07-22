@@ -164,16 +164,14 @@ both directions.
         {f' : hom[ f ] x' y'} {g' : hom[ g ] y' z'}
         {k' : hom[ f ⨾ g ] x' z'}
     → hfiberᴰ.p-charᴰ f' g' k' → f' ⨾ᴰ g' ≡ k'
-  cast-pathᴰ {f' = f'} {g'} {k'} pc =
-    ap fst (hfiberᴰ.pull-contrᴰ f' g' .paths (k' , pc))
+  cast-pathᴰ {f' = f'} {g'} {k'} pc = ap fst (hfiberᴰ.pull-contrᴰ f' g' .paths (k' , pc))
 
   cast-path⁻¹ᴰ
     : ∀ {x y z} {f : hom x y} {g : hom y z} {x' y' z'}
         {f' : hom[ f ] x' y'} {g' : hom[ g ] y' z'}
         {k' : hom[ f ⨾ g ] x' z'}
     → f' ⨾ᴰ g' ≡ k' → hfiberᴰ.p-charᴰ f' g' k'
-  cast-path⁻¹ᴰ {f' = f'} {g'} p =
-    pcom (ap (λ t → emb[ t ]) p) (emb-compᴰ f' g') refl
+  cast-path⁻¹ᴰ {f' = f'} {g'} p = pcom (ap (λ t → emb[ t ]) p) (emb-compᴰ f' g') refl
 ```
 
 ## The displaced unit chain
@@ -573,10 +571,8 @@ module cartesian {o h o' h'} {C : category o h} (D : categoryᴰ C o' h') where
       (λ i → is-equiv (λ (a' : hom[ a ] w' x') → absorb-rᴰ a' (~ i)))
       id-equiv
 
-  cartesian-lift
-    : ∀ {x y} (f : hom x y) (y' : ob[ y ]) → Type (o ⊔ h ⊔ o' ⊔ h')
-  cartesian-lift {x = x} f y' =
-    Σ x' ∶ ob[ x ] , Σ f' ∶ hom[ f ] x' y' , is-cartesian f'
+  cartesian-lift : ∀ {x y} (f : hom x y) (y' : ob[ y ]) → Type (o ⊔ h ⊔ o' ⊔ h')
+  cartesian-lift {x = x} f y' = Σ x' ∶ ob[ x ] , Σ f' ∶ hom[ f ] x' y' , is-cartesian f'
 
   is-fibration : Type (o ⊔ h ⊔ o' ⊔ h')
   is-fibration = ∀ {x y} (f : hom x y) (y' : ob[ y ]) → cartesian-lift f y'

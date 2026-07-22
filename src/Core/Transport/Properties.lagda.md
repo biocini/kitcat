@@ -13,6 +13,10 @@ open Core.Kan.Path
 open import Core.Sub
 open import Core.Transport.Base
 open import Core.Transport.J
+open import Core.Path.Base using (ap-comp)
+-- imported for its TRANSPPROOF binding: transport along a universe
+-- hcom (as in subst-∙'s ap-comp leg) elaborates through transp-proof
+open import Core.HCompU using ()
 open import Core.Equiv.Base
 
 private
@@ -69,6 +73,13 @@ transport-∙ {A = A} {C = C} p q a =
   base : (q' : A ≡ C) → transport (refl ∙ q') a ≡ transport q' (transport refl a)
   base q' = ap (λ r → transport r a) (Path.unitl q')
           ∙ sym (ap (λ x → transport q' x) (transport-refl a))
+
+subst-∙ : ∀ {u v} {A : Type u} (P : A → Type v) {x y z : A}
+          (p : x ≡ y) (q : y ≡ z) (a : P x)
+        → subst P (p ∙ q) a ≡ subst P q (subst P p a)
+subst-∙ P p q a =
+    ap (λ r → transport r a) (ap-comp P p q)
+  ∙ transport-∙ (ap P p) (ap P q) a
 
 -- a ∙-decomposition p ≡ q ∙ r packaged as a square — the inverse
 -- of Path.commutes

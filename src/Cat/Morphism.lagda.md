@@ -115,14 +115,12 @@ mono. The proof reassociates to apply `g`'s cancellation, then `f`'s.
   mono-comp
     : ∀ {x y z} {f : hom x y} {g : hom y z}
     → is-mono f → is-mono g → is-mono (f ⨾ g)
-  mono-comp {f = f} {g} mf mg p =
-    mf (mg (sym (assoc _ f g) ∙ p ∙ assoc _ f g))
+  mono-comp {f = f} {g} mf mg p = mf (mg (sym (assoc _ f g) ∙ p ∙ assoc _ f g))
 
   epi-comp
     : ∀ {x y z} {f : hom x y} {g : hom y z}
     → is-epi f → is-epi g → is-epi (f ⨾ g)
-  epi-comp {f = f} {g} ef eg p =
-    eg (ef (assoc f g _ ∙ p ∙ sym (assoc f g _)))
+  epi-comp {f = f} {g} ef eg p = eg (ef (assoc f g _ ∙ p ∙ sym (assoc f g _)))
 ```
 
 If `f ⨾ g` is mono then `f` is mono; if `f ⨾ g` is epi then `g` is
@@ -133,14 +131,12 @@ the opposite morphism.
   mono-cancel
     : ∀ {x y z} {f : hom x y} {g : hom y z}
     → is-mono (f ⨾ g) → is-mono f
-  mono-cancel {f = f} {g} mfg p =
-    mfg (assoc _ f g ∙ p ▹ g ∙ sym (assoc _ f g))
+  mono-cancel {f = f} {g} mfg p = mfg (assoc _ f g ∙ p ▹ g ∙ sym (assoc _ f g))
 
   epi-cancel
     : ∀ {x y z} {f : hom x y} {g : hom y z}
     → is-epi (f ⨾ g) → is-epi g
-  epi-cancel {f = f} {g} efg p =
-    efg (sym (assoc f g _) ∙ f ◃ p ∙ assoc f g _)
+  epi-cancel {f = f} {g} efg p = efg (sym (assoc f g _) ∙ f ◃ p ∙ assoc f g _)
 ```
 
 ## Neutrality
@@ -157,10 +153,8 @@ identity (cancel `_⨾ e` against `idn ⨾ e`).
     × (∀ {w} → is-equiv (λ (g : hom w x) → g ⨾ f))
 
   idn-is-neutral : ∀ {x} → is-neutral (idn x)
-  idn-is-neutral .fst =
-    subst is-equiv (sym (funext unitl)) (aut .snd)
-  idn-is-neutral .snd =
-    subst is-equiv (sym (funext unitr)) (aut .snd)
+  idn-is-neutral .fst = subst is-equiv (sym (funext unitl)) (aut .snd)
+  idn-is-neutral .snd = subst is-equiv (sym (funext unitr)) (aut .snd)
 
   idempotent-neutral→idn
     : ∀ {x} {e : hom x x}

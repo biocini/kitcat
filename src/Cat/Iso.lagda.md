@@ -147,8 +147,7 @@ retraction agree by `inv-unique`.
   biinv→iso
     : ∀ {x y} {f : hom x y}
     → is-biinv f → is-iso f
-  biinv→iso {f = f} ((s , fs) , (r , rf)) =
-    s , fs , ap (_⨾ f) s≡r ∙ rf
+  biinv→iso {f = f} ((s , fs) , (r , rf)) = s , fs , ap (_⨾ f) s≡r ∙ rf
     where
       s≡r : s ≡ r
       s≡r =

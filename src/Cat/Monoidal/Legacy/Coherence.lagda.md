@@ -17,7 +17,7 @@ spine.
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
 
-module Cat.Monoidal.Coherence where
+module Cat.Monoidal.Legacy.Coherence where
 
 open import Core.Type
 open import Core.Base hiding (I)
@@ -30,8 +30,8 @@ open import Core.Transport.J using (subst)
 
 open import Cat.Type
 open import Cat.Base
-open import Cat.Monoidal
-open import Cat.Monoidal.Bifunctor
+open import Cat.Monoidal.Legacy
+open import Cat.Monoidal.Legacy.Bifunctor
 ```
 
 ## 2-coherence
@@ -96,16 +96,14 @@ associativity of the ternary orders.
       (U : is-⊗₀-representable F) (V : is-⊗₀-representable G)
       (W : is-⊗₀-representable H)
     → Type o
-  ι-mult-r₀ {H = H} U V W =
-    ap (λ X → X ▿₀ H) (⊗₀-interchange♭ U V) ≡ ⊗₀-interchange♭ U (V ●₀ W)
+  ι-mult-r₀ {H = H} U V W = ap (λ X → X ▿₀ H) (⊗₀-interchange♭ U V) ≡ ⊗₀-interchange♭ U (V ●₀ W)
 
   ι-mult-l₀
     : ∀ {F G H : ⊗₀-composite}
       (U : is-⊗₀-representable F) (V : is-⊗₀-representable G)
       (W : is-⊗₀-representable H)
     → Type o
-  ι-mult-l₀ {F = F} U V W =
-    ap (λ X → F ▵₀ X) (⊗₀-interchange♭ V W) ≡ ⊗₀-interchange♭ (U ○₀ V) W
+  ι-mult-l₀ {F = F} U V W = ap (λ X → F ▵₀ X) (⊗₀-interchange♭ V W) ≡ ⊗₀-interchange♭ (U ○₀ V) W
 
   -- opaque like assoc-σ●₀: the naturality cube's type family
   -- projects this line at generic interval points, at both grades;
@@ -336,8 +334,7 @@ straightened to `⊗₀-assoc` endpoints by `assoc●₀-nrm`.
       (U : is-⊗₀-representable F) (V : is-⊗₀-representable G)
       (W : is-⊗₀-representable H)
     → assoc●₀ U V W ≡ ⊗₀-assoc (U .fst) (V .fst) (W .fst)
-  assoc●₀-nrm U V W m =
-    assoc●₀ (nrm-slide₀ U m) (nrm-slide₀ V m) (nrm-slide₀ W m)
+  assoc●₀-nrm U V W m = assoc●₀ (nrm-slide₀ U m) (nrm-slide₀ V m) (nrm-slide₀ W m)
 
   assoc●₁-nrm
     : ∀ {F F' G G' H H' : ⊗₀-composite}
@@ -352,8 +349,7 @@ straightened to `⊗₀-assoc` endpoints by `assoc●₀-nrm`.
                    (Û .fst ⊗₁ (V̂ .fst ⊗₁ Ŵ .fst))
                    ((Û .fst ⊗₁ V̂ .fst) ⊗₁ Ŵ .fst))
             (assoc●₁ Û V̂ Ŵ) (⊗₁-assoc (Û .fst) (V̂ .fst) (Ŵ .fst))
-  assoc●₁-nrm Û V̂ Ŵ m =
-    assoc●₁ (nrm-slide₁ Û m) (nrm-slide₁ V̂ m) (nrm-slide₁ Ŵ m)
+  assoc●₁-nrm Û V̂ Ŵ m = assoc●₁ (nrm-slide₁ Û m) (nrm-slide₁ V̂ m) (nrm-slide₁ Ŵ m)
 
   module pentagon₀ (x y z w : C.ob) where
     open pentagon●₀ (⊗₀-nrm x) (⊗₀-nrm y) (⊗₀-nrm z) (⊗₀-nrm w) public
@@ -1111,8 +1107,7 @@ it live under the coherence hypothesis, the rest is absolute.
         (ap fst T'.σₗᵣ) (T'.face-r (~ m))
         (λ i → σ̂ₗᵣ i .fst) (face-r̂ (~ m))
 
-    triangle-weak̂
-      : PathP (λ m → Fam (T.triangle-weak m) (T'.triangle-weak m)) E₁ bot₁
+    triangle-weak̂ : PathP (λ m → Fam (T.triangle-weak m) (T'.triangle-weak m)) E₁ bot₁
     triangle-weak̂ =
       comp-pathp₂ Fam T.whisker-r (T.step₁ ∙ T.step₂ ∙ T.face-l)
                       T'.whisker-r (T'.step₁ ∙ T'.step₂ ∙ T'.face-l)
@@ -1175,8 +1170,7 @@ it live under the coherence hypothesis, the rest is absolute.
                 (λ i → σ̂ₗᵣ i .fst) (⊗₁-assoc φ ι ψ)
       face-â m i = face-σ̂a m i .fst
 
-      whisker-â
-        : PathP (λ m → Fam (T.whisker-a mid m) (T'.whisker-a mid m)) top₁ E₁
+      whisker-â : PathP (λ m → Fam (T.whisker-a mid m) (T'.whisker-a mid m)) top₁ E₁
       whisker-â m =
         comp-pathp₂ C.hom
           (T.face-a mid (~ m)) (ap (_⊗₀ y) (⊗₀-unitr x))

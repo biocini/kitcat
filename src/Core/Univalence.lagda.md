@@ -80,6 +80,13 @@ a fundamental property of the Glue type. The computation works as follows:
 4. The final coercion through B is identity since B is constant
 
 ```agda
+-- Reading a point off the ua line: projects to B, restricting to
+-- `e .fst` at i0 and the identity at i1
+ua-unglue : (e : A ≃ B) (i : I) → ua e i → B
+ua-unglue {A = A} {B} e i x =
+  unglue (∂ i) {Te = λ where (i = i0) → A , e
+                             (i = i1) → B , aut} x
+
 ua-β : (e : A ≃ B) (a : A) → transport (ua e) a ≡ e .fst a
 ua-β {A} {B} e a = transport-refl (e .fst a)
 

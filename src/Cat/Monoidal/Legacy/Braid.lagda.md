@@ -26,12 +26,12 @@ Invertibility is free: the object braiding is a path in `ob`, so
 its symmetry is its inverse — there is no separate axiom, unlike
 the classical definition where invertibility is an imposed
 condition on a natural transformation. The hexagon coherences are
-*not* free; they live in `Cat.Monoidal.Hexagon`.
+*not* free; they live in `Cat.Monoidal.Legacy.Hexagon`.
 
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
 
-module Cat.Monoidal.Braid where
+module Cat.Monoidal.Legacy.Braid where
 
 open import Core.Type
 open import Core.Base hiding (I)
@@ -39,8 +39,8 @@ open import Core.Data.Sigma
 open import Core.Kan
 
 open import Cat.Type
-open import Cat.Monoidal
-open import Cat.Monoidal.Bifunctor
+open import Cat.Monoidal.Legacy
+open import Cat.Monoidal.Legacy.Bifunctor
 ```
 
 ## The braided record
@@ -129,8 +129,7 @@ module braid-theory {o h} {C : category o h} {M : monoidal C}
       : ∀ {F G : ⊗₀-composite}
         (U : is-⊗₀-representable F) (V : is-⊗₀-representable G)
       → ((U ●₀ V) ↝ ⊗₀-braid♭ U V) ≡ (V ●₀ U)
-    braid-σ●₀ U V =
-      is-⊗₀-representable-prop _ ((U ●₀ V) ↝ ⊗₀-braid♭ U V) (V ●₀ U)
+    braid-σ●₀ U V = is-⊗₀-representable-prop _ ((U ●₀ V) ↝ ⊗₀-braid♭ U V) (V ●₀ U)
 
   braid●₀
     : ∀ {F G : ⊗₀-composite}

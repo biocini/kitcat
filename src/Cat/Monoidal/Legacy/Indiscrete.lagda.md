@@ -25,7 +25,7 @@ without touching any morphism-level reasoning.
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
 
-module Cat.Monoidal.Indiscrete where
+module Cat.Monoidal.Legacy.Indiscrete where
 
 open import Core.Type
 open import Core.Base hiding (I)
@@ -34,9 +34,9 @@ open import Core.Kan using (is-contr→is-prop; _∙_)
 open import Core.HLevel.Base using (PathP-is-contr; Π-is-hlevel; Σ-is-hlevel)
 
 open import Cat.Type
-open import Cat.Monoidal
-open import Cat.Monoidal.Braid
-open import Cat.Monoidal.Hexagon
+open import Cat.Monoidal.Legacy
+open import Cat.Monoidal.Legacy.Braid
+open import Cat.Monoidal.Legacy.Hexagon
 ```
 
 ## The builder
@@ -53,15 +53,13 @@ module _ {o h} {C : category o h}
   private module C = category C
 
   private
-    ⊗₁-composite-contr
-      : ∀ {F F' : ⊗₀-composite} → is-contr (⊗₁-composite F F')
+    ⊗₁-composite-contr : ∀ {F F' : ⊗₀-composite} → is-contr (⊗₁-composite F F')
     ⊗₁-composite-contr =
       Π-is-hlevel Z λ γ → Π-is-hlevel Z λ γ' → Π-is-hlevel Z λ δ →
         hom-contr
 
   indiscrete-axioms₁ : monoidal-axioms₁ M₀
-  indiscrete-axioms₁ .monoidal-axioms₁.⊗₁-emb φ γ γ' δ =
-    hom-contr .center
+  indiscrete-axioms₁ .monoidal-axioms₁.⊗₁-emb φ γ γ' δ = hom-contr .center
   indiscrete-axioms₁ .monoidal-axioms₁.⊗₁-interchange♭ Û V̂ =
     PathP-is-contr ⊗₁-composite-contr _ _ .center
   indiscrete-axioms₁ .monoidal-axioms₁.⊗₁-spine-contr φ ψ =
@@ -69,10 +67,8 @@ module _ {o h} {C : category o h}
     Σ-is-hlevel Z (PathP-is-contr ⊗₁-composite-contr _ _) λ P →
     Σ-is-hlevel Z (PathP-is-contr ⊗₁-composite-contr _ _) λ Q →
     PathP-is-contr (PathP-is-contr ⊗₁-composite-contr _ _) _ _
-  indiscrete-axioms₁ .monoidal-axioms₁.⊗₁-unit φ =
-    PathP-is-contr hom-contr _ _ .center
-  indiscrete-axioms₁ .monoidal-axioms₁.⊗₁-emb-⨾ φ₁ φ₂ δ₁ δ₂ =
-    is-contr→is-prop hom-contr _ _
+  indiscrete-axioms₁ .monoidal-axioms₁.⊗₁-unit φ = PathP-is-contr hom-contr _ _ .center
+  indiscrete-axioms₁ .monoidal-axioms₁.⊗₁-emb-⨾ φ₁ φ₂ δ₁ δ₂ = is-contr→is-prop hom-contr _ _
 
   indiscrete-monoidal : monoidal C
   indiscrete-monoidal .monoidal.axioms₀ = M₀
@@ -100,8 +96,7 @@ displaced hexagons are squares into contractible fibers, the
 
     indiscrete-braided : braided indiscrete-monoidal
     indiscrete-braided .braided.⊗₀-flank-swap♭ = ⊗₀-flank-swap♭
-    indiscrete-braided .braided.⊗₁-flank-swap♭ Û V̂ =
-      PathP-is-contr ⊗₁-composite-contr _ _ .center
+    indiscrete-braided .braided.⊗₁-flank-swap♭ Û V̂ = PathP-is-contr ⊗₁-composite-contr _ _ .center
 
     open braided indiscrete-braided using (⊗₀-braid♭)
 
@@ -123,12 +118,10 @@ displaced hexagons are squares into contractible fibers, the
       where
 
       indiscrete-braided-coherent : braided-coherent indiscrete-braided
-      indiscrete-braided-coherent .braided-coherent.⊗₀-hexagon-r♭ =
-        ⊗₀-hexagon-r♭
+      indiscrete-braided-coherent .braided-coherent.⊗₀-hexagon-r♭ = ⊗₀-hexagon-r♭
       indiscrete-braided-coherent .braided-coherent.⊗₁-hexagon-r♭ Û V̂ Ŵ =
         PathP-is-contr (PathP-is-contr ⊗₁-composite-contr _ _) _ _ .center
-      indiscrete-braided-coherent .braided-coherent.⊗₀-hexagon-l♭ =
-        ⊗₀-hexagon-l♭
+      indiscrete-braided-coherent .braided-coherent.⊗₀-hexagon-l♭ = ⊗₀-hexagon-l♭
       indiscrete-braided-coherent .braided-coherent.⊗₁-hexagon-l♭ Û V̂ Ŵ =
         PathP-is-contr (PathP-is-contr ⊗₁-composite-contr _ _) _ _ .center
 ```

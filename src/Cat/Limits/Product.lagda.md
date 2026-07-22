@@ -39,8 +39,7 @@ module _ {o h} (C : category o h) where
   product-cone
     : ∀ {A B P : ob} → hom P A → hom P B
     → (X : ob) → hom X A → hom X B → Type (o ⊔ h)
-  product-cone {P = P} π₁ π₂ X f g =
-    Sigma (hom X P) λ m → (m ⨾ π₁ => f) × (m ⨾ π₂ => g)
+  product-cone {P = P} π₁ π₂ X f g = Sigma (hom X P) λ m → (m ⨾ π₁ => f) × (m ⨾ π₂ => g)
 
   is-product
     : ∀ {A B P : ob}
@@ -96,8 +95,7 @@ module _ {o h} (C : category o h) where
       → (m : hom X P)
       → m ⨾ π₁ => f → m ⨾ π₂ => g
       → ⟨ f , g ⟩ ≡ m
-    ⟨,⟩-η f g =
-      ⟨,⟩-ind f g (λ m _ _ → ⟨ f , g ⟩ ≡ m) refl
+    ⟨,⟩-η f g = ⟨,⟩-ind f g (λ m _ _ → ⟨ f , g ⟩ ≡ m) refl
 ```
 
 ## Product η-expansion
@@ -140,8 +138,7 @@ identity by η-expansion.
     → (prod : is-product π₁ π₂)
     → (prod' : is-product π₁' π₂')
     → P ≅ P'
-  product-unique {π₁ = π₁} {π₂} {π₁'} {π₂'} prod prod' =
-    ψ , φ , ψφ≡idn , φψ≡idn
+  product-unique {π₁ = π₁} {π₂} {π₁'} {π₂'} prod prod' = ψ , φ , ψφ≡idn , φψ≡idn
     where
       module Π  = Product prod
       module Π' = Product prod'
