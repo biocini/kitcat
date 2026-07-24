@@ -26,12 +26,26 @@ profile module *flags:
 check-tree dir="src":
     #!/usr/bin/env bash
     set -uo pipefail
-    fails=$(fd -e lagda.md . {{dir}} -E All.lagda.md \
-      -x sh -c 'agda "$1" >/dev/null 2>&1 || echo "$1"' _ {} | sort)
+    dir='{{dir}}'
+    if [ ! -d "$dir" ]; then
+      echo "check-tree: not a directory: $dir" >&2
+      echo "  (arguments are positional: just check-tree src/Test)" >&2
+      exit 2
+    fi
+    files=$(fd -e lagda.md . "$dir" -E All.lagda.md) || exit 2
+    if [ -z "$files" ]; then
+      echo "check-tree: no .lagda.md modules under $dir" >&2
+      exit 2
+    fi
+    total=$(printf '%s\n' "$files" | wc -l | tr -d ' ')
+    fails=$(printf '%s\n' "$files" \
+      | xargs -P 8 -I@ sh -c 'agda "$1" >/dev/null 2>&1 || echo "$1"' _ @ | sort)
     if [ -z "$fails" ]; then
-      echo "✓ all modules under {{dir}} typecheck"
+      echo "✓ $total modules under $dir typecheck"
     else
-      echo "✗ failed:"; echo "$fails" | sed 's|^|  |'
+      echo "✗ $(printf '%s\n' "$fails" | wc -l | tr -d ' ') of $total failed:"
+      printf '%s\n' "$fails" | sed 's|^|  |'
+      exit 1
     fi
 
 # The All.lagda.md aggregator is retired pending module-organisation decisions
