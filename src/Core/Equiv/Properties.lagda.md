@@ -232,6 +232,29 @@ contr→contr→is-equiv acontr bcontr f .eqv-fibers y =
     retr y =
       ap (λ p → subst B (sym p) y) (is-contr→loop-is-refl c) ∙ transport-refl y
 
+-- A dependent function out of a contractible domain is its value at the centre.
+Π-contr-dom : ∀ {u v} {A : Type u} {B : A → Type v}
+            → (c : is-contr A) → ((a : A) → B a) ≃ B (c .center)
+Π-contr-dom {A = A} {B} c = iso→equiv fwd bwd sec retr
+  where
+    fwd : ((a : A) → B a) → B (c .center)
+    fwd f = f (c .center)
+    bwd : B (c .center) → (a : A) → B a
+    bwd b a = subst B (c .paths a) b
+    sec : (f : (a : A) → B a) → bwd (fwd f) ≡ f
+    sec f = funext λ a → Path-over.from-pathp (λ i → f (c .paths a i))
+    retr : (b : B (c .center)) → fwd (bwd b) ≡ b
+    retr b =
+      ap (λ p → subst B p b) (is-contr→loop-is-refl c) ∙ transport-refl b
+
+-- Change of base along an equivalence: reindexing a family by an equivalence
+-- leaves its total space unchanged.
+Σ-equiv-fst : ∀ {u v w} {A : Type u} {A' : Type v} {P : A' → Type w}
+            → (e : A ≃ A') → (Σ a ∶ A , P (e .fst a)) ≃ Σ P
+Σ-equiv-fst {P = P} e =
+    (λ s → e .fst (s .fst) , s .snd)
+  , Σ-dep-map-is-equiv {g = λ _ p → p} (e .snd) (λ _ → id-equiv)
+
 path-equiv-r : ∀ {u} {A : Type u} {x y z : A}
              → y ≡ z → (x ≡ y) ≃ (x ≡ z)
 path-equiv-r {x = x} {y} {z} p = iso→equiv fwd bwd sec retr

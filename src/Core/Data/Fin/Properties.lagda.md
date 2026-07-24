@@ -14,12 +14,26 @@ open import Core.Transport
 open import Core.Data.Empty
 open import Core.Data.Dec
 open Dec
+open import Core.Data.Irr using (out-dec)
 open import Core.Data.Nat
 open import Core.Data.Fin.Type
 open import Core.Data.Fin.Base
 
 private variable
   m n k : Nat
+
+```
+
+## Relevant bound
+
+The bound of a finite index is stored irrelevantly, but `<` on the naturals is
+decidable, so it is recoverable in a relevant position: decide `lower i < n` and
+discharge the impossible branch against the stored proof.
+
+```agda
+
+bound : (i : Fin n) → lower i Nat.< n
+bound {n} (fin k ⦃ bounded = b ⦄) = out-dec (Nat.<-dec k n) b
 
 ```
 

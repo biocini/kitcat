@@ -91,6 +91,25 @@ module le where
 
 ```
 
+The order relations are decidable, and antisymmetry of `≤` turns a pair of
+bounds into an identity of numbers.
+
+```agda
+
+≤-antisym : m ≤ n → n ≤ m → m ≡ n
+≤-antisym suc       _ = refl
+≤-antisym (step p)  q = ex-falso (lt-le-absurd p q)
+
+<-dec : (m n : Nat) → Dec (m < n)
+<-dec m n with cmp n m
+... | inl n≤m = no λ m<n → lt-le-absurd m<n n≤m
+... | inr m<n = yes m<n
+
+≤-dec : (m n : Nat) → Dec (m ≤ n)
+≤-dec m n = <-dec m (S n)
+
+```
+
 Arithmetic lemmas.
 
 ```agda

@@ -19,7 +19,7 @@ open Core.Transport public
         ; to-path; to-path-over
         ; IdsJ; IdsJ-based
         ; singl-contr→Ids; fundamental-theorem-id; set-identity-system
-        ; is-contr-ΣC
+        ; is-contr-ΣC; based-singl-contr→Ids
         )
 
 ```
@@ -48,6 +48,32 @@ Ids-based→equiv
   → ∀ {b} → (a ≡ b) ≃ C b
 Ids-based→equiv {a = a} {C = C} {r = r} ids {b} =
   iso→equiv fwd bwd sec retr
+  where
+  fwd : ∀ {b'} → a ≡ b' → C b'
+  fwd p = subst C p r
+
+  bwd : ∀ {b'} → C b' → a ≡ b'
+  bwd c = ids .to-path c
+
+  sec : (p : a ≡ b) → bwd (fwd p) ≡ p
+  sec p = J (λ b' p' → bwd {b'} (fwd p') ≡ p')
+    (ap (ids .to-path) (transport-refl r) ∙ loop-refl) p
+    where
+    loop-refl : ids .to-path r ≡ refl
+    loop-refl i j =
+      is-contr→loop-is-refl (is-contr-ΣC ids) i j .fst
+
+  retr : (c : C b) → fwd (bwd c) ≡ c
+  retr c = Path-over.from-pathp (ids .to-path-over c)
+
+-- The same equivalence presented the other way round, so that `to-path` is the
+-- forward map and applications of it reduce.
+Ids-based→equiv⁻
+  : ∀ {u v} {A : Type u} {a : A} {C : A → Type v} {r : C a}
+  → is-based-identity-system a C r
+  → ∀ {b} → C b ≃ (a ≡ b)
+Ids-based→equiv⁻ {a = a} {C = C} {r = r} ids {b} =
+  iso→equiv bwd fwd retr sec
   where
   fwd : ∀ {b'} → a ≡ b' → C b'
   fwd p = subst C p r

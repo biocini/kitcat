@@ -342,6 +342,21 @@ is-contr-ΣC {r = r} ids .center         = _ , r
 is-contr-ΣC {r = r} ids .paths x i .fst = ids .to-path (x .snd) i
 is-contr-ΣC {r = r} ids .paths x i .snd = ids .to-path-over (x .snd) i
 
+-- Converse of is-contr-ΣC: a family with contractible total space and a chosen
+-- element over a base point is a based identity system at that point. The
+-- centre of contraction plays no role, so any element of the family serves.
+based-singl-contr→Ids
+  : ∀ {ℓ ℓ'} {A : Type ℓ} {a : A} {C : A → Type ℓ'} {r : C a}
+  → is-contr (Σ C)
+  → is-based-identity-system a C r
+based-singl-contr→Ids {a = a} {C} {r} c = ids where
+  paths' : (p : Σ C) → (a , r) ≡ p
+  paths' _ = is-contr→is-prop c _ _
+
+  ids : is-based-identity-system a C r
+  ids .to-path p = ap fst (paths' (_ , p))
+  ids .to-path-over p = ap snd (paths' (_ , p))
+
 IdsJ-based
   : ∀ {u u' u''} {A : Type u} {a : A} {C : A → Type u'} {r : C a}
   → is-based-identity-system a C r
