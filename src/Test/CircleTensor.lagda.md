@@ -25,9 +25,9 @@ open import Core.Transport.Properties using (SinglP-contr)
 open import Core.Equiv.Base using (_≃_; iso→equiv)
 open import Core.Equiv.Properties using (is-contr-equiv; Σ-equiv-snd)
 
-open import Cat.Type
-open import Cat.Groupoid using (∞-groupoid)
-open import Cat.Monoidal
+open import Cat.Depreciated.Type
+open import Cat.Depreciated.Groupoid using (∞-groupoid)
+open import Cat.Depreciated.Monoidal
 
 open import HData.Circle
 open Circle

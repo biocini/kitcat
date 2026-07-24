@@ -75,7 +75,6 @@ import Gloss.TautologicalFilling
 import Gloss.TriangleFace23
 
 -- Manual regression tripwire (Test/ rules): sync preserves, never adds.
-import Test.CodepCoherentKillchecks
 
 -- import Cat.Rezk  -- WIP: decode-gen holes at L203/204
 -- import Cat.Slice  -- WIP: open holes at L211/262/280
@@ -88,7 +87,6 @@ import Test.CodepCoherentKillchecks
 -- import Data.Thin.Properties  -- WIP: law holes at L32/35/39
 -- import Cat.Displayed  -- WIP: open holes in compose-contr contraction
 -- import Cat.Product  -- WIP: mid-edit, MetaCannotDependOn at L237
--- import HData.Rack  -- WIP: pre-existing unsolved metas at L31-34
 import Cat.Monoidal.Indiscrete
 -- import Cat.Monoidal.Twist  -- WIP: THE REFACTOR — re-founding (P6/P7)
 -- import Cat.Monoidal.Braid  -- WIP: THE REFACTOR — re-founding (P6/P7)

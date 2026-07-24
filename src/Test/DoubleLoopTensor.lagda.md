@@ -37,10 +37,10 @@ open import Core.Equiv.Properties using (is-contr-equiv; Σ-equiv-snd; _∙e_)
 open import Core.Function.Embedding
   using (is-equiv→is-embedding; is-embedding→ap-equiv; equiv→lc)
 
-open import Cat.Type
-open import Cat.Groupoid using (∞-groupoid)
-open import Cat.Monoidal
-open import Cat.Monoidal.Properties
+open import Cat.Depreciated.Type
+open import Cat.Depreciated.Groupoid using (∞-groupoid)
+open import Cat.Depreciated.Monoidal
+open import Cat.Depreciated.Monoidal.Properties
   using (flank-vanish→unitr-agreement; flank-vanish→unitl-agreement)
 
 module double-loop-tensor {u} (Y : Type* u)

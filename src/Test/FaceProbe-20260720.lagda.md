@@ -16,11 +16,11 @@ open import Core.Kan
 open import Core.Transport.Properties using (is-prop→SquareP)
 open import Core.Transport.J using (subst)
 
-open import Cat.Type
-open import Cat.Base
-open import Cat.Coherence
-open import Cat.Displayed
-open import Cat.Displayed.Base
+open import Cat.Depreciated.Type
+open import Cat.Depreciated.Base
+open import Cat.Depreciated.Coherence
+open import Cat.Depreciated.Displayed
+open import Cat.Depreciated.Displayed.Base
 
 module _ {o h o' h'} {C : category o h} (D : categoryᴰ C o' h') where
   open category C
