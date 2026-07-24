@@ -147,12 +147,13 @@ checks these triggers each session and edits only when one fires.
    Lane 2026-07-13, kelly's discretion open; T16 and T15 both
    lifted under the audit-keyed rule — no ⚠️
    source-identifications remain.
-5. **Housekeeping** — the styleguide conformance
-   sweeps (ruled GO, Lane 2026-07-13; docs/styleguide.md
-   "Rulings"): the **frontmatter
+5. **Housekeeping** — the style conformance
+   sweeps (ruled GO, Lane 2026-07-13;
+   docs/guidelines/rulings.md): the **frontmatter
    sweep** — convert every tracked `.lagda.md` to the YAML
    frontmatter convention (ruled 2026-07-14 — author/date/contents
-   core + optional synopsis; docs/styleguide.md Opener). The tooling
+   core + optional synopsis; docs/guidelines/module-anatomy.md). The
+   tooling
    (build.py rendering + the tolerant `bin/lint` frontmatter canary)
    and a limited two-file pilot (`Core.Path.Base`, `Core.Type`)
    landed 2026-07-14; the BULK is this target's scheduled work — the

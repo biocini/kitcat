@@ -17,9 +17,27 @@ check module:
         {{agda}} "$path"
     fi
 
-# Typecheck entire library
+# Measure a module's elaboration time, cold [--total [N]|--internal|--warm]
+profile module *flags:
+    bin/profile {{module}} {{flags}}
+
+# Typecheck every module under a directory (default: whole library), listing failures.
+# Interim whole-library check while the All aggregator is retired (see check-all).
+check-tree dir="src":
+    #!/usr/bin/env bash
+    set -uo pipefail
+    fails=$(fd -e lagda.md . {{dir}} -E All.lagda.md \
+      -x sh -c 'agda "$1" >/dev/null 2>&1 || echo "$1"' _ {} | sort)
+    if [ -z "$fails" ]; then
+      echo "✓ all modules under {{dir}} typecheck"
+    else
+      echo "✗ failed:"; echo "$fails" | sed 's|^|  |'
+    fi
+
+# The All.lagda.md aggregator is retired pending module-organisation decisions
+# (the Cat.Depreciated relocation is unresolved). Use `check-tree` meanwhile.
 check-all:
-    {{agda}} src/All.lagda.md
+    @echo "check-all is retired — use 'just check-tree' (or 'just check-tree <dir>')."
 
 # Create a new module
 new module *flags:
@@ -29,7 +47,7 @@ new module *flags:
 mv old new *flags:
     bin/mmv {{old}} {{new}} {{flags}}
 
-# Sync All.lagda.md with filesystem
+# Sync All.lagda.md with filesystem (retired; see check-all)
 sync *flags:
     bin/sync-all {{flags}}
 

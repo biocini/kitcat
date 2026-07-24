@@ -1,0 +1,93 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# profile — elaboration-time measurement for a kitcat module
+# Usage: profile MODULE [--total [N]] [--internal] [--warm]
+
+usage() {
+    echo "Usage: profile MODULE [--total [N]] [--internal] [--warm]"
+    echo ""
+    echo "Measure a module's elaboration time, cold by default."
+    echo ""
+    echo "  MODULE        Dot-path (Cat.Graph.Refl.Lens) or file path"
+    echo "  --total [N]   Median of N cold runs, module Total only"
+    echo "                (default N=3); the number that confirms a fix"
+    echo "  --internal    --profile=internal, decomposing Miscellaneous"
+    echo "  --warm        Keep the existing interface; measure a no-op"
+    echo ""
+    echo "A cold run discards the module's own .agdai and leaves its"
+    echo "dependencies built, so the time reported is the module's."
+}
+
+cd "$(git rev-parse --show-toplevel)"
+
+AGDA="${AGDA:-agda}"
+
+module=""
+runs=0
+kind="definitions"
+cold=1
+
+while [ $# -gt 0 ]; do
+    case "$1" in
+        -h|--help) usage; exit 0 ;;
+        --total)
+            runs=3
+            if [ $# -ge 2 ] && [[ "$2" =~ ^[0-9]+$ ]]; then runs="$2"; shift; fi
+            ;;
+        --internal) kind="internal" ;;
+        --warm) cold=0 ;;
+        -*) echo "profile: unknown flag $1" >&2; usage >&2; exit 2 ;;
+        *)
+            if [ -n "$module" ]; then
+                echo "profile: unexpected argument $1" >&2; exit 2
+            fi
+            module="$1"
+            ;;
+    esac
+    shift
+done
+
+[ -n "$module" ] || { usage >&2; exit 2; }
+
+# Dot-path and file path both resolve to the source file.
+if [[ "$module" == *.lagda.md ]]; then
+    src="$module"
+else
+    src="src/$(echo "$module" | tr '.' '/').lagda.md"
+fi
+[ -f "$src" ] || { echo "profile: no such module: $src" >&2; exit 1; }
+
+agdai="_build/$($AGDA --numeric-version)/agda/${src%.lagda.md}.agdai"
+
+run_once() {
+    [ "$cold" -eq 1 ] && rm -f "$agdai"
+    $AGDA "--profile=$kind" "$src"
+}
+
+# Agda writes the profile to stdout as "<label> <n>ms", Total first.
+total_of() {
+    run_once | awk '/^Total/ { gsub(/[^0-9]/, "", $2); print $2; exit }'
+}
+
+if [ "$runs" -eq 0 ]; then
+    run_once
+    exit 0
+fi
+
+if [ "$cold" -eq 0 ]; then
+    echo "profile: --total measures cold runs; drop --warm" >&2
+    exit 2
+fi
+
+echo "profiling $src — $runs cold runs" >&2
+samples=()
+for i in $(seq 1 "$runs"); do
+    t="$(total_of)"
+    samples+=("$t")
+    printf 'run %d  %sms\n' "$i" "$t" >&2
+done
+
+printf '%s\n' "${samples[@]}" \
+  | sort -n \
+  | awk -v n="$runs" 'NR == int((n+1)/2) { printf "median %sms\n", $1 }'
