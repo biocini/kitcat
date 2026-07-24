@@ -1,8 +1,12 @@
 # Design — 2026-07-21 — the free rack HIT
 
-Design session for the `HData.Rack` work item (refoundation
-checkpoint, next-steps item 2). No code lands until the open
-rulings at the end are settled.
+Design session for the `HData.Rack` work item. **The track is
+gated behind the braided-theory redevelopment** (Lane,
+2026-07-21): the new braided layer over the two-field record
+develops first, and the rack type is designed afterwards, applying
+what the model teaches. The rulings at the end are settled except
+where marked; they are pinned constraints for that later work, not
+a green light to start.
 
 ## The intention (pinned, Lane)
 
@@ -136,23 +140,30 @@ faithfully represented by their translations, and the orbit
 readout is the faithful choice. The Cat-side record is not on
 `HData.Rack`'s critical path.
 
-## Open rulings
+## Rulings (Lane, 2026-07-21)
 
-1. **Unit and associativity** inside the ruled form: empty-context
-   constructor in v1 or deferred; associativity as a later cell
-   versus derived through the monoidal record on the HIT.
-2. **Free-group dependency** for general A's encode target: wedge
-   loop space versus reduced words, and its phasing (one generator
-   first either way; mint `winding-∙`, `add-assoc`/`add-comm`,
-   shared with the interchange-path component count).
-3. **The Cat-side theory record**: proceed in parallel or wait for
-   the HIT as its first intended instance.
-4. **The context-calculus connection**: whether `Rack A` is
-   eventually the tensor context type (contexts/cocontexts for the
-   monoidal spine), and whether that generalization stays out of
-   scope until the record freezes.
-5. **Convention and glyphs**: Fenn–Rourke right action
-   (recommended); keep `▷`/`◁` for the derived operation.
-6. **Stub disposition**: delete `Ra` outright or archive.
+1. **Unit** — leaning include, form OPEN: either an empty-context
+   point constructor, or a pointed carrier (`x₀ : A` in the type
+   former, `inc x₀` playing the unit — the tensorial-pole
+   analogy). Decide after consulting Melliès
+   (`resources/mellies-braided-dialogue`) on how the pole handles
+   the unit/context role. **Associativity**: no cell committed —
+   let the monoidal-record instance on the HIT force whatever cell
+   it actually demands.
+2. **Encode target for general A**: the wedge-of-circles loop
+   space, ruled. Phasing: one generator first (mint `winding-∙`,
+   `add-assoc`/`add-comm`, shared with the interchange-path
+   component count); the wedge HIT arrives when general A does.
+3. **The Cat-side theory record**: waits for the HIT as its first
+   intended instance — instance evidence before fields.
+4. **The context-calculus connection**: OPEN in refined form — the
+   goal is to develop the new braided theory and then design the
+   rack from the model, so the binding question is deferred with
+   the whole track.
+5. **Convention and glyphs**: Fenn–Rourke right action; `▷`/`◁`
+   for the derived operation.
+6. **Stub disposition**: `Ra` deleted outright (the half-adjoint
+   translation idea survives here as a future theorem; an archive
+   copy sits in `.attic/Stash/`).
 7. **Chore**: vendor Fenn–Rourke, *Racks and links in codimension
-   two*, into `resources/` before code cites the convention.
+   two*, into `resources/` before rack code cites the convention.
