@@ -5,6 +5,7 @@ __pycache__/
 .DS_Store
 *.bak
 /Stash/
+.attic/
 .pi/tasks
 .pi/hindsight
 
