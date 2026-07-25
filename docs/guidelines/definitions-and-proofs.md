@@ -57,8 +57,10 @@
   **Every Core addition passes a redundancy check first** (Lane,
   2026-07-13): search `Core.*` for an existing form — by type
   shape and by the naming grammar — before landing anything; a
-  candidate that is beta-eta equal to an existing function is the
-  wrapper defect (Hard Rules), and a candidate that holds
+  candidate that is beta-eta equal to an existing function is a
+  duplicate — take the existing one, unless the addition presents
+  that construction in a vocabulary the development speaks and says
+  so — and a candidate that holds
   DEFINITIONALLY in cubical (e.g. `sym (sym p) ≡ p` is `refl`)
   earns no lemma at all — use sites write the definitional form.
   Core is the stable API; additions are deliberate, deduplicated,

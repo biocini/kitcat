@@ -92,9 +92,6 @@ decisions; `just check-tree` is the whole-library check meanwhile, and
 - **Never truncate homs.** Categories here are wild by design; do not
   pursue or assume hom-set conditions. Load-bearing, not aesthetic — see
   the op-involution regress, `docs/gloss.md` T12.
-- **No wrapper definitions beta-eta equal to an existing function.**
-  Factoring a shared proof skeleton into a named helper is good;
-  re-typing a primitive is ornament.
 - **Commit only when Lane says to commit.**
 
 ## Documents
