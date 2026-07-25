@@ -139,7 +139,7 @@ unique-agrees⁻
   → unit⁻-unique-pt x e abs ∙ unit⁻-is-idn x ≡ unit⁻-canonical x e abs
 ```
 
-VERIFIED in `Test.SpikeDeductiveSystem`, with the `⁺` mate. No
+VERIFIED in `Cat.Logic.Base`, with the `⁺` mate. No
 further coherence is involved: the two sides were already the same
 function, which is exactly what the half-adjoint attempt above did
 *not* have.

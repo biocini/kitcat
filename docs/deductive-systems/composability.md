@@ -49,7 +49,7 @@ proposition immediately:
 is-composable-is-prop : is-prop is-composable
 ```
 
-VERIFIED in `Test.SpikeDeductiveSystem`, by `is-contr-is-prop` under
+VERIFIED in `Cat.Logic.Base`, by `is-contr-is-prop` under
 the quantifiers.
 
 ## The slice and the coslice
@@ -103,6 +103,27 @@ the family as a `reflexive-graphᴰ` needs the displayed reflexivity
 `coslice-rx : reflect u ≡ composite⁻ u (idn y)`, and that is a flank
 absorption, supplied by the tiers above. So Sterling's fibration and
 lens API becomes literally available at the unit tier, not before.
+
+## Each action distributes over its own hand
+
+The head-rewriting witness is the whole proof, and the anonymous
+endpoint is handed back untouched, so each identification is that
+witness read at one argument:
+
+```agda
+act-⨾⁺   p q t i = t .fst , reflect-⨾⁺ p q i (argue t (covar z))
+coact-⨾⁻ p q e i = e .fst , reflect-⨾⁻ p q i (argue (var x) e)
+```
+
+giving `act (p ⨾⁺ q) t ≡ act q (act p t)` and `coact (p ⨾⁻ q) e ≡
+coact p (coact q e)`. VERIFIED in `Cat.Logic.Base`, as projections of
+the tier.
+
+Each hand distributes over its *own* composition and no other. That is
+the whole of what this tier says about the two operations interacting
+with the actions, and it is what makes the two-sided transport of
+[mediation.md](mediation.md) compose along one composition per
+coordinate rather than one throughout.
 
 ## Associativity, and what it costs
 

@@ -41,7 +41,7 @@ whatever, so:
 is-unital-is-prop : is-prop is-unital
 ```
 
-VERIFIED in `Test.SpikeDeductiveSystem`. This is the same discipline
+VERIFIED in `Cat.Logic.Base`. This is the same discipline
 the library uses elsewhere for unit data: the representable-embedding
 development takes `unital : ∀ {x} → fiber (yon {x}{x}) (λ _ → id)` as
 its field and projects `idn = unital .fst`
@@ -88,7 +88,7 @@ unit⁻-unique x e p = ap fst (unit⁻-unique-σ x e p)   -- e ≡ unit⁻ x
 
 with a pointwise variant `unit⁻-unique-pt` taking the hypothesis as
 `∀ γ → coact-π e γ ≡ γ .snd` and converting by `funext`. All VERIFIED
-in `Test.SpikeDeductiveSystem`.
+in `Cat.Logic.Base`.
 
 The `ap fst`-of-a-contraction move is the one `rx.univalence.to-id`
 makes in the reflexive-graph suite (`Cat/Graph/Refl/Base.lagda.md:187`),

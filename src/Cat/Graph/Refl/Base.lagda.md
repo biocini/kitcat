@@ -4,7 +4,7 @@ of edges between them, and a chosen edge at every vertex.
 
 ```agda
 
-{-# OPTIONS --safe --erased-cubical #-}
+{-# OPTIONS --safe --erased-cubical --no-guardedness #-}
 
 module Cat.Graph.Refl.Base where
 
@@ -243,6 +243,21 @@ reflexive graphs".
     component x .reflexive-graph.vtx      = D.vtx x
     component x .reflexive-graph.edge u w = D.edge x x (rx x) u w
     component x .reflexive-graph.rx u     = D.rx u
+```
+
+A *section* of `D` chooses a displayed vertex over every base vertex
+and a displayed edge over every base edge, agreeing with displayed
+reflexivity at the chosen edges. It is the displayed form of `hom`,
+field for field, and the constant display below exhibits that: a
+section of `constant S` is a graph morphism into `S`.
+
+```agda
+
+    record section : Type (v ⊔ v' ⊔ e ⊔ e') where
+      field
+        vmap    : (x : vtx) → D.vtx x
+        emap    : (x y : vtx) (p : edge x y) → D.edge x y p (vmap x) (vmap y)
+        pres-rx : (x : vtx) → emap x x (rx x) ≡ D.rx (vmap x)
 
     is-cov-fibration : Type (v ⊔ v' ⊔ e ⊔ e')
     is-cov-fibration = ∀ x y (p : edge x y) (u : D.vtx x) → is-contr (Σ w ∶ D.vtx y , D.edge x y p u w)
@@ -286,6 +301,24 @@ reflexive graphs".
   constant S .reflexive-graphᴰ.vtx _      = reflexive-graph.vtx S
   constant S .reflexive-graphᴰ.edge _ _ _ u v = reflexive-graph.edge S u v
   constant S .reflexive-graphᴰ.rx u       = reflexive-graph.rx S u
+
+  const-section : ∀ {w z} {S : reflexive-graph w z} → section (constant S) → hom S
+  const-section s .hom.vmap    = section.vmap    s
+  const-section s .hom.emap    = section.emap    s
+  const-section s .hom.pres-rx = section.pres-rx s
+
+  section-const : ∀ {w z} {S : reflexive-graph w z} → hom S → section (constant S)
+  section-const f .section.vmap    = hom.vmap f
+  section-const f .section.emap    = hom.emap f
+  section-const f .section.pres-rx = hom.pres-rx f
+
+  const-section-inv : ∀ {w z} {S : reflexive-graph w z} (f : hom S)
+                    → const-section (section-const f) ≡ f
+  const-section-inv _ = refl
+
+  section-const-inv : ∀ {w z} {S : reflexive-graph w z} (s : section (constant S))
+                    → section-const (const-section s) ≡ s
+  section-const-inv _ = refl
 ```
 
 ## Constructions

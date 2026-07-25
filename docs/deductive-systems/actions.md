@@ -95,6 +95,10 @@ the graph of anything, so its fibration condition is not free. It is
 | `hom a z` | `reflect w ≡ composite⁻ u p` | `is-composable` | `_⨾⁻ p` |
 | `hom x c` | `reflect u ≡ composite⁺ p w` | `is-composable` | `p ⨾⁺_` |
 
+These four are indexed by vertices, and each picks a hand. There is a
+fifth, indexed by edges, which is the only one that sees both;
+[displays.md](displays.md) is about it.
+
 ## Why the variance is forced
 
 A covariant action on coterms over the same graph would be
@@ -115,6 +119,13 @@ different graphs, and since an argument pairs a term at `x` with a
 coterm at `y`, one drawn from each, the pairing becomes heterogeneous
 and any statement mentioning both needs an op-transport before it can
 be stated.
+
+The same move made on `judgment` rather than on either slot succeeds,
+because a judgment consumes both slots and can absorb an edge at each.
+Over `rx.binary-product (rx.op graph) graph` the family transports
+covariantly in one step, so mixed variance is a property of the
+display and not of `judgment`; [mediation.md](mediation.md) works out
+what that base makes visible.
 
 ## The mixed variance is what makes the composites typecheck
 
@@ -163,9 +174,10 @@ stated motivation is characterising identity types of structures with
 mixed variance (`resources/sterling-reflexive-graph-lenses`;
 SOURCE-CHECKED), and `Cat.Graph.Refl.Classify`'s magma case study
 makes the same point, its homomorphism edge being mixed-variance and
-coming from neither biased lens. If `judgment` itself is ever to be
-displayed, rather than its two slots separately, that is the
-formalism it lands in.
+coming from neither biased lens. Displaying `judgment` itself, rather
+than its two slots separately, is that formalism, and the two
+injections it asks for are `inj⁻` and `inj⁺` —
+[displays.md](displays.md).
 
 ## The involution
 

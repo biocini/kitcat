@@ -26,7 +26,7 @@ units, the readback family and every derived identification.
 is-deductive-system-is-prop : is-prop is-deductive-system
 ```
 
-VERIFIED in `Test.SpikeDeductiveSystem`, field by field: the first
+VERIFIED in `Cat.Logic.Base`, field by field: the first
 two components by the tiers' own propositionality, the third as an
 `is-prop→PathP` over the path the unit component supplies. That last
 step is the only place the dependency shows up in a proof.
@@ -41,6 +41,7 @@ is a question about virtual graphs alone.
 ```
     from is-composable      _⨾⁻_, _⨾⁺_          the two compositions
                             reflect-⨾⁻/⁺        their head rewritings
+                            act-⨾⁺, coact-⨾⁻    each action distributes
 
     from is-unital          unit⁻, unit⁺        the two units
                             unit⁻/⁺-absorb      their absorptions
@@ -51,7 +52,17 @@ is a question about virtual graphs alone.
                             units-agree         the hands' units coincide
                             idn-absorb⁻/⁺       idn absorbs, both hands
                             flanks-agree        the one cross-hand fact
+
+    from the bundle         composite⁻-unitr    reflect u ≡ composite⁻ u (idn y)
+                            composite⁺-unitl    reflect u ≡ composite⁺ (idn x) u
+                            unitr⁻              f ⨾⁻ idn y ≡ f
+                            unitl⁺              idn x ⨾⁺ f ≡ f
 ```
+
+Each hand absorbs the chosen edge into the slot its second factor
+enters, and only there, so the `⁻` hand gets a right unit law and the
+`⁺` hand a left one. Neither has the other's. That asymmetry is not a
+gap to be filled — it is what a one-handed composition means.
 
 Everything in the left column is a projection. Nothing on the list is
 a field with laws attached, which is what makes the tiers
@@ -80,13 +91,16 @@ of [stability.md](stability.md) is the elementary form of what
 straightening runs on in `Cat.Graph.Refl.Fibration`; and the exchange
 of hands is `rx.op` with the total opposite on the displays.
 
-One asymmetry is worth keeping in view. Wherever that suite
-hypothesises `rx.is-univalent G` it is asking every fan to be a
-proposition — that every coterm type is one. A deductive system does
-not satisfy this, so the *uniqueness* theorems of `Lens` do not
-transfer even though its vocabulary and its duality machinery do.
-Univalence of the base is the path-object regime, and the theory here
-is deliberately wider.
+One asymmetry is worth keeping in view, and it is narrower than it
+first appears. Wherever that suite hypothesises `rx.is-univalent G` it
+is asking every fan to be a proposition — that every coterm type is
+one. A deductive system does not satisfy this, so no *uniqueness* or
+*totalisation* result of `Lens` reaches it. But the *fiberwise*
+results hypothesise path objects of the components only, and those
+transfer unconditionally; [displays.md](displays.md) draws the line
+and exhibits two univalent displays on the far side of it. Univalence
+of the base is the path-object regime, and the theory here is
+deliberately wider.
 
 ## Outside the theory
 
@@ -94,7 +108,12 @@ is deliberately wider.
 identification of the two composite judgments is an interchange, and
 a virtual graph may admit none, one or many. A deductive system with
 one point of that space is a category; the space itself is where
-braiding and chirality live.
+braiding and chirality live. Both conditions are named in
+`Cat.Logic.Base` so that they can be *stated* without being asserted,
+and interchange delivers the mediation. What kind of structure either
+one is, read through the reflexive-graph layer, is the subject of
+[mediation.md](mediation.md): a mediation is the functoriality a lens
+does not carry.
 
 **Polarity.** The two-handed picture with no interchange is the
 polarised one: in a non-associative category the maps for which
@@ -110,7 +129,11 @@ recording: a duploid's two disciplines are one composition read at
 the two polarities of the middle object, where a deductive system's
 are two operations projected from two fibers.
 
-**Provenance.** The spike modules `Test.SpikeDeductiveSystem`,
-`Test.SpikeUnitCanonical`, `Test.SpikeRxDict` and
-`Test.SpikePerHandUnit` carry the machine-checked development these
-documents present, and remain in the tree for that purpose.
+**Provenance.** The tiers, their propositionality and the derived
+theory above are `Cat.Logic.Base`. The spike modules
+`Test.SpikeDeductiveSystem`, `Test.SpikeUnitCanonical`,
+`Test.SpikeRxDict`, `Test.SpikePerHandUnit`, `Test.SpikeJudgmentLens`
+and `Test.SpikeTwoSided` carry the displays, the lenses and the
+negative results — that the bare pair of readback with its coherence
+is not propositional, and that the unitors consume no coherence — and
+remain in the tree for that purpose.

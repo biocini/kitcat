@@ -8,11 +8,12 @@ compositions, and no truncation anywhere.
 
 These documents lay out the theory as it stands. The mathematics is
 machine-checked; every claim labelled VERIFIED names the module that
-checks it, in the discipline of `docs/provenance.md`. The witnesses
-are the spike modules `Test.SpikeDeductiveSystem`,
-`Test.SpikeUnitCanonical`, `Test.SpikeRxDict` and
-`Test.SpikePerHandUnit`, which stay in the tree as provenance for
-this presentation; the foundation they build on is `Cat.Logic.Type`.
+checks it, in the discipline of `docs/provenance.md`. The foundation
+is `Cat.Logic.Type` and the axioms are `Cat.Logic.Base`; the displays,
+the lenses and the negative results are carried by the spike modules
+`Test.SpikeDeductiveSystem`, `Test.SpikeUnitCanonical`,
+`Test.SpikeRxDict`, `Test.SpikePerHandUnit`, `Test.SpikeJudgmentLens`
+and `Test.SpikeTwoSided`, which stay in the tree as provenance.
 
 ## The documents
 
@@ -20,10 +21,12 @@ this presentation; the foundation they build on is `Cat.Logic.Type`.
 | --- | --- |
 | [virtual-graphs.md](virtual-graphs.md) | Terms, coterms, arguments, judgments; the embedding `reflect`; evaluation and representability; the involution |
 | [actions.md](actions.md) | `act` and `coact` as displayed reflexive graphs on the term and coterm families; why the variance is mixed; the two composite judgments |
-| [composability.md](composability.md) | The first tier: composition as a fiber center, and the slice and coslice as fibrations |
+| [composability.md](composability.md) | The first tier: composition as a fiber center, the slice and coslice as fibrations, and the distributivity of each action |
 | [unitality.md](unitality.md) | The second tier: the unit as a fiber center, its uniqueness, and the canonicity of the chosen edge |
 | [stability.md](stability.md) | The third tier: readback, the flank coherence, and why the coherence must be taken inside a fiber |
 | [the-bundle.md](the-bundle.md) | The three tiers as one propositional predicate, and what the theory looks like from outside |
+| [displays.md](displays.md) | The five displays over the graph; judgments as an edge family and the unbiased lens on it; what the unitors consume; the univalence boundary; sections and the centre |
+| [mediation.md](mediation.md) | The two-sided base, over which `judgment` is covariant; interchange as a cospan; why no display carries it; a mediation as the functoriality a lens lacks |
 
 ## The shape of the theory
 
@@ -64,6 +67,14 @@ composability tier. The two families have *opposite* variance —
 covariant on terms, contravariant on coterms — which is forced by
 which endpoint each is indexed at, and is what gives `judgment` the
 variance profile of `hom`.
+
+Those four displays are indexed by vertices, and a vertex-indexed
+display's edge relates data on one side of the argument, so none of
+them can compare the two hands. The edge-indexed display can, and
+that is the division the last two documents work out: a cross-hand
+statement is an unbiased-lens datum, and the one cross-hand statement
+the theory declines — interchange — turns out not to be one, for a
+reason that is the semi-Segal obstruction seen in lens vocabulary.
 
 ## Names
 
