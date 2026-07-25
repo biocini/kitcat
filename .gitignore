@@ -28,6 +28,7 @@ resources/**/*.sty
 resources/**/*.cls
 resources/**/*.bib
 resources/**/*.bbl
+resources/**/*.json
 resources/**/*.ind
 resources/**/*.aux
 resources/**/*.toc
