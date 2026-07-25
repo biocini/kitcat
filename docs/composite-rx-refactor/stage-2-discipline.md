@@ -121,12 +121,48 @@ is the backend module's name and seat.
 
 ## 2.5 Displaced composition
 
-Delete `comp-pathp` (zero consumers anywhere). Hold the other nineteen
-names under invariant D8 — every one is reachable from green
-`Cat.Depreciated` code ([evidence](evidence.md) census). Stage 4
-releases them; the sole transitive root that outlives Depreciated is
-`comp-pathp₂` via `Core.Path.Exchange`, so any residue is the outcome
-of **decision D9**, not of arithmetic.
+Delete `comp-pathp` (zero consumers anywhere). The other nineteen are
+held in place, and the hold is a contract with a test, not a
+deferral: eighteen of them have no `Core` consumer at all
+([evidence](evidence.md)), existing in `Core.Kan` and
+`Core.Path.Base` solely to serve `Cat.Depreciated`, so leaving them
+unexamined would let a tree this refactor deletes go on shaping the
+namespace it is being deleted from.
+
+**The placement question.** Each held name carries one open question:
+*does the construction have a theoretical placement in the
+disciplined `Core`?* The family displaces the path-composition
+calculus — `cat.fill`/`rfill`/`lcoh`/`rcoh`, `Path.assoc`/`unitl`/
+`commutes`, `HComposite.path`, `pcom.map`, `ap-comp`/`ap-merge` — to
+unary and binary type families. Once 2.1 makes `SysP` a displayed
+fibration the question is concrete: does the name arise as that
+fibration's action on the base construction it displaces — `fillerP`
+and its consequences over a composite — or is it an artifact of the
+ad hoc route it was built along?
+
+**Disposition, per name, before Stage 4 closes.** Exactly two
+outcomes:
+
+- *Placement found* — the construction is reformulated over the
+  disciplined structure, in its principled home, and the displaced
+  form retires. The name need not survive; the mathematics does.
+- *No placement* — it was the deprecated tree's scaffolding, and it
+  is deleted with that tree.
+
+There is no third outcome. A name is not carried into the rebuilt
+`Cat` on the grounds that it already exists, and the disciplined
+structure is not bent to receive one.
+
+**Timing.** The question becomes answerable when 2.1 lands and
+sharpens at Stage 5, when the target shape is fixed; it must be
+answered for every held name before Stage 4 deletes the deprecated
+tree, that being the last moment a consumer exists to check a
+reformulation against. Until then the held names take no new
+consumers.
+
+`comp-pathp₂` is the one name with a `Core` consumer
+(`Core.Path.Exchange`); it faces the same question, and **decision
+D9** settles the module that holds it either way.
 
 ## Acceptance
 

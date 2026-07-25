@@ -213,7 +213,7 @@ the build. The error was reading this survey's own "live" convention,
 which excludes `Cat.Depreciated`, as a deletion licence. It is not
 one while the deprecated tree stands as the porting reference.
 
-**Released when `Cat.Depreciated` retires (19):** everything but
+**Held under the placement contract (19):** everything but
 `comp-pathp`. The holds cascade — `₂-merge-map`, then `₂-merge`, then
 `₂-assoc` with `₂-unique`/`₂-lcoh`/`₂-rcoh` and their
 `₂-fill`/`₂-rfill`; `₁-ap` then `₁`; `₂-map`; and the six above.

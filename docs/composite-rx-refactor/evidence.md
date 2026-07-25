@@ -74,7 +74,14 @@ Per-name, with direct consumers outside the defining module:
 | `pathp-ends` | `Depreciated.Iso` | held |
 
 Under invariant D8 (`Cat.Depreciated` green), **only `comp-pathp` is
-deletable today**. When Stage 4 retires Depreciated, the holds cascade:
+deletable today**; the other nineteen are held under the placement
+contract of [stage-2-discipline](stage-2-discipline.md) §2.5, which
+is what keeps a hold from becoming tenure. Note the asymmetry the
+table makes plain: **eighteen have no `Core` consumer at all**, and
+exist in `Core.Kan` and `Core.Path.Base` only to serve a tree this
+refactor deletes.
+
+When Stage 4 retires Depreciated, the reachability cascades:
 `₂-merge-map` falls, then `₂-merge`, then `₂-assoc` (whose only live
 consumer it was) with its feeders `₂-unique`/`₂-lcoh`/`₂-rcoh` and
 their feeders `₂-fill`/`₂-rfill`; `₁-ap` falls, then `₁`; `₂-map`

@@ -19,19 +19,23 @@ comparisons and the legacy-parity remainder.
 retired, not fixed. Whether anything in it survives unported is
 decision D5.
 
-## What retirement releases
+## What retirement closes
+
+The placement contract (D8; [stage-2-discipline](stage-2-discipline.md)
+§2.5) comes due here — this is the last moment a consumer exists to
+check a reformulation against.
 
 - The nineteen held displaced-composition names
-  ([evidence](evidence.md) census): the holds cascade —
-  `₂-merge-map`, then `₂-merge`, then `₂-assoc` with its feeders
-  `₂-unique`/`₂-lcoh`/`₂-rcoh` and theirs `₂-fill`/`₂-rfill`; `₁-ap`
-  then `₁`; `₂-map`; `₂-commutes`, `₂-unitl`, `₂-over`, `₁-fill`,
-  `₁-over`, `₂-ap`, `pathp-ends`. Residue: `comp-pathp₂` iff
-  `Core.Path.Exchange` lives (decision D9).
+  ([evidence](evidence.md) census) are each disposed of by the
+  contract's two outcomes: reformulated over the disciplined `SysP`
+  in its principled home, or deleted with the tree that consumed it.
+  Reaching Stage 4 with a name neither reformulated nor deleted is
+  the failure the contract exists to prevent — it is how a doomed
+  tree's scaffolding acquires tenure in `Core`.
 - ≈ 300 ms of `Core.Kan`'s cold elaboration and ≈ 430 lines
   (the family), on top of Stage 2.3's sweep.
 - Every other Depreciated-held surface that Stage 2 kept on the
-  invariant's account.
+  invariant's account, under the same test.
 
 ## Acceptance
 
@@ -40,5 +44,6 @@ decision D5.
 - The conservativity comparisons of the design note's step 5 hold
   with `⨾` preserved definitionally through the reshape (its stated
   acceptance test).
-- The Stage 2.5 release executed: the family reduced to the D9
+- The Stage 2.5 contract discharged: every held name reformulated or
+  deleted, none carried on tenure; the family reduced to the D9
   residue, `Core.Kan` re-profiled against the band.

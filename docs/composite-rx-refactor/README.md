@@ -127,10 +127,17 @@ projections; never bridge two constructions), generic lemmas extracted
 rather than re-derived in place, `-Werror` green, commit only on
 instruction.
 
-Proposed invariant, for ratification (decision D8): **`Cat.Depreciated`
-remains green until Stage 4 retires it.** It is green today (59/59
-modules under `src/Cat`) and is the porting reference; Stage 2's
-deletion schedule is computed under this invariant.
+Invariant (decision D8, ruled): **`Cat.Depreciated` remains green
+until Stage 4 retires it, and what `Core` holds on its account
+carries a placement contract.** The tree is green today (59/59 under
+`src/Cat`) and its greenness is instrumental — it is the porting
+reference and the check-against for reformulated constructions, never
+a constraint on `Core`'s shape. Material kept in `Core` because the
+deprecated tree consumes it must therefore answer, per name and
+before Stage 4, whether it has a theoretical placement in the
+disciplined `Core`: reformulated in its principled home if so,
+deleted with the scaffolding if not
+([stage-2-discipline](stage-2-discipline.md) §2.5).
 
 ## What the refactor yields
 

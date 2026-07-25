@@ -6,6 +6,7 @@ they touch are restated to match; until then an item carries the
 decision tag.
 
 Ruled so far: **D2** (the ternary action's home — the backend),
+**D8** (the Depreciated invariant, with a placement contract),
 **N1** (`is-composable`), **N2** (`emb` backend / `reflect` frontend).
 
 ## D1 — Stage 1 scope: the instances
@@ -70,13 +71,26 @@ one in which Tier 3 can ever be stated in `Core.Kan`, and D2's ruling
 strengthens its case — the backend now explicitly carries theory of
 this kind. Blocks: Stage 1.2's module boundaries.
 
-## D8 — the Depreciated invariant
+## D8 — the Depreciated invariant — RULED
 
-Ratify: `Cat.Depreciated` remains green until Stage 4 retires it. It
-is green today (59/59 under `src/Cat`) and is the porting reference;
-Stage 2's deletion schedule — deletable now = `comp-pathp` alone — is
-computed under this invariant. Recommended. Blocks: Stage 2.3/2.5's
-deletion lists if declined.
+**Ruled (Lane, 2026-07-24): the tree stays green until Stage 4, and
+the material held on its account carries a placement contract.**
+
+`Cat.Depreciated` is green today (59/59 under `src/Cat`), and its
+greenness is instrumental: it is the porting reference, and it is
+what a reformulated construction is checked against. It is not a
+constraint on `Core`'s shape. Anything held in `Core` on its account
+therefore carries the test in
+[stage-2-discipline](stage-2-discipline.md) §2.5 — does the
+construction have a theoretical placement in the disciplined `Core`?
+— answered per name before Stage 4 deletes the tree, with exactly two
+outcomes: reformulated in its principled home, or deleted with the
+scaffolding it belonged to.
+
+The rejected framing is a bare hold ("live modules rely on them"),
+which grants the deprecated tree an importance it does not have and
+invites the disciplined structure to be bent at Stage 4 to receive
+names that had merely accumulated tenure.
 
 ## D9 — `Core.Path.Exchange`
 

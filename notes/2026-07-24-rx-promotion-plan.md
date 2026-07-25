@@ -214,10 +214,13 @@ listed alongside it — `comp-pathp₂-commutes`, `-unitl`, `-over`,
 excluded `Cat.Depreciated`; it is not a deletion licence while the
 deprecated tree is the porting reference.
 
-Held until `Cat.Depreciated` retires in Stage 4: the other nineteen.
-When it retires the holds cascade — `₂-merge-map`, then `₂-merge`,
-then `₂-assoc` with `₂-unique`/`₂-lcoh`/`₂-rcoh` and their
-`₂-fill`/`₂-rfill`; `₁-ap` then `₁`; `₂-map`.
+Held until `Cat.Depreciated` retires in Stage 4: the other nineteen —
+under a contract, not a bare hold. Eighteen have no `Core` consumer
+at all, so each must answer before Stage 4 whether it has a
+theoretical placement in the disciplined `Core`: reformulated over
+`SysP` in its principled home if so, deleted with the deprecated tree
+if not, and carried on tenure never. The contract is stated at
+`docs/composite-rx-refactor/stage-2-discipline.md` §2.5.
 
 Surviving root: `comp-pathp₂` alone, via two uses in
 `Core.Path.Exchange` — which is itself imported only by
