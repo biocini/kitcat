@@ -33,7 +33,60 @@ open import Core.Path.Base
 
 open import Cat.Graph.Refl.Type
 open import Cat.Graph.Refl.Base
-open import Cat.Logic.Type
+-- The carrier, inlined: a spike in an in-development layer carries its
+-- own copy of the data it probes, so a change to the layer cannot
+-- silently retune it.
+
+record virtual-graph o h : Type₊ (o ⊔ h) where
+  field
+    ob : Type o
+    hom : ob → ob → Type h
+    idn : (x : ob) → hom x x
+
+  term : ob → Type (o ⊔ h)
+  term x = Σ w ∶ ob , hom w x
+
+  coterm : ob → Type (o ⊔ h)
+  coterm y = Σ v ∶ ob , hom y v
+
+  argument : ob → ob → Type (o ⊔ h)
+  argument x y = term x × coterm y
+
+  var : (a : ob) → term a
+  var a = a , idn a
+
+  covar : (y : ob) → coterm y
+  covar y = y , idn y
+
+  conclusion : ∀ {x y} → argument x y → Type h
+  conclusion γ = hom (γ .fst .fst) (γ .snd .fst)
+
+  judgment : ob → ob → Type (o ⊔ h)
+  judgment x y = (γ : argument x y) → conclusion γ
+
+  field
+    reflect : ∀ {x y} → hom x y → judgment x y
+
+module sequents {o h} (G : virtual-graph o h) where
+  open virtual-graph G
+
+  argue : ∀ {x y} → term x → coterm y → argument x y
+  argue h k = h , k
+
+  intro : ∀ {x y} → hom x y → term y
+  intro {x} f = x , f
+
+  elim : ∀ {x y} → hom x y → coterm x
+  elim {y = y} f = y , f
+
+  eval : ∀ {x y} → judgment x y → hom x y
+  eval {x} {y} α = α (var x , covar y)
+
+  is-representable : ∀ {x y} → judgment x y → Type (o ⊔ h)
+  is-representable = fiber reflect
+
+  normal : ∀ {x y} (f : hom x y) → is-representable (reflect f)
+  normal f = f , refl
 ```
 
 The opposite virtual graph reverses the edges and reads `reflect`
