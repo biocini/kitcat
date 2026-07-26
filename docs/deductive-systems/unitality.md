@@ -1,128 +1,67 @@
 # Unitality
 
-A unit is an edge whose action is the identity action. The tier says
-such an edge exists and is unique — per hand, and without mentioning
-the graph's chosen edge at all.
+Each hand has a tier, and each tier is a contractible fiber of that
+hand's action map. What the two tiers pin is the framing.
+
+## The target
+
+The target is not the second projection. It is the argument half's own
+edge with **one cancellation performed**:
 
 ```agda
-record is-unital : Type (o ⊔ h) where
-  field
-    unit-fiber⁻ : ∀ x → is-contr (fiber (coact-π {x} {x}) snd)
-    unit-fiber⁺ : ∀ x → is-contr (fiber (act-π {x} {x}) snd)
+cell⁻ x γ = act-π   (twist⁻ (γ .fst)) (x , γ .snd)
+cell⁺ x t = coact-π (twist⁺ (t .fst)) (x , t .snd)
+
+is-unital⁻ = ∀ x → is-contr (fiber (coact-π {x} {x}) (cell⁻ x))
+is-unital⁺ = ∀ x → is-contr (fiber (act-π   {x} {x}) (cell⁺ x))
 ```
 
-Recall `coact-π {x} {x} : hom x x → (γ : coterm x) → hom x (γ .fst)`:
-it sends an endo-edge to the map it induces on the coterms at `x`,
-each coterm going to an edge rather than to another coterm. Its
-fiber over `snd` — the map returning a coterm's own edge — is the
-type of pairs `(e , proof that e acts as the identity)`, and the
-field says that type is contractible.
+Each `cell` reads a hand's own twist through the *other* hand, so a
+pending read meets a pending write. It carries one edge and one twist of
+each sign: winding-neutral, and the cancellation is never named as an
+edge of its own — it exists only as the operation of performing it.
 
-The endomorphism is forced here and nowhere else. `snd` inhabits
-`coact-π`'s codomain only when source and target agree, so *acting
-as the identity* is a condition that typechecks for an endo-edge
-alone; the action itself is general.
+The second projection carries no twist at all. A unit sitting over it
+would be a bare twist for which a winding costs nothing, and a bare twist
+is a loop: composing with it must cost, and only the opposite twist can
+take that cost back.
 
-## Why the shape matters
+## The twists are the centres
 
-The naive form of this tier — a chosen unit together with its unit
-laws — is *not* a proposition when homs are untruncated. Capriotti
-and Kraus prove that the type of identity structures is propositional
-exactly under truncation (hom a family of sets for a precategory,
-1-types for a 2-precategory), and state that it is not so in general
-(`resources/capriotti-kraus-semi-segal`, `clean-arxiv.tex:1367`,
-Theorem at `:1373`; SOURCE-CHECKED). Since the library never truncates
-homs, that road is closed.
+VERIFIED (`Test.SpikeFramedCut`, at an arbitrary framing over an
+arbitrary type, no h-level hypothesis):
 
-What survives is a fiber. `is-contr` is a proposition for any type
-whatever, so:
+- `twist⁺-centre`, `twist⁻-centre` — each twist is the centre of the
+  *other* hand's fiber.
+- `twist⁺-unique`, `twist⁻-unique` — and the only edge that sits there.
 
-```agda
-is-unital-is-prop : is-prop is-unital
-```
+Nothing is assumed to place them. Each tier's condition, read at the
+axiom half of its argument, is the flank exchange; the argument half is
+contractible, so it carries everywhere.
 
-VERIFIED in `Cat.Logic.Base`. This is the same discipline
-the library uses elsewhere for unit data: the representable-embedding
-development takes `unital : ∀ {x} → fiber (yon {x}{x}) (λ _ → id)` as
-its field and projects `idn = unital .fst`
-(`reference/representable-embedding/Base.lagda.md:78,123`), and a
-Kraus-style chain shows the corresponding bundled type collapses to
-`is-eqv idn` (`reference/ternary-composition/VirtualAlt.lagda.md:573`).
+So the two tiers make each twist the uniquely determined inverse of the
+other. A future is what a buffer fulfils, and each is the only thing that
+fulfils the other.
 
-## What the tier projects
+## Propositional, and dual
 
-The unit and its absorption are the center's two components:
+VERIFIED (`Cat.Logic.Base`):
 
-```agda
-unit⁻ x = unit-fiber⁻ x .center .fst
-unit⁻-absorb x γ i = unit-fiber⁻ x .center .snd i γ
-    -- coact-π (unit⁻ x) γ ≡ γ .snd
-```
+- `is-unital⁻-is-prop`, `is-unital⁺-is-prop`, and the bundling record
+  `is-unital` with `is-unital-is-prop`.
+- `op-unital⁻`, `op-unital⁺` are both `refl`: the opposite exchanges the
+  hands and the twists, hence the targets, hence the tiers — on the nose.
+  So `op-unital` transports a unitality by swapping its two fields.
 
-and dually `unit⁺`, `unit⁺-absorb`. Absorption is readback-free: it
-comes out of the tier alone, which is what keeps the stability tier
-below from being circular over it.
+## What is left to the framing
 
-Absorption is also the displayed reflexivity of the two displays in
-[actions.md](actions.md). Their vertices and edges exist on a bare
-virtual graph; what a display lacks until this tier is its `rx`.
-Reading the tier that way: **`is-unital` is the assertion that the
-term and coterm actions carry displayed reflexive graph structure**,
-stated as a fiber so that the unit itself is projected rather than
-chosen.
+Whether either twist is a *unit* for its hand's composition is one
+further equation — that the cancellation is the identity — and it is the
+framing's own content, not a consequence of the tiers. VERIFIED
+(`Test.SpikeFramedCut`): `cancels` gives both `trivial⁻` and `trivial⁺`;
+and a unit exists at every framing regardless (`neutral⁻-unitr`,
+`neutral⁺-unitl`), coinciding with the twist exactly when the equation
+holds (`twist-is-neutral⁻`, `twist-is-neutral⁺`).
 
-## Uniqueness
-
-A candidate unit is an edge together with a proof that its action is
-the identity action — that is, an element of the very fiber the tier
-contracts. So contractibility *is* uniqueness, and the identification
-carries the witness, not only the element:
-
-```agda
-unit⁻-unique-σ : ∀ x (e : hom x x) (p : coact-π e ≡ snd)
-               → (e , p) ≡ unit-fiber⁻ x .center
-unit⁻-unique-σ x e p = sym (unit-fiber⁻ x .paths (e , p))
-
-unit⁻-unique x e p = ap fst (unit⁻-unique-σ x e p)   -- e ≡ unit⁻ x
-```
-
-with a pointwise variant `unit⁻-unique-pt` taking the hypothesis as
-`∀ γ → coact-π e γ ≡ γ .snd` and converting by `funext`. All VERIFIED
-in `Cat.Logic.Base`.
-
-The `ap fst`-of-a-contraction move is the one `rx.univalence.to-id`
-makes in the reflexive-graph suite (`Cat/Graph/Refl/Base.lagda.md:187`),
-which recovers a vertex identification as the shadow of a fan
-contraction; here the contracted fiber is the unit fiber instead of a
-fan, and the σ-form keeps what the shadow discards.
-
-## The chosen edge
-
-The tier says nothing about `idn`. That the graph's own reflexive
-edge is *the* unit is a theorem, and readback is what proves it —
-see [stability.md](stability.md). The two statements meet at the
-identity because evaluation at the axiom is the action applied to
-`idn`:
-
-```
-    eval (reflect e)  ≡  coact-π e x (idn x)      definitionally
-```
-
-so a candidate's absorption, instantiated at `idn`, and readback at
-that candidate, are two paths with a shared endpoint. Composing them
-identifies the candidate with `idn`.
-
-## Neutrality is a different condition
-
-An edge is *neutral* when composing with it is an equivalence — in
-horn form, when the relevant outer horns have contractible fillers
-(Capriotti–Kraus, `clean-arxiv.tex:1640`, with the Yoneda-style
-characterisation at `:1674`; SOURCE-CHECKED). Neutrality of `idn` is
-also a proposition, and the library has it in the magmoid setting as
-`is-neutral-is-prop` (`src/Cat/Depreciated/Magmoid/Base.lagda.md:155`).
-
-It is not the same statement as unitality, and it does not replace
-it: neutrality gives *cancellation* — a divisor is unique — while
-what the theory runs on is *absorption*, that the action is the
-identity. The tier above asserts the latter, in the only form that
-stays propositional.
+A framed system therefore has a unit that is not a twist. What the tiers
+pin is the framing; the unit is a separate fiber of the same map.
