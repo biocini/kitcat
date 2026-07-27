@@ -5,7 +5,7 @@ landed, what was verified, what failed, and what it superseded.
 **Newest entry first.**
 
 - **To resume work**, read the latest session log in
-  [`notes/session-logs/`](notes/session-logs/) — that is where
+  [`notes/`](notes/) (`notes/<date>-<slug>.md`) — that is where
   current state, open questions, and next steps live.
 - **To understand what happened**, read down this file.
 - Standing targets and their gates: [`docs/roadmap.md`](docs/roadmap.md).

@@ -1,24 +1,25 @@
-# Elaboration — implicit and explicit arguments
+# Elaboration: implicit and explicit arguments
 
 When a parameter `A` precedes an argument whose type mentions `A`, is
-`A` implicit? The gain from hiding it is that use sites stop restating
-what the later argument already says; the cost is that the elaborator
-must recover it, and where recovery fails the failure is a metavariable
-report at the call site rather than a type error at the mistake.
+`A` implicit? The gain from hiding it: use sites stop restating what
+the later argument already says. The cost: the elaborator must
+recover it. Where recovery fails, the failure is a metavariable
+report at the call site, not a type error at the mistake.
 
-The answer is not a matter of taste. **A parameter is implicit exactly
-when every use site recovers it**, and recoverability is decided by how
-the later argument's type reduces — which is a fact about the code,
-testable in a scratch module in under a minute. Inconsistency is worse
-than either choice uniformly applied: a caller cannot hold "sometimes
-inferable" in their head.
+The answer is not a matter of taste. **A parameter is implicit
+exactly when every use site recovers it.** How the later argument's
+type reduces decides recoverability. That is a fact about the code,
+testable in a scratch module in under a minute. Inconsistency is
+worse than either choice uniformly applied: a caller cannot hold
+"sometimes inferable" in their head.
 
 ## The three tiers
 
-**Tier 1 — record-headed.** The parameter sits in a parameter position
-of a record or data type that *heads* a later explicit argument's type.
-Unification solves it from that argument's type before anything else is
-checked, in inferring and checking position alike. **Implicit.**
+**Tier 1, record-headed.** The parameter sits in a parameter position
+of a record or data type that *heads* a later explicit argument's
+type. Unification solves it from that argument's type, before any
+other checking, in inferring and checking position alike.
+**Implicit.**
 
 ```agda
 module _ {o h} {C : category o h} (D : categoryᴰ C o' h') where
@@ -26,106 +27,110 @@ module _ {o h} {C : category o h} {M : monoidal C} (B : braided M) where
 ```
 
 The chain rule follows: in a telescope of dependent structures, the
-deepest one the declaration is *about* is explicit and every ancestor
+deepest one the declaration is *about* is explicit. Every ancestor
 recoverable from it is implicit.
 
-**Tier 2 — Π-domain.** The parameter is the domain of a later explicit
-argument's function type — `B : A → Type ℓ'`, or a synonym unfolding to
-one. Rigid, so it solves when the argument arrives as a term with a
-declared type: a named definition, a variable, a projection. It does
-**not** solve when the argument is a bare lambda, because the domain
-must be known to check the lambda, and the result type cannot rescue it
-if that type unfolds and buries the parameter under projections.
+**Tier 2, Π-domain.** The parameter is the domain of a later explicit
+argument's function type: `B : A → Type ℓ'`, or a synonym that
+unfolds to one. Rigid, so it solves when the argument arrives as a
+term with a declared type: a named definition, a variable, a
+projection. It does **not** solve when the argument is a bare
+lambda. The checker must know the domain to check the lambda, and
+the result type cannot rescue it if that type unfolds and buries the
+parameter under projections.
 
 So the tier splits on how call sites actually supply the argument. A
-family that is always named may hide its index; one that arrives as a
-lambda may not.
+family that always arrives named may hide its index. One that
+arrives as a lambda may not.
 
-**Tier 3 — projection-reached.** The parameter is reachable only through
-a field projection. No unifier solves `record.field ?G ≐ X`, because
-projections are not injective. **Explicit, always.**
+**Tier 3, projection-reached.** The parameter is reachable only
+through a field projection. No unifier solves `record.field ?G ≐ X`,
+because projections are not injective. **Explicit, always.**
 
-This is the tier that catches structure-indexed families. A type synonym
-like `vfam G w z = reflexive-graph.vtx G → …` looks as though it
-mentions `G`, but it unfolds to a function type whose domain is a stuck
-projection, so a family never determines its base.
+This is the tier that catches structure-indexed families. A type
+synonym like `vfam G w z = reflexive-graph.vtx G → …` looks as
+though it mentions `G`, but it unfolds to a function type whose
+domain is a stuck projection. A family therefore never determines
+its base.
 
 **No principal argument.** A declaration whose hypotheses are all
-unfolding predicates — `is-univalent G → is-path-objects B → is-prop
-(structure G B)` — has nothing to recover from and keeps its parameters
-explicit, even when its neighbours hide theirs.
+unfolding predicates (`is-univalent G → is-path-objects B → is-prop
+(structure G B)`) has nothing to recover from. It keeps its
+parameters explicit, even when its neighbors hide theirs.
 
 ## Levels
 
-Levels follow the same rule (ruled 2026-07-13 for `Level`, and general
-since): a `Level` is implicit exactly when a later explicit argument's
-type determines it by unification — `ob : Type o` determines `o` — and
-a level occurring only in field types, or only in the record's own
-sort, is explicit.
+Levels follow the same rule (ruled 2026-07-13 for `Level`, and
+general since): a `Level` is implicit exactly when a later explicit
+argument's type determines it by unification (`ob : Type o`
+determines `o`). A level that occurs only in field types, or only in
+the record's own sort, is explicit.
 
-A definition body that happens to solve the meta is not inference. The
-signature must stand alone.
+A definition body that happens to solve the meta is not inference.
+The signature must stand alone.
 
-Levels lead the signature. Quantifying over `Level` lands in `Setω`,
-whose inhabitants cannot be paired or passed to level-polymorphic
-combinators, so a level-leading telescope keeps every partial
-application small.
+Levels lead the signature. Quantifying over `Level` lands in `Setω`.
+Nothing pairs a `Setω` inhabitant or passes it to a
+level-polymorphic combinator. A level-leading telescope keeps every
+partial application small.
 
-The symptom of getting this wrong is visible in the source: a use site
-that writes `f {w = w} {z = z} x` is reporting that `w` and `z` were
-never inferable.
+The symptom is visible in the source: a use site that writes
+`f {w = w} {z = z} x` reports that `w` and `z` were never inferable.
 
 ## Endpoints
 
-Edge-indexed signatures are the same question one level down: `{x y}`
-before `(p : edge x y)`. In a wild-category or reflexive-graph setting
-this is the common case, and the answer is less obvious than it looks.
+Edge-indexed signatures are the same question one level down:
+`{x y}` before `(p : edge x y)`. In a wild-category or
+reflexive-graph setting this is the common case, and the answer is
+less obvious than it looks.
 
-**Whether an implicit endpoint solves is a property of the base, not of
-the signature.** A structure's `edge` field reduces whenever the
-structure is concrete — the same transparency that carries definitional
-unit laws — so unification meets the *reduced* edge type, and the
-endpoint survives only if that type mentions it in a solvable position.
+**Whether an implicit endpoint solves is a property of the base, not
+of the signature.** A structure's `edge` field reduces whenever the
+structure is concrete (the same transparency that carries
+definitional unit laws). Unification therefore meets the *reduced*
+edge type. The endpoint survives only if that type mentions it in a
+solvable position.
 
-Base constructions divide accordingly. Those that keep their endpoints
-in rigid or Miller-pattern position support implicit endpoints; those
-that discard an endpoint, bury it under a transport, or reindex it
-through a substitution do not. Totals and comprehensions inherit the
-failure, which means the constructions a library builds *on top of* its
-base are usually the ones where inference breaks — while the primitive
-bases, where the convention gets designed and tested, are usually the
-ones where it works.
+Base constructions divide accordingly. Those that keep their
+endpoints in rigid or Miller-pattern position support implicit
+endpoints. Those that discard an endpoint, bury it under a
+transport, or reindex it through a substitution do not. Totals and
+comprehensions inherit the failure. The constructions a library
+builds *on top of* its base are therefore usually the ones where
+inference breaks. The primitive bases, where the convention gets
+designed and tested, are usually the ones where it works.
 
 Two consequences worth stating, because neither is guessable from a
 signature:
 
-- The failure is **asymmetric**. A base that reindexes only its target
-  leaves the source recoverable, so of two dual operations over the same
-  structure, one elaborates and the other does not. Nothing in the types
-  discloses which.
-- Making `edge` opaque would fix it at the root and is not available
-  where definitional unit laws rest on that transparency. Explicit
-  endpoints are the only lever.
+- The failure is **asymmetric**. A base that reindexes only its
+  target leaves the source recoverable. Of two dual operations over
+  the same structure, one elaborates and the other does not. Nothing
+  in the types discloses which.
+- An opaque `edge` would fix it at the root, but that move is not
+  available where definitional unit laws rest on the transparency.
+  Explicit endpoints are the only lever.
 
-So: **the edge-indexed API names endpoints explicitly.** Endpoints stay
-implicit only where another argument pins them rigidly — a displayed
-reflexivity datum pinned by `vtx x`, or an operation whose argument is a
-*path*, which is rigid in its endpoints at every base.
+So: **the edge-indexed API names endpoints explicitly.** Endpoints
+stay implicit only where another argument pins them rigidly: a
+displayed reflexivity datum pinned by `vtx x`, or an operation whose
+argument is a *path*, rigid in its endpoints at every base.
 
-A field additionally cannot do otherwise: a type-synonym field
-auto-introduces its implicits and cannot be re-bound by name, so
-implicit endpoints are unusable in a copattern definition regardless of
-inference.
+A field additionally cannot do otherwise. A type-synonym field
+auto-introduces its implicits, and nothing re-binds them by name.
+Implicit endpoints are therefore unusable in a copattern definition,
+regardless of inference.
 
-Explicitness here also surfaces content that implicitness absorbs. An
-opposite-category or total-opposite operation that reads as an identity
-with implicit endpoints reveals its transposition once they are named —
-`f x y p` defined as `g y x p`. That is information, not noise.
+Explicitness here also surfaces content that implicitness absorbs.
+An opposite-category or total-opposite operation that reads as an
+identity with implicit endpoints reveals its transposition once the
+endpoints appear: `f x y p` defined as `g y x p`. That is
+information, not noise.
 
 ## Deciding a case
 
-Do not reason about the unifier; ask it. Both tests are a scratch module
-in `Test/` and cost a minute.
+Do not reason about the unifier. Ask it. Both tests are a scratch
+module in `Test/` and cost a minute.
 
 **Parameter:** restate the signature with the parameter implicit,
 delegating to the current form, and apply it at a real use site.
@@ -138,8 +143,8 @@ consumer' {G = G} {B} = consumer G B
 _ = consumer' some-named-structure some-hypothesis   -- solves, or does not
 ```
 
-**Endpoint:** instantiate at a *constructed* base — a total, a
-comprehension, a quotient — not at the primitive one.
+**Endpoint:** instantiate at a *constructed* base (a total, a
+comprehension, a quotient), not at the primitive one.
 
 ```agda
 src-of : ∀ {v e} (G : base v e) → ∀ {x y} → edge G x y → vtx G
@@ -149,24 +154,25 @@ _ = src-of SomeTotal an-edge      -- unsolved metavariable ⇒ explicit
 ```
 
 An `UnsolvedMetaVariables` or `UnsolvedConstraints` result is the
-answer. Read the constraint before concluding: `?y.snd (f x) = g (f x)`
-blocked on `?y.snd` says the endpoint appears applied to non-variable
-arguments, which is not a Miller pattern and never will be.
+answer. Read the constraint before concluding: `?y.snd (f x) = g (f
+x)` blocked on `?y.snd` says the endpoint appears applied to
+non-variable arguments. That is not a Miller pattern and never will
+be.
 
 ## Why uniformity is the point
 
-A signature that is usable at some instantiations and not others is
-worse than one that is uniformly verbose, because the failure is
-deferred to whoever instantiates it and reported as a metavariable
-rather than a mistake. Library code checked under an abstract parameter
-elaborates fine and proves nothing about the API: the green typecheck
-and the caller's experience are different facts. Where they can diverge,
-prefer the form that makes them agree.
+A signature usable at some instantiations and not others is worse
+than one uniformly verbose. The failure lands on whoever
+instantiates it, as a metavariable rather than a mistake. Library
+code checked under an abstract parameter elaborates fine and proves
+nothing about the API. The green typecheck and the caller's
+experience are different facts. Where they can diverge, prefer the
+form that makes them agree.
 
 ## Worked example
 
 `notes/2026-07-24-refl-inference-policy.md` applies both axes to
 `Cat.Graph.Refl` in full: the per-base endpoint-retention table, the
 tier assignment for every construction in the suite, and the probe
-behind each. That document is the worked application; this one is the
-rule.
+behind each. That document is the worked application. This one is
+the rule.

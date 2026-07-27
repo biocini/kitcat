@@ -9,11 +9,13 @@ __pycache__/
 .pi/tasks
 .pi/hindsight
 
-# notes/plans and notes/research are local working memory (run ledgers,
-# research intermediates); the durable session bridge that IS tracked is
-# notes/session-logs/ + CHANGELOG.md.
-/notes/plans/
-/notes/research/
+# outputs/ dot-directories are local working memory (run plans, research
+# intermediates, prove-loop state); the durable layer that IS tracked is
+# outputs/*.md finals + provenance sidecars, papers/, notes/, CHANGELOG.md.
+/outputs/.plans/
+/outputs/.drafts/
+/outputs/.notes/
+/outputs/.prove/
 
 # resources/: vendored source documents and derived forms are local-only;
 # only the entry README (citation, hash, line-anchored map) is tracked.

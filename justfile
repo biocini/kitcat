@@ -79,7 +79,6 @@ stats:
 # Run all lint checks
 lint *checks:
     bin/lint {{checks}}
-
 # Verify resources/ custody: recorded hashes vs vendored artifacts
 # (--remote also reports latest arXiv versions for drift)
 resources-verify *flags:

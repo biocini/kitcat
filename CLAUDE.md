@@ -20,7 +20,10 @@ them.
 
 Style law: match the local idiom of the module you are editing —
 `Core.*` is the exemplar, the guidelines codify its mechanics — and
-escalate style questions rather than improvising.
+escalate style questions rather than improvising. Prose follows the
+STE register: the `writing` skill is the normative statement, and
+[prose-and-comments](docs/guidelines/prose-and-comments.md) states
+the scope.
 
 ## Build
 
@@ -66,7 +69,7 @@ Dependencies: Agda builtins only — no agda-stdlib, no cubical library.
 | `just profile <Mod>` | Elaboration time, cold — `--total [N]`, `--internal`, `--warm` |
 | `just new <Mod> [--aggregator]` | New module with correct boilerplate |
 | `just mv Old New [--dry-run]` | Move/rename, updating references |
-| `just lint [width\|flags\|frontmatter\|changed]` | Lint; `changed` is the pre-commit gate |
+| `just lint [width\|flags\|prose\|frontmatter\|changed]` | Lint; `changed` is the pre-commit gate |
 | `just resources-verify [--remote]` | Custody check on `resources/` |
 | `just stats` / `just wip` | Inventories |
 | `just html` / `just html-serve` | Docs site |
@@ -90,7 +93,7 @@ decisions; `just check-tree` is the whole-library check meanwhile, and
   explicit authorization. Library modules are `--safe`.
 - **No external library imports.**
 - **Never truncate homs.** Categories here are wild by design; do not
-  pursue or assume hom-set conditions. Load-bearing, not aesthetic — see
+  pursue or assume hom-set conditions. A working constraint, not an aesthetic one — see
   the op-involution regress, `docs/gloss.md` T12.
 - **Commit only when Lane says to commit.**
 
@@ -104,6 +107,13 @@ decisions; `just check-tree` is the whole-library check meanwhile, and
   VERIFIED means machine-checked here (name the module); SOURCE-CHECKED
   means the opened document states the claim; literature claims are
   CONJECTURED.
-- `notes/` — design notes and working records, one file per arc.
+- `.euler/TOOLCHAIN.md` — the toolchain block: check commands,
+  obligation and unsafe-marker tokens, library layout. Field contract
+  in `.claude/TOOLCHAIN.example.md`.
+- `outputs/`, `papers/` — research/formalization reports with
+  `.provenance.md` sidecars, and paper-style drafts. Produced by the
+  euler workflows (`.claude/` commands, skills, agents); their contract
+  is `.claude/rules/euler.md`.
+- `notes/` — session logs (`<date>-<slug>.md`).
 - `resources/` — vetted sources; cite by entry. `resources/README.md` is
   the format authority.

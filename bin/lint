@@ -19,6 +19,7 @@ cd "$(git rev-parse --show-toplevel)"
 PROSE_WIDTH=72
 CODE_WIDTH=100
 FRONTMATTER_WIDTH=100
+PROSE_MAX_PER100=2.0
 checks=()
 changed_mode=false
 while [ $# -gt 0 ]; do
@@ -26,8 +27,13 @@ while [ $# -gt 0 ]; do
         --check) shift; checks+=("$1"); shift ;;
         --changed|changed) changed_mode=true; shift ;;
         -h|--help)
-            echo "Usage: lint [width] [flags] [authoring] [frontmatter] [changed]"
-            echo "  No args      run width + flags over the whole src/ tree."
+            echo "Usage: lint [width] [flags] [prose] [authoring] [frontmatter] [changed]"
+            echo "  No args      run width + flags over the whole src/ tree,"
+            echo "               and prose over docs/."
+            echo "  prose        STE register gate: every docs/ .md file must"
+            echo "               score <= ${PROSE_MAX_PER100} violations per 100 words"
+            echo "               (the writing skill's bundled linter). In"
+            echo "               changed mode, only the changed docs/ files."
             echo "  changed      non-regression gate: only files modified vs"
             echo "               HEAD, and width only on added/modified lines"
             echo "               (the whole tree carries a known width baseline"
@@ -45,7 +51,7 @@ while [ $# -gt 0 ]; do
     esac
 done
 
-[ ${#checks[@]} -eq 0 ] && checks=(width flags)
+[ ${#checks[@]} -eq 0 ] && checks=(width flags prose)
 
 # The lintable set, resolved once: an enumeration failure aborts here
 # and an empty set is an error — the gate must never pass by having
@@ -207,6 +213,36 @@ run_flags() {
             issues=$((issues + 1))
         fi
     done <<< "$files"
+}
+
+# ── prose check (the STE register gate over docs/) ───────────
+# Full mode gates every docs/ .md file; changed mode only the files
+# modified vs HEAD (tracked edits + untracked new files). The score
+# comes from bin/prose-lint; the threshold is PROSE_MAX_PER100.
+run_prose() {
+    echo "── prose ──"
+    local prose_files
+    if $changed_mode; then
+        prose_files="$(
+            { git diff --name-only --diff-filter=d HEAD -- 'docs/*.md' 'docs/**/*.md'
+              git ls-files --others --exclude-standard -- 'docs/*.md' 'docs/**/*.md'
+            } | sort -u)"
+        [ -z "$prose_files" ] && return 0
+    else
+        prose_files="$(fd -e md . docs/ | sort)"
+        if [ -z "$prose_files" ]; then
+            echo "lint: no .md files under docs/ for the prose check" >&2
+            exit 1
+        fi
+    fi
+    local out
+    if ! out="$(printf '%s\n' "$prose_files" | xargs .claude/skills/writing/prose-lint.py --max-per100 "$PROSE_MAX_PER100")"; then
+        while IFS= read -r ln; do
+            case "$ln" in
+                *FAIL*) echo "  ${ln}"; issues=$((issues + 1)) ;;
+            esac
+        done <<< "$out"
+    fi
 }
 
 # ── authoring check (the skills tree's own rules) ────────────
@@ -411,6 +447,7 @@ for check in "${checks[@]}"; do
     case "$check" in
         width) run_width ;;
         flags) run_flags ;;
+        prose) run_prose ;;
         authoring) run_authoring ;;
         frontmatter) run_frontmatter ;;
         *) echo "Unknown check: $check" >&2; exit 1 ;;
