@@ -1,15 +1,24 @@
 # Cat.Logic — open items
 
-State as of 2026-07-27. `Cat.Logic.Base` and `Cat.Logic.Type`
-typecheck. Nothing committed. The docs under
-`docs/deductive-systems/` contradict the compiled tree in places
-listed below.
+State as of 2026-07-27. `src/Cat` typechecks, 62 modules. `src/Test`
+typechecks apart from the two `Mag` spikes, which the `Mag.Type`
+rewrite broke. Lint is clean.
+
+Committed at `b979bb6` on branch `cat-logic-polarity`, which is the
+rename and the docs together. Two commits sit on top of it: `618184e`
+adds the agent suite, and `7dc65e8` applies the STE register across
+the docs and adds a prose check to `bin/lint`. The tree is otherwise
+clean; `src/Mag/` and four `Test` spikes are still untracked.
+
+Prose is now gated. `just lint prose` reports 509 issues across the
+repository and none in `src/Cat/Logic` or `src/Mag`. The `writing`
+skill is the normative statement and
+`docs/guidelines/prose-and-comments.md` states the scope. Keep new
+prose in that register.
 
 ## Done
 
-The rename pass is applied and `src/Cat` typechecks (62 modules), as
-does `src/Test` apart from the two `Mag` spikes broken by the
-`Mag.Type` rewrite. Lint clean.
+The rename pass is applied.
 
 - `is-unital±` → `is-invertible±`, with `is-invertible-is-prop`,
   `op-invertible±`, and the `is-deductive-system` field renamed
@@ -158,11 +167,13 @@ entirely. Likely its own session.
 
 ## Resources
 
-- `resources/munch-maccagnoni-duploids/` — vendored 2026-07-27, hash
-  verified, **PROVISIONAL, not audited**, so it supports no
-  load-bearing citation yet. The duploid dictionary above leans on it
-  and on `mangel-classical-notions`, which is also unaudited. Both
-  need statement audits before any of this reaches the ledger.
+- `resources/munch-maccagnoni-duploids/` — vendored 2026-07-27,
+  committed at `0cf05bf`, hash verified. **PROVISIONAL, not audited**,
+  so it supports no load-bearing citation yet. The duploid dictionary
+  above leans on it and on `mangel-classical-notions`, which is also
+  unaudited. Both need statement audits before any of this reaches the
+  ledger. Nothing in the tree cites either yet, and nothing should
+  until the audits are run.
 - Worth vendoring: Melliès, *Asynchronous Games 3*. It is the only
   place the future/buffer gloss could be source-checked at all —
   *future*, *buffer*, and any treatment of asynchrony, buffering,
