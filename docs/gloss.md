@@ -338,6 +338,107 @@ review (2026-07-13). The Test/ citation is Lane's granted
 exception to the promotion-trigger rule (2026-07-13): the spike is
 retained at any future Test/ sweep while this entry stands.
 
+## 7. The framed deductive-system theory
+
+Entries in this section are machine-checked in the working tree and not yet
+commit-pinned; each ✅ upgrades when the tree lands. The theory is documented
+in `docs/deductive-systems/`.
+
+**T25 — Propositionality of every tier and of the package.** Each of
+`is-stable`, `is-invertible⁻`/`is-invertible⁺`/`is-invertible` is a proposition
+outright; `is-composable` is one over the stability it is indexed by;
+and `is-deductive-system` is a proposition, its composability
+component filled by a path over the moving stability. Hence
+`deductive-system` splits as one structure field and one property
+field, and `opᴰ` is an involution — `opⱽ-invol` and `op-eval` are
+`refl`, and `opᴰ-invol` is `refl` on the carrier with the axioms
+component by propositionality.
+✅ `Cat.Logic.Base` (2026-07-25).
+
+**T26 — The framing is two reflexive graphs.** A twist is a
+reflexivity datum, so a virtual graph carries two reflexive-graph
+structures on one underlying graph. Fans and cofans name no
+reflexivity, so the term and coterm families are read off either; the
+*centres* split, `var` being the cofan centre of the negative graph
+and `covar` the fan centre of the positive one, so the axiom pairs one
+from each. Univalence is framing-blind (`univalence-shared` is
+`refl`), and the opposite is the swap of the two graphs composed with
+`rx.op` (`op-graph⁺`, `op-graph⁻`, both `refl`). The two-sided base is
+`rx.binary-product (rx.op graph⁻) graph⁺`, whose reflexive edge **is**
+the framing — at a diagonal vertex, the axiom rule as one edge.
+✅ `Cat.Logic.Graph` (2026-07-25); every claim `refl`.
+
+**T27 — Each family is a lens over the graph of the twist it does not hold, and each cut
+is a fibration.** A lens states its unitor at its base's reflexive
+edge, and each action is stated at the twist its own axiom half
+does not carry: `term-lens` is oplax covariant over `graph⁻`,
+`coterm-lens` lax contravariant over `graph⁺`, each unitor that side's
+cancellation. Both displays are univalent with no condition on the
+base, the families being discrete. The coslice display takes its
+displayed reflexivity from the cancellation alone, and its covariant
+lifting condition is exactly stability (uniqueness) plus the coterm cut
+(existence), with `push` the composition and `lift` the head-rewriting
+witness, both on the nose. The absorptions consume no tier and are
+stated over the pins and the cancellation alone.
+✅ `Cat.Logic.Display`, `Cat.Logic.Base` (`absorption`) (2026-07-25).
+
+**T28 — Stability is an embedding condition.** `is-stable` is
+`reflect` having propositional fibers at every pair of objects
+(`stable-is-embedding` is `refl`). Over hom-sets the judgments form
+sets, so the tier reduces to injectivity of transmission — the edge
+surrounded by one twist of each sign (`stable-from-hom-sets`).
+✅ `Cat.Logic.Base` (2026-07-25). Discharges the shape of the
+truncated-regime obligation in
+`notes/2026-07-22-deductive-system-design.md` (O4).
+
+**T29 — Interchange is a cospan coherence.** Over the two-sided base
+each composite judgment is the transport with one leg held at its
+twist, applied to one factor's reflection; the two land in the fiber at
+the outer pair from distinct vertices with legs pointing the same way.
+Agreement of the two cuts is agreement of that cospan's two
+pushforwards, both directions. The two-sided transport composes, but
+onto a base edge taking one hand's composition on one coordinate
+and the other's on the other, so no single composition makes the
+lens functorial: what a mediation buys, read here, is that
+functoriality.
+✅ `Cat.Logic.Display` (`push-is-composite⁻`/`⁺`, `cospan-from-cuts`,
+`cuts-from-cospan`, `bipush-comp`) (2026-07-25).
+📐 that no display of `judgment` can carry the agreement as an edge —
+a displayed edge relates data over the two ends of one base edge, and
+the reflections compared sit at distinct vertices; a base making them
+diagonal would make composability reflexive. The argument, not a
+formalized impossibility.
+
+**T30 — Framing collapse is weaker than mediation.** The derivation of
+`twists-agree` uses a left and a right unit for *one* composition, so
+it goes through on either missing unit law alone, with no interchange:
+`collapse⁺`, `collapse⁻`. Since a mediation supplies those laws, each
+hypothesis is weaker as a statement than interchange, and two collapses
+separate — the twists becoming one edge, and the compositions becoming
+one operation. Interchange gives both; a missing unit law gives only
+the first.
+✅ `Cat.Logic.Base` (2026-07-25). Corrects the "nothing between"
+reading in `docs/deductive-systems/mediation.md`.
+⚠️ whether the two collapses are separable is OPEN. In the group model
+of T31 they are equivalent, and the reason localizes the search: there
+`reflect` is an associative product, so the cuts differ only by the
+junction's twist. A separating model needs a `reflect` not of that
+form.
+
+**T31 — The framed package on wild fans, with both boundaries
+arithmetic.** An abelian group read as a one-object virtual graph,
+framed by an arbitrary *pair* of its elements, satisfies every tier.
+A fan there is the whole group, so the underlying graph is a path
+object only when the group is a proposition (`univalent→prop`) — the
+first framed model off that boundary. The framing is free, and two
+conditions become equations in the group: the cancellation is
+`t⁻ · t⁺ ≡ e`, and agreement of the two cuts is `t⁻ ≡ t⁺`, so the two
+cuts differ by exactly the framing's own discrepancy. Holding both
+forces each element to be its own inverse.
+✅ `Test.FramedGroup` (2026-07-25). Placement open: the model sits in
+`Test/` beside the path-groupoid witness; whether framed models get a
+library home is undecided.
+
 ## Standing results from earlier strata (pre-2026-07-10)
 
 - **Squaring effect** (ternary idempotency ⇒ `e² = 1`;

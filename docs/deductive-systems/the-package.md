@@ -4,7 +4,7 @@
 record is-deductive-system (G : virtual-graph o h) where
   field stable     : is-stable G
         composable : is-composable G stable
-        unital     : is-unital G
+        unital     : is-invertible G
 ```
 
 Stability comes first because the composability field is indexed by it:
@@ -36,7 +36,7 @@ opᴰ D .axioms = op-axioms _ (axioms D)
 ```
 
 where `op-axioms` assembles `op-stable`, `op-composable` and
-`op-unital` — the first two by reindexing along the exchange of argument
+`op-invertible` — the first two by reindexing along the exchange of argument
 halves, the last by swapping its two fields, since the two unit tiers
 exchange definitionally.
 

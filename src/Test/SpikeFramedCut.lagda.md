@@ -5,11 +5,11 @@ Representability is total there, so every tier of a deductive system
 holds without any condition on the framing — the framing is free and the
 package is inhabited untruncated.
 
-What the framing then decides is where the units are. The two twists are
-the tiers' centres unconditionally; whether either is a unit for its
-hand's composition is one equation, and a unit exists whether or not
-that equation holds. So a neutral unit and a nontrivial framing are not
-in competition: the neutral unit is simply not a twist.
+What the framing then decides is where the twists sit. Each hand's unit
+is that hand's tier's own centre and exists at every framing; the twists
+are the centres of the cell fibers instead, and whether the two centres
+coincide is one equation. So a neutral unit and a nontrivial framing are
+not in competition: the neutral unit is simply not a twist.
 
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
@@ -102,30 +102,30 @@ module path {u} {A : Type u} (t⁺ t⁻ : (x : A) → x ≡ x) where
   PG-stable : is-stable PG
   PG-stable α = is-contr→is-prop (eqv-fibers reflect-equiv α)
 
-  PG-composable⁻ : is-composable⁻ PG
-  PG-composable⁻ f g = eqv-fibers reflect-equiv (composite⁻ PG f g) .center
+  PG-composable⁻ : is-composable⁺ PG
+  PG-composable⁻ f g = eqv-fibers reflect-equiv (composite⁺ PG f g) .center
 
-  PG-composable⁺ : is-composable⁺ PG
-  PG-composable⁺ f g = eqv-fibers reflect-equiv (composite⁺ PG f g) .center
+  PG-composable⁺ : is-composable⁻ PG
+  PG-composable⁺ f g = eqv-fibers reflect-equiv (composite⁻ PG f g) .center
 
-  PG-unital⁻ : is-unital⁻ PG
-  PG-unital⁻ x = eqv-fibers (coact-π-equiv x) (cell⁻ PG x)
+  PG-unital⁻ : is-invertible⁻ PG
+  PG-unital⁻ x = eqv-fibers (coact-π-equiv x) snd
 
-  PG-unital⁺ : is-unital⁺ PG
-  PG-unital⁺ x = eqv-fibers (act-π-equiv x) (cell⁺ PG x)
+  PG-unital⁺ : is-invertible⁺ PG
+  PG-unital⁺ x = eqv-fibers (act-π-equiv x) snd
 
   PG-composable : is-composable PG PG-stable
-  PG-composable .is-composable.contr⁻ = PG-composable⁻
-  PG-composable .is-composable.contr⁺ = PG-composable⁺
+  PG-composable .is-composable.contr⁺ = PG-composable⁻
+  PG-composable .is-composable.contr⁻ = PG-composable⁺
 
-  PG-unital : is-unital PG
-  PG-unital .is-unital.fiber⁻ = PG-unital⁻
-  PG-unital .is-unital.fiber⁺ = PG-unital⁺
+  PG-unital : is-invertible PG
+  PG-unital .is-invertible.fiber⁻ = PG-unital⁻
+  PG-unital .is-invertible.fiber⁺ = PG-unital⁺
 
   PG-deductive : is-deductive-system PG
   PG-deductive .is-deductive-system.stable     = PG-stable
   PG-deductive .is-deductive-system.composable = PG-composable
-  PG-deductive .is-deductive-system.unital     = PG-unital
+  PG-deductive .is-deductive-system.invertible     = PG-unital
 
   PG-system : deductive-system u u
   PG-system .deductive-system.graph  = PG
@@ -134,14 +134,21 @@ module path {u} {A : Type u} (t⁺ t⁻ : (x : A) → x ≡ x) where
   open tower PG-stable PG-composable⁻ PG-composable⁺
 ```
 
-## The twists are the centres
+## The twists are the cells' centres
 
-Each tier's condition read at the axiom half of its argument is the
-flank exchange, so `pcom.lr` places each twist in the other hand's
-fiber, and the argument half being contractible carries it everywhere.
-The framing is not consulted.
+Each action map being an equivalence makes its fiber over the cell
+contractible as well. Read at the axiom half of the argument, membership
+of that fiber is the flank exchange, so `pcom.lr` places each twist in
+the other hand's cell fiber and the argument half being contractible
+carries it everywhere. The framing is not consulted.
 
 ```agda
+  cell-fiber⁻ : ∀ x → is-contr (fiber (coact-π {x} {x}) (cell⁻ PG x))
+  cell-fiber⁻ x = eqv-fibers (coact-π-equiv x) (cell⁻ PG x)
+
+  cell-fiber⁺ : ∀ x → is-contr (fiber (act-π {x} {x}) (cell⁺ PG x))
+  cell-fiber⁺ x = eqv-fibers (act-π-equiv x) (cell⁺ PG x)
+
   pin⁻-axiom : ∀ x → coact-π (t⁺ x) (x , refl) ≡ cell⁻ PG x (x , refl)
   pin⁻-axiom x = sym (pcom.lr (t⁻ x) (t⁺ x))
 
@@ -158,19 +165,19 @@ The framing is not consulted.
     subst (λ s → act-π (t⁻ x) s ≡ cell⁺ PG x s)
           (term-contr x .paths t) (pin⁺-axiom x)
 
-  twist⁺-centre : ∀ x → PG-unital⁻ x .center .fst ≡ t⁺ x
-  twist⁺-centre x = ap fst (PG-unital⁻ x .paths (t⁺ x , pin⁻ x))
+  twist⁺-centre : ∀ x → cell-fiber⁻ x .center .fst ≡ t⁺ x
+  twist⁺-centre x = ap fst (cell-fiber⁻ x .paths (t⁺ x , pin⁻ x))
 
-  twist⁻-centre : ∀ x → PG-unital⁺ x .center .fst ≡ t⁻ x
-  twist⁻-centre x = ap fst (PG-unital⁺ x .paths (t⁻ x , pin⁺ x))
+  twist⁻-centre : ∀ x → cell-fiber⁺ x .center .fst ≡ t⁻ x
+  twist⁻-centre x = ap fst (cell-fiber⁺ x .paths (t⁻ x , pin⁺ x))
 
   twist⁺-unique : ∀ x (e : x ≡ x) → coact-π e ≡ cell⁻ PG x → t⁺ x ≡ e
   twist⁺-unique x e w =
-    sym (twist⁺-centre x) ∙ ap fst (PG-unital⁻ x .paths (e , w))
+    sym (twist⁺-centre x) ∙ ap fst (cell-fiber⁻ x .paths (e , w))
 
   twist⁻-unique : ∀ x (e : x ≡ x) → act-π e ≡ cell⁺ PG x → t⁻ x ≡ e
   twist⁻-unique x e w =
-    sym (twist⁻-centre x) ∙ ap fst (PG-unital⁺ x .paths (e , w))
+    sym (twist⁻-centre x) ∙ ap fst (cell-fiber⁺ x .paths (e , w))
 ```
 
 ## One equation
@@ -198,39 +205,38 @@ either way.
 ```
 
 Under it each hand gains its one unit law and the twists compose to
-twists: `unitr⁻`, `unitl⁺`, `pair⁺` and `pair⁻` come from the module,
+twists: `unitr⁺`, `unitl⁻`, `pair⁻` and `pair⁺` come from the module,
 crossed as the tiers predict.
 
 ## A unit exists regardless
 
 A right unit for the coterm hand is an edge whose action is the second
-projection — an inhabitant of the fiber of the same map over `snd`
-rather than over `cell⁻`. Representability being total, that fiber is
-inhabited at every framing, so the composition has a unit whether or not
-the twists cancel. What the equation decides is only whether that unit
-*is* the twist.
+projection, which is what that hand's unit tier already asks for.
+Representability being total makes the tier hold at every framing, so
+the composition has a unit whether or not the twists cancel. What the
+equation decides is only whether that unit *is* the twist.
 
 ```agda
   neutral⁻ : ∀ x → fiber (coact-π {x} {x}) snd
-  neutral⁻ x = eqv-fibers (coact-π-equiv x) snd .center
+  neutral⁻ x = PG-unital⁻ x .center
 
   neutral⁻-absorb : ∀ {y} (k : coterm y) → coact (neutral⁻ y .fst) k ≡ k
   neutral⁻-absorb {y} k i = k .fst , neutral⁻ y .snd i k
 
-  neutral⁻-unitr : ∀ {x y} (f : hom x y) → f ⨾⁻ neutral⁻ y .fst ≡ f
+  neutral⁻-unitr : ∀ {x y} (f : hom x y) → f ⨾⁺ neutral⁻ y .fst ≡ f
   neutral⁻-unitr f = lc
-    ( reflect-⨾⁻ f (neutral⁻ _ .fst)
+    ( reflect-⨾⁺ f (neutral⁻ _ .fst)
     ∙ (λ i γ → reflect f (γ .fst , neutral⁻-absorb (γ .snd) i)) )
 
   neutral⁺ : ∀ x → fiber (act-π {x} {x}) snd
-  neutral⁺ x = eqv-fibers (act-π-equiv x) snd .center
+  neutral⁺ x = PG-unital⁺ x .center
 
   neutral⁺-absorb : ∀ {x} (t : term x) → act (neutral⁺ x .fst) t ≡ t
   neutral⁺-absorb {x} t i = t .fst , neutral⁺ x .snd i t
 
-  neutral⁺-unitl : ∀ {x y} (g : hom x y) → neutral⁺ x .fst ⨾⁺ g ≡ g
+  neutral⁺-unitl : ∀ {x y} (g : hom x y) → neutral⁺ x .fst ⨾⁻ g ≡ g
   neutral⁺-unitl g = lc
-    ( reflect-⨾⁺ (neutral⁺ _ .fst) g
+    ( reflect-⨾⁻ (neutral⁺ _ .fst) g
     ∙ (λ i γ → reflect g (neutral⁺-absorb (γ .fst) i , γ .snd)) )
 ```
 
@@ -242,13 +248,11 @@ the neutral.
   module _ (K : cancels) where
     twist-is-neutral⁻ : ∀ x → neutral⁻ x .fst ≡ t⁺ x
     twist-is-neutral⁻ x =
-      ap fst (eqv-fibers (coact-π-equiv x) snd .paths
-               (t⁺ x , pin⁻ x ∙ trivial⁻ K x))
+      ap fst (PG-unital⁻ x .paths (t⁺ x , pin⁻ x ∙ trivial⁻ K x))
 
     twist-is-neutral⁺ : ∀ x → neutral⁺ x .fst ≡ t⁻ x
     twist-is-neutral⁺ x =
-      ap fst (eqv-fibers (act-π-equiv x) snd .paths
-               (t⁻ x , pin⁺ x ∙ trivial⁺ K x))
+      ap fst (PG-unital⁺ x .paths (t⁻ x , pin⁺ x ∙ trivial⁺ K x))
 ```
 
 ## What the spike settles
@@ -256,9 +260,9 @@ the neutral.
 `PG-deductive` is the whole package at an arbitrary framing over an
 arbitrary type, with no h-level hypothesis: stability, both cuts, both
 unit tiers. Nothing in it constrains the twists, and `twist⁺-centre`,
-`twist⁻-centre` show why — the tiers place each twist in the other
-hand's fiber by the flank exchange alone, so the framing is free and the
-centres track it.
+`twist⁻-centre` show where they do land — the flank exchange alone puts
+each twist at the centre of the other hand's cell fiber, so the framing
+is free and those centres track it.
 
 `cancels` is one equation, and both hands' triviality follows from it by
 the same exchange. It is the framing's own content: mutual inverseness

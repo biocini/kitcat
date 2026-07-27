@@ -1,12 +1,12 @@
 # The two actions, and the two cuts
 
 Holding one half of an argument at its axiom leaves the edge-valued form
-of that hand; bundling the far endpoint back in gives the family
+of that side; bundling the far endpoint back in gives the family
 transport.
 
 ```agda
-coact-π f γ = reflect f (var x , γ)      -- coterm hand: holds the future
-act-π   f t = reflect f (t , covar y)    -- term hand:   holds the buffer
+coact-π f γ = reflect f (var x , γ)      -- holds the future  (twist⁻)
+act-π   f t = reflect f (t , covar y)    -- holds the buffer  (twist⁺)
 
 coact f γ = γ .fst , coact-π f γ         -- coterm y → coterm x   (contravariant)
 act   f t = t .fst , act-π   f t         -- term   x → term   y   (covariant)
@@ -20,35 +20,40 @@ transport.
 
 `term` and `coterm` are families over the objects, and `act` and `coact`
 are lens data on them: `act` a covariant action on the term family,
-`coact` a contravariant action on the coterm family. In the language of
-`Cat.Graph.Refl` these are the displayed structures over the underlying
-graph, and each hand's composability is a fibration condition on its own
-display.
+`coact` a contravariant action on the coterm family. Each cut's
+composability is a fibration condition on one of these displays.
 
-One thing the framing changes. A displayed *reflexive* graph asks its
-lift over reflexivity to be trivial. Here it is not: the action of a
-twist is one cancellation, not the identity — see
-[unitality.md](unitality.md). So the two displays are reflexive **up to
-one transmission**, and that is where the framing lives in the lens
-language.
-
-## Composing terms with terms, coterms with coterms
-
-The term hand composes a term with a term, closing the far end with the
-buffer; the coterm hand composes a coterm with a coterm, holding the
-future. Carried into one slot of a reflected head, these give the two
-composite judgments — the two **cuts**.
+A lens states its unitor at its base's reflexive edge, and each action
+holds one twist at its own axiom half. So a family's lens is based on
+the graph of the twist its action does *not* hold, and the unitor is a
+cancellation rather than an identity. VERIFIED (`Cat.Logic.Display`):
 
 ```agda
-inj⁻ α p γ = α (γ .fst , coact p (γ .snd))
-inj⁺ p β γ = β (act p (γ .fst) , γ .snd)
-
-composite⁻ f g = inj⁻ (reflect f) g
-composite⁺ f g = inj⁺ f (reflect g)
+term-lens   : oplax-cov-lens (graph⁻ G) (term-fam   G)   -- unitor = absorb⁺
+coterm-lens : lax-ctrv-lens  (graph⁺ G) (coterm-fam G)   -- unitor = absorb⁻
 ```
 
-`composite⁻` cuts through a **pending read**: `g` is taken from a future
-at the junction. `composite⁺` cuts through a **pending write**: `f` is
+That is where the framing lives in the lens language, and
+[displays.md](displays.md) carries the rest: the coslice display, each cut as
+a lift, and the two-sided base.
+
+## The two cuts
+
+Each cut absorbs one factor into an argument half and keeps the other
+reflected: the positive absorbs its second into the coterm, holding the
+future; the negative absorbs its first into the term, holding the
+buffer. These are the two composite judgments — the two **cuts**.
+
+```agda
+inj⁺ α p γ = α (γ .fst , coact p (γ .snd))
+inj⁻ p β γ = β (act p (γ .fst) , γ .snd)
+
+composite⁺ f g = inj⁺ (reflect f) g
+composite⁻ f g = inj⁻ f (reflect g)
+```
+
+`composite⁺` cuts through a **pending read**: `g` is taken from a future
+at the junction. `composite⁻` cuts through a **pending write**: `f` is
 put into a buffer there. Each carries exactly one twist at its junction,
 of opposite sign, and by the winding count of
 [framing.md](framing.md) no cut of two edges can avoid carrying one.

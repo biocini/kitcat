@@ -27,6 +27,28 @@ only to say that each cut is representable; it does not restate
 uniqueness at every composite. The propositional weight of the whole
 package sits in one place.
 
+## It is an embedding condition
+
+Propositional fibers is what an embedding is, so the tier is `reflect` being
+one at every pair of objects. VERIFIED (`Cat.Logic.Base`):
+`stable-is-embedding` is `refl`.
+
+Where the edges form sets so do the judgments, and an embedding into a set is
+an injection. The tier then reduces to injectivity of **transmission** — the
+edge surrounded by one twist of each sign, the winding-neutral form of
+[framing.md](framing.md):
+
+```agda
+stable-from-hom-sets
+  : (∀ {x y} → is-set (hom x y))
+  → (∀ {x y} {m n : hom x y} → eval (reflect m) ≡ eval (reflect n) → m ≡ n)
+  → is-stable
+```
+
+VERIFIED (`Cat.Logic.Base`). So in the truncated regime the tier is not an
+extra hypothesis about representation but a statement about the framing:
+whether surrounding an edge by the two twists loses information.
+
 ## Crossing the opposite
 
 Stability crosses, though not on the nose. The opposite reindexes a

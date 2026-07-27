@@ -1,7 +1,11 @@
 A deductive system is a virtual graph whose framing behaves: each twist
-is the uniquely determined inverse of the other, representation is
-unique where it occurs, and both cuts are representable. All of it is
-property; the framing is the only structure.
+has a uniquely determined one-sided inverse, representation is unique
+where it occurs, and both cuts are representable. All of it is property;
+the framing is the only structure.
+
+That the two inverses are the twists themselves — the twists mutually
+inverse — is not asserted here. It is the balanced layer's condition,
+carried as hypotheses by `absorption`.
 
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
@@ -15,7 +19,8 @@ open import Core.Kan using (_∙_; module Path; is-contr→is-prop)
 open import Core.Path.Base using (ap-comp)
 open import Core.Transport.Properties
   using (is-prop→is-set; is-prop-is-prop; is-contr-is-prop; prop-inhabited→is-contr)
-open import Core.HLevel.Base using (Π-is-prop; Πi-is-prop; is-prop-equiv)
+open import Core.HLevel.Base using (Π-is-prop; Πi-is-prop; is-prop-equiv; Π-is-hlevel)
+open import Core.Function.Embedding using (is-embedding; injective→is-embedding)
 open import Core.Transport.Base using (is-prop→PathP)
 open import Core.Equiv.Base using (iso→equiv)
 
@@ -48,13 +53,10 @@ op-eval G f = refl
 
 ## One cancellation
 
-Each hand's target is its own twist read through the *other* hand, so a
-pending read meets a pending write. Counting: the target carries the
-argument half's edge and one twist of each sign, so its winding is
-neutral — the edge with a cancellation performed, and the cancellation
-never named as an edge of its own. The second projection carries no
-twist at all, and a unit sitting over it would be a bare twist for which
-a winding costs nothing.
+Each side's cell carries one twist of each sign: the coterm-side cell is
+the negative twist read through `act-π`, which holds the positive one,
+and the term-side cell is the mirror. So a pending read meets a pending
+write, the cancellation performed and never named as an edge of its own.
 
 ```agda
 module _ {o h} (G : virtual-graph o h) where
@@ -66,29 +68,58 @@ module _ {o h} (G : virtual-graph o h) where
 
   cell⁺ : (x : ob) (t : term x) → hom (t .fst) x
   cell⁺ x t = coact-π (twist⁺ (t .fst)) (x , t .snd)
+```
 
-  is-unital⁻ : Type (o ⊔ h)
-  is-unital⁻ = ∀ x → is-contr (fiber (coact-π {x} {x}) (cell⁻ x))
+Each side's tier sits elsewhere: the fiber of that side's action map
+over the second projection, asked to be contractible. Its centre is the
+uniquely determined edge acting as the identity on that family. Since
+`coact-π` holds `var`, the negative centre is what cancels the negative
+twist, and the positive centre cancels the positive one — so the tier is
+invertibility of the framing, one side each. No twist enters the demand,
+and nothing here says a centre is the other twist.
 
-  is-unital⁺ : Type (o ⊔ h)
-  is-unital⁺ = ∀ x → is-contr (fiber (act-π {x} {x}) (cell⁺ x))
+```agda
+  is-invertible⁻ : Type (o ⊔ h)
+  is-invertible⁻ = ∀ x → is-contr (fiber (coact-π {x} {x}) snd)
 
-  is-unital⁻-is-prop : is-prop is-unital⁻
-  is-unital⁻-is-prop = Π-is-prop λ _ → is-contr-is-prop _
+  is-invertible⁺ : Type (o ⊔ h)
+  is-invertible⁺ = ∀ x → is-contr (fiber (act-π {x} {x}) snd)
 
-  is-unital⁺-is-prop : is-prop is-unital⁺
-  is-unital⁺-is-prop = Π-is-prop λ _ → is-contr-is-prop _
+  is-invertible⁻-is-prop : is-prop is-invertible⁻
+  is-invertible⁻-is-prop = Π-is-prop λ _ → is-contr-is-prop _
 
-  record is-unital : Type (o ⊔ h) where
+  is-invertible⁺-is-prop : is-prop is-invertible⁺
+  is-invertible⁺-is-prop = Π-is-prop λ _ → is-contr-is-prop _
+
+  record is-invertible : Type (o ⊔ h) where
     field
-      fiber⁻ : is-unital⁻
-      fiber⁺ : is-unital⁺
+      fiber⁻ : is-invertible⁻
+      fiber⁺ : is-invertible⁺
 
-  is-unital-is-prop : is-prop is-unital
-  is-unital-is-prop U U' i .is-unital.fiber⁻ =
-    is-unital⁻-is-prop (is-unital.fiber⁻ U) (is-unital.fiber⁻ U') i
-  is-unital-is-prop U U' i .is-unital.fiber⁺ =
-    is-unital⁺-is-prop (is-unital.fiber⁺ U) (is-unital.fiber⁺ U') i
+  is-invertible-is-prop : is-prop is-invertible
+  is-invertible-is-prop U U' i .is-invertible.fiber⁻ =
+    is-invertible⁻-is-prop (is-invertible.fiber⁻ U) (is-invertible.fiber⁻ U') i
+  is-invertible-is-prop U U' i .is-invertible.fiber⁺ =
+    is-invertible⁺-is-prop (is-invertible.fiber⁺ U) (is-invertible.fiber⁺ U') i
+```
+
+Pinning each twist to its side's cell and trivialising that cell is two
+hypotheses per side, and together they say each centre is the twist
+filling the other slot — the twists mutually inverse. That absorption
+consumes no tier: neither representation's uniqueness nor either cut's
+existence appears in it, and a deductive system does not assert it.
+
+```agda
+  module absorption
+    (pin⁻ : ∀ x → coact-π (twist⁺ x) ≡ cell⁻ x)
+    (pin⁺ : ∀ x → act-π   (twist⁻ x) ≡ cell⁺ x)
+    (K⁻ : ∀ x → cell⁻ x ≡ snd) (K⁺ : ∀ x → cell⁺ x ≡ snd) where
+
+    absorb⁻ : ∀ {y} (k : coterm y) → coact (twist⁺ y) k ≡ k
+    absorb⁻ {y} k i = k .fst , (pin⁻ y ∙ K⁻ y) i k
+
+    absorb⁺ : ∀ {x} (t : term x) → act (twist⁻ x) t ≡ t
+    absorb⁺ {x} t i = t .fst , (pin⁺ x ∙ K⁺ x) i t
 ```
 
 ## Stability
@@ -114,35 +145,56 @@ and touches no argument half, so it is winding-neutral: a condition on
   contr-from-stable S α = prop-inhabited→is-contr (S α)
 ```
 
-## The two cuts
-
-Composing terms with terms is the term hand, closing with the buffer;
-composing coterms with coterms is the coterm hand, closing with the
-future. The composite judgments are these carried into one slot of a
-reflected head, so the term-hand cut goes through a pending write and
-the coterm-hand cut through a pending read. Their windings are opposite,
-and identifying them would be the coherence this fragment forgets.
+Propositional fibers is what an embedding is, so stability is `reflect`
+being one at every pair of objects. Where the edges form sets the
+judgments do too, and an embedding is then an injection: the tier
+reduces to injectivity of transmission — evaluation of a reflection,
+the edge surrounded by one twist of each sign.
 
 ```agda
-  inj⁻ : ∀ {x y z} → judgment x y → hom y z → judgment x z
-  inj⁻ α p γ = α (γ .fst , coact p (γ .snd))
+  stable-is-embedding : is-stable ≡ (∀ {x y} → is-embedding (reflect {x} {y}))
+  stable-is-embedding = refl
 
-  inj⁺ : ∀ {x y z} → hom x y → judgment y z → judgment x z
-  inj⁺ p β γ = β (act p (γ .fst) , γ .snd)
+  stable-from-hom-sets
+    : (∀ {x y} → is-set (hom x y))
+    → (∀ {x y} {m n : hom x y} → eval (reflect m) ≡ eval (reflect n) → m ≡ n)
+    → is-stable
+  stable-from-hom-sets hset inj α =
+    injective→is-embedding (Π-is-hlevel 2 λ _ → hset) reflect (λ p → inj (ap eval p)) α
+```
 
-  composite⁻ : ∀ {x y z} → hom x y → hom y z → judgment x z
-  composite⁻ f g = inj⁻ (reflect f) g
+## The two cuts
+
+A positive cut absorbs its second factor into the coterm and keeps the
+first reflected; a negative cut absorbs its first into the term and
+keeps the second. Each absorption closes the opposite argument half at
+its axiom — the positive through `coact`, which holds `var` and so
+carries the negative twist, the negative through `act`, which holds
+`covar` and carries the positive one. So the positive cut goes through
+a pending read and the negative through a pending write. Their windings
+are opposite, and identifying them would be the coherence this fragment
+forgets.
+
+```agda
+  inj⁺ : ∀ {x y z} → judgment x y → hom y z → judgment x z
+  inj⁺ α p γ = α (γ .fst , coact p (γ .snd))
+
+  inj⁻ : ∀ {x y z} → hom x y → judgment y z → judgment x z
+  inj⁻ p β γ = β (act p (γ .fst) , γ .snd)
 
   composite⁺ : ∀ {x y z} → hom x y → hom y z → judgment x z
-  composite⁺ f g = inj⁺ f (reflect g)
+  composite⁺ f g = inj⁺ (reflect f) g
 
-  is-composable⁻ : Type (o ⊔ h)
-  is-composable⁻ = ∀ {x y z} (f : hom x y) (g : hom y z)
-                 → is-representable (composite⁻ f g)
+  composite⁻ : ∀ {x y z} → hom x y → hom y z → judgment x z
+  composite⁻ f g = inj⁻ f (reflect g)
 
   is-composable⁺ : Type (o ⊔ h)
   is-composable⁺ = ∀ {x y z} (f : hom x y) (g : hom y z)
                  → is-representable (composite⁺ f g)
+
+  is-composable⁻ : Type (o ⊔ h)
+  is-composable⁻ = ∀ {x y z} (f : hom x y) (g : hom y z)
+                 → is-representable (composite⁻ f g)
 ```
 
 Existence only: uniqueness sits in stability and is not restated here,
@@ -150,13 +202,13 @@ so each composability tier is a proposition exactly once stability is in
 hand.
 
 ```agda
-  is-composable⁻-is-prop : is-stable → is-prop is-composable⁻
-  is-composable⁻-is-prop S =
+  is-composable⁺-is-prop : is-stable → is-prop is-composable⁺
+  is-composable⁺-is-prop S =
     Πi-is-prop λ _ → Πi-is-prop λ _ → Πi-is-prop λ _ →
     Π-is-prop λ _ → Π-is-prop λ _ → S _
 
-  is-composable⁺-is-prop : is-stable → is-prop is-composable⁺
-  is-composable⁺-is-prop S =
+  is-composable⁻-is-prop : is-stable → is-prop is-composable⁻
+  is-composable⁻-is-prop S =
     Πi-is-prop λ _ → Πi-is-prop λ _ → Πi-is-prop λ _ →
     Π-is-prop λ _ → Π-is-prop λ _ → S _
 ```
@@ -168,14 +220,14 @@ that makes it one.
 ```agda
   record is-composable (S : is-stable) : Type (o ⊔ h) where
     field
-      contr⁻ : is-composable⁻
       contr⁺ : is-composable⁺
+      contr⁻ : is-composable⁻
 
   is-composable-is-prop : (S : is-stable) → is-prop (is-composable S)
-  is-composable-is-prop S C C' i .is-composable.contr⁻ =
-    is-composable⁻-is-prop S (is-composable.contr⁻ C) (is-composable.contr⁻ C') i
   is-composable-is-prop S C C' i .is-composable.contr⁺ =
     is-composable⁺-is-prop S (is-composable.contr⁺ C) (is-composable.contr⁺ C') i
+  is-composable-is-prop S C C' i .is-composable.contr⁻ =
+    is-composable⁻-is-prop S (is-composable.contr⁻ C) (is-composable.contr⁻ C') i
 ```
 
 ## Deductive systems
@@ -185,7 +237,7 @@ that makes it one.
     field
       stable     : is-stable
       composable : is-composable stable
-      unital     : is-unital
+      invertible : is-invertible
 
   is-deductive-system-is-prop : is-prop is-deductive-system
   is-deductive-system-is-prop D D' i .is-deductive-system.stable =
@@ -197,28 +249,28 @@ that makes it one.
                (is-stable-is-prop (is-deductive-system.stable D)
                                   (is-deductive-system.stable D') j))
       (is-deductive-system.composable D) (is-deductive-system.composable D') i
-  is-deductive-system-is-prop D D' i .is-deductive-system.unital =
-    is-unital-is-prop (is-deductive-system.unital D)
-                      (is-deductive-system.unital D') i
+  is-deductive-system-is-prop D D' i .is-deductive-system.invertible =
+    is-invertible-is-prop (is-deductive-system.invertible D)
+                      (is-deductive-system.invertible D') i
 ```
 
 ## Duality
 
-The opposite exchanges the hands and the twists, hence the targets,
-hence the unit tiers — on the nose. Stability crosses by reindexing a
-judgment along the exchange of argument halves, which is an equivalence
-on fibers.
+The opposite exchanges the argument halves and the twists, hence the two
+action maps, hence the invertibility tiers — on the nose. Stability
+crosses by reindexing a judgment along that exchange, which is an
+equivalence on fibers.
 
 ```agda
-op-unital⁻ : ∀ {o h} (G : virtual-graph o h) → is-unital⁻ (opⱽ G) ≡ is-unital⁺ G
-op-unital⁻ G = refl
+op-invertible⁻ : ∀ {o h} (G : virtual-graph o h) → is-invertible⁻ (opⱽ G) ≡ is-invertible⁺ G
+op-invertible⁻ G = refl
 
-op-unital⁺ : ∀ {o h} (G : virtual-graph o h) → is-unital⁺ (opⱽ G) ≡ is-unital⁻ G
-op-unital⁺ G = refl
+op-invertible⁺ : ∀ {o h} (G : virtual-graph o h) → is-invertible⁺ (opⱽ G) ≡ is-invertible⁻ G
+op-invertible⁺ G = refl
 
-op-unital : ∀ {o h} (G : virtual-graph o h) → is-unital G → is-unital (opⱽ G)
-op-unital G U .is-unital.fiber⁻ = is-unital.fiber⁺ U
-op-unital G U .is-unital.fiber⁺ = is-unital.fiber⁻ U
+op-invertible : ∀ {o h} (G : virtual-graph o h) → is-invertible G → is-invertible (opⱽ G)
+op-invertible G U .is-invertible.fiber⁻ = is-invertible.fiber⁺ U
+op-invertible G U .is-invertible.fiber⁺ = is-invertible.fiber⁻ U
 
 op-stable : ∀ {o h} (G : virtual-graph o h) → is-stable G → is-stable (opⱽ G)
 op-stable G S α =
@@ -229,19 +281,19 @@ op-stable G S α =
     (S (λ δ → α (δ .snd , δ .fst)))
 ```
 
-Each cut crosses to the other: the opposite's coterm-hand composite is
-the term-hand composite of the same pair read backwards, so a
-representative transports by exchanging the argument halves.
+Each cut crosses to the other: the opposite's positive composite is the
+negative composite of the same pair, in the other order, read backwards
+— so a representative transports by exchanging the argument halves.
 
 ```agda
 op-composable : ∀ {o h} (G : virtual-graph o h) (S : is-stable G)
               → is-composable G S → is-composable (opⱽ G) (op-stable G S)
-op-composable G S C .is-composable.contr⁻ f g =
-    is-composable.contr⁺ C g f .fst
-  , λ i γ → is-composable.contr⁺ C g f .snd i (γ .snd , γ .fst)
 op-composable G S C .is-composable.contr⁺ f g =
     is-composable.contr⁻ C g f .fst
   , λ i γ → is-composable.contr⁻ C g f .snd i (γ .snd , γ .fst)
+op-composable G S C .is-composable.contr⁻ f g =
+    is-composable.contr⁺ C g f .fst
+  , λ i γ → is-composable.contr⁺ C g f .snd i (γ .snd , γ .fst)
 
 op-axioms : ∀ {o h} (G : virtual-graph o h)
           → is-deductive-system G → is-deductive-system (opⱽ G)
@@ -249,8 +301,8 @@ op-axioms G D .is-deductive-system.stable =
   op-stable G (is-deductive-system.stable D)
 op-axioms G D .is-deductive-system.composable =
   op-composable G _ (is-deductive-system.composable D)
-op-axioms G D .is-deductive-system.unital =
-  op-unital G (is-deductive-system.unital D)
+op-axioms G D .is-deductive-system.invertible =
+  op-invertible G (is-deductive-system.invertible D)
 ```
 
 ## The package
@@ -283,75 +335,100 @@ opᴰ-invol D i .deductive-system.axioms =
 ## The two towers
 
 Each hand's composition is the representative of its own cut; stability
-makes it well defined without composability restating uniqueness. Each
-action distributes over its own hand's composition — the witness read at
-that hand's axiom half — and associativity follows from a fiber path.
+makes it well defined without composability restating uniqueness. The
+coaction distributes over the positive composition and the action over
+the negative — each witness read at the axiom half its own hand closes,
+`var` for the positive and `covar` for the negative — and associativity
+follows from a fiber path.
 
 ```agda
 module tower {o h} {G : virtual-graph o h}
-  (S : is-stable G) (C⁻ : is-composable⁻ G) (C⁺ : is-composable⁺ G) where
+  (S : is-stable G) (C⁺ : is-composable⁺ G) (C⁻ : is-composable⁻ G) where
   open virtual-graph G
   open sequents G
 
   lc : ∀ {x y} {m n : hom x y} → reflect m ≡ reflect n → m ≡ n
   lc = reflect-lc G S
 
-  _⨾⁻_ : ∀ {x y z} → hom x y → hom y z → hom x z
-  f ⨾⁻ g = C⁻ f g .fst
-
   _⨾⁺_ : ∀ {x y z} → hom x y → hom y z → hom x z
   f ⨾⁺ g = C⁺ f g .fst
 
-  reflect-⨾⁻ : ∀ {x y z} (f : hom x y) (g : hom y z)
-             → reflect (f ⨾⁻ g) ≡ composite⁻ G f g
-  reflect-⨾⁻ f g = C⁻ f g .snd
+  _⨾⁻_ : ∀ {x y z} → hom x y → hom y z → hom x z
+  f ⨾⁻ g = C⁻ f g .fst
 
   reflect-⨾⁺ : ∀ {x y z} (f : hom x y) (g : hom y z)
              → reflect (f ⨾⁺ g) ≡ composite⁺ G f g
   reflect-⨾⁺ f g = C⁺ f g .snd
 
-  coact-⨾⁻ : ∀ {x y z} (f : hom x y) (g : hom y z) (k : coterm z)
-           → coact (f ⨾⁻ g) k ≡ coact f (coact g k)
-  coact-⨾⁻ f g k i = k .fst , reflect-⨾⁻ f g i (var _ , k)
+  reflect-⨾⁻ : ∀ {x y z} (f : hom x y) (g : hom y z)
+             → reflect (f ⨾⁻ g) ≡ composite⁻ G f g
+  reflect-⨾⁻ f g = C⁻ f g .snd
 
-  act-⨾⁺ : ∀ {x y z} (f : hom x y) (g : hom y z) (t : term x)
-         → act (f ⨾⁺ g) t ≡ act g (act f t)
-  act-⨾⁺ f g t i = t .fst , reflect-⨾⁺ f g i (t , covar _)
+  coact-⨾⁺ : ∀ {x y z} (f : hom x y) (g : hom y z) (k : coterm z)
+           → coact (f ⨾⁺ g) k ≡ coact f (coact g k)
+  coact-⨾⁺ f g k i = k .fst , reflect-⨾⁺ f g i (var _ , k)
 
-  module tri⁻ {w x y z} (f : hom w x) (g : hom x y) (h : hom y z) where
+  act-⨾⁻ : ∀ {x y z} (f : hom x y) (g : hom y z) (t : term x)
+         → act (f ⨾⁻ g) t ≡ act g (act f t)
+  act-⨾⁻ f g t i = t .fst , reflect-⨾⁻ f g i (t , covar _)
+
+  module tri⁺ {w x y z} (f : hom w x) (g : hom x y) (h : hom y z) where
     E : judgment w z
     E γ = reflect f (γ .fst , coact g (coact h (γ .snd)))
 
     a₁ a₂ : is-representable E
-    a₁ = (f ⨾⁻ g) ⨾⁻ h
-       , reflect-⨾⁻ (f ⨾⁻ g) h
-       ∙ (λ i γ → reflect-⨾⁻ f g i (γ .fst , coact h (γ .snd)))
-    a₂ = f ⨾⁻ (g ⨾⁻ h)
-       , reflect-⨾⁻ f (g ⨾⁻ h)
-       ∙ (λ i γ → reflect f (γ .fst , coact-⨾⁻ g h (γ .snd) i))
+    a₁ = (f ⨾⁺ g) ⨾⁺ h
+       , reflect-⨾⁺ (f ⨾⁺ g) h
+       ∙ (λ i γ → reflect-⨾⁺ f g i (γ .fst , coact h (γ .snd)))
+    a₂ = f ⨾⁺ (g ⨾⁺ h)
+       , reflect-⨾⁺ f (g ⨾⁺ h)
+       ∙ (λ i γ → reflect f (γ .fst , coact-⨾⁺ g h (γ .snd) i))
 
     σ : a₁ ≡ a₂
     σ = S E a₁ a₂
 
-  assoc⁻ : ∀ {w x y z} (f : hom w x) (g : hom x y) (h : hom y z)
-         → (f ⨾⁻ g) ⨾⁻ h ≡ f ⨾⁻ (g ⨾⁻ h)
-  assoc⁻ f g h = ap fst (tri⁻.σ f g h)
-
   assoc⁺ : ∀ {w x y z} (f : hom w x) (g : hom x y) (h : hom y z)
          → (f ⨾⁺ g) ⨾⁺ h ≡ f ⨾⁺ (g ⨾⁺ h)
-  assoc⁺ f g h = lc
-    ( reflect-⨾⁺ (f ⨾⁺ g) h
-    ∙ (λ i γ → reflect h (act-⨾⁺ f g (γ .fst) i , γ .snd))
-    ∙ sym ( reflect-⨾⁺ f (g ⨾⁺ h)
-          ∙ (λ i γ → reflect-⨾⁺ g h i (act f (γ .fst) , γ .snd)) ) )
+  assoc⁺ f g h = ap fst (tri⁺.σ f g h)
+
+  assoc⁻ : ∀ {w x y z} (f : hom w x) (g : hom x y) (h : hom y z)
+         → (f ⨾⁻ g) ⨾⁻ h ≡ f ⨾⁻ (g ⨾⁻ h)
+  assoc⁻ f g h = lc
+    ( reflect-⨾⁻ (f ⨾⁻ g) h
+    ∙ (λ i γ → reflect h (act-⨾⁻ f g (γ .fst) i , γ .snd))
+    ∙ sym ( reflect-⨾⁻ f (g ⨾⁻ h)
+          ∙ (λ i γ → reflect-⨾⁻ g h i (act f (γ .fst) , γ .snd)) ) )
+```
+
+## Mixed words
+
+A three-factor word whose two junctions take different hands is well
+formed, and its two bracketings are related by no law above: `assoc⁺`
+and `assoc⁻` reach only the words whose junctions agree. The comparison
+is therefore a property of an edge rather than a theorem about all of
+them, and it has two universal closures — at the edge that leads the
+word, and at the edge that trails it. These are thunkability and
+linearity.
+
+```agda
+  mixed-assoc : ∀ {w x y z} → hom w x → hom x y → hom y z → Type h
+  mixed-assoc f g h = (f ⨾⁻ g) ⨾⁺ h ≡ f ⨾⁻ (g ⨾⁺ h)
+
+  thunkable : ∀ {w x} → hom w x → Type (o ⊔ h)
+  thunkable {x = x} f = ∀ {y z} (g : hom x y) (h : hom y z) → mixed-assoc f g h
+
+  linear : ∀ {y z} → hom y z → Type (o ⊔ h)
+  linear {y = y} h = ∀ {w x} (f : hom w x) (g : hom x y) → mixed-assoc f g h
 ```
 
 ## The unit laws
 
 Where the cancellation is the identity — the twists mutually inverse,
-the framing itself still free — each hand gains exactly one unit law,
-and the edge it gains is the *other* hand's composite of the pair. The
-missing law per hand is the one the forgotten coherence would supply.
+the framing itself still free — each hand gains exactly one unit law:
+the positive a right unit at `twist⁺`, the negative a left unit at
+`twist⁻`. The edge each gains is the *other* hand's composite of the
+pair. The missing law per hand is the one the forgotten coherence would
+supply.
 
 ```agda
   module unital
@@ -359,32 +436,43 @@ missing law per hand is the one the forgotten coherence would supply.
     (pin⁺ : ∀ x → act-π   (twist⁻ x) ≡ cell⁺ G x)
     (K⁻ : ∀ x → cell⁻ G x ≡ snd) (K⁺ : ∀ x → cell⁺ G x ≡ snd) where
 
-    absorb⁻ : ∀ {y} (k : coterm y) → coact (twist⁺ y) k ≡ k
-    absorb⁻ {y} k i = k .fst , (pin⁻ y ∙ K⁻ y) i k
+    open absorption G pin⁻ pin⁺ K⁻ K⁺ public
 
-    absorb⁺ : ∀ {x} (t : term x) → act (twist⁻ x) t ≡ t
-    absorb⁺ {x} t i = t .fst , (pin⁺ x ∙ K⁺ x) i t
-
-    unitr⁻ : ∀ {x y} (f : hom x y) → f ⨾⁻ twist⁺ y ≡ f
-    unitr⁻ f = lc
-      ( reflect-⨾⁻ f (twist⁺ _)
+    unitr⁺ : ∀ {x y} (f : hom x y) → f ⨾⁺ twist⁺ y ≡ f
+    unitr⁺ f = lc
+      ( reflect-⨾⁺ f (twist⁺ _)
       ∙ (λ i γ → reflect f (γ .fst , absorb⁻ (γ .snd) i)) )
 
-    unitl⁺ : ∀ {x y} (g : hom x y) → twist⁻ x ⨾⁺ g ≡ g
-    unitl⁺ g = lc
-      ( reflect-⨾⁺ (twist⁻ _) g
+    unitl⁻ : ∀ {x y} (g : hom x y) → twist⁻ x ⨾⁻ g ≡ g
+    unitl⁻ g = lc
+      ( reflect-⨾⁻ (twist⁻ _) g
       ∙ (λ i γ → reflect g (absorb⁺ (γ .fst) i , γ .snd)) )
 
-    pair⁺ : ∀ x → twist⁻ x ⨾⁺ twist⁺ x ≡ twist⁺ x
-    pair⁺ x = unitl⁺ (twist⁺ x)
+    pair⁻ : ∀ x → twist⁻ x ⨾⁻ twist⁺ x ≡ twist⁺ x
+    pair⁻ x = unitl⁻ (twist⁺ x)
 
-    pair⁻ : ∀ x → twist⁻ x ⨾⁻ twist⁺ x ≡ twist⁻ x
-    pair⁻ x = unitr⁻ (twist⁻ x)
+    pair⁺ : ∀ x → twist⁻ x ⨾⁺ twist⁺ x ≡ twist⁻ x
+    pair⁺ x = unitr⁺ (twist⁻ x)
+```
+
+A hand's crossed pairing meets that hand's *other* unit law at the
+composite of the two twists, so either missing law identifies the
+framing. The collapse is one equation about the framing; whether it in
+turn forces the two cuts to agree is not settled here.
+
+```agda
+    collapse⁺ : (∀ {x y} (g : hom x y) → twist⁻ x ⨾⁺ g ≡ g)
+              → ∀ x → twist⁻ x ≡ twist⁺ x
+    collapse⁺ L x = sym (pair⁺ x) ∙ L (twist⁺ x)
+
+    collapse⁻ : (∀ {x y} (f : hom x y) → f ⨾⁻ twist⁺ y ≡ f)
+              → ∀ x → twist⁻ x ≡ twist⁺ x
+    collapse⁻ R x = sym (R (twist⁻ x)) ∙ pair⁻ x
 ```
 
 ## The pentagon
 
-The five bracketings of a four-fold coterm-hand cut are five points of
+The five bracketings of a four-fold positive cut are five points of
 one fiber of `reflect`. Stability makes that fiber a proposition, hence
 a set, so any two paths between two of its points agree. Each classical
 edge lifts back into the fiber — the triple's own fiber path, whiskered
@@ -392,33 +480,33 @@ or with the fourth factor's rewriting appended — and the fiber being a
 proposition identifies the lift with the canonical path.
 
 ```agda
-  module pentagon⁻ {w x y z v}
+  module pentagon⁺ {w x y z v}
     (f : hom w x) (g : hom x y) (h : hom y z) (k : hom z v) where
 
     E : judgment w v
     E γ = reflect f (γ .fst , coact g (coact h (coact k (γ .snd))))
 
     b₁ b₂ b₃ b₄ b₅ : is-representable E
-    b₁ = ((f ⨾⁻ g) ⨾⁻ h) ⨾⁻ k
-       , reflect-⨾⁻ ((f ⨾⁻ g) ⨾⁻ h) k
-       ∙ (λ i γ → reflect-⨾⁻ (f ⨾⁻ g) h i (γ .fst , coact k (γ .snd)))
-       ∙ (λ i γ → reflect-⨾⁻ f g i (γ .fst , coact h (coact k (γ .snd))))
-    b₂ = (f ⨾⁻ (g ⨾⁻ h)) ⨾⁻ k
-       , reflect-⨾⁻ (f ⨾⁻ (g ⨾⁻ h)) k
-       ∙ (λ i γ → reflect-⨾⁻ f (g ⨾⁻ h) i (γ .fst , coact k (γ .snd)))
-       ∙ (λ i γ → reflect f (γ .fst , coact-⨾⁻ g h (coact k (γ .snd)) i))
-    b₃ = f ⨾⁻ ((g ⨾⁻ h) ⨾⁻ k)
-       , reflect-⨾⁻ f ((g ⨾⁻ h) ⨾⁻ k)
+    b₁ = ((f ⨾⁺ g) ⨾⁺ h) ⨾⁺ k
+       , reflect-⨾⁺ ((f ⨾⁺ g) ⨾⁺ h) k
+       ∙ (λ i γ → reflect-⨾⁺ (f ⨾⁺ g) h i (γ .fst , coact k (γ .snd)))
+       ∙ (λ i γ → reflect-⨾⁺ f g i (γ .fst , coact h (coact k (γ .snd))))
+    b₂ = (f ⨾⁺ (g ⨾⁺ h)) ⨾⁺ k
+       , reflect-⨾⁺ (f ⨾⁺ (g ⨾⁺ h)) k
+       ∙ (λ i γ → reflect-⨾⁺ f (g ⨾⁺ h) i (γ .fst , coact k (γ .snd)))
+       ∙ (λ i γ → reflect f (γ .fst , coact-⨾⁺ g h (coact k (γ .snd)) i))
+    b₃ = f ⨾⁺ ((g ⨾⁺ h) ⨾⁺ k)
+       , reflect-⨾⁺ f ((g ⨾⁺ h) ⨾⁺ k)
        ∙ (λ j γ → reflect f
-           (γ .fst , (γ .snd .fst , tri⁻.a₁ g h k .snd j (var _ , γ .snd))))
-    b₄ = (f ⨾⁻ g) ⨾⁻ (h ⨾⁻ k)
-       , reflect-⨾⁻ (f ⨾⁻ g) (h ⨾⁻ k)
-       ∙ (λ i γ → reflect-⨾⁻ f g i (γ .fst , coact (h ⨾⁻ k) (γ .snd)))
-       ∙ (λ i γ → reflect f (γ .fst , coact g (coact-⨾⁻ h k (γ .snd) i)))
-    b₅ = f ⨾⁻ (g ⨾⁻ (h ⨾⁻ k))
-       , reflect-⨾⁻ f (g ⨾⁻ (h ⨾⁻ k))
+           (γ .fst , (γ .snd .fst , tri⁺.a₁ g h k .snd j (var _ , γ .snd))))
+    b₄ = (f ⨾⁺ g) ⨾⁺ (h ⨾⁺ k)
+       , reflect-⨾⁺ (f ⨾⁺ g) (h ⨾⁺ k)
+       ∙ (λ i γ → reflect-⨾⁺ f g i (γ .fst , coact (h ⨾⁺ k) (γ .snd)))
+       ∙ (λ i γ → reflect f (γ .fst , coact g (coact-⨾⁺ h k (γ .snd) i)))
+    b₅ = f ⨾⁺ (g ⨾⁺ (h ⨾⁺ k))
+       , reflect-⨾⁺ f (g ⨾⁺ (h ⨾⁺ k))
        ∙ (λ j γ → reflect f
-           (γ .fst , (γ .snd .fst , tri⁻.a₂ g h k .snd j (var _ , γ .snd))))
+           (γ .fst , (γ .snd .fst , tri⁺.a₂ g h k .snd j (var _ , γ .snd))))
 
     pth : (a b : is-representable E) → a ≡ b
     pth = S E
@@ -440,92 +528,92 @@ proposition identifies the lift with the canonical path.
       ∙ ap (α₁₂ ∙_) (ap-comp fst (pth b₂ b₃) (pth b₃ b₅))
 
     γ₁₂ : b₁ ≡ b₂
-    γ₁₂ i = tri⁻.σ f g h i .fst ⨾⁻ k
-          , reflect-⨾⁻ (tri⁻.σ f g h i .fst) k
-          ∙ (λ j γ → tri⁻.σ f g h i .snd j (γ .fst , coact k (γ .snd)))
+    γ₁₂ i = tri⁺.σ f g h i .fst ⨾⁺ k
+          , reflect-⨾⁺ (tri⁺.σ f g h i .fst) k
+          ∙ (λ j γ → tri⁺.σ f g h i .snd j (γ .fst , coact k (γ .snd)))
 
-    face₁₂ : α₁₂ ≡ ap (_⨾⁻ k) (assoc⁻ f g h)
+    face₁₂ : α₁₂ ≡ ap (_⨾⁺ k) (assoc⁺ f g h)
     face₁₂ = ap (ap fst) (is-prop→is-set (S E) b₁ b₂ (pth b₁ b₂) γ₁₂)
 
     γ₃₅ : b₃ ≡ b₅
-    γ₃₅ i = f ⨾⁻ tri⁻.σ g h k i .fst
-          , reflect-⨾⁻ f (tri⁻.σ g h k i .fst)
+    γ₃₅ i = f ⨾⁺ tri⁺.σ g h k i .fst
+          , reflect-⨾⁺ f (tri⁺.σ g h k i .fst)
           ∙ (λ j γ → reflect f
-              (γ .fst , (γ .snd .fst , tri⁻.σ g h k i .snd j (var _ , γ .snd))))
+              (γ .fst , (γ .snd .fst , tri⁺.σ g h k i .snd j (var _ , γ .snd))))
 
-    face₃₅ : α₃₅ ≡ ap (f ⨾⁻_) (assoc⁻ g h k)
+    face₃₅ : α₃₅ ≡ ap (f ⨾⁺_) (assoc⁺ g h k)
     face₃₅ = ap (ap fst) (is-prop→is-set (S E) b₃ b₅ (pth b₃ b₅) γ₃₅)
 
     wrap : judgment x v → judgment w v
     wrap α γ = reflect f (γ .fst , (γ .snd .fst , α (var _ , γ .snd)))
 
     γ₂₃-pt : (i : I) → is-representable E
-    γ₂₃-pt i = tri⁻.σ f (g ⨾⁻ h) k i .fst
-             , tri⁻.σ f (g ⨾⁻ h) k i .snd
-             ∙ (λ j γ → reflect f (γ .fst , coact-⨾⁻ g h (coact k (γ .snd)) j))
+    γ₂₃-pt i = tri⁺.σ f (g ⨾⁺ h) k i .fst
+             , tri⁺.σ f (g ⨾⁺ h) k i .snd
+             ∙ (λ j γ → reflect f (γ .fst , coact-⨾⁺ g h (coact k (γ .snd)) j))
 
     l₂₃ : γ₂₃-pt i0 ≡ γ₂₃-pt i1
     l₂₃ i = γ₂₃-pt i
 
     c₂₃⁰ : b₂ ≡ γ₂₃-pt i0
     c₂₃⁰ i = b₂ .fst
-           , Path.assoc (reflect-⨾⁻ (f ⨾⁻ (g ⨾⁻ h)) k)
-               (λ j γ → reflect-⨾⁻ f (g ⨾⁻ h) j (γ .fst , coact k (γ .snd)))
-               (λ j γ → reflect f (γ .fst , coact-⨾⁻ g h (coact k (γ .snd)) j)) i
+           , Path.assoc (reflect-⨾⁺ (f ⨾⁺ (g ⨾⁺ h)) k)
+               (λ j γ → reflect-⨾⁺ f (g ⨾⁺ h) j (γ .fst , coact k (γ .snd)))
+               (λ j γ → reflect f (γ .fst , coact-⨾⁺ g h (coact k (γ .snd)) j)) i
 
     c₂₃¹ : γ₂₃-pt i1 ≡ b₃
     c₂₃¹ i = b₃ .fst
-           , ( sym (Path.assoc (reflect-⨾⁻ f ((g ⨾⁻ h) ⨾⁻ k))
-                 (λ j γ → reflect f (γ .fst , coact-⨾⁻ (g ⨾⁻ h) k (γ .snd) j))
-                 (λ j γ → reflect f (γ .fst , coact-⨾⁻ g h (coact k (γ .snd)) j)))
-             ∙ ap (reflect-⨾⁻ f ((g ⨾⁻ h) ⨾⁻ k) ∙_)
-                 (sym (ap-comp wrap (reflect-⨾⁻ (g ⨾⁻ h) k)
-                         (λ j δ → reflect-⨾⁻ g h j (δ .fst , coact k (δ .snd)))))
+           , ( sym (Path.assoc (reflect-⨾⁺ f ((g ⨾⁺ h) ⨾⁺ k))
+                 (λ j γ → reflect f (γ .fst , coact-⨾⁺ (g ⨾⁺ h) k (γ .snd) j))
+                 (λ j γ → reflect f (γ .fst , coact-⨾⁺ g h (coact k (γ .snd)) j)))
+             ∙ ap (reflect-⨾⁺ f ((g ⨾⁺ h) ⨾⁺ k) ∙_)
+                 (sym (ap-comp wrap (reflect-⨾⁺ (g ⨾⁺ h) k)
+                         (λ j δ → reflect-⨾⁺ g h j (δ .fst , coact k (δ .snd)))))
              ) i
 
     γ₂₃ : b₂ ≡ b₃
     γ₂₃ = c₂₃⁰ ∙ (l₂₃ ∙ c₂₃¹)
 
-    face₂₃ : α₂₃ ≡ assoc⁻ f (g ⨾⁻ h) k
+    face₂₃ : α₂₃ ≡ assoc⁺ f (g ⨾⁺ h) k
     face₂₃ =
       ap (ap fst) (is-prop→is-set (S E) b₂ b₃ (pth b₂ b₃) γ₂₃)
       ∙ ap-comp fst c₂₃⁰ (l₂₃ ∙ c₂₃¹)
-      ∙ ap (refl ∙_) (ap-comp fst l₂₃ c₂₃¹ ∙ Path.unitr (assoc⁻ f (g ⨾⁻ h) k))
-      ∙ Path.unitl (assoc⁻ f (g ⨾⁻ h) k)
+      ∙ ap (refl ∙_) (ap-comp fst l₂₃ c₂₃¹ ∙ Path.unitr (assoc⁺ f (g ⨾⁺ h) k))
+      ∙ Path.unitl (assoc⁺ f (g ⨾⁺ h) k)
 
     γ₄₅-pt : (i : I) → is-representable E
-    γ₄₅-pt i = tri⁻.σ f g (h ⨾⁻ k) i .fst
-             , tri⁻.σ f g (h ⨾⁻ k) i .snd
-             ∙ (λ j γ → reflect f (γ .fst , coact g (coact-⨾⁻ h k (γ .snd) j)))
+    γ₄₅-pt i = tri⁺.σ f g (h ⨾⁺ k) i .fst
+             , tri⁺.σ f g (h ⨾⁺ k) i .snd
+             ∙ (λ j γ → reflect f (γ .fst , coact g (coact-⨾⁺ h k (γ .snd) j)))
 
     l₄₅ : γ₄₅-pt i0 ≡ γ₄₅-pt i1
     l₄₅ i = γ₄₅-pt i
 
     c₄₅⁰ : b₄ ≡ γ₄₅-pt i0
     c₄₅⁰ i = b₄ .fst
-           , Path.assoc (reflect-⨾⁻ (f ⨾⁻ g) (h ⨾⁻ k))
-               (λ j γ → reflect-⨾⁻ f g j (γ .fst , coact (h ⨾⁻ k) (γ .snd)))
-               (λ j γ → reflect f (γ .fst , coact g (coact-⨾⁻ h k (γ .snd) j))) i
+           , Path.assoc (reflect-⨾⁺ (f ⨾⁺ g) (h ⨾⁺ k))
+               (λ j γ → reflect-⨾⁺ f g j (γ .fst , coact (h ⨾⁺ k) (γ .snd)))
+               (λ j γ → reflect f (γ .fst , coact g (coact-⨾⁺ h k (γ .snd) j))) i
 
     c₄₅¹ : γ₄₅-pt i1 ≡ b₅
     c₄₅¹ i = b₅ .fst
-           , ( sym (Path.assoc (reflect-⨾⁻ f (g ⨾⁻ (h ⨾⁻ k)))
-                 (λ j γ → reflect f (γ .fst , coact-⨾⁻ g (h ⨾⁻ k) (γ .snd) j))
-                 (λ j γ → reflect f (γ .fst , coact g (coact-⨾⁻ h k (γ .snd) j))))
-             ∙ ap (reflect-⨾⁻ f (g ⨾⁻ (h ⨾⁻ k)) ∙_)
-                 (sym (ap-comp wrap (reflect-⨾⁻ g (h ⨾⁻ k))
-                         (λ j δ → reflect g (δ .fst , coact-⨾⁻ h k (δ .snd) j))))
+           , ( sym (Path.assoc (reflect-⨾⁺ f (g ⨾⁺ (h ⨾⁺ k)))
+                 (λ j γ → reflect f (γ .fst , coact-⨾⁺ g (h ⨾⁺ k) (γ .snd) j))
+                 (λ j γ → reflect f (γ .fst , coact g (coact-⨾⁺ h k (γ .snd) j))))
+             ∙ ap (reflect-⨾⁺ f (g ⨾⁺ (h ⨾⁺ k)) ∙_)
+                 (sym (ap-comp wrap (reflect-⨾⁺ g (h ⨾⁺ k))
+                         (λ j δ → reflect g (δ .fst , coact-⨾⁺ h k (δ .snd) j))))
              ) i
 
     γ₄₅ : b₄ ≡ b₅
     γ₄₅ = c₄₅⁰ ∙ (l₄₅ ∙ c₄₅¹)
 
-    face₄₅ : α₄₅ ≡ assoc⁻ f g (h ⨾⁻ k)
+    face₄₅ : α₄₅ ≡ assoc⁺ f g (h ⨾⁺ k)
     face₄₅ =
       ap (ap fst) (is-prop→is-set (S E) b₄ b₅ (pth b₄ b₅) γ₄₅)
       ∙ ap-comp fst c₄₅⁰ (l₄₅ ∙ c₄₅¹)
-      ∙ ap (refl ∙_) (ap-comp fst l₄₅ c₄₅¹ ∙ Path.unitr (assoc⁻ f g (h ⨾⁻ k)))
-      ∙ Path.unitl (assoc⁻ f g (h ⨾⁻ k))
+      ∙ ap (refl ∙_) (ap-comp fst l₄₅ c₄₅¹ ∙ Path.unitr (assoc⁺ f g (h ⨾⁺ k)))
+      ∙ Path.unitl (assoc⁺ f g (h ⨾⁺ k))
 ```
 
 The last edge is the one where two appended steps commute rather than
@@ -534,28 +622,28 @@ their square is the head's own witness read at a moving coterm.
 
 ```agda
     exch : (i j : I) → judgment w v
-    exch i j γ = reflect-⨾⁻ f g i (γ .fst , coact-⨾⁻ h k (γ .snd) j)
+    exch i j γ = reflect-⨾⁺ f g i (γ .fst , coact-⨾⁺ h k (γ .snd) j)
 
     γ₁₄-pt : (i : I) → is-representable E
-    γ₁₄-pt i = tri⁻.σ (f ⨾⁻ g) h k i .fst
-             , tri⁻.σ (f ⨾⁻ g) h k i .snd
-             ∙ (λ j γ → reflect-⨾⁻ f g j (γ .fst , coact h (coact k (γ .snd))))
+    γ₁₄-pt i = tri⁺.σ (f ⨾⁺ g) h k i .fst
+             , tri⁺.σ (f ⨾⁺ g) h k i .snd
+             ∙ (λ j γ → reflect-⨾⁺ f g j (γ .fst , coact h (coact k (γ .snd))))
 
     l₁₄ : γ₁₄-pt i0 ≡ γ₁₄-pt i1
     l₁₄ i = γ₁₄-pt i
 
     c₁₄⁰ : b₁ ≡ γ₁₄-pt i0
     c₁₄⁰ i = b₁ .fst
-           , Path.assoc (reflect-⨾⁻ ((f ⨾⁻ g) ⨾⁻ h) k)
-               (λ j γ → reflect-⨾⁻ (f ⨾⁻ g) h j (γ .fst , coact k (γ .snd)))
-               (λ j γ → reflect-⨾⁻ f g j (γ .fst , coact h (coact k (γ .snd)))) i
+           , Path.assoc (reflect-⨾⁺ ((f ⨾⁺ g) ⨾⁺ h) k)
+               (λ j γ → reflect-⨾⁺ (f ⨾⁺ g) h j (γ .fst , coact k (γ .snd)))
+               (λ j γ → reflect-⨾⁺ f g j (γ .fst , coact h (coact k (γ .snd)))) i
 
     c₁₄¹ : γ₁₄-pt i1 ≡ b₄
     c₁₄¹ i = b₄ .fst
-           , ( sym (Path.assoc (reflect-⨾⁻ (f ⨾⁻ g) (h ⨾⁻ k))
+           , ( sym (Path.assoc (reflect-⨾⁺ (f ⨾⁺ g) (h ⨾⁺ k))
                  (λ j → exch i0 j)
-                 (λ j γ → reflect-⨾⁻ f g j (γ .fst , coact h (coact k (γ .snd)))))
-             ∙ ap (reflect-⨾⁻ (f ⨾⁻ g) (h ⨾⁻ k) ∙_)
+                 (λ j γ → reflect-⨾⁺ f g j (γ .fst , coact h (coact k (γ .snd)))))
+             ∙ ap (reflect-⨾⁺ (f ⨾⁺ g) (h ⨾⁺ k) ∙_)
                  (Path.commutes (λ j → exch i0 j) (λ j → exch j i1)
                                 (λ j → exch j i0) (λ j → exch i1 j)
                                 (λ i j → exch i j))
@@ -564,20 +652,20 @@ their square is the head's own witness read at a moving coterm.
     γ₁₄ : b₁ ≡ b₄
     γ₁₄ = c₁₄⁰ ∙ (l₁₄ ∙ c₁₄¹)
 
-    face₁₄ : α₁₄ ≡ assoc⁻ (f ⨾⁻ g) h k
+    face₁₄ : α₁₄ ≡ assoc⁺ (f ⨾⁺ g) h k
     face₁₄ =
       ap (ap fst) (is-prop→is-set (S E) b₁ b₄ (pth b₁ b₄) γ₁₄)
       ∙ ap-comp fst c₁₄⁰ (l₁₄ ∙ c₁₄¹)
-      ∙ ap (refl ∙_) (ap-comp fst l₁₄ c₁₄¹ ∙ Path.unitr (assoc⁻ (f ⨾⁻ g) h k))
-      ∙ Path.unitl (assoc⁻ (f ⨾⁻ g) h k)
+      ∙ ap (refl ∙_) (ap-comp fst l₁₄ c₁₄¹ ∙ Path.unitr (assoc⁺ (f ⨾⁺ g) h k))
+      ∙ Path.unitl (assoc⁺ (f ⨾⁺ g) h k)
 
-    pentagon : assoc⁻ (f ⨾⁻ g) h k ∙ assoc⁻ f g (h ⨾⁻ k)
-             ≡ ap (_⨾⁻ k) (assoc⁻ f g h)
-             ∙ (assoc⁻ f (g ⨾⁻ h) k ∙ ap (f ⨾⁻_) (assoc⁻ g h k))
+    pentagon : assoc⁺ (f ⨾⁺ g) h k ∙ assoc⁺ f g (h ⨾⁺ k)
+             ≡ ap (_⨾⁺ k) (assoc⁺ f g h)
+             ∙ (assoc⁺ f (g ⨾⁺ h) k ∙ ap (f ⨾⁺_) (assoc⁺ g h k))
     pentagon =
-      sym (ap (α₁₄ ∙_) face₄₅ ∙ ap (_∙ assoc⁻ f g (h ⨾⁻ k)) face₁₄)
+      sym (ap (α₁₄ ∙_) face₄₅ ∙ ap (_∙ assoc⁺ f g (h ⨾⁺ k)) face₁₄)
       ∙ hom-identity
       ∙ ap (_∙ (α₂₃ ∙ α₃₅)) face₁₂
-      ∙ ap (ap (_⨾⁻ k) (assoc⁻ f g h) ∙_)
-          (ap (_∙ α₃₅) face₂₃ ∙ ap (assoc⁻ f (g ⨾⁻ h) k ∙_) face₃₅)
+      ∙ ap (ap (_⨾⁺ k) (assoc⁺ f g h) ∙_)
+          (ap (_∙ α₃₅) face₂₃ ∙ ap (assoc⁺ f (g ⨾⁺ h) k ∙_) face₃₅)
 ```

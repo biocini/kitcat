@@ -74,8 +74,29 @@ a virtual graph.
     twist⁻  : (x : ob) → hom x x
 ```
 
-Each half of an argument has an axiom, filled by the twist of its own
-polarity, and the two together are the axiom at an object.
+Each half of an argument has an axiom, and the two together are the
+axiom at an object. The term half is filled by the negative twist and
+the coterm half by the positive one.
+
+A `⁻`/`⁺` suffix is read in one of three registers, and they do not
+agree with one another:
+
+- `twist⁺`, `twist⁻` name the twists themselves, after the winding
+  sign of balanced categories. `twist⁻` fills `var`, `twist⁺` fills
+  `covar`.
+- The **framing** register — `cell`, `pin`, `K`, `absorb`,
+  `is-invertible`, `fiber` — is indexed by the argument side the
+  construction lives on: `⁻` is the coterm side, built through
+  `coact`; `⁺` the term side, built through `act`.
+- The **composition** register — `composite`, `inj`, `is-composable`,
+  `contr`, `_⨾_`, `assoc`, `unitl`, `unitr`, `tri`, `collapse`,
+  `pentagon`, `pair` — is the polarity of the hand, in the duploid
+  sense. `⁺` is call-by-value, `⁻` call-by-name.
+
+The last two registers are crossed: the `⁺` hand is built from the
+coterm-side coaction, hence carries the *negative* twist, and the `⁻`
+hand carries the positive one. That crossing is what the framing is,
+not an artefact of naming.
 
 ```agda
   var : (x : ob) → term x

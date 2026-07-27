@@ -1,5 +1,10 @@
 # `Cat.Logic` — the module decomposition
 
+> **Relabelled 2026-07-27.** The polarity labels on the composition
+> towers were swapped and the unit tier renamed `is-invertible±`.
+> Identifiers below carry the pre-swap names; `src/Cat/Logic/TODO.md`
+> records the change and the naming rule now in `Cat.Logic.Type`.
+
 > **Superseded.** This describes the formulation in which a virtual
 > graph carries a single chosen edge `idn`, the tiers are stated over
 > the second projection, and stability is a contractible fiber over a
@@ -48,13 +53,20 @@ business knowing about the tiers until layer 5 needs both.
 
 ## What is not yet placed
 
-Layers 5 and 6 are still in `Test/`, and layer 5 has a dependency
-knot: `Test.SpikeJudgmentLens` and `Test.SpikeTwoSided` build on
-`Test.SpikeDeductiveSystem`'s copy of the tiers rather than on
-`Cat.Logic.Base`'s, because the displays they need live in that
-spike's appendix. The two copies are the same text; they will not
-converge until the seam module exists and the appendix moves into it.
-Nothing downstream should be built on the spike in the meantime.
+**Layers 2 and 5 have landed on the framed carrier**: the seam is
+`Cat.Logic.Graph` and the displays are `Cat.Logic.Display`, documented
+in `docs/deductive-systems/graphs.md` and `displays.md`. The seam is not
+a transcription of the spike material below — on the framed carrier
+there is no single `rx` to hand a reflexive graph, so a virtual graph
+carries *two*, `graph⁺` and `graph⁻`, and each construction had to be
+placed over one of them. Layer 6, the displaced theory, is still in
+`Test/`.
+
+The dependency knot recorded here was worse than stated. The spikes
+`Test.SpikeJudgmentLens`, `Test.SpikeTwoSided` and `Test.SpikeRxDict`
+inline a carrier with a single chosen edge, so they state facts about a
+carrier the library no longer has; they are superseded rather than
+promotable. Nothing downstream should be built on them.
 
 ## Promotion changes the shape of a definition
 

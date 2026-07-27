@@ -38,7 +38,7 @@ Three consequences, and they shape the whole theory.
 
 - A statement about a **single** edge (payload one) can be
   winding-neutral: two twists, one of each sign. This is where the unit
-  tiers live — see [unitality.md](unitality.md).
+  tiers live — see [invertibility.md](invertibility.md).
 - A statement about **two** edges — a unit law written as "composing
   with this edge changes nothing" — carries an odd number of twists and
   can never be neutral.
@@ -52,17 +52,36 @@ by every composite the theory forms.
 
 ## What the framing is not asked to be
 
-Nothing in the axioms constrains the twists. VERIFIED
-(`Test.SpikeFramedCut`): the path groupoid on an arbitrary type, framed
-by two arbitrary families of loops, satisfies every tier — `PG-deductive`
-holds with no condition on the framing and no h-level hypothesis on the
-carrier.
+Nothing in the axioms constrains the twists, and this holds on both sides of
+the path-object boundary.
 
-What the axioms *do* is make each twist the uniquely determined inverse
-of the other. The two are pinned as the centres of the two unit tiers,
-and nothing above them decides whether they cancel to the identity: that
-is one equation, the framing's own content, and the theory holds either
-way.
+VERIFIED (`Test.SpikeFramedCut`): the path groupoid on an arbitrary type,
+framed by two arbitrary families of loops, satisfies every tier —
+`PG-deductive` holds with no condition on the framing and no h-level
+hypothesis on the carrier. Its fans are singletons, so the underlying graph
+is a path object whatever the framing does; over such a graph an edge is an
+identification and a framing is a family of loops, its winding measured in
+the loop space of the vertices.
+
+VERIFIED (`Test.FramedGroup`): an abelian group read as a one-object virtual
+graph, framed by an arbitrary *pair* of its elements, likewise satisfies
+every tier — `system : deductive-system`. Here a fan is the whole group, so
+`univalent→prop` shows the graph is a path object only when the group is a
+proposition. Off the boundary the framing is free as well, and two of the
+theory's conditions become arithmetic in that model:
+
+```agda
+→cancels    / cancels→    : the cancellation  ⟺  t⁻ · t⁺ ≡ e
+→cuts-agree / cuts-agree→ : the cuts agree    ⟺  t⁻ ≡ t⁺
+```
+
+so the two cuts differ there by exactly the framing's own discrepancy, and
+`both→` says holding both forces each element to be its own inverse.
+
+What the theory *does* is give each twist a uniquely determined
+one-sided inverse — the centre of that side's tier. Nothing above
+decides whether that centre *is* the other twist: that is one equation,
+the framing's own content, and the theory holds either way.
 
 VERIFIED (`Test.SpikeFramedCut`): `cancels` is a single equation — the
 composite of the two twists at an object is trivial — and both hands'

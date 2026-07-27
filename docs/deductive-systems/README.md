@@ -3,8 +3,8 @@
 A *virtual graph* is a graph together with a two-sided representable
 embedding of its edges into judgments, and a **framing**: two families
 of endo-edges, one at each half of an argument. A *deductive system* is
-a virtual graph whose framing behaves — each twist the uniquely
-determined inverse of the other, representation unique where it occurs,
+a virtual graph whose framing behaves — each twist with a uniquely
+determined one-sided inverse, representation unique where it occurs,
 both cuts representable.
 
 The framing is the only structure. Everything asked of it is property,
@@ -13,8 +13,8 @@ and the package is a proposition.
 These documents lay out the theory as it stands. Claims marked VERIFIED
 name the module that checks them, in the discipline of
 `docs/provenance.md`. The carrier is `Cat.Logic.Type`; the axioms, the
-package and the towers are `Cat.Logic.Base`; the model and the boundary
-are `Test.SpikeFramedCut` and `Test.SpikeNeutralUnit`.
+package and the towers are `Cat.Logic.Base`; the reflexive-graph seam is
+`Cat.Logic.Graph` and the displays over it `Cat.Logic.Display`.
 
 ## The documents
 
@@ -22,9 +22,11 @@ are `Test.SpikeFramedCut` and `Test.SpikeNeutralUnit`.
 | --- | --- |
 | [virtual-graphs.md](virtual-graphs.md) | Terms, coterms, arguments, judgments; `reflect`; representability; the opposite |
 | [framing.md](framing.md) | The two twists; futures and buffers; the axiom and evaluation; winding, and what it forbids |
+| [graphs.md](graphs.md) | The framing as two reflexive graphs; the fan dictionary; the opposite; the two-sided base |
 | [actions.md](actions.md) | `act` and `coact` as displayed graphs on the term and coterm families; the two cuts |
+| [displays.md](displays.md) | Each family as a lens over the graph of the twist it does not hold; each cut as a fibration; interchange as a cospan |
 | [stability.md](stability.md) | Representation is unique where it occurs; cancellation; where the propositional weight sits |
-| [unitality.md](unitality.md) | The two tiers, over one cancellation rather than over the projection; the twists as the centres |
+| [invertibility.md](invertibility.md) | The two tiers over the projection; the cells, and what is left to the framing |
 | [composability.md](composability.md) | The two cuts' representability, existence only, indexed by a stability |
 | [the-package.md](the-package.md) | `is-deductive-system`, its propositionality, `deductive-system`, and the strict involution |
 | [towers.md](towers.md) | The two compositions, distributivity, associativity, the unit law each hand gets, the pentagon |
@@ -43,6 +45,11 @@ coterm half; each tier is one statement read at one half and at the
 other. The opposite exchanges them, and every construction is written
 once and instantiated twice.
 
+The two twists are two reflexive graphs. A twist is a reflexivity datum, so
+the framing is a pair of reflexive-graph structures on one underlying graph,
+each argument half is the centre of its own, and every tier pairing them
+reads one against the other — [graphs.md](graphs.md).
+
 ```
   virtual-graph      ob, hom, reflect, twist⁺, twist⁻
     │
@@ -51,12 +58,12 @@ once and instantiated twice.
     ├── is-composable  both cuts representable         (over a stability)
     │                    ⇝ the two compositions
     │
-    └── is-unital      two contractible fibers of the action maps
-                         ⇝ the twists, as the unique centres
+    └── is-invertible  two contractible fibers of the action maps
+                         ⇝ each side's centre, uniquely determined
 ```
 
 The two hands' compositions are never identified. That identification is
 what a mediation buys, and it lies outside this theory: adding it
-collapses the two twists into one edge, which then becomes a two-sided
-unit for a single composition. [mediation.md](mediation.md) states
+collapses the two twists into one edge — the twist its own inverse —
+which then becomes a two-sided unit for a single composition. [mediation.md](mediation.md) states
 exactly what is gained and what is spent.
