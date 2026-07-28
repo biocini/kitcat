@@ -213,15 +213,71 @@ the same correction. `Test/MixedWord.lagda.md` held the proof
 during the check and is deleted, since checking `Base` checks the
 theorem.
 
-Open, from the same pass. No inhabitant of `thunkable` or `linear`
-is derived, and the twists and the tier centres are the candidates.
-Mangel's polarity definitions are stateable verbatim: positive when
-every map out is linear, negative when every map in is thunkable.
-A separating countermodel for `associates` would certify that the
-towers carry exactly the pre-duploid associativity profile.
-Correlation spaces and Blass games are the literature's witnesses.
-Whether the readback-carrying record derives `associates` outright
-is also open.
+The open lines from this pass are items 1 to 4 of the investigation
+list below.
+
+## Lines of investigation: toward higher duploids
+
+Enumerated 2026-07-27, from the duploid comparison. Each line names
+its question and a first move. Lines 4 to 7 are ordered: each needs
+the ones before it.
+
+1. **Bound the associativity profile.** The towers prove the three
+   pre-duploid associativity axioms, and nothing yet refuses
+   `associates`. Build a separating countermodel in `Test/`.
+   Correlation spaces and Blass games are the literature's
+   witnesses. Settles whether the profile is exactly pre-duploid.
+
+2. **Thunkability: property or data.** Over untruncated homs an
+   inhabitant of `associates f g h` is an associator cell, and
+   `thunkable f` is a choice of associators with no coherence law.
+   The two bracketings represent different judgments, so stability
+   does not reach across them. Decide the higher notion: a
+   fiber-shaped refinement in the style of the tiers, or a proof
+   that the bare closure self-improves. First move: state the
+   length-4 compatibility square for a thunkable edge and test it
+   in the path groupoid.
+
+3. **Inhabitants.** No edge is proved thunkable or linear. The
+   twists and the tier centres are the candidates. Also test
+   whether the readback-carrying record
+   (`Test/FramedInterchange.lagda.md`) derives `associates`
+   outright. If it does, the classes only bite in the unit-free
+   regime.
+
+4. **Polarity in the wild setting.** Mangel's definitions are
+   stateable verbatim: positive when every map out is linear,
+   negative when every map in is thunkable. Neither is a
+   proposition here, so polarity is structure until refined or
+   truncated. Decide its status, then define the subcategories of
+   thunkable maps, linear maps, positive objects and negative
+   objects over the towers. Closure of thunkable and linear under
+   the compositions is the first lemma.
+
+5. **The fully balanced layer.** String computation, unverified:
+   with both cancellation orders, each hand is two-sided unital
+   with its own twist as unit. That is two unital magmoids on one
+   graph, offset by θ². State the layer, check the four unit laws,
+   and compare with `absorption`. This is where the duploid
+   identity apparatus should reappear.
+
+6. **Shifts as representability.** The positive shift's universal
+   property is a unique linear factorization through a thunkable
+   `ω`. State it as a fiber condition in the house style. Needs
+   line 4 for `linear` to have content.
+
+7. **The reflection theorem.** The target that makes the
+   comparison a theorem: the polarized, balanced core of a
+   deductive system is a duploid, and the correspondence extends
+   the adjunction characterization. Its expected home is the
+   notion the two source literatures imply and do not define, a
+   balanced duploid, with plain duploids as the trivially framed,
+   polarized, set-level case.
+
+8. **Prior art on one-sided unitality.** Neither vendored source
+   mentions skew structures. Run a literature pass on
+   skew-monoidal and adjacent one-sided-unital settings before any
+   novelty claim for the framed carrier.
 
 ## Resources
 
