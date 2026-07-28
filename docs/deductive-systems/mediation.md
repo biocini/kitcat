@@ -80,7 +80,9 @@ model, and it is a constraint on where a separating one could live.
 Its `reflect` is an associative product, so the two cuts differ only
 by the junction's twist, and identifying the twists identifies them.
 A model separating the collapses must have a `reflect` that is not
-of that form.
+of that form. Such reflections exist: `Test.ExtractedTwistCancel`
+twists one by a permutation. Whether one of them separates the
+collapses is untested.
 
 ## Where the boundary sits
 

@@ -27,7 +27,7 @@ A lens states its unitor at its base's reflexive edge, and each
 action holds one twist at its own axiom half. So a family's lens
 sits over the graph of the twist its action does *not* hold, and the
 unitor is a cancellation rather than an identity. VERIFIED
-(`Cat.Logic.Display`):
+(`Cat.Logic.Display`), under the two pins and the cancellations:
 
 ```agda
 term-lens   : oplax-cov-lens (graph⁻ G) (term-fam   G)   -- unitor = absorb⁺

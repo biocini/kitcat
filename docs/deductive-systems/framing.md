@@ -38,7 +38,7 @@ Three consequences, and they shape the whole theory.
 
 - A statement about a **single** edge (payload one) can be
   winding-neutral: two twists, one of each sign. This is where the
-  unit tiers live. See [invertibility.md](invertibility.md).
+  invertibility tiers live. See [invertibility.md](invertibility.md).
 - A statement about **two** edges (a unit law written as "composing
   with this edge changes nothing") carries an odd number of twists
   and can never be neutral.
@@ -83,10 +83,19 @@ its own inverse.
 What the theory *does* is give each twist a uniquely determined
 one-sided inverse: the center of that side's tier. Nothing above
 decides whether that center *is* the other twist. That is one
-equation, the framing's own content, and the theory holds either
-way.
+equation per side, the framing's own content, and the theory holds
+either way.
 
-VERIFIED (`Test.SpikeFramedCut`): `cancels` is a single equation
-(the composite of the two twists at an object is trivial), and both
-hands' cancellation conditions, `trivial⁻` and `trivial⁺`, follow
-from it.
+The two sides are moreover independent. VERIFIED
+(`Test.ExtractedTwistCancel`), over the one-twist carrier of
+`Test.ExtractedTwist`. The model is the Klein four-group, with the
+reflection twisted by a three-cycle of its non-unit elements. Every
+tier holds, one side's cancellation holds by construction, and the
+other side's is refutable. In the two models above, `reflect` is a
+plain composite and the two sides collapse into one equation. The
+independence is invisible there.
+
+VERIFIED (`Test.SpikeFramedCut`): over the path groupoid, `cancels`
+is a single equation (the composite of the two twists at an object
+is trivial), and both hands' cancellation conditions, `trivial⁻`
+and `trivial⁺`, follow from it.

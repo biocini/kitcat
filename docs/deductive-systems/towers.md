@@ -62,6 +62,12 @@ above inhabits `thunkable` or `linear`. A mediation does, since it
 makes the two junctions one operation and both bracketings instances
 of `assoc⁺`.
 
+The homs are untruncated, so an inhabitant of `associates` is an
+associator cell. A proof of `thunkable f` is then a choice of
+associators, one per word. Nothing above coheres such choices.
+Whether the higher notion is this bare closure or a fiber-shaped
+refinement in the style of the tiers is an open line of the theory.
+
 ## One unit law per hand
 
 Where the cancellation is the identity (the twists mutually inverse,

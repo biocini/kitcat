@@ -52,5 +52,7 @@ original's `contr⁻`, and conversely.
 
 The two compositions, and with them everything in
 [towers.md](towers.md): distributivity of each action over the hand
-it builds, associativity for both, one unit law per hand, and the
-pentagon. The theory declares none of it and reads each off a fiber.
+it builds, associativity for both hands and for the valid mixed
+word, and the pentagon. The unit laws per hand arrive with the
+cancellation hypotheses. The theory declares none of it and reads
+each off a fiber.

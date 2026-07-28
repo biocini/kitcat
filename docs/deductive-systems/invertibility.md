@@ -14,8 +14,8 @@ is-invertible⁺ = ∀ x → is-contr (fiber (act-π   {x} {x}) snd)
 ```
 
 A side's center is therefore the uniquely determined edge whose
-action on that family is the identity. Equivalently, it is the
-inverse that cancels the twist the action holds. No twist appears in
+action on that family is the identity. Equivalently, it is a
+one-sided inverse of the twist the action holds. No twist appears in
 the demand, so the tiers constrain the framing not at all.
 
 ## The cells
@@ -75,7 +75,13 @@ tier supplies. There the package carries the tier and
 
 Whether a side's center *is* a twist is one further equation (that
 the cancellation is the identity), and it is the framing's own
-content, not a consequence of the tiers. VERIFIED
+content, not a consequence of the tiers. The two sides are moreover
+independent. VERIFIED (`Test.ExtractedTwistCancel`), over the
+one-twist carrier: a twisted reflection on the Klein four-group has
+one cancellation and refutes the other. Neither side's
+identification buys the other.
+
+Over the path groupoid the sides do meet in one equation. VERIFIED
 (`Test.SpikeFramedCut`): `cancels` gives both `trivial⁻` and
 `trivial⁺`. The tier's center is a unit for its hand's composition
 at every framing (`neutral⁻-unitr`, `neutral⁺-unitl`), and it

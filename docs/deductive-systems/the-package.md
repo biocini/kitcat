@@ -4,7 +4,7 @@
 record is-deductive-system (G : virtual-graph o h) where
   field stable     : is-stable G
         composable : is-composable G stable
-        unital     : is-invertible G
+        invertible : is-invertible G
 ```
 
 Stability comes first because it indexes the composability field.
@@ -38,8 +38,8 @@ opᴰ D .axioms = op-axioms _ (axioms D)
 
 `op-axioms` assembles `op-stable`, `op-composable` and
 `op-invertible`. The first two reindex along the exchange of
-argument halves. The last swaps its two fields, since the two unit
-tiers exchange definitionally.
+argument halves. The last swaps its two fields, since the two
+invertibility tiers exchange definitionally.
 
 VERIFIED (`Cat.Logic.Base`): `opᴰ-invol : opᴰ (opᴰ D) ≡ D`. The
 carrier component is `refl`, because the opposite of a virtual graph

@@ -30,7 +30,7 @@ seam is `Cat.Logic.Graph`, and the displays over it
 | [invertibility.md](invertibility.md) | The two tiers over the projection, the cells, and what is left to the framing |
 | [composability.md](composability.md) | The two cuts' representability, existence only, indexed by a stability |
 | [the-package.md](the-package.md) | `is-deductive-system`, its propositionality, `deductive-system`, and the strict involution |
-| [towers.md](towers.md) | The two compositions, distributivity, associativity, the unit law each hand gets, the pentagon |
+| [towers.md](towers.md) | The two compositions, distributivity, associativity and the valid mixed word, the unit law each hand gets, the pentagon |
 | [mediation.md](mediation.md) | Interchange: what identifying the two cuts adds, and what it collapses |
 
 ## The shape of the theory

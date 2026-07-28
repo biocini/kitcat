@@ -27,9 +27,13 @@ reflect : hom x y → judgment x y
 ```
 
 Every proof is a sufficient condition to derive the judgment its
-argument denotes. Written out, `reflect f (t , k)` is the ternary
-composite of `t .snd`, `f` and `k .snd`: the edge, the argument's
-two halves, and nothing else.
+argument denotes. Read as a string, `reflect f (t , k)` is the
+ternary composite of `t .snd`, `f` and `k .snd`: the edge, the
+argument's two halves, and nothing else. The reading is a gloss,
+not a constraint. Models whose `reflect` is not a composite exist
+(VERIFIED `Test.ExtractedTwistCancel`, a reflection twisted by a
+permutation). They are what keeps the framing's two cancellations
+independent.
 
 ## Representability
 

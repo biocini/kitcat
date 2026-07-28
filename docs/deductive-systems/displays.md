@@ -101,8 +101,8 @@ Each composite judgment is the two-sided transport with one leg held
 at its twist, applied to one factor's reflection. VERIFIED:
 
 ```agda
-push-is-composite⁻ f g : bipush (twist⁻ x) g (reflect f) ≡ composite⁺ f g
-push-is-composite⁺ f g : bipush f (twist⁺ z) (reflect g) ≡ composite⁻ f g
+push-is-composite⁺ f g : bipush (twist⁻ x) g (reflect f) ≡ composite⁺ f g
+push-is-composite⁻ f g : bipush f (twist⁺ z) (reflect g) ≡ composite⁻ f g
 ```
 
 ```
