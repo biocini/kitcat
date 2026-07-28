@@ -16,6 +16,41 @@ concise, and honest about verification status (`verified` /
 
 ---
 
+## 2026-07-28 — Cat.Logic: line 2 settled, the Gist namespace, the balance dossier, custody
+
+**Thunkability is data, `verified`** (`Cat.Logic.Gist.ThunkableSquare`,
+checked): the length-4 square `compat` stated, and the circle model
+refutes propositionality of `thunkable` and of the square-refined
+closure in a full weak system. The freedom is a loop-space action and
+uniform shifts are natural, so no coherence tower truncates it. The
+same mechanism forecast the balance torsor, `verified` in
+`Gist.ReadbackTorsor`: the contractible form of balance dies on the
+phase fragment, so balance enters as structure. `Gist` created, nine
+spikes vendored from `Test` with prefixes dropped.
+
+**The programs written for cold starts**: the initial-model program
+(line 9, the coherence conjecture, the word model), the
+internal-language seam (CatColab RFC 0004, five lines), the balance
+dossier under line 5 with positions (C), (D), (D′). Rulings: mode
+separation is not a foundation, balance goes into `virtual-graph` as
+structure, strict involution not required and kept anyway. The three
+staged spike prompts ran in sibling sessions and ratified the (D′)
+cut (entry below).
+
+**Close-out, `verified`**: the handedness swap adjudicated stale
+(executed in the rename pass, evidence at `Type:96`, `Base:504`),
+gloss T32-T34 added and T31 corrected, the future/buffer register
+compression fixed at its single live site. Custody: the entry renamed
+`mmmm-classical-notions` (three authors, slug as four name words),
+`kiselyov-having-effect` vendored PROVISIONAL, schema admits `html`,
+`resources-verify` clean at 16 entries. `inferred`, not theorems: the
+(D′)-hcategory convergence and the NbE reading of readback. Open: the
+(D′) profile, oracle the free balanced word model.
+
+Commits: `7f1cf05`, `5ca957e`, `920a21f`, `1003899`, `b43fd3c`.
+Session log:
+[notes/2026-07-28-thunkability-balance-turn.md](notes/2026-07-28-thunkability-balance-turn.md).
+
 ## 2026-07-28 — Cat.Logic: the balance spikes, the (D′) record cut, the Bb archive
 
 **The record cut, `verified`** (`just check-tree`: `src/Cat` 69 of
