@@ -16,7 +16,7 @@ grep_v_allow_empty() { grep -v "$@" || [ $? -eq 1 ]; }
 
 cd "$(git rev-parse --show-toplevel)"
 
-PROSE_WIDTH=72
+PROSE_WIDTH=100
 CODE_WIDTH=100
 FRONTMATTER_WIDTH=100
 checks=()

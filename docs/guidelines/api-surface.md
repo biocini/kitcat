@@ -12,8 +12,9 @@
   `Class-Type`. The aggregator re-exports them under the type's
   `impl` namespace. Inline `instance` blocks appear only where the
   instance is inseparable from the type.
-- **Width**: 72 prose / 100 code (code width raised from 85, ruled
-  by Lane 2026-07-20), enforced on new and changed lines
+- **Width**: 100 throughout, prose and code alike (code raised
+  from 85, ruled by Lane 2026-07-20; prose raised from 72, ruled
+  by Lane 2026-07-28), enforced on new and changed lines
   (`just lint changed`). The baseline falls deliberately. It is not
   license for new over-width lines.
 - **Unicode is purposeful**: notation freely (`∂`, `⌞_⌟`,

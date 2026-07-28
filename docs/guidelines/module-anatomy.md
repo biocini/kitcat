@@ -21,9 +21,8 @@
   `Test/` scratch is exempt. Agda ignores everything before the
   first fence, so the block never affects the typecheck. A tolerant
   canary (`just lint frontmatter`) validates the core where a block
-  is present. Frontmatter lines carry a 100-char width soft cap
-  (`bin/lint`), wider than the 72 prose limit, because a
-  `contents:` tagline is one unwrappable line. The tree-wide
+  is present. Frontmatter lines carry the same 100-char width cap as
+  prose and code (`bin/lint`). The tree-wide
   conversion of the header-less and prose-header files is
   docs/roadmap.md target 6.
 - **Pragma tracks the stratum**: default

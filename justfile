@@ -32,9 +32,9 @@ check-tree dir="src":
       echo "  (arguments are positional: just check-tree src/Test)" >&2
       exit 2
     fi
-    files=$(fd -e lagda.md . "$dir" -E All.lagda.md) || exit 2
+    files=$(fd '\.lagda(\.[a-z]+)?$' "$dir" -E All.lagda.md) || exit 2
     if [ -z "$files" ]; then
-      echo "check-tree: no .lagda.md modules under $dir" >&2
+      echo "check-tree: no .lagda* modules under $dir" >&2
       exit 2
     fi
     total=$(printf '%s\n' "$files" | wc -l | tr -d ' ')
