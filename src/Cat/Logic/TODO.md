@@ -410,7 +410,24 @@ the ones before it.
    with the field aboard. RULED (Lane, 2026-07-28) regardless:
    strict op-involution is not required, involution up to a path
    of deductive systems is acceptable, so the mechanical gate is
-   gone either way. Remaining gates are mathematical
+   gone either way.
+
+   The semantic reading (Lane, 2026-07-28): readback is the
+   correctness equation of normalization-by-evaluation, stated
+   unit-free. `reflect` evaluates an edge into the judgment
+   domain, `eval` reifies at the axiom, the framed generic
+   environment, and readback says reification retracts
+   evaluation: representing any element at the axiom produces
+   the element. Below balance the transmission `eval ∘ reflect`
+   is the double twist, so readback's failure measures the
+   framing anomaly. Two checks this adds to the (D) rehearsal:
+   whether `Mag`'s stability-from-readback derivation transplants
+   to two twists, in which case `stable` demotes from tier to
+   theorem and the predicate shrinks; and the alignment with
+   line 9, where the coherence theorem is an NbE construction
+   and `Gn.equal` of roadmap project 5 is evaluate-then-reify,
+   so a readback-bearing record states its own normalization
+   correctness. Remaining gates are mathematical
    only. The tower theorems survive verbatim, since `tower` is
    parameterized by the tiers and not the record. The four-reader
    and Klein instruments die, so the associativity profile and
@@ -421,6 +438,79 @@ the ones before it.
    path-groupoid framings, and the ribbon targets all carry
    readback. Melliès treats balance as fundamental. Position (C)
    stands only until the (D) port is attempted.
+
+   Spiked 2026-07-28: the propositional form of balance is buried,
+   `Test.SpikeReadbackTorsor`. `torsor : ∀ F → F rb₀ → F rb₁ →
+   is-contr (Σ readback F) → ⊥`. A filler now dies on two witnesses.
+
+   Rehearsed 2026-07-28, `Test.SpikeBalancedBase`: `bgraph` is
+   `virtual-graph` plus a readback field. (1) landed — `opᴮ` reuses
+   the readback term and `opᴮ-invol` is `refl`, so the strict
+   involution survives (D). (2) BLOCKED from readback alone (wrong
+   head: readback fixes reflect at the reflected edge's axiom
+   environment only); with a cut, `⨾⁻-is-act` and `⨾⁺-is-coact`
+   land and reduce each hypothesis to its residue — `K⁻`/`K⁺` to
+   the hand's missing unit law at its own twist, `pin⁻`/`pin⁺` to
+   the two crossed pairings — all four unproved. (3) landed without
+   absorption or stability: `unitr⁺` and `unitl⁻` from readback
+   plus that hand's cut, the tower's statements verbatim.
+   (4) reduced to its price: `composite⁻-twist` is a theorem (the
+   cut's witness against `unitl⁻`, no absorption spent), and
+   `stable-from-contr-cut⁻` closes stability through Core's
+   `image-fibers-contr→is-embedding` once one cut's fiber arrives
+   contractible — the one datum existence-only `is-composable⁻`
+   lacks. Verdict: (D) keeps the strict involution, and the
+   predicate shrinks iff the cut field is stated contractible;
+   with existence-only cuts `stable` stays a tier.
+
+   Addendum, position (D′), named 2026-07-28 from that verdict:
+   `virtual-graph` plus readback, predicate = contractible cuts
+   plus invertibility, `stable` a theorem. Over any stable system
+   an inhabited representability fiber is contractible, so
+   existence-only and contractible cuts agree on every intended
+   model: the choice is which is primitive. (D′) is flatter than
+   the current predicate, since contractible cuts are
+   propositional outright and the stability-indexed
+   `is-composable` record with its `is-prop→PathP` step
+   disappears. The NbE reading favors it: a contractible
+   representability fiber says the judgment has a unique
+   representative, normalization with uniqueness. And (D′) is
+   `hcategory` with two twists — contractible cuts, readback,
+   stability-as-theorem — so the `Mag` re-founding and the (D)
+   port meet at one record family, `hcategory` its θ²-collapsed
+   one-twist instance. Ruling still waits on the profile
+   re-litigation, whose prompt stands.
+
+   Gated 2026-07-28, `Test.SpikeBalancedProfile`, the last gate on
+   (D′). The derivation direction lands beyond expectation: at
+   (D′) strength each tier centre reads back as the other twist,
+   so both cancellations are theorems, all four unit laws hold
+   (`unitl⁺` and `unitr⁻` are the new pair; this item's string
+   computation is now machine-checked), and `associates f t⁺ t⁻`
+   holds for every `f`. Interchange stays out: the two units are
+   offset by θ². Carriers: (1) projection plus a reading point —
+   readback and both tiers land, `no-cut⁻` refutes the negative
+   cut, the composite of a constant against the twist being a
+   mixed reader the carrier lacks; (2) the four readers
+   reindexed, twists at the two projections — readback, tiers,
+   centres the other twists on the nose, `no-cut⁺` refutes the
+   positive cut at `π₂ ⨾⁺ π₁`, constant at a projection. Verdict:
+   open after two carriers: obstructions — readback pins every
+   constant reader to its own value while the mixed composites
+   manufacture readers constant at a projection; the units reach
+   only twist-flanked words, so neither a countermodel nor a
+   general derivation exists yet.
+   The (C) versus (D′) matrix as the evidence leaves it. Strict
+   op-involution: both, `opᴰ-invol` and `opᴮ-invol` both refl.
+   Predicate: (C) carries the stability tier and the indexed
+   `is-composable` with its `is-prop→PathP` step; (D′) is flat —
+   contractible cuts plus tiers, `stable` a theorem. Balance:
+   (C) posits absorption as four hypotheses; (D′) proves the
+   cancellations and all four unit laws. Profile: (C) exactly
+   pre-duploid, machine-checked; (D′) adds the twist-flanked
+   `associates` family, the general instance open both ways —
+   and its countermodel supply is thin, since finite reader
+   carriers cannot close a cut under readback.
 
 6. **Shifts as representability.** The positive shift's universal
    property is a unique linear factorization through a thunkable
