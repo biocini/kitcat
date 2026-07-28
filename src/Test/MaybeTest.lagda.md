@@ -1,3 +1,7 @@
+A path endpoint in builtin `Maybe` computes: `p i0` at a
+`nothing`-loop is `nothing`, definitionally.
+
+```agda
 {-# OPTIONS --safe --erased-cubical #-}
 module Test.MaybeTest where
 
@@ -14,3 +18,4 @@ refl {x = x} i = x
 
 test : (p : nothing {A = A} ≡ nothing) → p i0 ≡ nothing
 test p = refl
+```

@@ -1,3 +1,8 @@
+The chain rule for `funext` at four arguments: pointwise path
+composition maps to path composition of the extensionalized
+functions, definitionally.
+
+```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
 
 module Test.Funext where
@@ -24,3 +29,4 @@ test⁴ : ∀ {u v} {A : Type u}
      → funext⁴ (λ a b c d → p a b c d ∙ q a b c d)
      ≡ funext⁴ p ∙ funext⁴ q
 test⁴ p q = refl
+```
