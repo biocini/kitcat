@@ -9,7 +9,7 @@ the lift's target and the head-rewriting witness the lift.
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
 
-module Cat.Logic.Display where
+module Bb.WeakDeductiveSystem.Display where
 
 open import Core.Type
 open import Core.Base
@@ -24,27 +24,23 @@ open import Cat.Graph.Refl.Properties
 open import Cat.Graph.Refl.Lens
 open import Cat.Graph.Refl.Fibration
 
-open import Cat.Logic.Type
-open import Cat.Logic.Base
-open import Cat.Logic.Graph
+open import Bb.WeakDeductiveSystem.Type
+open import Bb.WeakDeductiveSystem.Base
+open import Bb.WeakDeductiveSystem.Graph
 ```
 
 ## The two families
 
 ```agda
 module framed {o h} (G : virtual-graph o h)
-  (cancel⁻ : ∀ x → virtual-graph.coact-π G (virtual-graph.twist⁺ G x) ≡ snd)
-  (cancel⁺ : ∀ x → virtual-graph.act-π   G (virtual-graph.twist⁻ G x) ≡ snd)
+  (pin⁻ : ∀ x → virtual-graph.coact-π G (virtual-graph.twist⁺ G x) ≡ cell⁻ G x)
+  (pin⁺ : ∀ x → virtual-graph.act-π   G (virtual-graph.twist⁻ G x) ≡ cell⁺ G x)
+  (K⁻ : ∀ x → cell⁻ G x ≡ snd) (K⁺ : ∀ x → cell⁺ G x ≡ snd)
   where
   open virtual-graph G
   open sequents G
   open two-sided G
-
-  absorb⁻ : ∀ {y} (k : coterm y) → coact (twist⁺ y) k ≡ k
-  absorb⁻ {y} k i = k .fst , cancel⁻ y i k
-
-  absorb⁺ : ∀ {x} (t : term x) → act (twist⁻ x) t ≡ t
-  absorb⁺ {x} t i = t .fst , cancel⁺ x i t
+  open absorption G pin⁻ pin⁺ K⁻ K⁺
 ```
 
 The term action pushes forward and its cancellation points back at the
@@ -94,7 +90,7 @@ the two together are exactly a covariant fibration.
 
 ```agda
   module cuts (S : is-stable G) (C⁺ : is-composable⁺ G) (C⁻ : is-composable⁻ G) where
-    open tower G S C⁺ C⁻
+    open tower S C⁺ C⁻
 
     coslice-fibration : ∀ a → rx.is-cov-fibration (graph⁺ G) (coslice a)
     coslice-fibration _ _ _ p u = prop-inhabited→is-contr (S _) (C⁺ u p)
@@ -173,7 +169,7 @@ forward one. No single composition makes the lens functorial.
 
 ```agda
   module _ (S : is-stable G) (C⁺ : is-composable⁺ G) (C⁻ : is-composable⁻ G) where
-    open tower G S C⁺ C⁻
+    open tower S C⁺ C⁻
 
     bipush-comp
       : ∀ {x y x' y' x'' y''}

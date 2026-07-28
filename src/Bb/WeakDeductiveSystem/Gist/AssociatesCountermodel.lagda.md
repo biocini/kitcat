@@ -11,7 +11,8 @@ itself. Each hand then projects: the positive composite is the first
 factor, the negative composite is the second. `associates f g h`
 computes to `h ≡ f`, and no edge is thunkable or linear. The same
 carrier satisfies the readback record of
-`Cat.Logic.Gist.FramedInterchange`, so readback and both cuts do not
+`Bb.WeakDeductiveSystem.Gist.FramedInterchange`, so readback and
+both cuts do not
 derive `associates` either. What the projection model lacks is the
 invertibility tier, which it refutes.
 
@@ -27,7 +28,7 @@ particular the twists are not thunkable.
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
 
-module Cat.Logic.Gist.AssociatesCountermodel where
+module Bb.WeakDeductiveSystem.Gist.AssociatesCountermodel where
 
 open import Core.Type
 open import Core.Base
@@ -41,9 +42,9 @@ open import Core.Transport.Properties using (prop-inhabited→is-contr)
 open import Core.HLevel.Base using (Π-is-hlevel; ×-is-hlevel)
 open import Core.Function.Embedding using (injective→is-embedding)
 
-open import Cat.Logic.Type
-open import Cat.Logic.Base
-open import Cat.Logic.Gist.FramedInterchange using (framed; module framing)
+open import Bb.WeakDeductiveSystem.Type
+open import Bb.WeakDeductiveSystem.Base
+open import Bb.WeakDeductiveSystem.Gist.FramedInterchange using (framed; module framing)
 
 is-true : Bool → Type
 is-true true  = ⊤

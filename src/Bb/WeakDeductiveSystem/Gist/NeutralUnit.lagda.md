@@ -13,15 +13,15 @@ equal, and their composite is the shared neutral unit.
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
 
-module Cat.Logic.Gist.NeutralUnit where
+module Bb.WeakDeductiveSystem.Gist.NeutralUnit where
 
 open import Core.Type
 open import Core.Base
 open import Core.Data.Sigma
 open import Core.Kan using (_∙_)
 
-open import Cat.Logic.Type
-open import Cat.Logic.Base
+open import Bb.WeakDeductiveSystem.Type
+open import Bb.WeakDeductiveSystem.Base
 ```
 
 ## The hypothesis

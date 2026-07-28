@@ -34,7 +34,7 @@ the operation of performing it.
 
 ## The twists are the cells' centers
 
-VERIFIED (`Cat.Logic.Gist.FramedCut`, at an arbitrary framing over an
+VERIFIED (`Bb.WeakDeductiveSystem.Gist.FramedCut`, at an arbitrary framing over an
 arbitrary type, no h-level hypothesis):
 
 - `twist⁺-centre`, `twist⁻-centre`: each twist is the center of the
@@ -69,7 +69,7 @@ cancellations. No derivation in `Cat.Logic.Base` reads the center a
 tier supplies. There the package carries the tier and
 `op-invertible` crosses it. A unit law drawn from a tier directly is
 `neutral⁻-unitr` and `neutral⁺-unitl`, VERIFIED
-(`Cat.Logic.Gist.FramedCut`).
+(`Bb.WeakDeductiveSystem.Gist.FramedCut`).
 
 ## What is left to the framing
 
@@ -82,14 +82,14 @@ one cancellation and refutes the other. Neither side's
 identification buys the other.
 
 Over the path groupoid the sides do meet in one equation. VERIFIED
-(`Cat.Logic.Gist.FramedCut`): `cancels` gives both `trivial⁻` and
+(`Bb.WeakDeductiveSystem.Gist.FramedCut`): `cancels` gives both `trivial⁻` and
 `trivial⁺`. The tier's center is a unit for its hand's composition
 at every framing (`neutral⁻-unitr`, `neutral⁺-unitl`), and it
 coincides with the twist exactly when the equation holds
 (`twist-is-neutral⁻`, `twist-is-neutral⁺`).
 
 Off the path-object regime the same split is arithmetic. VERIFIED
-(`Cat.Logic.Gist.FramedGroup`): in an abelian group framed by an arbitrary
+(`Bb.WeakDeductiveSystem.Gist.FramedGroup`): in an abelian group framed by an arbitrary
 pair, each tier's center is the inverse of the twist its action map
 holds (`ι t⁻` for `coact-π`, `ι t⁺` for `act-π`), and
 `absorber⁻-is-twist⁺` carries the first back to `t⁺` exactly under

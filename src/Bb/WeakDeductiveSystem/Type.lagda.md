@@ -1,7 +1,7 @@
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
 
-module Cat.Logic.Type where
+module Bb.WeakDeductiveSystem.Type where
 
 open import Core.Type
 open import Core.Base
@@ -23,8 +23,9 @@ record virtual-graph o h : Type₊ (o ⊔ h) where
     hom : ob → ob → Type h
 ```
 
-We interpret the type of over and under arrows based at some object in the
-language of terms and coterms in an evocative way, which we intend to make
+We interpret the type of over and under arrows based at some object
+in the language of terms and coterms in an evocative way, which we
+intend to make
 precise in what follows.
 
 ```agda
@@ -104,20 +105,6 @@ not an artefact of naming.
 
   covar : (y : ob) → coterm y
   covar y = y , twist⁺ y
-```
-
-Readback is the correctness equation of normalization by
-evaluation, stated unit-free. `reflect` evaluates an edge into the
-judgment domain, and the axiom is the generic environment: the
-variable arrives with its pending read, the covariable with its
-pending write. Readback says reification at the axiom retracts
-evaluation — representing any edge at its own axiom produces the
-edge.
-
-```agda
-  field
-    readback : ∀ {x y} (f : hom x y)
-             → reflect f (var x , covar y) ≡ f
 
   axiom : (x : ob) → argument x x
   axiom x .fst = var x
@@ -166,7 +153,8 @@ module sequents {o h} (G : virtual-graph o h) where
   normal : ∀ {x y} (f : hom x y) → is-representable (reflect f)
   normal f = f , refl
 
-  hom≃total-representable : ∀ {x y} → hom x y ≃ (Σ α ∶ judgment x y , is-representable α)
+  hom≃total-representable
+    : ∀ {x y} → hom x y ≃ (Σ α ∶ judgment x y , is-representable α)
   hom≃total-representable {x} {y} = iso→equiv fwd bwd hom-ret rep-sec
     where
       fwd : hom x y → Σ F ∶ judgment x y , is-representable F

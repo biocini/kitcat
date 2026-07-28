@@ -7,15 +7,15 @@ either twist natural?
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
 
-module Cat.Logic.Gist.TwistFidelity where
+module Bb.WeakDeductiveSystem.Gist.TwistFidelity where
 
 open import Core.Type
 open import Core.Base
 open import Core.Data.Sigma
 open import Core.Kan using (_∙_)
 
-open import Cat.Logic.Type
-open import Cat.Logic.Base
+open import Bb.WeakDeductiveSystem.Type
+open import Bb.WeakDeductiveSystem.Base
 ```
 
 ## Terms and coterms exchange definitionally

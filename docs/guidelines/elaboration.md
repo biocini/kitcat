@@ -58,6 +58,15 @@ unfolding predicates (`is-univalent G → is-path-objects B → is-prop
 (structure G B)`) has nothing to recover from. It keeps its
 parameters explicit, even when its neighbors hide theirs.
 
+A record-typed parameter behind such hypotheses can appear to
+solve anyway. The unifier rebuilds it by eta, field by field, from
+the projections that the predicates' unfolded types mention. That
+recovery is complete exactly while every field of the record
+occurs there. This is an inventory fact about the record, not a
+property of the signature. A new structure field that no predicate
+mentions breaks every such signature at once, at the use sites.
+Treat an eta-recovered parameter as unrecovered.
+
 ## Levels
 
 Levels follow the same rule (ruled 2026-07-13 for `Level`, and

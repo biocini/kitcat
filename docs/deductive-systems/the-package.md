@@ -52,7 +52,7 @@ is what the split is for.
 
 ## Inhabited
 
-VERIFIED (`Cat.Logic.Gist.FramedCut`): the path groupoid on an arbitrary
+VERIFIED (`Bb.WeakDeductiveSystem.Gist.FramedCut`): the path groupoid on an arbitrary
 type, framed by two arbitrary families of loops, gives
 `PG-deductive` and hence `PG-system : deductive-system u u`.
 Representability there is total (`reflect` is an equivalence).

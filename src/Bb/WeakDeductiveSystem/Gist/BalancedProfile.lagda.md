@@ -5,7 +5,7 @@ a theorem.
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
 
-module Test.SpikeBalancedProfile where
+module Bb.WeakDeductiveSystem.Gist.BalancedProfile where
 
 open import Core.Type
 open import Core.Base
@@ -21,10 +21,10 @@ open import Core.Transport.Properties
 open import Core.HLevel.Base using (Π-is-hlevel; ×-is-hlevel)
 open import Core.Function.Embedding using (injective→is-embedding)
 
-open import Cat.Logic.Type
-open import Cat.Logic.Base
+open import Bb.WeakDeductiveSystem.Type
+open import Bb.WeakDeductiveSystem.Base
 
-open import Test.SpikeBalancedBase
+open import Bb.WeakDeductiveSystem.Gist.BalancedBase
 ```
 
 At this strength each tier's centre reads back as the other

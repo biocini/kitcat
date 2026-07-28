@@ -14,7 +14,7 @@ equating them is a coherence.
 
 ## What it adds
 
-VERIFIED (`Cat.Logic.Gist.NeutralUnit`), over a stability, both
+VERIFIED (`Bb.WeakDeductiveSystem.Gist.NeutralUnit`), over a stability, both
 composabilities, the two pins and the cancellation:
 
 **The two compositions become one.** `⨾-agree : f ⨾⁺ g ≡ f ⨾⁻ g`, by
@@ -73,7 +73,7 @@ Interchange gives both. Either missing unit law gives the first, and
 nothing in this theory carries it to the second.
 
 Whether the two are actually separable is open. In the group model
-(`Cat.Logic.Gist.FramedGroup`) they are not: VERIFIED there, agreement of the
+(`Bb.WeakDeductiveSystem.Gist.FramedGroup`) they are not: VERIFIED there, agreement of the
 two cuts is *equivalent* to equality of the two framing elements
 (`cuts-agree→` and `→cuts-agree`). The reason is visible in that
 model, and it is a constraint on where a separating one could live.

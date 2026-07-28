@@ -14,7 +14,7 @@ not in competition: the neutral unit is simply not a twist.
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
 
-module Cat.Logic.Gist.FramedCut where
+module Bb.WeakDeductiveSystem.Gist.FramedCut where
 
 open import Core.Type
 open import Core.Base
@@ -26,8 +26,8 @@ open import Core.Equiv.Base using (_≃_; is-equiv; eqv-fibers; iso→equiv)
 open import Core.Equiv.Properties using (_∙e_; Π-contr-dom)
 open import Core.Groupoid.Virtual using (module yon-unbiased)
 
-open import Cat.Logic.Type
-open import Cat.Logic.Base
+open import Bb.WeakDeductiveSystem.Type
+open import Bb.WeakDeductiveSystem.Base
 ```
 
 ## The carrier

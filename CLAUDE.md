@@ -54,6 +54,7 @@ Dependencies: Agda builtins only — no agda-stdlib, no cubical library.
 | `HData.*` | Higher inductive types |
 | `Cat.*` | Category theory |
 | `Lib.*` | Extended developments |
+| `Bb.*` | Blackboard: archived strata, frozen green |
 | `Test.*` | Scratch and regression witnesses (gate-exempt) |
 
 `just stats` for live inventories rather than static tables.

@@ -1,27 +1,30 @@
+# Bb.WeakDeductiveSystem — archive
+
+**Archive banner.** This tree is the frozen form of `Cat.Logic` as
+of the tree state it was copied from: the weak stratum, existence
+cuts indexed by a stability tier, no readback field. The live TODO
+stays at `src/Cat/Logic/TODO.md`. This copy does not evolve.
+
 # Cat.Logic — open items
 
-State as of 2026-07-28, after the record cut. `src/Cat`
-typechecks, 69 modules. The five free-framing spikes are retired
-to the archive, the block below. `src/Test` typechecks, 33
-modules, the `ExtractedTwist` trio among them. `src/Bb` is new — the Blackboard, archived strata frozen
-green — and `Bb.WeakDeductiveSystem`, 16 modules, is the weak
-stratum as it stood before the cut. Lint is clean. The `Mag`
-rebuild against `src/Mag/TODO.md` remains pending.
+State as of 2026-07-28. `src/Cat` typechecks, 71 modules, and
+`src/Test` typechecks, 33 modules. Lint is clean. The `Mag` rebuild
+against `src/Mag/TODO.md` remains pending.
 
 `Cat.Logic.Gist` is new: the certified spikes on `Cat.Logic`'s
 definitions, vendored out of `Test` with the `Spike` prefixes
-dropped. Seven modules: `BalancedBase`, `BalancedProfile`,
-`FramedInterchange`, `ReadbackTorsor`, `ReflectFiber`, `RxDict`,
-`ThunkableSquare`. Five more live only in the archive, the
-retired block below. The one-twist trio
+dropped. Twelve modules: `AssociatesCountermodel`, `BalancedBase`,
+`BalancedProfile`, `FramedCut`, `FramedGroup`, `FramedInterchange`,
+`NeutralUnit`, `ReadbackTorsor`, `ReflectFiber`, `RxDict`,
+`ThunkableSquare`, `TwistFidelity`. The one-twist trio
 (`ExtractedTwist*`) stays in `Test`: it probes the rejected rival
 carrier, not these definitions.
 
-Committed through `0065395`, the three balance spikes, on
-`cat-logic-polarity`. The record cut, the `Gist` promotion, and
-the `Bb` archive are uncommitted work in the tree. Untracked
-besides them: `src/Mag/`, the `Test` spikes `ExtractedTwistCancel`
-and `ExtractedTwistModels`, the one-twist brief in `notes/`, and
+Committed through the seam-and-programs commit on
+`cat-logic-polarity`, on top of `7f1cf05`, the `Gist` vendoring.
+Untracked: `src/Mag/`,
+the `Test` spikes `ExtractedTwistCancel` and
+`ExtractedTwistModels`, the one-twist brief in `notes/`, and
 `resources/selinger-graphical-languages/`.
 
 Prose is gated by the `writing` skill alone. Its bundled linter is
@@ -33,56 +36,6 @@ skill is the normative statement and
 prose in that register. Open: whether the gate should also cover
 module prose under `src/`, which the retired porcelain gate never
 measured either.
-
-## Settled: the record cut
-
-Cut 2026-07-28, adopting position (D′). `virtual-graph` carries
-`readback`, stated through `reflect` at `var`/`covar`, so it is
-`eval ∘ reflect ≡ id` on the nose. `is-deductive-system` is
-contractible cuts plus invertibility — propositional fieldwise,
-no `is-prop→PathP` step — and `stable` is gone as a field.
-Theorems now, in `Cat.Logic.Base`: `axioms→stable`
-(`contr-cut⁻.stable-from-contr-cut⁻`, through `composite⁻-twist`
-and `image-fibers-contr→is-embedding`); `unitr⁺` and `unitl⁻`
-unconditional in `tower`, from `hand⁺`/`hand⁻`; and under the two
-tiers, `tower.balanced`: `centre⁻-twist⁺`, `centre⁺-twist⁻`,
-`cancel⁻`, `cancel⁺`, `absorb⁻`, `absorb⁺`, `unitl⁺`, `unitr⁻` —
-all four unit laws, two unital magmoids on one graph offset by
-the double twist. `opⱽ` carries the readback leg unchanged and
-`opⱽ-invol` stays `refl`. The `absorption` and `unital` hypothesis
-modules are gone; `Display.framed` takes the two cancellations.
-One inference ruling: readback never appears in the axioms'
-types, so an implicit-`G` application no longer pins `G` by eta —
-recovery held before only because every field of the record
-occurred in the predicates' unfolded types, an inventory fact no
-signature can see change. Per the no-principal-argument clause of
-`docs/guidelines/elaboration.md`, the carrier is explicit in
-`tower`, `coherence`, and any future signature whose hypotheses
-are all predicates over it.
-
-## Retired to the archive by the record cut
-
-Five `Gist` modules are deleted from the live tree. Their subject
-is the free-framing regime, which readback ends, and their green
-form is the archive's: `Bb.WeakDeductiveSystem.Gist`, where every
-`docs/` citation of the five now points. Deciding Lane's ruling
-of 2026-07-28: the live tree carries no red modules.
-
-- `AssociatesCountermodel`: the four-reader carrier has no
-  readback — a constant reads back as a projection. The
-  weak-stratum profile verdict lives in the archive; the balanced
-  profile is `Gist.BalancedProfile`.
-- `FramedCut`: its subject is a full system at every framing, and
-  readback kills framing freedom — at `t⁻ = loop` it dies by
-  `loop-nontrivial`.
-- `FramedGroup`: the abelian group at an arbitrary framing pair;
-  readback forces the pair to sum to the unit, which erases the
-  spike's free-framing fan.
-- `NeutralUnit`: consumes `unital`'s hypothesis interface, now
-  derived; its question is answered at (D′) by `tower.balanced`.
-- `TwistFidelity`: audits the `pin`/`K` hypotheses, which no
-  longer exist; framing invertibility is `balanced.cancel⁻` and
-  `balanced.cancel⁺`.
 
 ## Done
 
@@ -96,8 +49,8 @@ The rename pass is applied.
   `tri±`, `collapse±`, `pentagon±`, `pair±`, `C±`,
   `push-is-composite±`. Framing register untouched.
 - `mixed-leading` → `thunkable`, `mixed-trailing` → `linear`.
-- Consumers fixed: `Bb/WeakDeductiveSystem/Gist/FramedGroup`, `Bb/WeakDeductiveSystem/Gist/TwistFidelity`,
-  `Bb/WeakDeductiveSystem/Gist/FramedCut`, `Bb/WeakDeductiveSystem/Gist/NeutralUnit`.
+- Consumers fixed: `Cat/Logic/Gist/FramedGroup`, `Cat/Logic/Gist/TwistFidelity`,
+  `Cat/Logic/Gist/FramedCut`, `Cat/Logic/Gist/NeutralUnit`.
 - The three-register naming rule is written into `Cat.Logic.Type`,
   beside the twist fields.
 
@@ -173,8 +126,8 @@ same way.
 
 Identifiers affected: `composite±`, `inj±`, `is-composable±`,
 `cell±`, the `op-*` lemmas, and whatever `Cat/Logic/Display.lagda.md`,
-`Cat/Logic/Graph.lagda.md`, `Bb/WeakDeductiveSystem/Gist/FramedGroup.lagda.md` and
-`Bb/WeakDeductiveSystem/Gist/TwistFidelity.lagda.md` inherit.
+`Cat/Logic/Graph.lagda.md`, `Cat/Logic/Gist/FramedGroup.lagda.md` and
+`Cat/Logic/Gist/TwistFidelity.lagda.md` inherit.
 
 Docs affected: `actions.md` and `towers.md`, whose pending-read /
 pending-write sentences swap with the names — landing on ⁺ = future
@@ -278,7 +231,7 @@ list below.
 
 ## Settled: the associativity profile
 
-Decided 2026-07-27, by countermodel: `Bb/WeakDeductiveSystem/Gist/AssociatesCountermodel`,
+Decided 2026-07-27, by countermodel: `Cat/Logic/Gist/AssociatesCountermodel`,
 machine-checked. The deductive-system axioms prove exactly the
 pre-duploid triple — `assoc⁺`, `assoc⁻`, `mixed-assoc` — and
 `associates` is independent. No correlation-space or game machinery
@@ -350,7 +303,7 @@ the ones before it.
 1. **Bound the associativity profile.** SETTLED 2026-07-27: the
    profile is exactly pre-duploid, at full deductive-system
    strength. See the settled section above and
-   `Bb/WeakDeductiveSystem/Gist/AssociatesCountermodel`.
+   `Cat/Logic/Gist/AssociatesCountermodel`.
 
 2. **Thunkability: property or data.** SETTLED 2026-07-27: data,
    and the square does not truncate it. See the settled section
@@ -404,7 +357,7 @@ the ones before it.
    the comparison table there into a depolarization theorem.
 
    Readback is independent of the deductive-system axioms, so no
-   derivation search is worth a session: `Bb.WeakDeductiveSystem.Gist.FramedCut`
+   derivation search is worth a session: `Cat.Logic.Gist.FramedCut`
    gives a full system at every framing, and at `t⁻ = loop`,
    `t⁺ = refl` over the circle, readback at `refl` dies by
    `loop-nontrivial`. The centres, by contrast, carry their
@@ -421,7 +374,7 @@ the ones before it.
    readback record only rederives them because its own axiom
    base lacks the stability tier. Candidate compression, one loop per object
    instead of a path per edge: `cancels` in
-   `Bb.WeakDeductiveSystem.Gist.FramedCut`, with naturality derived from
+   `Cat.Logic.Gist.FramedCut`, with naturality derived from
    stability rather than posited, in the way stability already
    manufactures associativity. First moves: attempt that
    derivation over the tower, mixed-σ style, and run the
@@ -591,10 +544,7 @@ the ones before it.
    over hom sets, so the syntactic question reduces to one
    coherence conjecture: the free deductive system on a set-level
    signature has hom sets. The full brief is the initial-model
-   section below. Next session starts here. The open profile
-   question of the (D′) gate transfers here: the free balanced
-   word model — item 1 at (D′) strength — is now the profile
-   oracle.
+   section below. Next session starts here.
 
 ## The initial-model program
 

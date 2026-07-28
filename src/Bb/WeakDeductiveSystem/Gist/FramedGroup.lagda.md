@@ -12,7 +12,7 @@ what the two cuts differ by.
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
 
-module Cat.Logic.Gist.FramedGroup where
+module Bb.WeakDeductiveSystem.Gist.FramedGroup where
 
 open import Core.Type
 open import Core.Base
@@ -27,9 +27,9 @@ open import Core.Transport.Properties using (prop-inhabited→is-contr)
 open import Cat.Graph.Refl.Type
 open import Cat.Graph.Refl.Base
 
-open import Cat.Logic.Type
-open import Cat.Logic.Base
-open import Cat.Logic.Graph
+open import Bb.WeakDeductiveSystem.Type
+open import Bb.WeakDeductiveSystem.Base
+open import Bb.WeakDeductiveSystem.Graph
 ```
 
 ## The carrier

@@ -16,7 +16,7 @@ the one datum an existence-only cut does not supply.
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
 
-module Test.SpikeBalancedBase where
+module Bb.WeakDeductiveSystem.Gist.BalancedBase where
 
 open import Core.Type
 open import Core.Base
@@ -25,8 +25,8 @@ open import Core.Kan using (_∙_)
 open import Core.Transport.J using (subst)
 open import Core.Function.Embedding using (image-fibers-contr→is-embedding)
 
-open import Cat.Logic.Type
-open import Cat.Logic.Base
+open import Bb.WeakDeductiveSystem.Type
+open import Bb.WeakDeductiveSystem.Base
 
 record bgraph o h : Type₊ (o ⊔ h) where
   field

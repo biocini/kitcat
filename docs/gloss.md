@@ -502,9 +502,9 @@ is `t⁻ ≡ t⁺`, so the two cuts differ by exactly the framing's own
 discrepancy. Holding both forces each element to be its own
 inverse.
 
-✅ `Cat.Logic.Gist.FramedGroup` (2026-07-25). Placement settled
+✅ `Bb.WeakDeductiveSystem.Gist.FramedGroup` (2026-07-25). Placement settled
 2026-07-27: framed models live in `Cat.Logic.Gist`, beside the
-path-groupoid witness `Cat.Logic.Gist.FramedCut`.
+path-groupoid witness `Bb.WeakDeductiveSystem.Gist.FramedCut`.
 
 ## Standing results from earlier strata (pre-2026-07-10)
 

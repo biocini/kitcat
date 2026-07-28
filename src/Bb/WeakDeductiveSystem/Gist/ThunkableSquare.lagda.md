@@ -36,7 +36,7 @@ Both ride the winding equivalence, which `ua` builds.
 ```agda
 {-# OPTIONS --cubical --safe --no-guardedness --no-sized-types #-}
 
-module Cat.Logic.Gist.ThunkableSquare where
+module Bb.WeakDeductiveSystem.Gist.ThunkableSquare where
 
 open import Core.Type
 open import Core.Base
@@ -51,8 +51,8 @@ open import Core.Equiv.Base using (_≃_; iso→equiv)
 open import Core.Equiv.Properties using (is-contr-equiv; Σ-equiv-snd)
 open import Core.Data.Empty using (⊥)
 
-open import Cat.Logic.Type
-open import Cat.Logic.Base
+open import Bb.WeakDeductiveSystem.Type
+open import Bb.WeakDeductiveSystem.Base
 
 open import HData.Circle
 open Circle
@@ -66,10 +66,10 @@ each `associates` cell lives in a set. The closure is then a
 proposition, and the square holds for every witness.
 
 ```agda
-module coherence {o h} (G : virtual-graph o h)
+module coherence {o h} {G : virtual-graph o h}
   (S : is-stable G) (C⁺ : is-composable⁺ G) (C⁻ : is-composable⁻ G) where
   open virtual-graph G
-  open tower G S C⁺ C⁻ public
+  open tower S C⁺ C⁻ public
 
   compat : ∀ {w x y z v} {f : hom w x} (T : thunkable f)
          → hom x y → hom y z → hom z v → Type h
@@ -116,7 +116,6 @@ module circle where
   model .virtual-graph.reflect = rf
   model .virtual-graph.twist⁺ _ = base
   model .virtual-graph.twist⁻ _ = base
-  model .virtual-graph.readback f = mult-unit-r f
 
   open virtual-graph model using (coact-π; act-π)
 
@@ -243,10 +242,9 @@ centre onto `base`.
             (SinglP-contr {A = λ _ → Circle} base))))
 
   D : is-deductive-system model
-  D .is-deductive-system.composable .is-composable.contr⁺ f g =
-    contr-from-stable model stable _ (C⁺ f g)
-  D .is-deductive-system.composable .is-composable.contr⁻ f g =
-    contr-from-stable model stable _ (C⁻ f g)
+  D .is-deductive-system.stable = stable
+  D .is-deductive-system.composable .is-composable.contr⁺ = C⁺
+  D .is-deductive-system.composable .is-composable.contr⁻ = C⁻
   D .is-deductive-system.invertible .is-invertible.fiber⁻ = λ _ → tier⁻
   D .is-deductive-system.invertible .is-invertible.fiber⁺ = λ _ → tier⁺
 ```
@@ -259,7 +257,7 @@ loop space at `mult g h`. The constant family and its pointwise
 them by one winding.
 
 ```agda
-  open coherence model stable C⁺ C⁻
+  open coherence {G = model} stable C⁺ C⁻
 
   T₀ : thunkable base
   T₀ g h = refl

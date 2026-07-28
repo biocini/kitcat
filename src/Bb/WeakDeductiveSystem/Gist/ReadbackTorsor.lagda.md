@@ -14,7 +14,7 @@ winding equivalence that `ua` builds.
 ```agda
 {-# OPTIONS --cubical --safe --no-guardedness --no-sized-types #-}
 
-module Test.SpikeReadbackTorsor where
+module Bb.WeakDeductiveSystem.Gist.ReadbackTorsor where
 
 open import Core.Type
 open import Core.Base
@@ -22,8 +22,8 @@ open import Core.Data.Sigma
 open import Core.Kan using (_∙_; module Path; is-contr→is-prop)
 open import Core.Data.Empty using (⊥)
 
-open import Cat.Logic.Type
-open import Cat.Logic.Gist.ThunkableSquare
+open import Bb.WeakDeductiveSystem.Type
+open import Bb.WeakDeductiveSystem.Gist.ThunkableSquare
 
 open import HData.Circle
 open Circle

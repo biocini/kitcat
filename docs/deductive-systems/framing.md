@@ -55,7 +55,7 @@ the theory forms carries its winding.
 Nothing in the axioms constrains the twists, and this holds on both
 sides of the path-object boundary.
 
-VERIFIED (`Cat.Logic.Gist.FramedCut`): the path groupoid on an arbitrary
+VERIFIED (`Bb.WeakDeductiveSystem.Gist.FramedCut`): the path groupoid on an arbitrary
 type, framed by two arbitrary families of loops, satisfies every
 tier: `PG-deductive` holds with no condition on the framing and no
 h-level hypothesis on the carrier. Its fans are singletons, so the
@@ -63,7 +63,7 @@ underlying graph is a path object whatever the framing does. Over
 such a graph an edge is an identification and a framing is a family
 of loops, its winding measured in the loop space of the vertices.
 
-VERIFIED (`Cat.Logic.Gist.FramedGroup`): an abelian group read as a one-object
+VERIFIED (`Bb.WeakDeductiveSystem.Gist.FramedGroup`): an abelian group read as a one-object
 virtual graph, framed by an arbitrary *pair* of its elements,
 likewise satisfies every tier: `system : deductive-system`. Here a
 fan is the whole group, so `univalent→prop` shows the graph is a
@@ -95,7 +95,7 @@ other side's is refutable. In the two models above, `reflect` is a
 plain composite and the two sides collapse into one equation. The
 independence is invisible there.
 
-VERIFIED (`Cat.Logic.Gist.FramedCut`): over the path groupoid, `cancels`
+VERIFIED (`Bb.WeakDeductiveSystem.Gist.FramedCut`): over the path groupoid, `cancels`
 is a single equation (the composite of the two twists at an object
 is trivial), and both hands' cancellation conditions, `trivial⁻`
 and `trivial⁺`, follow from it.

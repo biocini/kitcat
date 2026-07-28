@@ -16,6 +16,40 @@ concise, and honest about verification status (`verified` /
 
 ---
 
+## 2026-07-28 — Cat.Logic: the balance spikes, the (D′) record cut, the Bb archive
+
+**The record cut, `verified`** (`just check-tree`: `src/Cat` 69 of
+69, `src/Test` 33 of 33, `src/Bb` 16 of 16; lint clean). Position
+(D′) adopted. `virtual-graph` carries `readback`, the NbE
+correctness equation stated unit-free. `is-deductive-system` is
+contractible cuts plus invertibility, propositional fieldwise, and
+`stable` demoted from tier to theorem (`axioms→stable`). At tier
+strength the four unit laws and both cancellations are theorems
+(`tower.balanced`): each tier centre reads back as the other
+twist, two unital magmoids on one graph, offset by the double
+twist. The strict op-involution survives the field (`opⱽ-invol`
+stays `refl`). The weak stratum is frozen green as
+`Bb.WeakDeductiveSystem` (16 modules, new `Bb.*` namespace). Five
+free-framing Gist spikes retired to it under Lane's no-red ruling,
+with every `docs/` citation re-pointed. Groundwork the same day,
+`verified`: the readback torsor (`Gist.ReadbackTorsor`, balance
+moduli is content), the (D) rehearsal (`Gist.BalancedBase`), and
+the (D′) profile gate (`Gist.BalancedProfile`, two carrier kills).
+
+**Failed forms, recorded:** an implicit carrier over unfolding
+predicates breaks on any new record field (eta recovery is
+complete only while every field occurs in the hypotheses) — ruled
+explicit per `docs/guidelines/elaboration.md`, which gained the
+eta paragraph. Where-scoped opens of parameterized modules and
+inline prop-combinator chains in copattern clauses both leave
+unsolved metas; the named, module-parameter forms check.
+
+**Open:** the (D′) associates profile, both directions. The free
+balanced word model is the oracle, merged with line 9 of the
+`Cat.Logic` TODO. Next step: the word-model session at (D′)
+strength. Commits `0065395`, `36ef6d7`. Session log:
+[`notes/2026-07-28-balanced-record-cut.md`](notes/2026-07-28-balanced-record-cut.md).
+
 ## 2026-07-14 (tenth session) — THE REFACTOR downstream committed (5 stages); a context-layer process failure surfaced, hardening opened and handed to Lane
 
 **THE REFACTOR core downstream — five stages, all `verified` (each

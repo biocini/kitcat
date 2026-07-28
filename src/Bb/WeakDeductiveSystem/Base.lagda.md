@@ -1,17 +1,16 @@
 A deductive system is a virtual graph whose framing behaves: each twist
-has a uniquely determined one-sided inverse, and both cuts are uniquely
-representable. All of it is property; the framing and the readback are
-the structure. Stability — representation unique where it occurs — is a
-theorem here, not a tier.
+has a uniquely determined one-sided inverse, representation is unique
+where it occurs, and both cuts are representable. All of it is property;
+the framing is the only structure.
 
 That the two inverses are the twists themselves — the twists mutually
-inverse — is a theorem as well: each tier's centre reads back as the
-other twist. The cancellations live in `tower.balanced`.
+inverse — is not asserted here. It is the balanced layer's condition,
+carried as hypotheses by `absorption`.
 
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
 
-module Cat.Logic.Base where
+module Bb.WeakDeductiveSystem.Base where
 
 open import Core.Type
 open import Core.Base
@@ -21,14 +20,11 @@ open import Core.Path.Base using (ap-comp)
 open import Core.Transport.Properties
   using (is-prop→is-set; is-prop-is-prop; is-contr-is-prop; prop-inhabited→is-contr)
 open import Core.HLevel.Base using (Π-is-prop; Πi-is-prop; is-prop-equiv; Π-is-hlevel)
-open import Core.Function.Embedding
-  using (is-embedding; injective→is-embedding; image-fibers-contr→is-embedding)
+open import Core.Function.Embedding using (is-embedding; injective→is-embedding)
 open import Core.Transport.Base using (is-prop→PathP)
-open import Core.Transport.J using (subst)
 open import Core.Equiv.Base using (iso→equiv)
-open import Core.Equiv.Properties using (is-contr-equiv)
 
-open import Cat.Logic.Type
+open import Bb.WeakDeductiveSystem.Type
 ```
 
 ## The opposite
@@ -45,7 +41,6 @@ opⱽ G .virtual-graph.hom x y   = virtual-graph.hom G y x
 opⱽ G .virtual-graph.reflect f γ = virtual-graph.reflect G f (γ .snd , γ .fst)
 opⱽ G .virtual-graph.twist⁺    = virtual-graph.twist⁻ G
 opⱽ G .virtual-graph.twist⁻    = virtual-graph.twist⁺ G
-opⱽ G .virtual-graph.readback  = virtual-graph.readback G
 
 opⱽ-invol : ∀ {o h} (G : virtual-graph o h) → opⱽ (opⱽ G) ≡ G
 opⱽ-invol G = refl
@@ -106,6 +101,25 @@ and nothing here says a centre is the other twist.
     is-invertible⁻-is-prop (is-invertible.fiber⁻ U) (is-invertible.fiber⁻ U') i
   is-invertible-is-prop U U' i .is-invertible.fiber⁺ =
     is-invertible⁺-is-prop (is-invertible.fiber⁺ U) (is-invertible.fiber⁺ U') i
+```
+
+Pinning each twist to its side's cell and trivialising that cell is two
+hypotheses per side, and together they say each centre is the twist
+filling the other slot — the twists mutually inverse. That absorption
+consumes no tier: neither representation's uniqueness nor either cut's
+existence appears in it, and a deductive system does not assert it.
+
+```agda
+  module absorption
+    (pin⁻ : ∀ x → coact-π (twist⁺ x) ≡ cell⁻ x)
+    (pin⁺ : ∀ x → act-π   (twist⁻ x) ≡ cell⁺ x)
+    (K⁻ : ∀ x → cell⁻ x ≡ snd) (K⁺ : ∀ x → cell⁺ x ≡ snd) where
+
+    absorb⁻ : ∀ {y} (k : coterm y) → coact (twist⁺ y) k ≡ k
+    absorb⁻ {y} k i = k .fst , (pin⁻ y ∙ K⁻ y) i k
+
+    absorb⁺ : ∀ {x} (t : term x) → act (twist⁻ x) t ≡ t
+    absorb⁺ {x} t i = t .fst , (pin⁺ x ∙ K⁺ x) i t
 ```
 
 ## Stability
@@ -199,104 +213,21 @@ hand.
     Π-is-prop λ _ → Π-is-prop λ _ → S _
 ```
 
-The record demands each cut's representability contractibly — the
-representative and its uniqueness in one datum — so composability is a
-proposition outright, with no stability index.
+Composability is stated over a stability: neither cut's existence is a
+proposition on its own, and it is the stability the record is indexed by
+that makes it one.
 
 ```agda
-  record is-composable : Type (o ⊔ h) where
+  record is-composable (S : is-stable) : Type (o ⊔ h) where
     field
-      contr⁺ : ∀ {x y z} (f : hom x y) (g : hom y z)
-             → is-contr (is-representable (composite⁺ f g))
-      contr⁻ : ∀ {x y z} (f : hom x y) (g : hom y z)
-             → is-contr (is-representable (composite⁻ f g))
+      contr⁺ : is-composable⁺
+      contr⁻ : is-composable⁻
 
-  contr⁺-is-prop : is-prop (∀ {x y z} (f : hom x y) (g : hom y z)
-                          → is-contr (is-representable (composite⁺ f g)))
-  contr⁺-is-prop =
-    Πi-is-prop λ _ → Πi-is-prop λ _ → Πi-is-prop λ _ →
-    Π-is-prop λ _ → Π-is-prop λ _ → is-contr-is-prop _
-
-  contr⁻-is-prop : is-prop (∀ {x y z} (f : hom x y) (g : hom y z)
-                          → is-contr (is-representable (composite⁻ f g)))
-  contr⁻-is-prop =
-    Πi-is-prop λ _ → Πi-is-prop λ _ → Πi-is-prop λ _ →
-    Π-is-prop λ _ → Π-is-prop λ _ → is-contr-is-prop _
-
-  is-composable-is-prop : is-prop is-composable
-  is-composable-is-prop C C' i .is-composable.contr⁺ =
-    contr⁺-is-prop (is-composable.contr⁺ C) (is-composable.contr⁺ C') i
-  is-composable-is-prop C C' i .is-composable.contr⁻ =
-    contr⁻-is-prop (is-composable.contr⁻ C) (is-composable.contr⁻ C') i
-```
-
-## Readback and one cut
-
-Each composition is its own action read at the axiom: the cut's
-representation witness evaluates there, and readback straightens both
-flanks. Each hand gains its unit law at its own twist the same way.
-
-```agda
-  module hand⁺ (C⁺ : is-composable⁺) where
-
-    _⨾⁺_ : ∀ {x y z} → hom x y → hom y z → hom x z
-    f ⨾⁺ g = C⁺ f g .fst
-
-    ⨾⁺-is-coact : ∀ {x y z} (f : hom x y) (k : hom y z)
-                → coact-π f (z , k) ≡ f ⨾⁺ k
-    ⨾⁺-is-coact {x} {y} {z} f k =
-        (λ i → reflect f (var x , (z , readback k (~ i))))
-      ∙ (λ i → C⁺ f k .snd (~ i) (var x , covar z))
-      ∙ readback (f ⨾⁺ k)
-
-    unitr⁺ : ∀ {x y} (f : hom x y) → f ⨾⁺ twist⁺ y ≡ f
-    unitr⁺ {x} {y} f =
-        sym (readback (f ⨾⁺ twist⁺ y))
-      ∙ (λ i → C⁺ f (twist⁺ y) .snd i (var x , covar y))
-      ∙ (λ i → reflect f (var x , (y , readback (twist⁺ y) i)))
-      ∙ readback f
-
-  module hand⁻ (C⁻ : is-composable⁻) where
-
-    _⨾⁻_ : ∀ {x y z} → hom x y → hom y z → hom x z
-    f ⨾⁻ g = C⁻ f g .fst
-
-    ⨾⁻-is-act : ∀ {w x y} (s : hom w x) (h : hom x y)
-              → act-π h (w , s) ≡ s ⨾⁻ h
-    ⨾⁻-is-act {w} {x} {y} s h =
-        (λ i → reflect h ((w , readback s (~ i)) , covar y))
-      ∙ (λ i → C⁻ s h .snd (~ i) (var w , covar y))
-      ∙ readback (s ⨾⁻ h)
-
-    unitl⁻ : ∀ {x y} (g : hom x y) → twist⁻ x ⨾⁻ g ≡ g
-    unitl⁻ {x} {y} g =
-        sym (readback (twist⁻ x ⨾⁻ g))
-      ∙ (λ i → C⁻ (twist⁻ x) g .snd i (var x , covar y))
-      ∙ (λ i → reflect g ((x , readback (twist⁻ x) i) , covar y))
-      ∙ readback g
-
-    composite⁻-twist : ∀ {x y} (g : hom x y)
-                     → composite⁻ (twist⁻ x) g ≡ reflect g
-    composite⁻-twist {x} g =
-      sym (C⁻ (twist⁻ x) g .snd) ∙ ap reflect (unitl⁻ g)
-```
-
-The negative composite at the twist is a reflection, so a contractible
-cut fiber transports to every image fiber: stability is a theorem of
-the contractible cuts.
-
-```agda
-  module contr-cut⁻
-    (cc : ∀ {x y z} (f : hom x y) (g : hom y z)
-        → is-contr (is-representable (composite⁻ f g))) where
-
-    open hand⁻ (λ f g → cc f g .center)
-
-    stable-from-contr-cut⁻ : is-stable
-    stable-from-contr-cut⁻ {x} {y} =
-      image-fibers-contr→is-embedding
-        (λ g → subst (λ β → is-contr (is-representable β))
-                     (composite⁻-twist g) (cc (twist⁻ x) g))
+  is-composable-is-prop : (S : is-stable) → is-prop (is-composable S)
+  is-composable-is-prop S C C' i .is-composable.contr⁺ =
+    is-composable⁺-is-prop S (is-composable.contr⁺ C) (is-composable.contr⁺ C') i
+  is-composable-is-prop S C C' i .is-composable.contr⁻ =
+    is-composable⁻-is-prop S (is-composable.contr⁻ C) (is-composable.contr⁻ C') i
 ```
 
 ## Deductive systems
@@ -304,26 +235,23 @@ the contractible cuts.
 ```agda
   record is-deductive-system : Type (o ⊔ h) where
     field
-      composable : is-composable
+      stable     : is-stable
+      composable : is-composable stable
       invertible : is-invertible
 
   is-deductive-system-is-prop : is-prop is-deductive-system
+  is-deductive-system-is-prop D D' i .is-deductive-system.stable =
+    is-stable-is-prop (is-deductive-system.stable D)
+                      (is-deductive-system.stable D') i
   is-deductive-system-is-prop D D' i .is-deductive-system.composable =
-    is-composable-is-prop (is-deductive-system.composable D)
-                          (is-deductive-system.composable D') i
+    is-prop→PathP
+      (λ j → is-composable-is-prop
+               (is-stable-is-prop (is-deductive-system.stable D)
+                                  (is-deductive-system.stable D') j))
+      (is-deductive-system.composable D) (is-deductive-system.composable D') i
   is-deductive-system-is-prop D D' i .is-deductive-system.invertible =
     is-invertible-is-prop (is-deductive-system.invertible D)
-                          (is-deductive-system.invertible D') i
-```
-
-Stability is the theorem, not a field: the negative cut's
-contractibility is the whole of it.
-
-```agda
-  axioms→stable : is-deductive-system → is-stable
-  axioms→stable D =
-    contr-cut⁻.stable-from-contr-cut⁻
-      (is-composable.contr⁻ (is-deductive-system.composable D))
+                      (is-deductive-system.invertible D') i
 ```
 
 ## Duality
@@ -358,25 +286,21 @@ negative composite of the same pair, in the other order, read backwards
 — so a representative transports by exchanging the argument halves.
 
 ```agda
-op-composable : ∀ {o h} (G : virtual-graph o h)
-              → is-composable G → is-composable (opⱽ G)
-op-composable G C .is-composable.contr⁺ f g =
-  is-contr-equiv
-    (iso→equiv (λ w → w .fst , λ i γ → w .snd i (γ .snd , γ .fst))
-               (λ w → w .fst , λ i γ → w .snd i (γ .snd , γ .fst))
-               (λ _ → refl) (λ _ → refl))
-    (is-composable.contr⁻ C g f)
-op-composable G C .is-composable.contr⁻ f g =
-  is-contr-equiv
-    (iso→equiv (λ w → w .fst , λ i γ → w .snd i (γ .snd , γ .fst))
-               (λ w → w .fst , λ i γ → w .snd i (γ .snd , γ .fst))
-               (λ _ → refl) (λ _ → refl))
-    (is-composable.contr⁺ C g f)
+op-composable : ∀ {o h} (G : virtual-graph o h) (S : is-stable G)
+              → is-composable G S → is-composable (opⱽ G) (op-stable G S)
+op-composable G S C .is-composable.contr⁺ f g =
+    is-composable.contr⁻ C g f .fst
+  , λ i γ → is-composable.contr⁻ C g f .snd i (γ .snd , γ .fst)
+op-composable G S C .is-composable.contr⁻ f g =
+    is-composable.contr⁺ C g f .fst
+  , λ i γ → is-composable.contr⁺ C g f .snd i (γ .snd , γ .fst)
 
 op-axioms : ∀ {o h} (G : virtual-graph o h)
           → is-deductive-system G → is-deductive-system (opⱽ G)
+op-axioms G D .is-deductive-system.stable =
+  op-stable G (is-deductive-system.stable D)
 op-axioms G D .is-deductive-system.composable =
-  op-composable G (is-deductive-system.composable D)
+  op-composable G _ (is-deductive-system.composable D)
 op-axioms G D .is-deductive-system.invertible =
   op-invertible G (is-deductive-system.invertible D)
 ```
@@ -418,7 +342,7 @@ the negative — each witness read at the axiom half its own hand closes,
 follows from a fiber path.
 
 ```agda
-module tower {o h} (G : virtual-graph o h)
+module tower {o h} {G : virtual-graph o h}
   (S : is-stable G) (C⁺ : is-composable⁺ G) (C⁻ : is-composable⁻ G) where
   open virtual-graph G
   open sequents G
@@ -526,35 +450,36 @@ linearity.
 
 ## The unit laws
 
-Readback gives each hand one unit law at its own twist,
-unconditionally: the positive a right unit at `twist⁺`, the negative a
-left unit at `twist⁻`. The edge each gains is the *other* hand's
-composite of the pair.
+Where the cancellation is the identity — the twists mutually inverse,
+the framing itself still free — each hand gains exactly one unit law:
+the positive a right unit at `twist⁺`, the negative a left unit at
+`twist⁻`. The edge each gains is the *other* hand's composite of the
+pair. The missing law per hand is the one the forgotten coherence would
+supply.
 
 ```agda
-  ⨾⁺-is-coact : ∀ {x y z} (f : hom x y) (k : hom y z)
-              → coact-π f (z , k) ≡ f ⨾⁺ k
-  ⨾⁺-is-coact = hand⁺.⨾⁺-is-coact G C⁺
+  module unital
+    (pin⁻ : ∀ x → coact-π (twist⁺ x) ≡ cell⁻ G x)
+    (pin⁺ : ∀ x → act-π   (twist⁻ x) ≡ cell⁺ G x)
+    (K⁻ : ∀ x → cell⁻ G x ≡ snd) (K⁺ : ∀ x → cell⁺ G x ≡ snd) where
 
-  unitr⁺ : ∀ {x y} (f : hom x y) → f ⨾⁺ twist⁺ y ≡ f
-  unitr⁺ = hand⁺.unitr⁺ G C⁺
+    open absorption G pin⁻ pin⁺ K⁻ K⁺ public
 
-  ⨾⁻-is-act : ∀ {w x y} (s : hom w x) (h : hom x y)
-            → act-π h (w , s) ≡ s ⨾⁻ h
-  ⨾⁻-is-act = hand⁻.⨾⁻-is-act G C⁻
+    unitr⁺ : ∀ {x y} (f : hom x y) → f ⨾⁺ twist⁺ y ≡ f
+    unitr⁺ f = lc
+      ( reflect-⨾⁺ f (twist⁺ _)
+      ∙ (λ i γ → reflect f (γ .fst , absorb⁻ (γ .snd) i)) )
 
-  unitl⁻ : ∀ {x y} (g : hom x y) → twist⁻ x ⨾⁻ g ≡ g
-  unitl⁻ = hand⁻.unitl⁻ G C⁻
+    unitl⁻ : ∀ {x y} (g : hom x y) → twist⁻ x ⨾⁻ g ≡ g
+    unitl⁻ g = lc
+      ( reflect-⨾⁻ (twist⁻ _) g
+      ∙ (λ i γ → reflect g (absorb⁺ (γ .fst) i , γ .snd)) )
 
-  composite⁻-twist : ∀ {x y} (g : hom x y)
-                   → composite⁻ G (twist⁻ x) g ≡ reflect g
-  composite⁻-twist = hand⁻.composite⁻-twist G C⁻
+    pair⁻ : ∀ x → twist⁻ x ⨾⁻ twist⁺ x ≡ twist⁺ x
+    pair⁻ x = unitl⁻ (twist⁺ x)
 
-  pair⁻ : ∀ x → twist⁻ x ⨾⁻ twist⁺ x ≡ twist⁺ x
-  pair⁻ x = unitl⁻ (twist⁺ x)
-
-  pair⁺ : ∀ x → twist⁻ x ⨾⁺ twist⁺ x ≡ twist⁻ x
-  pair⁺ x = unitr⁺ (twist⁻ x)
+    pair⁺ : ∀ x → twist⁻ x ⨾⁺ twist⁺ x ≡ twist⁻ x
+    pair⁺ x = unitr⁺ (twist⁻ x)
 ```
 
 A hand's crossed pairing meets that hand's *other* unit law at the
@@ -563,54 +488,13 @@ framing. The collapse is one equation about the framing; whether it in
 turn forces the two cuts to agree is not settled here.
 
 ```agda
-  collapse⁺ : (∀ {x y} (g : hom x y) → twist⁻ x ⨾⁺ g ≡ g)
-            → ∀ x → twist⁻ x ≡ twist⁺ x
-  collapse⁺ L x = sym (pair⁺ x) ∙ L (twist⁺ x)
+    collapse⁺ : (∀ {x y} (g : hom x y) → twist⁻ x ⨾⁺ g ≡ g)
+              → ∀ x → twist⁻ x ≡ twist⁺ x
+    collapse⁺ L x = sym (pair⁺ x) ∙ L (twist⁺ x)
 
-  collapse⁻ : (∀ {x y} (f : hom x y) → f ⨾⁻ twist⁺ y ≡ f)
-            → ∀ x → twist⁻ x ≡ twist⁺ x
-  collapse⁻ R x = sym (R (twist⁻ x)) ∙ pair⁻ x
-```
-
-Each tier's centre reads back as the other twist, so both
-cancellations are theorems, the twist absorptions follow, and each
-hand gains its other unit law: two unital magmoids on one graph,
-offset by the double twist.
-
-```agda
-  module balanced (T⁻ : is-invertible⁻ G) (T⁺ : is-invertible⁺ G) where
-
-    centre⁻-twist⁺ : ∀ x → T⁻ x .center .fst ≡ twist⁺ x
-    centre⁻-twist⁺ x =
-        sym (readback (T⁻ x .center .fst))
-      ∙ happly (T⁻ x .center .snd) (x , twist⁺ x)
-
-    centre⁺-twist⁻ : ∀ x → T⁺ x .center .fst ≡ twist⁻ x
-    centre⁺-twist⁻ x =
-        sym (readback (T⁺ x .center .fst))
-      ∙ happly (T⁺ x .center .snd) (x , twist⁻ x)
-
-    cancel⁻ : ∀ x → coact-π (twist⁺ x) ≡ snd
-    cancel⁻ x =
-      subst (λ e → coact-π e ≡ snd) (centre⁻-twist⁺ x) (T⁻ x .center .snd)
-
-    cancel⁺ : ∀ x → act-π (twist⁻ x) ≡ snd
-    cancel⁺ x =
-      subst (λ e → act-π e ≡ snd) (centre⁺-twist⁻ x) (T⁺ x .center .snd)
-
-    absorb⁻ : ∀ {y} (k : coterm y) → coact (twist⁺ y) k ≡ k
-    absorb⁻ {y} k i = k .fst , cancel⁻ y i k
-
-    absorb⁺ : ∀ {x} (t : term x) → act (twist⁻ x) t ≡ t
-    absorb⁺ {x} t i = t .fst , cancel⁺ x i t
-
-    unitl⁺ : ∀ {w x} (s : hom w x) → twist⁺ w ⨾⁺ s ≡ s
-    unitl⁺ {w} {x} s =
-      sym (⨾⁺-is-coact (twist⁺ w) s) ∙ happly (cancel⁻ w) (x , s)
-
-    unitr⁻ : ∀ {x v} (k : hom x v) → k ⨾⁻ twist⁻ v ≡ k
-    unitr⁻ {x} {v} k =
-      sym (⨾⁻-is-act k (twist⁻ v)) ∙ happly (cancel⁺ v) (x , k)
+    collapse⁻ : (∀ {x y} (f : hom x y) → f ⨾⁻ twist⁺ y ≡ f)
+              → ∀ x → twist⁻ x ≡ twist⁺ x
+    collapse⁻ R x = sym (R (twist⁻ x)) ∙ pair⁻ x
 ```
 
 ## The pentagon
