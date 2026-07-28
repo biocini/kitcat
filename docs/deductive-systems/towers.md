@@ -35,25 +35,32 @@ the coherence above it available.
 
 ## Mixed words
 
-Both associativities reach only the words whose two junctions take
-the same hand. A word whose junctions differ is well formed and
-governed by no law above. Comparing its bracketings is therefore a
-property of an edge rather than a theorem about all of them, with
-one reading at each end of the word:
+A word whose two junctions take different hands is well formed, and
+the order of its junctions decides its law. Negative then positive is
+a theorem: both bracketings represent one judgment, in which the
+leading edge acts, the trailing edge coacts, and the middle edge
+stays reflected, so stability identifies them.
 
 ```agda
 mixed-assoc f g h : (f ⨾⁻ g) ⨾⁺ h ≡ f ⨾⁻ (g ⨾⁺ h)
-thunkable   f     : ∀ g h → mixed-assoc f g h
-linear      h     : ∀ f g → mixed-assoc f g h
 ```
 
-The word `mixed-assoc` names is the one whose junctions run negative
-then positive. Its two universal closures are thunkability at the
-leading edge and linearity at the trailing one.
+Positive then negative shares no judgment between its bracketings:
+one closes a junction inside `act`, the other inside `coact`. Whether
+such a triple associates is a property, with one universal closure at
+each end of the word:
 
-Stated in `Cat.Logic.Base`'s `tower`. Nothing above inhabits them. A
-mediation does, since it makes the two junctions one operation and
-both bracketings instances of `assoc⁺`.
+```agda
+associates f g h : (f ⨾⁺ g) ⨾⁻ h ≡ f ⨾⁺ (g ⨾⁻ h)
+thunkable  f     : ∀ g h → associates f g h
+linear     h     : ∀ f g → associates f g h
+```
+
+VERIFIED: `mixed-assoc` (the module `mixed` names the common
+judgment, the two representatives and the path between them). Nothing
+above inhabits `thunkable` or `linear`. A mediation does, since it
+makes the two junctions one operation and both bracketings instances
+of `assoc⁺`.
 
 ## One unit law per hand
 

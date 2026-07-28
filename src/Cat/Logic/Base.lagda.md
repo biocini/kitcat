@@ -403,22 +403,49 @@ module tower {o h} {G : virtual-graph o h}
 ## Mixed words
 
 A three-factor word whose two junctions take different hands is well
-formed, and its two bracketings are related by no law above: `assoc⁺`
-and `assoc⁻` reach only the words whose junctions agree. The comparison
-is therefore a property of an edge rather than a theorem about all of
-them, and it has two universal closures — at the edge that leads the
-word, and at the edge that trails it. These are thunkability and
+formed, and the order of its junctions decides its law. Where they run
+negative then positive, the two bracketings represent one judgment —
+the leading edge acting on the term half, the trailing edge coacting
+on the coterm half, the middle edge reflected — so stability
+identifies them and the word is a theorem.
+
+```agda
+  module mixed {w x y z} (f : hom w x) (g : hom x y) (k : hom y z) where
+    E : judgment w z
+    E γ = reflect g (act f (γ .fst) , coact k (γ .snd))
+
+    a₁ a₂ : is-representable E
+    a₁ = (f ⨾⁻ g) ⨾⁺ k
+       , reflect-⨾⁺ (f ⨾⁻ g) k
+       ∙ (λ i γ → reflect-⨾⁻ f g i (γ .fst , coact k (γ .snd)))
+    a₂ = f ⨾⁻ (g ⨾⁺ k)
+       , reflect-⨾⁻ f (g ⨾⁺ k)
+       ∙ (λ i γ → reflect-⨾⁺ g k i (act f (γ .fst) , γ .snd))
+
+    σ : a₁ ≡ a₂
+    σ = S E a₁ a₂
+
+  mixed-assoc : ∀ {w x y z} (f : hom w x) (g : hom x y) (k : hom y z)
+              → (f ⨾⁻ g) ⨾⁺ k ≡ f ⨾⁻ (g ⨾⁺ k)
+  mixed-assoc f g k = ap fst (mixed.σ f g k)
+```
+
+Where the junctions run positive then negative, the bracketings share
+no judgment: one closes its first junction inside `act`, the other its
+second inside `coact`. Whether such a triple associates is a property
+of the triple, and its two universal closures — at the edge that leads
+the word, and at the edge that trails it — are thunkability and
 linearity.
 
 ```agda
-  mixed-assoc : ∀ {w x y z} → hom w x → hom x y → hom y z → Type h
-  mixed-assoc f g h = (f ⨾⁻ g) ⨾⁺ h ≡ f ⨾⁻ (g ⨾⁺ h)
+  associates : ∀ {w x y z} → hom w x → hom x y → hom y z → Type h
+  associates f g h = (f ⨾⁺ g) ⨾⁻ h ≡ f ⨾⁺ (g ⨾⁻ h)
 
   thunkable : ∀ {w x} → hom w x → Type (o ⊔ h)
-  thunkable {x = x} f = ∀ {y z} (g : hom x y) (h : hom y z) → mixed-assoc f g h
+  thunkable {x = x} f = ∀ {y z} (g : hom x y) (h : hom y z) → associates f g h
 
   linear : ∀ {y z} → hom y z → Type (o ⊔ h)
-  linear {y = y} h = ∀ {w x} (f : hom w x) (g : hom x y) → mixed-assoc f g h
+  linear {y = y} h = ∀ {w x} (f : hom w x) (g : hom x y) → associates f g h
 ```
 
 ## The unit laws

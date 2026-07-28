@@ -7,14 +7,22 @@ rewrite broke. Lint is clean.
 Committed at `b979bb6` on branch `cat-logic-polarity`, which is the
 rename and the docs together. Two commits sit on top of it: `618184e`
 adds the agent suite, and `7dc65e8` applies the STE register across
-the docs and adds a prose check to `bin/lint`. The tree is otherwise
-clean; `src/Mag/` and four `Test` spikes are still untracked.
+the docs and adds a prose check to `bin/lint`. The working tree also
+carries the `associates` correction in `Cat.Logic.Base`, the matching
+`towers.md` passage, and the prose-gate scrub in `bin/lint`, the
+`writing` skill, `prose-and-comments.md`, and the root `CLAUDE.md`.
+Untracked: `src/Mag/`, six `Test` spikes, the one-twist brief in
+`notes/`, and `resources/selinger-graphical-languages/`.
 
-Prose is now gated. `just lint prose` reports 509 issues across the
-repository and none in `src/Cat/Logic` or `src/Mag`. The `writing`
+Prose is gated by the `writing` skill alone. Its bundled linter is
+the only prose gate: a changed `docs/` file must score at or under
+2.0 violations per 100 words. `bin/lint` covers width and flags, and
+the skill triggers on any technical-prose creation or edit. The
 skill is the normative statement and
 `docs/guidelines/prose-and-comments.md` states the scope. Keep new
-prose in that register.
+prose in that register. Open: whether the gate should also cover
+module prose under `src/`, which the retired porcelain gate never
+measured either.
 
 ## Done
 
@@ -86,7 +94,8 @@ Nothing. The remaining work is the `Mag` rebuild against
    linear** — the universal closures of the one failing mixed word at
    a fixed leading/trailing edge, which is his definition. Align the
    naming. Note the prefix rule: neither is a proposition, so no
-   `is-`.
+   `is-`. Attachment corrected 2026-07-27: the code closed them over
+   the valid word. See the duploid section below.
 
 ## The handedness swap — scope
 
@@ -135,35 +144,84 @@ and ⁻ = buffer, which is the CBV/CBN alignment.
   below it. The nearest duploid *phenomenon* is `ω_X`; say
   "analogous", never "corresponds".
 
-## Open: spike form B + (B) in full before changing the definition
+## Settled: the one-twist virtual graph
 
-Position **(B)** is to post `twist⁻` only and extract `twist⁺` as the
-`⁻` tier's centre — the tier mentions `coact-π`, hence `var`, hence
-`twist⁻` alone, so it is stateable before `twist⁺` exists.
-`Test/ExtractedTwist.lagda.md` has the shape and shows the coterm-side
-absorption and the positive right unit law falling out with no
-readback and one fewer structure field.
+Decided 2026-07-27, against the proposal, by countermodel. The brief
+is `notes/2026-07-27-one-twist-virtual-graph.md`. Its §5 caveat is
+confirmed, and its §9 needs the attachment correction recorded in
+the duploid section below.
 
-**The case for it.** `virtual-graph` returns to a single reflexivity
-datum, so the carrier for the category form and for the
-deductive-system form converge; the difference between the theories
-becomes the *flavour* of that reflexivity edge — whether it is a
-trivial or a non-trivial isomorphism.
+The deciding lemma is refutable, so the derived twist does not
+cancel on the term side. `Test/ExtractedTwistCancel.lagda.md`
+extends the one-twist carrier of `Test/ExtractedTwist.lagda.md` with
+the `⁺` tier. Its model is the Klein four-group, with the reflection
+twisted by a three-cycle of the non-unit elements. Every field and
+both tiers are inhabited, and `no-cancel⁺` refutes
+`act-π (twist⁻ x) ≡ snd`. By contractibility the cancellation is the
+agreement of the `⁺` centre with the posited twist
+(`cancel⁺→agree`, `agree→cancel⁺`). The agreement is also
+op-involutivity at the twist field. So `no-agree` settles both
+halves of the experiment. The same model shows the §5 reduction does
+not transpose to the readback-free carrier:
+`⨾⁻twist⁺-cancellable` holds while `no-frame⁻` refutes the frame
+law.
 
-**The hesitation.** How much of the present form's symmetry is lost.
-`opⱽ` is currently definitional on the carrier; under (B) the carrier
-is asymmetric, so `op` moves up to carrier-plus-`⁻`-tier, and its
-involutivity requires the opposite's extracted twist to be the
-original's posited one.
+The §11 checks, in order. More property: passes. `twist⁺` with its
+`cancel⁻` becomes the centre of the `⁻` tier, which is a
+proposition. No more structure: passes on counts, five sections to
+four plus a propositional tier in the carrier. No truncation:
+passes. `Test/ExtractedTwistModels.lagda.md` runs the path groupoid
+over an arbitrary type at an arbitrary `t⁻`, with no h-level
+hypothesis, and the abelian group at an arbitrary element. There
+`twist⁺-forced` pins the extraction to the inverse, and
+`group-cancel⁺` shows a group model cannot witness the failure.
+What the checks do not measure, the countermodel does: the proposal
+breaks the opposite. The op moves up a level, its square posits the
+`⁺` centre, and the centre is not the twist.
 
-**The deciding lemma.** Is `act-π (twist⁻ x) ≡ snd` derivable? With
-readback and `mixed-assoc` it reduces exactly to right-cancellability
-of `_⨾⁻ twist⁺` (`Test/FramedInterchange.lagda.md`,
-`cancel⁺-from-cancellable`); nothing in readback or the cuts supplies
-that. **The same lemma decides `op`-involutivity under (B).**
+`virtual-graph` keeps its five fields, and position (C) stands. The
+extraction trick belongs to the balanced layer. There both
+cancellations are asserted anyway, and the remaining datum over a
+one-twist carrier is exactly the centre-agreement path family.
 
-Do not change the definition until form B + (B) is worked out
-entirely. Likely its own session.
+## Settled: the duploid dictionary, statement-checked
+
+A statement-level pass over the brief's §9 anchors ran 2026-07-27,
+in both vendored sources. Confirmed: the valid mixed word is
+Definition 1's (•◦) clause, junction for junction, with ⁻ as ◦ and
+⁺ as •. The failing word is the one whose middle map runs positive
+to negative. Thunkable and linear close over all length-3 paths at
+a fixed leading or trailing edge. A unital magmoid carries a
+two-sided identity. The shift unit ω has a two-sided pointwise
+inverse and is still not an isomorphism, since that notion asks
+thunkable and linear of both maps. P is the Kleisli category of the
+monad. The duploid of an adjunction is associative exactly when the
+monad is idempotent. Idempotent is equivalent to every map
+thunkable, and commutative to every map central, for strong monads.
+Not found in either source: the "∗-autonomous" leg of §9's collapse
+chain. Treat that leg as unchecked. The full statement audits
+remain pending, and the PROVISIONAL standing of both entries is
+unchanged.
+
+The pass found one defect in the tree, now fixed. `thunkable` and
+`linear` closed over the valid word, and `stable` with the two cuts
+proves that word for every triple. `mixed-assoc` is that theorem
+now, in `Cat.Logic.Base`'s `tower` (the module `mixed` carries the
+common judgment). The property is the failing word, named
+`associates`, and the closures attach to it. `towers.md` carries
+the same correction. `Test/MixedWord.lagda.md` held the proof
+during the check and is deleted, since checking `Base` checks the
+theorem.
+
+Open, from the same pass. No inhabitant of `thunkable` or `linear`
+is derived, and the twists and the tier centres are the candidates.
+Mangel's polarity definitions are stateable verbatim: positive when
+every map out is linear, negative when every map in is thunkable.
+A separating countermodel for `associates` would certify that the
+towers carry exactly the pre-duploid associativity profile.
+Correlation spaces and Blass games are the literature's witnesses.
+Whether the readback-carrying record derives `associates` outright
+is also open.
 
 ## Resources
 
@@ -173,7 +231,9 @@ entirely. Likely its own session.
   above leans on it and on `mangel-classical-notions`, which is also
   unaudited. Both need statement audits before any of this reaches the
   ledger. Nothing in the tree cites either yet, and nothing should
-  until the audits are run.
+  until the audits are run. The 2026-07-27 statement pass (the duploid
+  section above) checked the §9 anchors at statement depth. It does
+  not stand in for the audits.
 - Worth vendoring: Melliès, *Asynchronous Games 3*. It is the only
   place the future/buffer gloss could be source-checked at all —
   *future*, *buffer*, and any treatment of asynchrony, buffering,
