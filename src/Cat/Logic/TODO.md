@@ -1,14 +1,14 @@
 # Cat.Logic — open items
 
-State as of 2026-07-28, after the record cut. `src/Cat`
-typechecks, 69 modules. The five free-framing spikes are retired
-to the archive, the block below. `src/Test` typechecks, 30
-modules. `src/Bb` is new — the Blackboard, archived strata frozen
-green: `Bb.WeakDeductiveSystem`, 16 modules, the weak stratum as
-it stood before the cut, and `Bb.OneTwist`, 3 modules, the
-rejected one-twist carrier promoted out of `Test`. Lint is clean.
-The `Mag` rebuild remains pending; its program of record is
-`src/Bb/VgCategoryShape/TODO.md`, the vendored staging tree.
+State as of 2026-07-28, end of the word-model session. `src/Cat`
+typechecks, 20 modules, with `Cat.Depreciated` moved to the
+archive. `src/Test` typechecks, 9 modules, under the spike-zero
+policy of `src/Test/CLAUDE.md`. `src/Bb` typechecks, 98 modules:
+six frozen trees and the `Bb.index` aggregator, each tree with a
+README and CHANGELOG per `src/Bb/CLAUDE.md`. Lint is clean at
+the 100-column width. The `Mag` rebuild remains pending; its
+program of record is `src/Bb/VgCategoryShape/README.md`, the
+vendored staging tree.
 
 `Cat.Logic.Gist` is new: the certified spikes on `Cat.Logic`'s
 definitions, vendored out of `Test` with the `Spike` prefixes
@@ -19,9 +19,8 @@ retired block below. The one-twist trio is archived at
 `Bb.OneTwist`: it probes the rejected rival carrier, not these
 definitions.
 
-Committed through the ledger-and-attribution commit on
-`cat-logic-polarity`, on top of the resources-custody commit and
-the `Bb.VgCategoryShape` vendoring. Nothing is untracked.
+Committed through `61c1a17` on `cat-logic-polarity`. The
+word-model session's work sits in the working tree, uncommitted.
 
 Prose is gated by the `writing` skill alone. Its bundled linter is
 the only prose gate: a changed `docs/` file must score at or under
@@ -124,7 +123,7 @@ rewrite.
 ### Still to do from the pass
 
 Nothing. The remaining work is the `Mag` rebuild against
-`src/Bb/VgCategoryShape/TODO.md`, and the fresh briefing block for
+`src/Bb/VgCategoryShape/README.md`, and the fresh briefing block for
 the sibling agent.
 
 ## Settled this session
@@ -340,6 +339,41 @@ freedom sits at the second loop space of the base, out of reach
 of the library's types. A hom type with its own fundamental group
 reaches it, which is what the circle provides.
 
+## Settled: the (D′) profile, at the free balanced point
+
+Measured 2026-07-28, `Test.SpikeBalancedWord`: the word model of
+the bare framed point at (D′) strength. Normal forms are
+eventual-translation descriptors, both cuts admissible functions
+on them, no quotient, equality decidable, the carrier a set. The
+model satisfies the live record on the nose: `virtual-graph` with
+readback, the two-field predicate, stability through
+`stable-from-hom-sets`.
+
+- `associates t⁻ t⁺ t⁺` is refuted: the left bracketing
+  normalizes to `t⁺`, the right to the descriptor `([1], 1)`.
+  Generic `associates` is underivable at (D′). The profile is
+  exactly: pre-duploid, `mixed-assoc`, the four unit laws, and
+  the twist-flanked family. The gate of `Gist.BalancedProfile`
+  closes on the countermodel side.
+- Bound for line 3: `t⁻` is not thunkable and `t⁺` is not linear
+  at the free point, so refutation kills both candidates
+  outright.
+- The winding conjecture holds as designed. The endo-homs carry
+  a ℤ-grade, `shift`: additive over `⨾⁺`, predecessor of the sum
+  over `⨾⁻`, every grade inhabited, the double twist
+  `t⁺ ⨾⁻ t⁺` the `+1` generator. The obstruction to `associates`
+  is one-sided invertibility on the nose:
+  `(t⁺ ⨾⁻ t⁺) ⨾⁺ t⁻ ≡ t⁺` by `refl`, and the reverse composite
+  is not `t⁺`.
+- verified: `just check Test.SpikeBalancedWord`, 2026-07-28,
+  zero warnings, no holes, no postulates. inferred: that this
+  model is the free object — certified empirically through six
+  leaves (64 classes, 64 distinct descriptors, reachability
+  complete; scripts and results at
+  `outputs/.notes/balanced-word-model-*`), with formal
+  initiality deferred to items 2 and 3 of the initial-model
+  program.
+
 ## Lines of investigation: toward higher duploids
 
 Enumerated 2026-07-27, from the duploid comparison. Each line names
@@ -375,6 +409,9 @@ the ones before it.
    inhabitant theorem exists yet. The word model of line 9 is the
    cheapest executioner: refutation there kills a candidate
    outright, and derivability questions become computations.
+   Executed 2026-07-28: the word model refutes thunkability of
+   `t⁻` and linearity of `t⁺` (the settled profile block above),
+   so the inhabitant question reduces to the unit-law fragment.
 
 4. **Polarity in the wild setting.** The classical-notions paper's
    definitions are stateable verbatim: positive when every map out is linear,
@@ -398,7 +435,7 @@ the ones before it.
    graph, offset by θ². State the layer, check the four unit laws,
    and compare with `absorption`. This is where the duploid
    identity apparatus should reappear. First consumer: the `Mag`
-   re-founding program in `src/Bb/VgCategoryShape/TODO.md`, which reads
+   re-founding program in `src/Bb/VgCategoryShape/README.md`, which reads
    `hcategory` as the θ² = id merge of the two magmoids and turns
    the comparison table there into a depolarization theorem.
 
@@ -432,7 +469,7 @@ the ones before it.
    No impossibility claim stands anywhere here: propositional
    shapes are exhausted only as far as spiked, which is the
    lesson of the interchange precedent in
-   `src/Bb/VgCategoryShape/TODO.md`.
+   `src/Bb/VgCategoryShape/README.md`.
 
    The propositional form of balance,
    `is-contr (Σ readback-data , filler)`, is refutable on
@@ -565,7 +602,9 @@ the ones before it.
    pre-duploid, machine-checked; (D′) adds the twist-flanked
    `associates` family, the general instance open both ways —
    and its countermodel supply is thin, since finite reader
-   carriers cannot close a cut under readback.
+   carriers cannot close a cut under readback. Closed 2026-07-28:
+   the free balanced word model supplies the countermodel. See
+   the settled profile block.
 
 6. **Shifts as representability.** The positive shift's universal
    property is a unique linear factorization through a thunkable
@@ -625,19 +664,34 @@ Two structural constraints pin the construction.
 
 The work items, in order.
 
-1. The word model of the framed point, as a spike. An inductive
-   type of words in `t⁻`, `t⁺`, `c⁻`, `c⁺` under the two cuts,
-   canonicalized against `assoc⁺`, `assoc⁻`, `mixed-assoc` and
-   the centre absorptions `w ⨾⁺ c⁻ ≡ w`, `c⁺ ⨾⁻ w ≡ w`. Decidable
+1. EXECUTED 2026-07-28 as `Test.SpikeBalancedWord`, results in
+   the settled profile block. The spec that ran, kept for the
+   generator-bearing sequels: the word model of the framed
+   point, as a spike. Generating
+   data (Lane, 2026-07-28): the bare framed point first, the
+   smallest oracle, with generator-bearing versions after the
+   point is understood. At (D′) the centres are not generators:
+   each tier centre reads back as the other twist. An inductive
+   type of normal words in `t⁻`, `t⁺` under the two cuts. The
+   rewriting is post-cut: `assoc⁺`, `assoc⁻`, `mixed-assoc`, and
+   the four unit laws, each hand two-sided unital at its own
+   twist. Readback is the transmission relation. `reflect f` at
+   an argument is the flanked word `a ⨾⁻ f ⨾⁺ b`, one judgment
+   by `mixed-assoc`, and the field's equation is flanking at the
+   axiom, which `unitl⁻` then `unitr⁺` discharge. Decidable
    equality, then the deductive-system axioms, all set-level on
    `--erased-cubical`. Construction: cut-free. Define the normal
    forms as the inductive type and both cuts as admissible
    functions on them. No quotient, so no confluence obligation,
    and item 3's coherence theorem becomes cut admissibility. See
-   the internal-language seam, line 1. Payoff immediately: a
-   derivability bound for line 3. Refutation in the word model
-   kills a candidate outright. Inhabitation is evidence only,
-   until item 3 upgrades it.
+   the internal-language seam, line 1. Decidable equality makes
+   the free point the (D′) profile oracle: `associates` at
+   generic words is a computation. The closing measurement is
+   the winding conjecture: the endo-homs of the free balanced
+   point are ℤ-graded, and the surviving grade is the double
+   twist. Payoff immediately: a derivability bound for line 3.
+   Refutation in the word model kills a candidate outright.
+   Inhabitation is evidence only, until item 3 upgrades it.
 2. Morphisms. None exist: `Display` and `Graph` carry lenses and
    the reflexive-graph reading, not maps of systems. Design:
    path-level preservation of `reflect` and the twists. System
@@ -648,10 +702,11 @@ The work items, in order.
    coherence theorem: free equivalent to the word model. This is
    where the conjecture is decided.
 
-Open design question, Lane's call, before item 1 is written:
-whether the free framing takes the centres as generators with
-their laws, or the point theory is stated over a bare framed
-graph first, with the centres arriving only in item 3.
+Decided (Lane, 2026-07-28): the point theory is stated over the
+bare framed graph first, the smallest oracle. Generator-bearing
+free framings follow once the point is understood. At (D′) the
+centres carry no separate laws, since each tier centre reads
+back as the other twist.
 
 Anchors. Roadmap project 5 already wants `Gₙ` with `Gn.equal`
 deciding free hom-equality, and project 2 names the S¹ no-UIP
