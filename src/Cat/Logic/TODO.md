@@ -2,27 +2,24 @@
 
 State as of 2026-07-28, after the record cut. `src/Cat`
 typechecks, 69 modules. The five free-framing spikes are retired
-to the archive, the block below. `src/Test` typechecks, 33
-modules, the `ExtractedTwist` trio among them. `src/Bb` is new — the Blackboard, archived strata frozen
-green — and `Bb.WeakDeductiveSystem`, 16 modules, is the weak
-stratum as it stood before the cut. Lint is clean. The `Mag`
-rebuild against `src/Mag/TODO.md` remains pending.
+to the archive, the block below. `src/Test` typechecks, 30
+modules. `src/Bb` is new — the Blackboard, archived strata frozen
+green: `Bb.WeakDeductiveSystem`, 16 modules, the weak stratum as
+it stood before the cut, and `Bb.OneTwist`, 3 modules, the
+rejected one-twist carrier promoted out of `Test`. Lint is clean.
+The `Mag` rebuild against `src/Mag/TODO.md` remains pending.
 
 `Cat.Logic.Gist` is new: the certified spikes on `Cat.Logic`'s
 definitions, vendored out of `Test` with the `Spike` prefixes
 dropped. Seven modules: `BalancedBase`, `BalancedProfile`,
 `FramedInterchange`, `ReadbackTorsor`, `ReflectFiber`, `RxDict`,
 `ThunkableSquare`. Five more live only in the archive, the
-retired block below. The one-twist trio
-(`ExtractedTwist*`) stays in `Test`: it probes the rejected rival
-carrier, not these definitions.
+retired block below. The one-twist trio is archived at
+`Bb.OneTwist`: it probes the rejected rival carrier, not these
+definitions.
 
-Committed through `0065395`, the three balance spikes, on
-`cat-logic-polarity`. The record cut, the `Gist` promotion, and
-the `Bb` archive are uncommitted work in the tree. Untracked
-besides them: `src/Mag/`, the `Test` spikes `ExtractedTwistCancel`
-and `ExtractedTwistModels`, the one-twist brief in `notes/`, and
-`resources/selinger-graphical-languages/`.
+Committed through the `Bb.OneTwist` promotion, on
+`cat-logic-polarity`. Untracked: `src/Mag/`.
 
 Prose is gated by the `writing` skill alone. Its bundled linter is
 the only prose gate: a changed `docs/` file must score at or under
@@ -207,13 +204,15 @@ and ⁻ = buffer, which is the CBV/CBN alignment.
 ## Settled: the one-twist virtual graph
 
 Decided 2026-07-27, against the proposal, by countermodel. The brief
-is `notes/2026-07-27-one-twist-virtual-graph.md`. Its §5 caveat is
+was `notes/2026-07-27-one-twist-virtual-graph.md`, since deleted
+(the verdict note `notes/2026-07-27-one-twist-verdict.md` stands,
+banner-noted). Its §5 caveat is
 confirmed, and its §9 needs the attachment correction recorded in
 the duploid section below.
 
 The deciding lemma is refutable, so the derived twist does not
-cancel on the term side. `Test/ExtractedTwistCancel.lagda.md`
-extends the one-twist carrier of `Test/ExtractedTwist.lagda.md` with
+cancel on the term side. `Bb/OneTwist/Cancel.lagda.md`
+extends the one-twist carrier of `Bb/OneTwist/Base.lagda.md` with
 the `⁺` tier. Its model is the Klein four-group, with the reflection
 twisted by a three-cycle of the non-unit elements. Every field and
 both tiers are inhabited, and `no-cancel⁺` refutes
@@ -230,7 +229,7 @@ The §11 checks, in order. More property: passes. `twist⁺` with its
 `cancel⁻` becomes the centre of the `⁻` tier, which is a
 proposition. No more structure: passes on counts, five sections to
 four plus a propositional tier in the carrier. No truncation:
-passes. `Test/ExtractedTwistModels.lagda.md` runs the path groupoid
+passes. `Bb/OneTwist/Models.lagda.md` runs the path groupoid
 over an arbitrary type at an arbitrary `t⁻`, with no h-level
 hypothesis, and the abelian group at an arbitrary element. There
 `twist⁺-forced` pins the extraction to the inverse, and

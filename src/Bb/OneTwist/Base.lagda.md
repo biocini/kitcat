@@ -8,7 +8,7 @@ centre's own witness, and the carrier loses a field.
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
 
-module Test.ExtractedTwist where
+module Bb.OneTwist.Base where
 
 open import Core.Type
 open import Core.Base

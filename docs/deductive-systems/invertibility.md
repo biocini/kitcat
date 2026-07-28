@@ -76,7 +76,7 @@ tier supplies. There the package carries the tier and
 Whether a side's center *is* a twist is one further equation (that
 the cancellation is the identity), and it is the framing's own
 content, not a consequence of the tiers. The two sides are moreover
-independent. VERIFIED (`Test.ExtractedTwistCancel`), over the
+independent. VERIFIED (`Bb.OneTwist.Cancel`), over the
 one-twist carrier: a twisted reflection on the Klein four-group has
 one cancellation and refutes the other. Neither side's
 identification buys the other.

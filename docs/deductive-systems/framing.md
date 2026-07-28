@@ -87,8 +87,8 @@ equation per side, the framing's own content, and the theory holds
 either way.
 
 The two sides are moreover independent. VERIFIED
-(`Test.ExtractedTwistCancel`), over the one-twist carrier of
-`Test.ExtractedTwist`. The model is the Klein four-group, with the
+(`Bb.OneTwist.Cancel`), over the one-twist carrier of
+`Bb.OneTwist.Base`. The model is the Klein four-group, with the
 reflection twisted by a three-cycle of its non-unit elements. Every
 tier holds, one side's cancellation holds by construction, and the
 other side's is refutable. In the two models above, `reflect` is a
