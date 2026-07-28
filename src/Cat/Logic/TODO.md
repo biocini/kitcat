@@ -348,6 +348,80 @@ the ones before it.
    `hcategory` as the θ² = id merge of the two magmoids and turns
    the comparison table there into a depolarization theorem.
 
+   Readback is independent of the deductive-system axioms, so no
+   derivation search is worth a session: `Cat.Logic.Gist.FramedCut`
+   gives a full system at every framing, and at `t⁻ = loop`,
+   `t⁺ = refl` over the circle, readback at `refl` dies by
+   `loop-nontrivial`. The centres, by contrast, carry their
+   one-sided absorption from the tiers, so the layer is exactly
+   the agreement family: the twists are the centres.
+
+   The layer's structural cost is bounded, and the bound should
+   be pushed down before the layer is packaged. Upper bound,
+   machine-checked: one self-dual field, `readback` in
+   `Cat.Logic.Gist.FramedInterchange`, with op keeping the field
+   on the nose. Over a deductive system its marginal purchase is
+   the unit laws and the twist pairings only: `mixed-assoc` and
+   stability are theorems of the bare tower already, and the
+   readback record only rederives them because its own axiom
+   base lacks the stability tier. Candidate compression, one loop per object
+   instead of a path per edge: `cancels` in
+   `Cat.Logic.Gist.FramedCut`, with naturality derived from
+   stability rather than posited, in the way stability already
+   manufactures associativity. First moves: attempt that
+   derivation over the tower, mixed-σ style, and run the
+   nonabelian group model at `t⁻ = g`, `t⁺ = g⁻¹` as the expected
+   countermodel, since per-object cancellation holds there while
+   conjugation fixes only central edges. If the countermodel
+   kills the derivation, the residue is exactly a naturality
+   clause, and the question becomes whether it has a fiber shape.
+   No impossibility claim stands anywhere here: propositional
+   shapes are exhausted only as far as spiked, which is the
+   lesson of the interchange precedent in `src/Mag/TODO.md`.
+
+   The propositional form of balance,
+   `is-contr (Σ readback-data , filler)`, is refutable on
+   motivating models, not merely on instruments. Over the circle
+   model the coherent readbacks are a torsor over the centre: the
+   `rot` family shifts any readback edgewise by winding, and
+   fillers stated in the doctrine's language are expected
+   centre-equivariant by the uniform-shift mechanism of
+   `Cat.Logic.Gist.ThunkableSquare`, so the total space keeps ℤ
+   components at every coherence depth. The classical shadow is
+   the non-uniqueness of ribbon structure, super vector spaces
+   carrying two. So a contractible form defines uniquely-balanced
+   systems, a strictly smaller class that excludes the phase
+   fragment the program studies. Spike to pin it: two coherent
+   readbacks on the circle model, machinery on the shelf. The
+   framing-existentialized variant fails one level down, the
+   integers model giving centre-many balanced framings. Both
+   verdicts say the same thing: the balance moduli is content,
+   so balance enters any definition as structure.
+
+   Position (D), reopened (Lane, 2026-07-28): balance as base,
+   readback a structure field beside the framing, the record
+   carrying the choice the moduli shows is real. Placement, per
+   Lane: the field goes into `virtual-graph`, never into
+   `is-deductive-system`, so the axioms stay all-property and
+   propositional and the ledger keeps its shape. At that level
+   the field is plausibly op-invariant on the nose, since `opⱽ`
+   swaps the twists and the opposite's `var` is `covar`, the
+   `Mag` observation verbatim, so `opⱽ-invol` may stay `refl`
+   with the field aboard. RULED (Lane, 2026-07-28) regardless:
+   strict op-involution is not required, involution up to a path
+   of deductive systems is acceptable, so the mechanical gate is
+   gone either way. Remaining gates are mathematical
+   only. The tower theorems survive verbatim, since `tower` is
+   parameterized by the tiers and not the record. The four-reader
+   and Klein instruments die, so the associativity profile and
+   the one-twist verdict need balanced-strength witnesses,
+   restated or reopened; the circle model cannot serve, since
+   every edge there is thunkable. No motivating model is lost:
+   the circle, the cancelling group models, the cancelling
+   path-groupoid framings, and the ribbon targets all carry
+   readback. Melliès treats balance as fundamental. Position (C)
+   stands only until the (D) port is attempted.
+
 6. **Shifts as representability.** The positive shift's universal
    property is a unique linear factorization through a thunkable
    `ω`. State it as a fiber condition in the house style. Needs
