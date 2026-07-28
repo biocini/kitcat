@@ -19,8 +19,9 @@ retired block below. The one-twist trio is archived at
 `Bb.OneTwist`: it probes the rejected rival carrier, not these
 definitions.
 
-Committed through the `Bb.VgCategoryShape` vendoring, on
-`cat-logic-polarity`. Nothing is untracked.
+Committed through the ledger-and-attribution commit on
+`cat-logic-polarity`, on top of the resources-custody commit and
+the `Bb.VgCategoryShape` vendoring. Nothing is untracked.
 
 Prose is gated by the `writing` skill alone. Its bundled linter is
 the only prose gate: a changed `docs/` file must score at or under
@@ -100,7 +101,8 @@ The rename pass is applied.
   beside the twist fields.
 
 Checks that landed as predicted: `mixed-assoc` is now
-`(f ⨾⁻ g) ⨾⁺ h ≡ f ⨾⁻ (g ⨾⁺ h)` — Mangel's valid word — and
+`(f ⨾⁻ g) ⨾⁺ h ≡ f ⨾⁻ (g ⨾⁺ h)` — the classical-notions paper's
+valid word — and
 `unitr⁺ : f ⨾⁺ twist⁺ y ≡ f`, `unitl⁻ : twist⁻ x ⨾⁻ g ≡ g` now agree
 with `Cat/Logic/Gist/FramedInterchange` on the nose.
 
@@ -149,35 +151,31 @@ the sibling agent.
    the duploid dictionary, and must be swapped. Names and docs only —
    the operations are unchanged and no proof moves.
 
-4. **`mixed-leading` / `mixed-trailing` are Mangel's thunkable and
-   linear** — the universal closures of the one failing mixed word at
-   a fixed leading/trailing edge, which is his definition. Align the
+4. **`mixed-leading` / `mixed-trailing` are the classical-notions
+   paper's thunkable and linear** — the universal closures of the one
+   failing mixed word at a fixed leading/trailing edge, which is that
+   paper's definition. Align the
    naming. Note the prefix rule: neither is a proposition, so no
    `is-`. Attachment corrected 2026-07-27: the code closed them over
    the valid word. See the duploid section below.
 
-## The handedness swap — scope
+## Settled: the handedness swap
 
-`Cat.Logic.Base` currently has `composite⁻` carrying the `var`
-junction (hence `twist⁻`) and `composite⁺` carrying `covar` (hence
-`twist⁺`). `Mag` and `Cat.Logic.Gist.FramedInterchange` have it the other way,
-and that is the one the literature selects: aligning the provable
-mixed word with Mangel's valid word forces
+The rename pass executed the swap, and the Done block above records
+the flip. The live tree is post-swap on both sides. The
+three-register note says the `⁺` hand is built from the coterm-side
+coaction and carries the negative twist
+(`src/Cat/Logic/Type.lagda.md:96-98`). `mixed-assoc` is stated
+`(f ⨾⁻ g) ⨾⁺ k ≡ f ⨾⁻ (g ⨾⁺ k)`
+(`src/Cat/Logic/Base.lagda.md:504-505`).
 
-> ⁺ = the `twist⁻`-carrying junction (CBV, value-demanding)
-> ⁻ = the `twist⁺`-carrying junction (CBN, "frozen")
-
-So `Cat.Logic` moves and `Mag` does not; afterwards both read the
-same way.
-
-Identifiers affected: `composite±`, `inj±`, `is-composable±`,
-`cell±`, the `op-*` lemmas, and whatever `Cat/Logic/Display.lagda.md`,
-`Cat/Logic/Graph.lagda.md`, `Bb/WeakDeductiveSystem/Gist/FramedGroup.lagda.md` and
-`Bb/WeakDeductiveSystem/Gist/TwistFidelity.lagda.md` inherit.
-
-Docs affected: `actions.md` and `towers.md`, whose pending-read /
-pending-write sentences swap with the names — landing on ⁺ = future
-and ⁻ = buffer, which is the CBV/CBN alignment.
+The docs carry no residue. In `actions.md` and `towers.md` the `⁺`
+hand cuts through the implicit `twist⁻` and takes from a future.
+The `⁻` hand cuts through the implicit `twist⁺` and puts into a
+buffer. No `docs/deductive-systems/` file reverses that pairing
+(swept 2026-07-28). Item 4 of the open questions in
+`notes/2026-07-28-balanced-record-cut.md` calls the swap an
+unstarted pass. This block supersedes that item.
 
 ## Docs reconciliation
 
@@ -378,8 +376,8 @@ the ones before it.
    cheapest executioner: refutation there kills a candidate
    outright, and derivability questions become computations.
 
-4. **Polarity in the wild setting.** Mangel's definitions are
-   stateable verbatim: positive when every map out is linear,
+4. **Polarity in the wild setting.** The classical-notions paper's
+   definitions are stateable verbatim: positive when every map out is linear,
    negative when every map in is thunkable. Neither is a
    proposition here, so polarity is structure until refined or
    truncated. Decide its status, then define the subcategories of
@@ -732,19 +730,43 @@ The lines of inquiry.
    pending write. For effectful doctrines, the RFC's Markov and
    promonad examples, the framed rule may be the honest one.
    Export direction, low priority, a note for any future contact
-   with that community rather than a work item here.
+   with that community rather than a work item here. The
+   algebraic-effects anchor (Lane, 2026-07-28): Kiselyov's
+   "Having an Effect" page, reconstructing Cartwright and
+   Felleisen's Extensible Denotational Language Specifications.
+   Its slogans map clause for clause, SOURCE-CHECKED at fetch
+   depth: an effect is an interaction with the context;
+   dereferencing a variable is also an effect, `ReqVar` sent to
+   a handler, which is `var` as the pending read; the meaning of
+   a phrase is a computation that may request from its
+   environment, which is `reflect` as denotation into
+   interactions. Their driving problem is stable denotations,
+   and `is-stable` is a stable-denotation condition: the
+   judgment determines the edge. See the Resources entry.
 
 ## Resources
 
 - `resources/munch-maccagnoni-duploids/` — vendored 2026-07-27,
   committed at `0cf05bf`, hash verified. **PROVISIONAL, not audited**,
   so it supports no load-bearing citation yet. The duploid dictionary
-  above leans on it and on `mangel-classical-notions`, which is also
+  above leans on it and on `mmmm-classical-notions`, which is also
   unaudited. Both need statement audits before any of this reaches the
   ledger. Nothing in the tree cites either yet, and nothing should
   until the audits are run. The 2026-07-27 statement pass (the duploid
   section above) checked the §9 anchors at statement depth. It does
   not stand in for the audits.
+- `resources/kiselyov-having-effect/` — vendored 2026-07-28,
+  hash-verified, PROVISIONAL with no statement audit, so it
+  supports no load-bearing citation yet. The internal-language
+  seam, line 5, records the mapping: variables as `ReqVar`
+  requests, `var` as the pending read, `is-stable` as a
+  stable-denotation condition. The frontmatter uses
+  `format: html`, admitted into the format authority's schema
+  (Lane, 2026-07-28).
+- Worth vendoring: Cartwright and Felleisen, "Extensible
+  Denotational Language Specifications" (TACS 1994), the paper
+  the Kiselyov page reconstructs, cited at l.514 of the vendored
+  copy.
 - Worth vendoring: CatColab RFC 0004, "Internal languages for
   models" (Patterson, 2026-04-10). The internal-language seam
   above depends on it, and lines 3 and 4 there need its
@@ -763,10 +785,11 @@ The lines of inquiry.
 - Worth vendoring: Melliès, *Asynchronous Games 3*. It is the only
   place the future/buffer gloss could be source-checked at all —
   *future*, *buffer*, and any treatment of asynchrony, buffering,
-  scheduling or delay appear nowhere in the six Melliès/Mangel
+  scheduling or delay appear nowhere in the six Melliès-authored
   sources currently on the shelf.
 - What the gloss does shadow, and can be honestly re-anchored to, is
-  Mangel's order-of-evaluation semantics: CBN parks a **"frozen"**
+  the classical-notions paper's order-of-evaluation semantics: CBN
+  parks a **"frozen"**
   expression (buffer-like), CBV demands a value first (future-like),
   and that attaches to the two *compositions*, not to the twists.
 - The sourced side-assignment is term = proof/program side, coterm =

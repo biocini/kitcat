@@ -502,9 +502,38 @@ is `t⁻ ≡ t⁺`, so the two cuts differ by exactly the framing's own
 discrepancy. Holding both forces each element to be its own
 inverse.
 
-✅ `Bb.WeakDeductiveSystem.Gist.FramedGroup` (2026-07-25). Placement settled
-2026-07-27: framed models live in `Cat.Logic.Gist`, beside the
-path-groupoid witness `Bb.WeakDeductiveSystem.Gist.FramedCut`.
+✅ `Bb.WeakDeductiveSystem.Gist.FramedGroup` (2026-07-25). Retired to the
+archive 2026-07-28: the free-framing models live in
+`Bb.WeakDeductiveSystem.Gist`, beside the path-groupoid witness
+`Bb.WeakDeductiveSystem.Gist.FramedCut`.
+
+**T32: Stability is a theorem of the contractible negative cut.**
+`axioms→stable : is-deductive-system → is-stable`. The negative
+composite at the twist is a reflection (`composite⁻-twist`), so the
+cut's contractible fiber transports to every image fiber of
+`reflect`. `image-fibers-contr→is-embedding`
+(`Core.Function.Embedding`) then closes the embedding. Stability is
+not a field of the package.
+
+✅ `Cat.Logic.Base` (`axioms→stable`,
+`contr-cut⁻.stable-from-contr-cut⁻`) (2026-07-28).
+
+**T33: The cancellations are theorems of the tiers.** Each tier's
+centre reads back as the other twist: `centre⁻-twist⁺` and
+`centre⁺-twist⁻`. Both cancellations (`cancel⁻`, `cancel⁺`) and
+both twist absorptions (`absorb⁻`, `absorb⁺`) follow from the two
+invertibility tiers alone.
+
+✅ `Cat.Logic.Base` (`tower.balanced`) (2026-07-28). The certified
+spike is `Cat.Logic.Gist.BalancedProfile`.
+
+**T34: The four unit laws.** Each hand is two-sided unital with its
+own twist as unit. `unitr⁺` and `unitl⁻` hold in `tower` with no
+tier, from readback and each hand's cut. Under the two invertibility
+tiers, `tower.balanced` adds `unitl⁺` and `unitr⁻`. Two unital
+magmoids on one graph, offset by the double twist.
+
+✅ `Cat.Logic.Base` (`tower`, `tower.balanced`) (2026-07-28).
 
 ## Standing results from earlier strata (pre-2026-07-10)
 
