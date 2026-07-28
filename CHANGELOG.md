@@ -16,6 +16,42 @@ concise, and honest about verification status (`verified` /
 
 ---
 
+## 2026-07-28 — the free balanced word model: the (D′) profile closes, refuted
+
+**The oracle ran, `verified`** (`Test.SpikeBalancedWord`, 948
+lines, recorded `just check`, zero obligations): the word model
+of the bare framed point at (D′) strength — normal forms as
+eventual-translation descriptors, cuts admissible, no quotient,
+decidable equality, the full two-field instance. `associates
+t⁻ t⁺ t⁺` is refuted, so generic `associates` is underivable at
+(D′): the profile is exactly pre-duploid plus `mixed-assoc`, the
+four unit laws, and the twist-flanked family. Bound for the
+inhabitants line: `t⁻` not thunkable, `t⁺` not linear. The
+winding conjecture holds: endo-homs ℤ-graded by the shift, the
+double twist the `+1` generator, the obstruction exhibited as
+one-sided invertibility (`refl` one way, refuted the other).
+`inferred`, not proved: the model is the free object (empirical
+certification 64/64 through six leaves,
+`outputs/.notes/balanced-word-model-*`); initiality is line 9
+items 2–3.
+
+**Test distributed under spike zero, the archive got its
+process, `verified`**: twelve chosen-edge spikes →
+`Bb.NaiveVirtualGraph`; `Cat.Depreciated` (49) →
+`Bb.CatsWithExplicitInterchange`, its twelve Test witnesses →
+its `Gist` (gloss T21 now cites checked code); the Magmoid suite
+→ `Bb.UnitalMagmoids`; `src/Bb/CLAUDE.md` process, READMEs,
+CHANGELOGs, `Bb.index` — `src/Bb` 98 of 98, `src/Test` 9 of 9,
+four removals with grounds, `CatData` resolved as a planning
+name never adopted. Rulings executed: width 100 everywhere,
+`check-tree` sweeps `.lagda*` (which surfaced the four
+`Data.Thin` holes, pre-existing, still deferred). Whole tree:
+319 of 323. Lint clean. No commits.
+
+Next: line 9 item 2 (morphisms), the gloss entries for the cut
+and the profile, the spike's promotion. Log:
+[notes/2026-07-28-balanced-word-model.md](notes/2026-07-28-balanced-word-model.md).
+
 ## 2026-07-28 — Cat.Logic: line 2 settled, the Gist namespace, the balance dossier, custody
 
 **Thunkability is data, `verified`** (`Cat.Logic.Gist.ThunkableSquare`,
