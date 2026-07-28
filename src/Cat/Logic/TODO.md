@@ -1,18 +1,22 @@
 # Cat.Logic — open items
 
-State as of 2026-07-27. `src/Cat` typechecks, 62 modules. `src/Test`
-typechecks apart from the two `Mag` spikes, which the `Mag.Type`
-rewrite broke. Lint is clean.
+State as of 2026-07-27. `src/Cat` typechecks, 71 modules, and
+`src/Test` typechecks, 33 modules. Lint is clean. The `Mag` rebuild
+against `src/Mag/TODO.md` remains pending.
 
-Committed at `b979bb6` on branch `cat-logic-polarity`, which is the
-rename and the docs together. Two commits sit on top of it: `618184e`
-adds the agent suite, and `7dc65e8` applies the STE register across
-the docs and adds a prose check to `bin/lint`. The working tree also
-carries the `associates` correction in `Cat.Logic.Base`, the matching
-`towers.md` passage, and the prose-gate scrub in `bin/lint`, the
-`writing` skill, `prose-and-comments.md`, and the root `CLAUDE.md`.
-Untracked: `src/Mag/`, six `Test` spikes, the one-twist brief in
-`notes/`, and `resources/selinger-graphical-languages/`.
+`Cat.Logic.Gist` is new: the certified spikes on `Cat.Logic`'s
+definitions, vendored out of `Test` with the `Spike` prefixes
+dropped. Nine modules: `AssociatesCountermodel`, `FramedCut`,
+`FramedGroup`, `FramedInterchange`, `NeutralUnit`, `ReflectFiber`,
+`RxDict`, `ThunkableSquare`, `TwistFidelity`. The one-twist trio
+(`ExtractedTwist*`) stays in `Test`: it probes the rejected rival
+carrier, not these definitions.
+
+Committed through the `Gist` vendoring commit on
+`cat-logic-polarity`, on top of `12dd0af`. Untracked: `src/Mag/`,
+the `Test` spikes `ExtractedTwistCancel` and
+`ExtractedTwistModels`, the one-twist brief in `notes/`, and
+`resources/selinger-graphical-languages/`.
 
 Prose is gated by the `writing` skill alone. Its bundled linter is
 the only prose gate: a changed `docs/` file must score at or under
@@ -36,15 +40,15 @@ The rename pass is applied.
   `tri±`, `collapse±`, `pentagon±`, `pair±`, `C±`,
   `push-is-composite±`. Framing register untouched.
 - `mixed-leading` → `thunkable`, `mixed-trailing` → `linear`.
-- Consumers fixed: `Test/FramedGroup`, `Test/TwistFidelity`,
-  `Test/SpikeFramedCut`, `Test/SpikeNeutralUnit`.
+- Consumers fixed: `Cat/Logic/Gist/FramedGroup`, `Cat/Logic/Gist/TwistFidelity`,
+  `Cat/Logic/Gist/FramedCut`, `Cat/Logic/Gist/NeutralUnit`.
 - The three-register naming rule is written into `Cat.Logic.Type`,
   beside the twist fields.
 
 Checks that landed as predicted: `mixed-assoc` is now
 `(f ⨾⁻ g) ⨾⁺ h ≡ f ⨾⁻ (g ⨾⁺ h)` — Mangel's valid word — and
 `unitr⁺ : f ⨾⁺ twist⁺ y ≡ f`, `unitl⁻ : twist⁻ x ⨾⁻ g ≡ g` now agree
-with `Test/FramedInterchange` on the nose.
+with `Cat/Logic/Gist/FramedInterchange` on the nose.
 
 Module prose in `Base`, `Display` and `Graph` has been reread and
 rewritten against the new labels. `Base`'s header no longer claims the
@@ -101,7 +105,7 @@ Nothing. The remaining work is the `Mag` rebuild against
 
 `Cat.Logic.Base` currently has `composite⁻` carrying the `var`
 junction (hence `twist⁻`) and `composite⁺` carrying `covar` (hence
-`twist⁺`). `Mag` and `Test.FramedInterchange` have it the other way,
+`twist⁺`). `Mag` and `Cat.Logic.Gist.FramedInterchange` have it the other way,
 and that is the one the literature selects: aligning the provable
 mixed word with Mangel's valid word forces
 
@@ -113,8 +117,8 @@ same way.
 
 Identifiers affected: `composite±`, `inj±`, `is-composable±`,
 `cell±`, the `op-*` lemmas, and whatever `Cat/Logic/Display.lagda.md`,
-`Cat/Logic/Graph.lagda.md`, `Test/FramedGroup.lagda.md` and
-`Test/TwistFidelity.lagda.md` inherit.
+`Cat/Logic/Graph.lagda.md`, `Cat/Logic/Gist/FramedGroup.lagda.md` and
+`Cat/Logic/Gist/TwistFidelity.lagda.md` inherit.
 
 Docs affected: `actions.md` and `towers.md`, whose pending-read /
 pending-write sentences swap with the names — landing on ⁺ = future
@@ -216,34 +220,106 @@ theorem.
 The open lines from this pass are items 1 to 4 of the investigation
 list below.
 
+## Settled: the associativity profile
+
+Decided 2026-07-27, by countermodel: `Cat/Logic/Gist/AssociatesCountermodel`,
+machine-checked. The deductive-system axioms prove exactly the
+pre-duploid triple — `assoc⁺`, `assoc⁻`, `mixed-assoc` — and
+`associates` is independent. No correlation-space or game machinery
+was needed; four elements suffice.
+
+Two models. The projection model (constant reflection over `Bool`,
+both hands projections) satisfies the towers and every field of the
+readback record in `Cat/Logic/Gist/FramedInterchange`, computes
+`associates f g h` to `h ≡ f`, and has no thunkable and no linear
+edge. So the readback record does not derive `associates` either:
+the classes bite with units present, not only in the unit-free
+regime. The same model refutes the invertibility tier, which is why
+the second model exists.
+
+The four-reader model (`Bool × Bool`; an edge reads the argument as
+a projection onto one flank or a constant at one projection) is a
+full `is-deductive-system` in which `associates π₁ g π₂` computes to
+a refutable path for every middle edge. Its classes are exactly the
+tier centres: the `⁻` centre `π₂` is the one thunkable edge, and the
+`⁺` centre `π₁`, which is also both twists, is the one linear edge.
+So the axioms prove no twist thunkable. The model does not decide
+the balanced layer — its absorption hypotheses fail there — so
+whether balance forces thunkable twists stays open with line 5.
+
+## Settled: thunkability is data
+
+Decided 2026-07-27, by countermodel: `Cat/Logic/Gist/ThunkableSquare`,
+machine-checked. The spike states the length-4 compatibility
+square, `compat`, over any stable virtual graph with both cuts.
+The square consumes a thunkable witness at `(g , h)` and at
+`(g , h ⨾⁺ k)`. Its other three edges are `mixed-assoc` twice and
+`assoc⁺` once. So it is the least coherence a choice of
+associators can carry: naturality of the choice as the trailing
+edge grows through the valid mixed word. Growth by `⨾⁻` gives a
+pentagon with three witness instances instead. Growth at the
+leading edge makes witnesses for composites, not a law. Over hom
+sets the closure and the square are both propositions.
+
+The countermodel is the circle as a one-object system: homs the
+circle, reflection multiplies the edge between the flanks, both
+twists at `base`. It is a full deductive system with wild homs,
+and `associates base g h` computes to the loop space at
+`mult g h`. `thunkable-not-prop`: the constant witness and its
+`rot`-shift are provably distinct, so the axioms leave
+thunkability as structure. `coherent-not-prop`: both witnesses
+satisfy the square, through the `mult`-equivariance of `rot`, so
+the square-refined closure is not a proposition either. No
+coherence law over the same data cuts a set-level shift freedom.
+
+The verdict on the dichotomy: the bare closure does not
+self-improve to a property, and coherence does not restore it. A
+fiber-shaped propositional refinement is therefore strictly
+stronger than inhabitation, and the circle model separates the
+two: a contractibility demand on this witness space fails there
+while `thunkable` holds. So the group-like models pay for any
+tier-style thunkability, and the working notion stays structure,
+as polarity already is in line 4. The path groupoid was the wrong
+test bed. Over any base its homs are path types, so witness
+freedom sits at the second loop space of the base, out of reach
+of the library's types. A hom type with its own fundamental group
+reaches it, which is what the circle provides.
+
 ## Lines of investigation: toward higher duploids
 
 Enumerated 2026-07-27, from the duploid comparison. Each line names
 its question and a first move. Lines 4 to 7 are ordered: each needs
 the ones before it.
 
-1. **Bound the associativity profile.** The towers prove the three
-   pre-duploid associativity axioms, and nothing yet refuses
-   `associates`. Build a separating countermodel in `Test/`.
-   Correlation spaces and Blass games are the literature's
-   witnesses. Settles whether the profile is exactly pre-duploid.
+1. **Bound the associativity profile.** SETTLED 2026-07-27: the
+   profile is exactly pre-duploid, at full deductive-system
+   strength. See the settled section above and
+   `Cat/Logic/Gist/AssociatesCountermodel`.
 
-2. **Thunkability: property or data.** Over untruncated homs an
-   inhabitant of `associates f g h` is an associator cell, and
-   `thunkable f` is a choice of associators with no coherence law.
-   The two bracketings represent different judgments, so stability
-   does not reach across them. Decide the higher notion: a
-   fiber-shaped refinement in the style of the tiers, or a proof
-   that the bare closure self-improves. First move: state the
-   length-4 compatibility square for a thunkable edge and test it
-   in the path groupoid.
+2. **Thunkability: property or data.** SETTLED 2026-07-27: data,
+   and the square does not truncate it. See the settled section
+   above and `Cat/Logic/Gist/ThunkableSquare`. What remains is
+   narrower: whether the square holds for every witness in every
+   deductive system. The circle model validates rather than
+   refutes it, since its witness freedom is set-level and uniform
+   shifts are natural. A refutation needs a hom type with
+   nontrivial parallel 2-cells, which the library does not
+   currently provide. The syntactic half of the residue, whether
+   propositionality returns on initial models, is line 9.
 
-3. **Inhabitants.** No edge is proved thunkable or linear. The
-   twists and the tier centres are the candidates. Also test
-   whether the readback-carrying record
-   (`Test/FramedInterchange.lagda.md`) derives `associates`
-   outright. If it does, the classes only bite in the unit-free
-   regime.
+3. **Inhabitants.** Narrowed 2026-07-27 by the countermodel. The
+   readback question is answered: the record does not derive
+   `associates`. The twists are dead as candidates — the
+   four-reader model's twists are linear and not thunkable. Live
+   candidates: the tier centres, `centre⁻` thunkable and `centre⁺`
+   linear, which the model supports and nothing yet proves. A proof
+   cannot go through judgment identity — the two bracketings still
+   represent distinct judgments at a centre — so it needs either
+   the balanced layer or a new mechanism, and a refuting model
+   would need tiers with a non-thunkable centre. No positive
+   inhabitant theorem exists yet. The word model of line 9 is the
+   cheapest executioner: refutation there kills a candidate
+   outright, and derivability questions become computations.
 
 4. **Polarity in the wild setting.** Mangel's definitions are
    stateable verbatim: positive when every map out is linear,
@@ -278,6 +354,75 @@ the ones before it.
    mentions skew structures. Run a literature pass on
    skew-monoidal and adjacent one-sided-unital settings before any
    novelty claim for the framed carrier.
+
+9. **The initial-model program.** Enumerated 2026-07-27, from the
+   thunkability verdict. `thunkable-is-prop` in
+   `Cat.Logic.Gist.ThunkableSquare` already gives propositionality
+   over hom sets, so the syntactic question reduces to one
+   coherence conjecture: the free deductive system on a set-level
+   signature has hom sets. The full brief is the initial-model
+   section below. Next session starts here.
+
+## The initial-model program
+
+Planned 2026-07-27, for the next session. The question: does
+propositionality return on the initial objects of the theory? It
+factors. Hom sets make `thunkable` a property in any system
+(`thunkable-is-prop`, machine-checked in `Gist.ThunkableSquare`).
+So the whole open content is the coherence conjecture: the free
+deductive system on a set-level signature has hom sets.
+
+Two structural constraints pin the construction.
+
+- No set-quotient can be the free object. Set-quotient recursion
+  eliminates into sets only, and the universal property must hold
+  against wild targets, the circle model among them. The free
+  system is an untruncated HIT, and hom-set-ness can only be a
+  theorem about it, never a definition.
+- Every identification the theory forces is fiber-internal. The
+  HIT's path constructors make `reflect`'s fibers propositional,
+  and forced edge equalities are `ap fst` of paths in those
+  fibers. Props are sets, so fiber-internal identifications
+  cohere, which is the `pentagon⁺` mechanism. Proof strategy for
+  the conjecture: every derivable identification factors through
+  propositional fibers. The refutation shape is equally real: if
+  the two hands manufacture a loop from set generators, then
+  thunkability is data even syntactically, and wildness is not
+  conservative over syntax. Either outcome is a theorem.
+
+The work items, in order.
+
+1. The word model of the framed point, as a spike. An inductive
+   type of words in `t⁻`, `t⁺`, `c⁻`, `c⁺` under the two cuts,
+   canonicalized against `assoc⁺`, `assoc⁻`, `mixed-assoc` and
+   the centre absorptions `w ⨾⁺ c⁻ ≡ w`, `c⁺ ⨾⁻ w ≡ w`. Decidable
+   equality, then the deductive-system axioms, all set-level on
+   `--erased-cubical`. Payoff immediately: a derivability bound
+   for line 3. Refutation in the word model kills a candidate
+   outright. Inhabitation is evidence only, until item 3 upgrades
+   it.
+2. Morphisms. None exist: `Display` and `Graph` carry lenses and
+   the reflexive-graph reading, not maps of systems. Design:
+   path-level preservation of `reflect` and the twists. System
+   maps are graph maps, since the axioms are props. Initiality is
+   fiber-shaped, contractibility of the mapping type. Read
+   `docs/guidelines/elaboration.md` before fixing signatures.
+3. The free system as an untruncated HIT, its initiality, and the
+   coherence theorem: free equivalent to the word model. This is
+   where the conjecture is decided.
+
+Open design question, Lane's call, before item 1 is written:
+whether the free framing takes the centres as generators with
+their laws, or the point theory is stated over a bare framed
+graph first, with the centres arriving only in item 3.
+
+Anchors. Roadmap project 5 already wants `Gₙ` with `Gn.equal`
+deciding free hom-equality, and project 2 names the S¹ no-UIP
+model, so the program lands on committed ground. Führmann's
+thunkable-equals-value characterization and the duploid sources'
+syntactic models are CONJECTURED anchors only: Führmann is not on
+the shelf, the two vendored sources are unaudited, and all build
+syntax at set level by fiat, which the wild setting cannot.
 
 ## Resources
 

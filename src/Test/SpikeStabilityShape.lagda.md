@@ -248,5 +248,5 @@ is one obstruction wearing three costumes.
 
 What is no longer at stake is the derived theory. Readback's remaining
 consumers were the unit laws, and those follow from the engine of
-`Test.SpikeReflectFiber` — composability plus the flank absorptions —
+`Cat.Logic.Gist.ReflectFiber` — composability plus the flank absorptions —
 with no readback family in scope. Associativity never needed it either.

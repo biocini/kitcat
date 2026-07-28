@@ -24,7 +24,7 @@ against the variance it exhibits.
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
 
-module Test.SpikeRxDict where
+module Cat.Logic.Gist.RxDict where
 
 open import Core.Type
 open import Core.Base

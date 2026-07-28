@@ -14,7 +14,7 @@ not in competition: the neutral unit is simply not a twist.
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
 
-module Test.SpikeFramedCut where
+module Cat.Logic.Gist.FramedCut where
 
 open import Core.Type
 open import Core.Base

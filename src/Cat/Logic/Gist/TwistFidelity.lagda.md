@@ -1,13 +1,13 @@
 Audit: are `twist⁺`/`twist⁻` the balanced/tortile twist?
 
-Two questions, both statable without a tensor. Is the framing invertible in
-the sense a tortile twist is — the two composing to the unit? And is either
-twist natural?
+Two questions, both statable without a tensor. Is the framing invertible
+in the sense a tortile twist is — the two composing to the unit? And is
+either twist natural?
 
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
 
-module Test.TwistFidelity where
+module Cat.Logic.Gist.TwistFidelity where
 
 open import Core.Type
 open import Core.Base
@@ -20,8 +20,8 @@ open import Cat.Logic.Base
 
 ## Terms and coterms exchange definitionally
 
-The coterm family of a virtual graph is the term family of its opposite. So
-no condition may be imposed on one family alone.
+The coterm family of a virtual graph is the term family of its opposite.
+So no condition may be imposed on one family alone.
 
 ```agda
 coterm-is-op-term : ∀ {o h} (G : virtual-graph o h) (y : virtual-graph.ob G)
@@ -47,10 +47,10 @@ module _ {o h} {G : virtual-graph o h}
   open unital pin⁻ pin⁺ K⁻ K⁺
 ```
 
-A tortile twist is invertible: `θ⁻¹ ∘ θ` is the identity. Each hand has a
-unit — the twist the *other* half carries — so the demand is that the
-composite of the two twists be that unit. Read in either hand it forces the
-two twists to be one edge.
+A tortile twist is invertible: `θ⁻¹ ∘ θ` is the identity. Each hand has
+a unit — the twist the *other* half carries — so the demand is that the
+composite of the two twists be that unit. Read in either hand it forces
+the two twists to be one edge.
 
 ```agda
   inverse⁻ : Type (o ⊔ h)
@@ -68,7 +68,8 @@ two twists to be one edge.
 
 A tortile twist is natural. In the hand where a twist is the unit, its
 naturality *is* two-sided unitality — the tortile law carries no twist
-content there, because the edge it speaks about occupies the unit's place.
+content there, because the edge it speaks about occupies the unit's
+place.
 
 ```agda
   natural⁻ : Type (o ⊔ h)
@@ -86,9 +87,10 @@ content there, because the edge it speaks about occupies the unit's place.
 
 ## Interchange at the twists alone
 
-The two hands are asked to agree on the composite of the framing — the whole
-of the tier, with no other pair quantified over. The crossed pairings make
-each side one of the two twists, so the tier *is* their identification.
+The two hands are asked to agree on the composite of the framing — the
+whole of the tier, with no other pair quantified over. The crossed
+pairings make each side one of the two twists, so the tier *is* their
+identification.
 
 ```agda
   twist-interchange : Type (o ⊔ h)

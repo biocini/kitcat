@@ -40,7 +40,7 @@ Any statement pairing them therefore reads one graph against the
 other. The cells are exactly that comparison: each is one graph's
 reflexivity read through the other graph's action. Over a path
 object, each reflexivity is the unique edge whose action lands on
-the cell of the other side (VERIFIED `Test.SpikeFramedCut`). In
+the cell of the other side (VERIFIED `Cat.Logic.Gist.FramedCut`). In
 general that placement is the pins, the framing's own content.
 
 ## Univalence

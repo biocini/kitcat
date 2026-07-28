@@ -13,7 +13,7 @@ equal, and their composite is the shared neutral unit.
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
 
-module Test.SpikeNeutralUnit where
+module Cat.Logic.Gist.NeutralUnit where
 
 open import Core.Type
 open import Core.Base

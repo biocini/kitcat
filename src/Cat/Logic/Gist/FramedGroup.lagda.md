@@ -1,17 +1,18 @@
-A framed deductive system whose fans are not propositional: an abelian group
-read as a one-object virtual graph, framed by an arbitrary pair of its
-elements.
+A framed deductive system whose fans are not propositional: an abelian
+group read as a one-object virtual graph, framed by an arbitrary pair of
+its elements.
 
-Every tier holds at every such pair, so the framing is free here as well —
-but now outside the path-object regime, where a fan is the whole group. Two
-of the fragment's boundaries become arithmetic: the cancellation is that the
-two framing elements sum to the unit, and agreement of the two cuts is that
-they are equal. Their difference is what the two cuts differ by.
+Every tier holds at every such pair, so the framing is free here as well
+— but now outside the path-object regime, where a fan is the whole
+group. Two of the fragment's boundaries become arithmetic: the
+cancellation is that the two framing elements sum to the unit, and
+agreement of the two cuts is that they are equal. Their difference is
+what the two cuts differ by.
 
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
 
-module Test.FramedGroup where
+module Cat.Logic.Gist.FramedGroup where
 
 open import Core.Type
 open import Core.Base
@@ -86,8 +87,8 @@ The framing is a pair of elements, unconstrained.
 
 ## The fans are the group
 
-A fan is the group paired with the one object, so the graph is a path object
-only when the group itself is a proposition.
+A fan is the group paired with the one object, so the graph is a path
+object only when the group itself is a proposition.
 
 ```agda
     univalent→prop : rx.is-univalent (graph⁺ VG) → is-prop A
@@ -99,8 +100,9 @@ only when the group itself is a proposition.
 
 ## Stability
 
-Transmission surrounds an edge with one twist of each sign, and cancelling
-them is injective, so the edges being a set is the whole of the tier.
+Transmission surrounds an edge with one twist of each sign, and
+cancelling them is injective, so the edges being a set is the whole of
+the tier.
 
 ```agda
     transmit-injective : ∀ {m n : A} → t⁻ · (m · t⁺) ≡ t⁻ · (n · t⁺) → m ≡ n
@@ -112,8 +114,9 @@ them is injective, so the edges being a set is the whole of the tier.
 
 ## Both cuts
 
-Each composite judgment is a five-fold product with the twist of its own sign
-at the junction, and reassociating gathers the middle three into one edge.
+Each composite judgment is a five-fold product with the twist of its own
+sign at the junction, and reassociating gathers the middle three into
+one edge.
 
 ```agda
     cut⁻ : A → A → A
@@ -135,11 +138,11 @@ at the junction, and reassociating gathers the middle three into one edge.
 
 ## Both unit tiers
 
-An action map holds the half it does not act on at that half's axiom, so it
-multiplies by that half's twist: `coact-π` by the future's `t⁻`, `act-π` by
-the buffer's `t⁺`. The edge acting as the second projection is therefore
-that twist's inverse. Injectivity makes the fiber a proposition, and the
-inverse inhabits it.
+An action map holds the half it does not act on at that half's axiom, so
+it multiplies by that half's twist: `coact-π` by the future's `t⁻`,
+`act-π` by the buffer's `t⁺`. The edge acting as the second projection
+is therefore that twist's inverse. Injectivity makes the fiber a
+proposition, and the inverse inhabits it.
 
 ```agda
     coact-π-injective : ∀ {m n : A} → coact-π {⋆} {⋆} m ≡ coact-π {⋆} {⋆} n → m ≡ n
@@ -165,9 +168,9 @@ inverse inhabits it.
       , funext λ t → ap (t .snd ·_) (invl t⁺) ∙ unitr (t .snd) )
 ```
 
-A hand's cell reads the opposite half's twist through the opposite half's
-action, and each twist acting on its own family lands exactly there — both
-sides multiplication by `t⁻ · t⁺`.
+A hand's cell reads the opposite half's twist through the opposite
+half's action, and each twist acting on its own family lands exactly
+there — both sides multiplication by `t⁻ · t⁺`.
 
 ```agda
     pin⁻ : ∀ x → coact-π (twist⁺ x) ≡ cell⁻ VG x
@@ -207,9 +210,9 @@ The cancellation is that the two framing elements compose to the unit.
     →cancels K = sym (unitl (t⁻ · t⁺)) ∙ happly (K ⋆) (⋆ , e)
 ```
 
-Agreement of the two cuts is that the two framing elements are equal: the
-cuts are the same product with the junction's twist differing by sign, so
-their difference is the framing's.
+Agreement of the two cuts is that the two framing elements are equal:
+the cuts are the same product with the junction's twist differing by
+sign, so their difference is the framing's.
 
 ```agda
     cuts-agree→ : t⁻ ≡ t⁺
@@ -234,10 +237,10 @@ their difference is the framing's.
            ∙ ap (t⁺ ·_) (unitl e) ∙ unitr t⁺
 ```
 
-So a framing whose two elements differ gives a deductive system on wild fans
-whose two cuts are genuinely distinct, and one whose elements are mutually
-inverse gives the cancelling case. Both together force each element to be
-its own inverse.
+So a framing whose two elements differ gives a deductive system on wild
+fans whose two cuts are genuinely distinct, and one whose elements are
+mutually inverse gives the cancelling case. Both together force each
+element to be its own inverse.
 
 ```agda
     both→ : t⁻ · t⁺ ≡ e → t⁻ ≡ t⁺ → t⁺ · t⁺ ≡ e
@@ -246,8 +249,8 @@ its own inverse.
 
 ## What each hand's unit actually is
 
-Each cut carries a junction twist, so the coterm hand's composition is the
-product twisted by `t⁻` and its unit is that element's inverse.
+Each cut carries a junction twist, so the coterm hand's composition is
+the product twisted by `t⁻` and its unit is that element's inverse.
 
 ```agda
     unit⁻-is-inverse : (u : A) → (∀ {x y} (f : hom x y) → f ⨾⁺ u ≡ f)
@@ -259,8 +262,9 @@ product twisted by `t⁻` and its unit is that element's inverse.
     unit⁺-is-inverse u U = sym (unitr (u · t⁺)) ∙ U e
 ```
 
-The composite of the two twists therefore carries three, and demanding it be
-the unit is a cubic condition on the framing rather than the cancellation.
+The composite of the two twists therefore carries three, and demanding
+it be the unit is a cubic condition on the framing rather than the
+cancellation.
 
 ```agda
     ι⁻ : A
@@ -278,9 +282,9 @@ the unit is a cubic condition on the framing rather than the cancellation.
     ι⁺-unit→cubic U = sym (unitr _) ∙ U e
 ```
 
-Read across the hands instead, the count comes out even: one hand's composite
-of the two twists carries the *other* hand's junction, and is that hand's
-unit exactly under the cancellation.
+Read across the hands instead, the count comes out even: one hand's
+composite of the two twists carries the *other* hand's junction, and is
+that hand's unit exactly under the cancellation.
 
 ```agda
     ι⁻-unit⁺→square : (∀ {x y} (f : hom x y) → ι⁻ ⨾⁻ f ≡ f)
@@ -296,9 +300,10 @@ unit exactly under the cancellation.
 
 ## The tier's centre against the framing
 
-An edge whose coterm action is the projection is the held twist's inverse —
-the centre `unital⁻` supplies — and under the cancellation that inverse is
-the other twist again, so unit and framing coincide exactly there.
+An edge whose coterm action is the projection is the held twist's
+inverse — the centre `unital⁻` supplies — and under the cancellation
+that inverse is the other twist again, so unit and framing coincide
+exactly there.
 
 ```agda
     absorber⁻-is-inverse : (u : A) → (∀ γ → coact-π {⋆} {⋆} u γ ≡ γ .snd)
@@ -312,9 +317,9 @@ the other twist again, so unit and framing coincide exactly there.
 
 ## What does untwist it
 
-The twist enters because a cut fills one argument slot with an axiom half. A
-two-payload string fills no slot — the factors sit adjacent — and it is
-represented by the plain product.
+The twist enters because a cut fills one argument slot with an axiom
+half. A two-payload string fills no slot — the factors sit adjacent —
+and it is represented by the plain product.
 
 ```agda
     string : A → A → argument ⋆ ⋆ → A
@@ -331,8 +336,8 @@ represented by the plain product.
     cut⁺-is-twisted _ _ = refl
 ```
 
-Against the plain product the composite of the two twists is the cancellation
-itself, with no residue.
+Against the plain product the composite of the two twists is the
+cancellation itself, with no residue.
 
 ```agda
     string-twists : string t⁻ t⁺ ≡ reflect (t⁻ · t⁺)
@@ -341,9 +346,9 @@ itself, with no residue.
 
 ## A candidate filler, and what it costs
 
-Filling the junction with a candidate rather than with an axiom half. The
-candidate is self-consistent when composing the two twists through it returns
-it — and that condition is the cancellation, with no residue.
+Filling the junction with a candidate rather than with an axiom half.
+The candidate is self-consistent when composing the two twists through
+it returns it — and that condition is the cancellation, with no residue.
 
 ```agda
     cut[_] : A → A → A → A

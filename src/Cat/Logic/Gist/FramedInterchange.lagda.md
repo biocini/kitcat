@@ -9,7 +9,7 @@ both sides; what stands in the way is the double twist.
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
 
-module Test.FramedInterchange where
+module Cat.Logic.Gist.FramedInterchange where
 
 open import Core.Type
 open import Core.Base

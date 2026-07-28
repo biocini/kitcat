@@ -16,7 +16,7 @@ each hand's own action being an equivalence at the reflexive edge?
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
 
-module Test.SpikeReflectFiber where
+module Cat.Logic.Gist.ReflectFiber where
 
 open import Core.Type
 open import Core.Base

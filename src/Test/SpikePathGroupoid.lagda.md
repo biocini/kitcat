@@ -325,7 +325,7 @@ projected unit.
 Because `reflect` is an equivalence here, left-cancellability is
 immediate rather than a consequence of the unit laws: the fiber over a
 reflection contains both the normal point and any competitor. The
-engine of `Test.SpikeReflectFiber` recovers this from composability and
+engine of `Cat.Logic.Gist.ReflectFiber` recovers this from composability and
 the flank absorptions in the general case, where representability is
 only propositional.
 
