@@ -7,7 +7,8 @@ modules. `src/Bb` is new — the Blackboard, archived strata frozen
 green: `Bb.WeakDeductiveSystem`, 16 modules, the weak stratum as
 it stood before the cut, and `Bb.OneTwist`, 3 modules, the
 rejected one-twist carrier promoted out of `Test`. Lint is clean.
-The `Mag` rebuild against `src/Mag/TODO.md` remains pending.
+The `Mag` rebuild remains pending; its program of record is
+`src/Bb/VgCategoryShape/TODO.md`, the vendored staging tree.
 
 `Cat.Logic.Gist` is new: the certified spikes on `Cat.Logic`'s
 definitions, vendored out of `Test` with the `Spike` prefixes
@@ -18,8 +19,8 @@ retired block below. The one-twist trio is archived at
 `Bb.OneTwist`: it probes the rejected rival carrier, not these
 definitions.
 
-Committed through the `Bb.OneTwist` promotion, on
-`cat-logic-polarity`. Untracked: `src/Mag/`.
+Committed through the `Bb.VgCategoryShape` vendoring, on
+`cat-logic-polarity`. Nothing is untracked.
 
 Prose is gated by the `writing` skill alone. Its bundled linter is
 the only prose gate: a changed `docs/` file must score at or under
@@ -121,7 +122,8 @@ rewrite.
 ### Still to do from the pass
 
 Nothing. The remaining work is the `Mag` rebuild against
-`src/Mag/TODO.md`, and the fresh briefing block for the sibling agent.
+`src/Bb/VgCategoryShape/TODO.md`, and the fresh briefing block for
+the sibling agent.
 
 ## Settled this session
 
@@ -398,7 +400,7 @@ the ones before it.
    graph, offset by θ². State the layer, check the four unit laws,
    and compare with `absorption`. This is where the duploid
    identity apparatus should reappear. First consumer: the `Mag`
-   re-founding program in `src/Mag/TODO.md`, which reads
+   re-founding program in `src/Bb/VgCategoryShape/TODO.md`, which reads
    `hcategory` as the θ² = id merge of the two magmoids and turns
    the comparison table there into a depolarization theorem.
 
@@ -431,7 +433,8 @@ the ones before it.
    clause, and the question becomes whether it has a fiber shape.
    No impossibility claim stands anywhere here: propositional
    shapes are exhausted only as far as spiked, which is the
-   lesson of the interchange precedent in `src/Mag/TODO.md`.
+   lesson of the interchange precedent in
+   `src/Bb/VgCategoryShape/TODO.md`.
 
    The propositional form of balance,
    `is-contr (Σ readback-data , filler)`, is refutable on
