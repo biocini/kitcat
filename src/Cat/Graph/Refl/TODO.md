@@ -204,8 +204,9 @@ Levels lead and are explicit exactly where un-inferable — `vfam`/`efam`/`disp`
 ## Loose ends
 
 - The `All.lagda.md` aggregator is retired pending module-organisation decisions
-  (does `Cat.Depreciated` belong in it?). Whole-library check is `just check-tree`
-  (a parallel `fd … -x agda` sweep); do not run `bin/sync-all` meanwhile.
+  (does `Bb.CatsWithExplicitInterchange` belong in it?). Whole-library check
+  is `just check-tree` (a parallel `fd … -x agda` sweep); do not run
+  `bin/sync-all` meanwhile.
 - [ ] `rst-disp` — restriction of an iterated displayed reflexive graph.
 - [ ] Full `path-alg-toolkit` / `pre-ct-is-equiv` — `edge≃path` covers the
       downstream needs so far; complete if a later proof requires it.

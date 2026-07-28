@@ -16,10 +16,10 @@ design note's mechanical roadmap
 - the monoidal re-stratification onto the lax schema (R1 names it)
 - Properties comparisons and the legacy-parity remainder
 
-`Cat.Depreciated.*` is the porting reference throughout
-(`Cat.Depreciated.CatData.*` for the magmoid-era material). The tree
-retires, unfixed. Whether anything in it survives unported is
-decision D5.
+`Bb.CatsWithExplicitInterchange.*` is the porting reference throughout
+(`Bb.UnitalMagmoids.*` for the magmoid-era material, extracted to its
+own tree). The tree retires, unfixed. Whether anything in it survives
+unported is decision D5.
 
 ## What retirement closes
 

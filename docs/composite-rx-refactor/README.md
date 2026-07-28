@@ -23,7 +23,7 @@ conventions. `notes/2025-06-03-coherent-unit-gist.md` is provenance.
 | [stage-1-backend](stage-1-backend.md) | The `Core.Rx` promotion: rename, split, acceptance |
 | [stage-2-discipline](stage-2-discipline.md) | `Core.Kan`/`Core.Composite` restated, deletions and dedup |
 | [stage-3-frontend](stage-3-frontend.md) | `Cat.Logic`: virtual graphs, the deductive-system record |
-| [stage-4-cat-rebuild](stage-4-cat-rebuild.md) | Porting `Cat.Depreciated` onto the deductive system |
+| [stage-4-cat-rebuild](stage-4-cat-rebuild.md) | Porting `Bb.CatsWithExplicitInterchange` onto the deductive system |
 | [stage-5-coherence](stage-5-coherence.md) | The Core coherence refoundation |
 | [decisions](decisions.md) | D1–D10, N1–N2, R1, the decision ledger. Rulings land there |
 | [unscheduled](unscheduled.md) | `cyl-compose`, the reference questions, carried conjectures |
@@ -75,7 +75,7 @@ The arc, in forced order:
 1. Promote the backend into `Core` and discipline the Kan machinery
    through it (Stages 0–2).
 2. Build the frontend (Stage 3).
-3. Rebuild `Cat` on the deductive system, with `Cat.Depreciated` as
+3. Rebuild `Cat` on the deductive system, with `Bb.CatsWithExplicitInterchange` as
    the porting reference until then (Stage 4).
 4. Only then refound the Core coherence work (Stage 5): in the
    deductive-system shape, with the path groupoid as the canonical
@@ -124,7 +124,7 @@ Rulings, with attribution:
   explicitly, part of `Core.Composite`'s meaning. The frontend
   restates it in the sequent vernacular by compatibility.
 - **Order** (Lane, 2026-07-24). The restructuring away from
-  `Cat.Depreciated`'s methods precedes the Core coherence refactor.
+  `Bb.CatsWithExplicitInterchange`'s methods precedes the Core coherence refactor.
 - **Reference tree** (Lane, 2026-07-24). `reference/` is notes, not
   expected to typecheck. Repairs involve Lane
   ([unscheduled](unscheduled.md)).
@@ -135,7 +135,7 @@ projections, never bridge two constructions), generic lemmas
 extracted rather than re-derived in place, `-Werror` green, commit
 only on instruction.
 
-Invariant (decision D8, ruled): **`Cat.Depreciated` remains green
+Invariant (decision D8, ruled): **`Bb.CatsWithExplicitInterchange` remains green
 until Stage 4 retires it, and what `Core` holds on its account
 carries a placement contract.** The tree is green today (59/59 under
 `src/Cat`) and its greenness is instrumental: it is the porting

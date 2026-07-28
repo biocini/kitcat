@@ -297,7 +297,7 @@ clauses:
 Consequence: the faithful stratum's abstract propositional-strata
 count is three BY THEOREM.
 
-🧪 `Gloss.ExtractAgreeIndependence` (2026-07-13).
+🧪 `Bb.CatsWithExplicitInterchange.Gist.CodepExtractAgree` (2026-07-13).
 
 ## 6. The faithful stratum
 

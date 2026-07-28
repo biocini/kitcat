@@ -12,7 +12,7 @@ untracked planning artifacts. Reproduction commands at the end.
   `Core.Transport.Base`'s). Both failures are committed state.
 - `just check-tree src/Test`: **17/17** (`.lagda.md` only; the six
   `.agda` scratch files sit outside `check-tree`).
-- `just check-tree src/Cat`: **59/59**. `Cat.Depreciated` (49
+- `just check-tree src/Cat`: **59/59**. `Bb.CatsWithExplicitInterchange` (49
   modules, 15,545 lines) is green.
 - `just profile Core.Kan`, cold, four runs: **1,025–1,072 ms** (run
   noise ≈ ±50 ms, acceptance criteria elsewhere cite this band).
@@ -53,10 +53,10 @@ Per-name, with direct consumers outside the defining module:
 | name | direct consumers | class |
 | --- | --- | --- |
 | `comp-pathp` | none anywhere | **deletable now** |
-| `comp-pathp₁` | `₁-ap`, `₁-over`, `Cat.Depreciated.Displayed.*` | held |
+| `comp-pathp₁` | `₁-ap`, `₁-over`, `Bb.CatsWithExplicitInterchange.Displayed.*` | held |
 | `comp-pathp₁-fill` | `Depreciated.Displayed.Base` | held |
 | `comp-pathp₁-over` | `Depreciated.Displayed.Base` | held |
-| `comp-pathp₁-ap` | `Depreciated.Displayed.Coherence`, `Test.MiscFloor` | held |
+| `comp-pathp₁-ap` | `Depreciated.Displayed.Coherence`, `Bb.CatsWithExplicitInterchange.Gist.MiscFloor` | held |
 | `comp-pathp₂` | `Core.Path.Exchange` (2 uses), family, Depreciated widely | held, **the transitive root** |
 | `comp-pathp₂-fill` | `₂-lcoh`, `₂-rcoh`, both `Monoidal` Bifunctors | held |
 | `comp-pathp₂-over` | both `Monoidal` Bifunctors | held |
@@ -73,7 +73,7 @@ Per-name, with direct consumers outside the defining module:
 | `comp-pathp₂-merge-map` | `Legacy.Hexagon`, `Legacy.Properties` | held |
 | `pathp-ends` | `Depreciated.Iso` | held |
 
-Under invariant D8 (`Cat.Depreciated` green), **only `comp-pathp` is
+Under invariant D8 (`Bb.CatsWithExplicitInterchange` green), **only `comp-pathp` is
 deletable today**. The other nineteen sit under the placement
 contract of [stage-2-discipline](stage-2-discipline.md) §2.5, which
 is what keeps a hold from becoming tenure. Note the asymmetry the
@@ -87,8 +87,9 @@ consumer it was) with its feeders `₂-unique`/`₂-lcoh`/`₂-rcoh` and
 their feeders `₂-fill`/`₂-rfill`. `₁-ap` falls, then `₁`. `₂-map`
 falls. **The sole transitive root after Stage 4 is `comp-pathp₂`**,
 via `whisker-rl-conj`/`whisker-lr-conj` in `Core.Path.Exchange`, and
-only `Test.DoubleLoopTensor` imports `Core.Path.Exchange`. Whether
-anything survives is decision D9, not arithmetic.
+only `Bb.CatsWithExplicitInterchange.Gist.DoubleLoopTensor` imports
+`Core.Path.Exchange`. Whether anything survives is decision D9, not
+arithmetic.
 
 ## Dead surface in `Core.Kan`
 
@@ -140,7 +141,8 @@ Dead already (importer is the retired `src/All.lagda.md` only):
 After Stage 0.1 moves `Singl-contr-cofan` to `Core.Base`,
 `Core.Groupoid`'s one live consumer has its home and the module
 joins `Core.Groupoid.Virtual` at zero live consumers.
-`Core.Path.Exchange`'s only importer is `Test.DoubleLoopTensor`.
+`Core.Path.Exchange`'s only importer is
+`Bb.CatsWithExplicitInterchange.Gist.DoubleLoopTensor`.
 Fates: decisions D9, D10.
 
 ## Rename inventory (Stage 1)

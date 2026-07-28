@@ -127,7 +127,7 @@ Delete `comp-pathp` (zero consumers anywhere). The other nineteen
 stay in place, and the hold is a contract with a test, not a
 deferral. Eighteen of them have no `Core` consumer at all
 ([evidence](evidence.md)) and exist in `Core.Kan` and
-`Core.Path.Base` solely to serve `Cat.Depreciated`. Leaving them
+`Core.Path.Base` solely to serve `Bb.CatsWithExplicitInterchange`. Leaving them
 unexamined would let a tree this refactor deletes go on shaping the
 namespace it departs.
 

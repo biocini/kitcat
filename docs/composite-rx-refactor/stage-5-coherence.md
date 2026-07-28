@@ -2,7 +2,7 @@
 
 The refoundation of the Mac Lane coherence work for the path
 groupoid, in the deductive-system shape. Precondition: Stage 4. The
-restructuring away from `Cat.Depreciated`'s methods precedes this
+restructuring away from `Bb.CatsWithExplicitInterchange`'s methods precedes this
 refactor (ruled).
 
 ## The broken modules

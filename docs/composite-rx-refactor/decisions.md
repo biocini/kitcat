@@ -80,7 +80,7 @@ this kind. Blocks: Stage 1.2's module boundaries.
 **Ruled (Lane, 2026-07-24): the tree stays green until Stage 4, and
 the material held on its account carries a placement contract.**
 
-`Cat.Depreciated` is green today (59/59 under `src/Cat`), and its
+`Bb.CatsWithExplicitInterchange` is green today (59/59 under `src/Cat`), and its
 greenness is instrumental: it is the porting reference, and it is
 what a reformulated construction is checked against. It is not a
 constraint on `Core`'s shape. Anything held in `Core` on its account
@@ -100,7 +100,8 @@ names that had merely accumulated tenure.
 
 The sole eventual consumer of the displaced-composition family (two
 uses of `comp-pathp₂`), itself imported only by
-`Test.DoubleLoopTensor`. Its `unitl refl ≐ unitr refl` seal is the
+`Bb.CatsWithExplicitInterchange.Gist.DoubleLoopTensor`. Its
+`unitl refl ≐ unitr refl` seal is the
 design note's Core-level anticipation of the `is-stable` cross-hand
 cell. Promote it (the family keeps a root). Retire it (the family
 dies whole at Stage 4). Or re-derive its whisker–exchange calculus
