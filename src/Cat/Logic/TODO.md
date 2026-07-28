@@ -1,6 +1,6 @@
 # Cat.Logic — open items
 
-State as of 2026-07-27. `src/Cat` typechecks, 71 modules, and
+State as of 2026-07-28. `src/Cat` typechecks, 71 modules, and
 `src/Test` typechecks, 33 modules. Lint is clean. The `Mag` rebuild
 against `src/Mag/TODO.md` remains pending.
 
@@ -12,8 +12,9 @@ dropped. Nine modules: `AssociatesCountermodel`, `FramedCut`,
 (`ExtractedTwist*`) stays in `Test`: it probes the rejected rival
 carrier, not these definitions.
 
-Committed through the `Gist` vendoring commit on
-`cat-logic-polarity`, on top of `12dd0af`. Untracked: `src/Mag/`,
+Committed through the seam-and-programs commit on
+`cat-logic-polarity`, on top of `7f1cf05`, the `Gist` vendoring.
+Untracked: `src/Mag/`,
 the `Test` spikes `ExtractedTwistCancel` and
 `ExtractedTwistModels`, the one-twist brief in `notes/`, and
 `resources/selinger-graphical-languages/`.
@@ -328,14 +329,24 @@ the ones before it.
    truncated. Decide its status, then define the subcategories of
    thunkable maps, linear maps, positive objects and negative
    objects over the towers. Closure of thunkable and linear under
-   the compositions is the first lemma.
+   the compositions is the first lemma, with a portable template:
+   the closure proofs in the origin mechanization consume no unit
+   laws and no hom sets. RULED (Lane, 2026-07-28): mode separation
+   is not a candidate foundation. It cannot be stated below
+   unitality, and the origin mechanization is itself one-carrier,
+   with adjunctions only as what the structure theorem
+   reconstructs. Modes return, if at all, as a derived
+   presentation of the balanced core through lines 6 and 7.
 
 5. **The fully balanced layer.** String computation, unverified:
    with both cancellation orders, each hand is two-sided unital
    with its own twist as unit. That is two unital magmoids on one
    graph, offset by θ². State the layer, check the four unit laws,
    and compare with `absorption`. This is where the duploid
-   identity apparatus should reappear.
+   identity apparatus should reappear. First consumer: the `Mag`
+   re-founding program in `src/Mag/TODO.md`, which reads
+   `hcategory` as the θ² = id merge of the two magmoids and turns
+   the comparison table there into a depolarization theorem.
 
 6. **Shifts as representability.** The positive shift's universal
    property is a unique linear factorization through a thunkable
@@ -397,10 +408,14 @@ The work items, in order.
    canonicalized against `assoc⁺`, `assoc⁻`, `mixed-assoc` and
    the centre absorptions `w ⨾⁺ c⁻ ≡ w`, `c⁺ ⨾⁻ w ≡ w`. Decidable
    equality, then the deductive-system axioms, all set-level on
-   `--erased-cubical`. Payoff immediately: a derivability bound
-   for line 3. Refutation in the word model kills a candidate
-   outright. Inhabitation is evidence only, until item 3 upgrades
-   it.
+   `--erased-cubical`. Construction: cut-free. Define the normal
+   forms as the inductive type and both cuts as admissible
+   functions on them. No quotient, so no confluence obligation,
+   and item 3's coherence theorem becomes cut admissibility. See
+   the internal-language seam, line 1. Payoff immediately: a
+   derivability bound for line 3. Refutation in the word model
+   kills a candidate outright. Inhabitation is evidence only,
+   until item 3 upgrades it.
 2. Morphisms. None exist: `Display` and `Graph` carry lenses and
    the reflexive-graph reading, not maps of systems. Design:
    path-level preservation of `reflect` and the twists. System
@@ -424,6 +439,77 @@ syntactic models are CONJECTURED anchors only: Führmann is not on
 the shelf, the two vendored sources are unaudited, and all build
 syntax at set level by fiat, which the wild setting cannot.
 
+## The internal-language seam: CatColab RFC 0004
+
+Enumerated 2026-07-28, from one fetch of
+<https://next.catcolab.org/rfc/0004>, "Internal languages for
+models", Evan Patterson, 2026-04-10. SOURCE-CHECKED at that depth
+only. The document is not vendored, so nothing below supports a
+citation. Vendoring and a statement audit come before any of this
+reaches code, docs, or the ledger.
+
+The proposal, as fetched. A two-level type theory parameterized
+by a modal double theory. The outer theory speaks of models, the
+inner theory of morphisms, through judgment forms that carry a
+domain term and a codomain term. Composition in the inner theory
+is admissible, not primitive, so cut-freeness enforces canonical
+forms. Doctrines are virtual double categories under an "almost
+representable" condition. Models are Set-valued. The apparatus
+assumes the doctrine is flat, at most one cell per boundary, on
+the ground that pointful notation has no syntax for cells. Its
+future work opens with coherence theorems that prove flatness for
+finite presentations.
+
+The relation to this framework, in two sentences. The kinship is
+structural: composition as a property-witnessed representative,
+representability as the organizing notion, and a judgment form
+that is the one-sided shadow of `judgment x y`. The divergence is
+the truncation policy: flatness plus Set-valued models is the
+hom-set regime, where `thunkable-is-prop` makes the thunkability
+question a proposition by fiat, while the circle model holds
+ℤ-many coherent witnesses on one boundary that such a language
+cannot name.
+
+The lines of inquiry.
+
+1. **Cut-freeness as the word-model construction.** Adopted into
+   the initial-model program, item 1: normal forms as an
+   inductive type, both cuts admissible, no quotient. The
+   coherence conjecture becomes a cut-admissibility theorem. No
+   further reading needed, the discipline stands on its own.
+2. **The polarity fork.** RULED (Lane, 2026-07-28): resolved
+   against the modes, see line 4 of the investigation list. What
+   survives of this line: when the RFC's adjoint-logic extension
+   lands, compare it with the derived presentation lines 6 and 7
+   reconstruct, as an external check, not as a foundation
+   question.
+3. **Expressibility of the framed carrier.** Can a pre-duploid,
+   or a deductive system, be presented as a modal double theory
+   at all? Virtual double categories paste multicells
+   associatively, and the carrier sits below that floor: the
+   provable profile is exactly pre-duploid
+   (`Gist.AssociatesCountermodel`). First move, after vendoring:
+   a statement-level pass over the RFC's definitions to locate
+   where pasting associativity enters, and whether the "almost
+   representable" weakening leaves room below it.
+4. **Syntactic indiscernibility.** The RFC justifies flatness
+   because pointful terms cannot name cells. Read against wild
+   models, that suggests a theorem: no internal language of this
+   kind separates the circle model's coherent witnesses, so
+   pointful syntax is complete only for the set truncation. State
+   it precisely once morphisms of systems exist, initial-model
+   program item 2, since "a language" then means a map out of a
+   free system. This is the external face of the coherence
+   conjecture, and the RFC's flatness future-work item is the
+   same theorem one level down.
+5. **The framed variable rule.** The RFC's identity rule is a
+   fresh, unframed variable. Here `var x = (x , twist⁻ x)`: a
+   variable arrives with a pending read, and a covariable with a
+   pending write. For effectful doctrines, the RFC's Markov and
+   promonad examples, the framed rule may be the honest one.
+   Export direction, low priority, a note for any future contact
+   with that community rather than a work item here.
+
 ## Resources
 
 - `resources/munch-maccagnoni-duploids/` — vendored 2026-07-27,
@@ -435,6 +521,21 @@ syntax at set level by fiat, which the wild setting cannot.
   until the audits are run. The 2026-07-27 statement pass (the duploid
   section above) checked the §9 anchors at statement depth. It does
   not stand in for the audits.
+- Worth vendoring: CatColab RFC 0004, "Internal languages for
+  models" (Patterson, 2026-04-10). The internal-language seam
+  above depends on it, and lines 3 and 4 there need its
+  definitions at statement depth.
+- Local prior mechanization, the origin of this program:
+  `~/TypeTopology/source/Duploids` (Sterling, 2022), set-level
+  duploids over Munch-Maccagnoni. To mine: `idn-thunkable` and
+  `idn-linear` consume one unit law each, twice, which is the
+  template whose porting gap is investigation line 3;
+  `cut-thunkable` and `cut-linear` consume no units and port to
+  line 4; `Depolarization` (depolarized deductive system is a
+  precategory) is the set-level shadow of the `Mag` collapse; the
+  announced univalent structure theorem is absent from the
+  checkout, so line 7 has no finished set-level precedent there.
+  Cite by path and commit after a custody decision.
 - Worth vendoring: Melliès, *Asynchronous Games 3*. It is the only
   place the future/buffer gloss could be source-checked at all —
   *future*, *buffer*, and any treatment of asynchrony, buffering,
