@@ -28,6 +28,7 @@ resources/**/*.pdftext
 resources/**/*.tex
 resources/**/*.sty
 resources/**/*.cls
+resources/**/*.html
 resources/**/*.bib
 resources/**/*.bbl
 resources/**/*.json

@@ -4,6 +4,8 @@
 > towers were swapped and the unit tier renamed `is-invertible±`.
 > Identifiers below carry the pre-swap names; `src/Cat/Logic/TODO.md`
 > records the change and the naming rule now in `Cat.Logic.Type`.
+> The resources entry `mangel-classical-notions` is renamed
+> `mmmm-classical-notions`, 2026-07-28.
 
 Where the framed deductive-system theory stands with respect to (1) the
 reflexive-graph theory of `Cat.Graph.Refl`, after Sterling, and (2) the

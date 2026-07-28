@@ -3,7 +3,9 @@
 > Relocation banner, 2026-07-28. The `Test.ExtractedTwist*` trio
 > named below now lives at `Bb.OneTwist.{Base,Cancel,Models}`, and
 > the brief `notes/2026-07-27-one-twist-virtual-graph.md` is
-> deleted. Paths in this dated record are left as written.
+> deleted. The resources entry `mangel-classical-notions` is renamed
+> `mmmm-classical-notions`, 2026-07-28. Paths in this dated record
+> are left as written.
 
 Session log, 2026-07-27. Branch `cat-logic-polarity`, four commits:
 `13bd646`, `cb00916`, `fe98769`, `ec98ebe`. The brief for the day's

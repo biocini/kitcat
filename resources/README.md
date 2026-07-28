@@ -57,7 +57,7 @@ House the source's own markup when it exists. The format hierarchy:
    until the audit is re-run.
 
 Each entry records its canonical format in its frontmatter
-(`format: latex-source | pdf | scan` — the schema is below).
+(`format: latex-source | html | pdf | scan` — the schema is below).
 All vendored and derived forms are gitignored — the source tarball,
 the extracted markup, the `.pdftext` — so only tracked, regenerable
 metadata leaves the machine. A new unfolded-source file extension not
@@ -77,7 +77,7 @@ keys only, no nesting. Required keys, on every entry:
 ---
 artifact: <filename of the canonical artifact, in the entry dir>
 sha256: <64-hex sha256 of the canonical artifact>
-format: latex-source   # or: pdf | scan
+format: latex-source   # or: html | pdf | scan
 fetch-url: <URL that retrieves the canonical artifact, or none>
 ---
 ```

@@ -33,7 +33,7 @@ duploid functors, and Adj is the category of adjunctions and pseudo
 maps of adjunctions."
 
 This is the originating duploid paper, cited as the duploids reference
-by [`mangel-classical-notions`](../mangel-classical-notions/README.md).
+by [`mmmm-classical-notions`](../mmmm-classical-notions/README.md).
 
 ## Vetting
 
