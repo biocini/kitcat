@@ -69,7 +69,7 @@ Dependencies: Agda builtins only — no agda-stdlib, no cubical library.
 | `just profile <Mod>` | Elaboration time, cold — `--total [N]`, `--internal`, `--warm` |
 | `just new <Mod> [--aggregator]` | New module with correct boilerplate |
 | `just mv Old New [--dry-run]` | Move/rename, updating references |
-| `just lint [width\|flags\|prose\|frontmatter\|changed]` | Lint; `changed` is the pre-commit gate |
+| `just lint [width\|flags\|frontmatter\|changed]` | Lint; `changed` is the pre-commit gate. Prose is gated by the `writing` skill's bundled linter, not here |
 | `just resources-verify [--remote]` | Custody check on `resources/` |
 | `just stats` / `just wip` | Inventories |
 | `just html` / `just html-serve` | Docs site |

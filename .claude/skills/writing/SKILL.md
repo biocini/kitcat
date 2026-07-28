@@ -1,6 +1,6 @@
 ---
 name: writing
-description: Rewrite prose (docs, READMEs, PR descriptions, error messages, release notes, comments, never code) into ASD-STE100 Simplified Technical English to remove "AI slop". Use when asked to make writing not sound like AI, make docs clear or plain, enforce a controlled writing style, or write technical documentation that reads human. Two modes, strict (procedures/safety) and STE-flavored (general prose).
+description: Write, edit, or rewrite technical prose (docs, READMEs, module prose, PR descriptions, error messages, release notes, comments, never code) in ASD-STE100 Simplified Technical English. Load BEFORE any creation or edit of such prose, not only on request - and when asked to remove "AI slop", make docs clear or plain, or enforce a controlled writing style. Two modes, strict (procedures/safety) and STE-flavored (general prose). Bundles prose-lint.py, the repository's only prose linter and gate.
 ---
 
 # writing
@@ -10,6 +10,10 @@ to documentation, READMEs, pull-request text, error messages, release
 notes, and comments. It does not apply to code, identifiers, or
 command syntax. It is not for marketing copy, essays, or text that
 needs a voice. STE strips voice on purpose.
+
+Load this skill before you create or edit any such prose. Do not wait
+for a request about style. After the edit, run the bundled linter on
+each changed file (see Measure).
 
 ## Rules
 
@@ -87,8 +91,12 @@ This skill bundles its linter: `prose-lint.py`, beside this file.
 Run `python3 "${CLAUDE_SKILL_DIR}/prose-lint.py" <files>` for a
 score in violations per 100 words. Lower is cleaner. Lint a draft,
 apply the skill, and lint again. The delta between the two scores
-is the signal. The optional `--max-per100 <x>` flag makes the exit
-status a pass/fail gate.
+is the signal. The `--max-per100 <x>` flag makes the exit status a
+pass/fail gate.
+
+This linter is the repository's only prose gate. The gate for a
+changed `docs/` file is `--max-per100 2.0`. Run it on the `docs/`
+files that your change touches, before commit.
 
 Free official standard (copyrighted, do not paste it in full):
 https://asd-ste100.org

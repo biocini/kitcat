@@ -25,5 +25,6 @@ normative statement is the `writing` skill
   the dictionary rules. The sentence and punctuation rules still
   apply around them.
 - The `writing` skill bundles its linter, which measures
-  conformance in violations per 100 words. `bin/lint prose` gates
-  `docs/` with it, threshold 2.0 per file.
+  conformance in violations per 100 words. That linter is the only
+  prose gate: run it on each changed `docs/` file, which must score
+  at or under 2.0.
