@@ -37,3 +37,6 @@ resources/**/*.toc
 resources/**/*.out
 resources/**/*.log
 resources/**/*.idx
+resources/**/*.eps
+resources/**/*.mf
+resources/**/*.fd
