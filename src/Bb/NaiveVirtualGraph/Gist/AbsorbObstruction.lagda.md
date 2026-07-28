@@ -14,7 +14,7 @@ hypothesis anywhere and no commitment to how the predicate is packaged.
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
 
-module Test.SpikeAbsorbObstruction where
+module Bb.NaiveVirtualGraph.Gist.AbsorbObstruction where
 
 open import Core.Type
 open import Core.Base
@@ -23,60 +23,7 @@ open import Core.Kan using (_∙_; module Path; module pcom; module cat)
 open import Core.Transport.Base using (is-prop→PathP)
 open import Core.Groupoid.Virtual using (module yon-unbiased)
 
--- The carrier, inlined: a spike in an in-development layer carries its
--- own copy of the data it probes, so a change to the layer cannot
--- silently retune it.
-
-record virtual-graph o h : Type₊ (o ⊔ h) where
-  field
-    ob : Type o
-    hom : ob → ob → Type h
-    idn : (x : ob) → hom x x
-
-  term : ob → Type (o ⊔ h)
-  term x = Σ w ∶ ob , hom w x
-
-  coterm : ob → Type (o ⊔ h)
-  coterm y = Σ v ∶ ob , hom y v
-
-  argument : ob → ob → Type (o ⊔ h)
-  argument x y = term x × coterm y
-
-  var : (a : ob) → term a
-  var a = a , idn a
-
-  covar : (y : ob) → coterm y
-  covar y = y , idn y
-
-  conclusion : ∀ {x y} → argument x y → Type h
-  conclusion γ = hom (γ .fst .fst) (γ .snd .fst)
-
-  judgment : ob → ob → Type (o ⊔ h)
-  judgment x y = (γ : argument x y) → conclusion γ
-
-  field
-    reflect : ∀ {x y} → hom x y → judgment x y
-
-module sequents {o h} (G : virtual-graph o h) where
-  open virtual-graph G
-
-  argue : ∀ {x y} → term x → coterm y → argument x y
-  argue h k = h , k
-
-  intro : ∀ {x y} → hom x y → term y
-  intro {x} f = x , f
-
-  elim : ∀ {x y} → hom x y → coterm x
-  elim {y = y} f = y , f
-
-  eval : ∀ {x y} → judgment x y → hom x y
-  eval {x} {y} α = α (var x , covar y)
-
-  is-representable : ∀ {x y} → judgment x y → Type (o ⊔ h)
-  is-representable = fiber reflect
-
-  normal : ∀ {x y} (f : hom x y) → is-representable (reflect f)
-  normal f = f , refl
+open import Bb.NaiveVirtualGraph.Base
 ```
 
 ## Absorption as one path
@@ -248,9 +195,10 @@ propositional consequence of absorption while yielding absorption
 itself only where it splits.
 
 The failures already on record are this obstruction seen from
-particular angles. `Test.SpikeStabilityShape` computes the datum, given
-the unit fiber, as a path in a hom type; `Test.SpikeSelfUnit` finds that
-demoting the chosen edge weakens *is a unit* to *squares to a unit* —
-the same doubling, met head-on. What the rigidity theorem adds is that
-the obstruction is not a property of any packaging: it is the free
-occurrence of `idn` in the record.
+particular angles. `Bb.NaiveVirtualGraph.Gist.StabilityShape` computes
+the datum, given the unit fiber, as a path in a hom type;
+`Bb.NaiveVirtualGraph.Gist.SelfUnit` finds that demoting the chosen
+edge weakens *is a unit* to *squares to a unit* — the same doubling,
+met head-on. What the rigidity theorem adds is that the obstruction is
+not a property of any packaging: it is the free occurrence of `idn` in
+the record.

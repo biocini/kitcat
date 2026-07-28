@@ -14,7 +14,7 @@ it is.
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
 
-module Test.SpikeStabilityShape where
+module Bb.NaiveVirtualGraph.Gist.StabilityShape where
 
 open import Core.Type
 open import Core.Base
@@ -25,70 +25,12 @@ open import Core.Equiv.Base using (_≃_; iso→equiv; is-contr-equiv)
 open import Core.Equiv.Properties using (_∙e_; esym; Σ-contr-fst)
 open import Core.HLevel.Base using (is-prop-equiv)
 
--- The carrier, inlined: a spike in an in-development layer carries its
--- own copy of the data it probes, so a change to the layer cannot
--- silently retune it.
-
-record virtual-graph o h : Type₊ (o ⊔ h) where
-  field
-    ob : Type o
-    hom : ob → ob → Type h
-    idn : (x : ob) → hom x x
-
-  term : ob → Type (o ⊔ h)
-  term x = Σ w ∶ ob , hom w x
-
-  coterm : ob → Type (o ⊔ h)
-  coterm y = Σ v ∶ ob , hom y v
-
-  argument : ob → ob → Type (o ⊔ h)
-  argument x y = term x × coterm y
-
-  var : (a : ob) → term a
-  var a = a , idn a
-
-  covar : (y : ob) → coterm y
-  covar y = y , idn y
-
-  conclusion : ∀ {x y} → argument x y → Type h
-  conclusion γ = hom (γ .fst .fst) (γ .snd .fst)
-
-  judgment : ob → ob → Type (o ⊔ h)
-  judgment x y = (γ : argument x y) → conclusion γ
-
-  field
-    reflect : ∀ {x y} → hom x y → judgment x y
-
-module sequents {o h} (G : virtual-graph o h) where
-  open virtual-graph G
-
-  argue : ∀ {x y} → term x → coterm y → argument x y
-  argue h k = h , k
-
-  intro : ∀ {x y} → hom x y → term y
-  intro {x} f = x , f
-
-  elim : ∀ {x y} → hom x y → coterm x
-  elim {y = y} f = y , f
-
-  eval : ∀ {x y} → judgment x y → hom x y
-  eval {x} {y} α = α (var x , covar y)
-
-  is-representable : ∀ {x y} → judgment x y → Type (o ⊔ h)
-  is-representable = fiber reflect
-
-  normal : ∀ {x y} (f : hom x y) → is-representable (reflect f)
-  normal f = f , refl
+open import Bb.NaiveVirtualGraph.Base
 
 module _ {o h} (G : virtual-graph o h) where
   open virtual-graph G
   open sequents G
-
-  coact-π : ∀ {x y} → hom x y → (γ : coterm y) → hom x (γ .fst)
-  coact-π {x} f γ = reflect f (argue (var x) γ)
-
-  act-π : ∀ {x y} → hom x y → (t : term x) → hom (t .fst) y
-  act-π {y = y} f t = reflect f (argue t (covar y))
+  open vocab G
 ```
 
 ## The datum, and what it is
@@ -140,8 +82,8 @@ at `idn x` — computes the datum outright.
 So the datum *is* a path in `hom x x`, and asking it to be
 propositional asks the loop space of `hom x x` at `idn x` to be
 propositional. That is a truncation condition on the homs, and it is
-the same condition `Test.SpikeUnitCanonical` extracts from the
-half-adjoint form by a twist argument — obtained here without
+the same condition `Bb.NaiveVirtualGraph.Gist.UnitCanonical` extracts
+from the half-adjoint form by a twist argument — obtained here without
 reference to any particular packaging.
 
 ```agda
@@ -229,9 +171,9 @@ would be non-conservative, ruling out graphs whose chosen edge does
 absorb. And wrapping the datum in `is-contr` makes the *statement*
 propositional without making the content so — what is then asserted is
 contractibility of a space whose readback component
-`Test.SpikePathGroupoid` shows is not a proposition above h-level
-three. Whether the flank coherence nonetheless contracts it there is
-open.
+`Bb.NaiveVirtualGraph.Gist.PathGroupoid` shows is not a proposition
+above h-level three. Whether the flank coherence nonetheless contracts
+it there is open.
 
 The same computation disposes of the one-fiber-for-both-hands
 candidate. Contracting a single space of edges absorbing on both sides
@@ -248,5 +190,6 @@ is one obstruction wearing three costumes.
 
 What is no longer at stake is the derived theory. Readback's remaining
 consumers were the unit laws, and those follow from the engine of
-`Cat.Logic.Gist.ReflectFiber` — composability plus the flank absorptions —
-with no readback family in scope. Associativity never needed it either.
+`Cat.Logic.Gist.ReflectFiber` — composability plus the flank
+absorptions — with no readback family in scope. Associativity never
+needed it either.

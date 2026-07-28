@@ -19,7 +19,7 @@ cross-hand fact, and it is left uninhabited here.
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
 
-module Test.SpikePerHandUnit where
+module Bb.NaiveVirtualGraph.Gist.PerHandUnit where
 
 open import Core.Type
 open import Core.Base

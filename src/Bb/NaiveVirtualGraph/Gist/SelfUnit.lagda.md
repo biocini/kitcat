@@ -14,7 +14,7 @@ This spike asks what that datum actually says.
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
 
-module Test.SpikeSelfUnit where
+module Bb.NaiveVirtualGraph.Gist.SelfUnit where
 
 open import Core.Type
 open import Core.Base
@@ -30,8 +30,8 @@ open import Core.Groupoid.Virtual using (module yon-unbiased)
 
 `reflect`'s type needs only objects and edges — terms, coterms,
 arguments and conclusions are all built by `Σ` and `×` from those. The
-chosen edge is needed for `var`, `covar` and `eval`, which are downstream
-of the unit tier rather than upstream of it.
+chosen edge is needed for `var`, `covar` and `eval`, which are
+downstream of the unit tier rather than upstream of it.
 
 ```agda
 record pre-graph o h : Type₊ (o ⊔ h) where
@@ -151,6 +151,6 @@ where the loop space is torsion-free.
 
 So the chosen edge cannot be demoted this way. Either it stays a field
 of the graph, in which case identifying it with the projected unit is
-the hom-path `Test.SpikeStabilityShape` shows is not propositional, or
-a characterisation of the unit is needed that refers to a neutral slot
-without presupposing one — and this is not it.
+the hom-path `Bb.NaiveVirtualGraph.Gist.StabilityShape` shows is not
+propositional, or a characterisation of the unit is needed that refers
+to a neutral slot without presupposing one — and this is not it.

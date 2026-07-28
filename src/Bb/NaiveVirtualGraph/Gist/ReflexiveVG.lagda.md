@@ -2,11 +2,12 @@ Spike: the unit laws as carrier structure, so that the predicate is a
 proposition.
 
 Pinning an independently chosen `idn` to the unit is a path in a hom
-type — `Test.SpikeStabilityShape` computes it — so no predicate over a
-graph carrying `idn` freely can assert it propositionally. The way out
-is not another packaging but a different division: the chosen edge
-comes *with* its two absorptions, as structure, and the predicate over
-that structure is three contractibility statements and nothing else.
+type — `Bb.NaiveVirtualGraph.Gist.StabilityShape` computes it — so no
+predicate over a graph carrying `idn` freely can assert it
+propositionally. The way out is not another packaging but a different
+division: the chosen edge comes *with* its two absorptions, as
+structure, and the predicate over that structure is three
+contractibility statements and nothing else.
 
 `reflect`'s type needs only objects and edges, so the chosen edge and
 its laws can be declared after it, in order.
@@ -14,7 +15,7 @@ its laws can be declared after it, in order.
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
 
-module Test.SpikeReflexiveVG where
+module Bb.NaiveVirtualGraph.Gist.ReflexiveVG where
 
 open import Core.Type
 open import Core.Base
@@ -27,7 +28,7 @@ open import Core.HLevel.Base using (Π-is-prop; Πi-is-prop; ×-is-hlevel)
 open import Core.Transport.Properties using (is-contr-is-prop)
 open import Core.Groupoid.Virtual using (module yon-unbiased)
 
-import Test.AnchorPin as AP
+open import Bb.NaiveVirtualGraph.Base
 ```
 
 ## The carrier
@@ -234,7 +235,7 @@ module path {u} (A : Type u) where
 
 Representability is total, so composability is handed over; each
 action at reflexivity is an equivalence, so each unit fiber is
-contractible; and restriction is `AnchorPin`'s singleton contraction.
+contractible; and restriction is a singleton contraction.
 
 ```agda
   curry≃ : ∀ {x y} → (∀ w → w ≡ x → ∀ z → y ≡ z → w ≡ z) ≃ judgment x y
@@ -289,10 +290,10 @@ contractible; and restriction is `AnchorPin`'s singleton contraction.
 
   PG-stable : is-stable PG
   PG-stable =
-    (rb≃ ∙e (AP.at-refl T t₀
-            , iso→equiv (AP.at-refl T t₀) (AP.extend T t₀)
-                        (AP.extend-retract T t₀)
-                        (λ v → funext (AP.extend-refl T t₀ v)) .snd)) .snd
+    (rb≃ ∙e (pin.at-refl T t₀
+            , iso→equiv (pin.at-refl T t₀) (pin.extend T t₀)
+                        (pin.extend-retract T t₀)
+                        (λ v → funext (pin.extend-refl T t₀ v)) .snd)) .snd
 
   PG-deductive : is-deductive-system PG
   PG-deductive .is-deductive-system.composable = PG-composable

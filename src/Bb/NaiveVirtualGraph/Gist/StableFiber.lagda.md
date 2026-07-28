@@ -10,7 +10,7 @@ tier's statement is not circular over them.
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
 
-module Test.SpikeStableFiber where
+module Bb.NaiveVirtualGraph.Gist.StableFiber where
 
 open import Core.Type
 open import Core.Base
@@ -25,62 +25,7 @@ open import Core.Function.Embedding
   using (equiv→lc; is-equiv→is-embedding; is-embedding→ap-equiv)
 open import Core.Groupoid.Virtual using (module yon-unbiased)
 
--- The carrier, inlined: a spike in an in-development layer carries its
--- own copy of the data it probes, so a change to the layer cannot
--- silently retune it.
-
-record virtual-graph o h : Type₊ (o ⊔ h) where
-  field
-    ob : Type o
-    hom : ob → ob → Type h
-    idn : (x : ob) → hom x x
-
-  term : ob → Type (o ⊔ h)
-  term x = Σ w ∶ ob , hom w x
-
-  coterm : ob → Type (o ⊔ h)
-  coterm y = Σ v ∶ ob , hom y v
-
-  argument : ob → ob → Type (o ⊔ h)
-  argument x y = term x × coterm y
-
-  var : (a : ob) → term a
-  var a = a , idn a
-
-  covar : (y : ob) → coterm y
-  covar y = y , idn y
-
-  conclusion : ∀ {x y} → argument x y → Type h
-  conclusion γ = hom (γ .fst .fst) (γ .snd .fst)
-
-  judgment : ob → ob → Type (o ⊔ h)
-  judgment x y = (γ : argument x y) → conclusion γ
-
-  field
-    reflect : ∀ {x y} → hom x y → judgment x y
-
-module sequents {o h} (G : virtual-graph o h) where
-  open virtual-graph G
-
-  argue : ∀ {x y} → term x → coterm y → argument x y
-  argue h k = h , k
-
-  intro : ∀ {x y} → hom x y → term y
-  intro {x} f = x , f
-
-  elim : ∀ {x y} → hom x y → coterm x
-  elim {y = y} f = y , f
-
-  eval : ∀ {x y} → judgment x y → hom x y
-  eval {x} {y} α = α (var x , covar y)
-
-  is-representable : ∀ {x y} → judgment x y → Type (o ⊔ h)
-  is-representable = fiber reflect
-
-  normal : ∀ {x y} (f : hom x y) → is-representable (reflect f)
-  normal f = f , refl
-
-import Test.AnchorPin as AP
+open import Bb.NaiveVirtualGraph.Base
 ```
 
 ## The vocabulary
@@ -89,27 +34,13 @@ import Test.AnchorPin as AP
 module _ {o h} (G : virtual-graph o h) where
   open virtual-graph G
   open sequents G
-
-  coact-π : ∀ {x y} → hom x y → (γ : coterm y) → hom x (γ .fst)
-  coact-π {x} f γ = reflect f (argue (var x) γ)
-
-  act-π : ∀ {x y} → hom x y → (t : term x) → hom (t .fst) y
-  act-π {y = y} f t = reflect f (argue t (covar y))
-
-  coact : ∀ {x y} → hom x y → coterm y → coterm x
-  coact {x} f e = elim (reflect f (argue (var x) e))
-
-  act : ∀ {x y} → hom x y → term x → term y
-  act {y = y} f t = intro (reflect f (argue t (covar y)))
+  open vocab G
 
   composite⁻ : ∀ {x y z} → hom x y → hom y z → judgment x z
   composite⁻ f g γ = reflect f (argue (γ .fst) (coact g (γ .snd)))
 
   composite⁺ : ∀ {x y z} → hom x y → hom y z → judgment x z
   composite⁺ f g γ = reflect g (argue (act f (γ .fst)) (γ .snd))
-
-  readback : Type (o ⊔ h)
-  readback = ∀ {x y} (f : hom x y) → eval (reflect f) ≡ f
 ```
 
 ## Composability
@@ -291,14 +222,14 @@ module dict {o h} (G : virtual-graph o h) where
   covar-op _ = refl
 
   coact-π-op : ∀ {x y} (f : hom y x) (t : term y)
-             → coact-π (opⱽ G) f t ≡ act-π G f t
+             → vocab.coact-π (opⱽ G) f t ≡ vocab.act-π G f t
   coact-π-op _ _ = refl
 
   act-π-op : ∀ {x y} (f : hom y x) (e : coterm x)
-           → act-π (opⱽ G) f e ≡ coact-π G f e
+           → vocab.act-π (opⱽ G) f e ≡ vocab.coact-π G f e
   act-π-op _ _ = refl
 
-  readback-op : readback (opⱽ G) ≃ readback G
+  readback-op : vocab.readback (opⱽ G) ≃ vocab.readback G
   readback-op = iso→equiv (λ u f → u f) (λ u f → u f) (λ _ → refl) (λ _ → refl)
 ```
 
@@ -409,9 +340,9 @@ idempotences move, and they move along `⨾-op`.
 is-unital : ∀ {o h} (G : virtual-graph o h) → Type (o ⊔ h)
 is-unital G =
     (∀ {x v} → is-equiv (λ (b : virtual-graph.hom G x v)
-                           → coact-π G (virtual-graph.idn G x) (v , b)))
+                           → vocab.coact-π G (virtual-graph.idn G x) (v , b)))
   × (∀ {w x} → is-equiv (λ (a : virtual-graph.hom G w x)
-                           → act-π G (virtual-graph.idn G x) (w , a)))
+                           → vocab.act-π G (virtual-graph.idn G x) (w , a)))
   × (∀ x → virtual-graph.reflect G (virtual-graph.idn G x)
          ≡ composite⁻ G (virtual-graph.idn G x) (virtual-graph.idn G x))
   × (∀ x → virtual-graph.reflect G (virtual-graph.idn G x)
@@ -456,7 +387,7 @@ module stable {o h} (G : virtual-graph o h) where
   flank : Type (o ⊔ h)
   flank = ∀ x → eval (reflect (idn x)) ≡ idn x
 
-  restrict : readback G → flank
+  restrict : vocab.readback G → flank
   restrict u x = u (idn x)
 
   is-stable : Type (o ⊔ h)
@@ -482,7 +413,7 @@ flank-op : ∀ {o h} (G : virtual-graph o h) → stable.flank (opⱽ G) ≡ stab
 flank-op _ = refl
 
 restrict-op
-  : ∀ {o h} (G : virtual-graph o h) (u : readback (opⱽ G))
+  : ∀ {o h} (G : virtual-graph o h) (u : vocab.readback (opⱽ G))
   → stable.restrict (opⱽ G) u ≡ stable.restrict G (dict.readback-op G .fst u)
 restrict-op _ _ = refl
 
@@ -575,6 +506,7 @@ module path {u} (A : Type u) where
 
   open virtual-graph PG
   open sequents PG
+  open vocab PG
 ```
 
 The two emb-action equivalences are `pcom`'s idempotence laws, each
@@ -582,10 +514,10 @@ witnessing that the map is homotopic to the identity in both
 directions.
 
 ```agda
-  eqv⁻ : ∀ {x v : A} → is-equiv (λ (b : hom x v) → coact-π PG (idn x) (v , b))
+  eqv⁻ : ∀ {x v : A} → is-equiv (λ (b : hom x v) → coact-π (idn x) (v , b))
   eqv⁻ = iso→equiv _ (λ b → b) (λ b → pcom.ideml b) (λ b → pcom.ideml b) .snd
 
-  eqv⁺ : ∀ {w x : A} → is-equiv (λ (a : hom w x) → act-π PG (idn x) (w , a))
+  eqv⁺ : ∀ {w x : A} → is-equiv (λ (a : hom w x) → act-π (idn x) (w , a))
   eqv⁺ = iso→equiv _ (λ a → a) (λ a → pcom.idemr a) (λ a → pcom.idemr a) .snd
 ```
 
@@ -618,10 +550,10 @@ represents the composite judgment, by the corresponding action's
 idempotence read under `reflect`, and the fiber's uniqueness names it.
 
 ```agda
-  coact-idn : ∀ {y : A} (e : coterm y) → coact PG (idn y) e ≡ e
+  coact-idn : ∀ {y : A} (e : coterm y) → coact (idn y) e ≡ e
   coact-idn e i = e .fst , pcom.ideml (e .snd) i
 
-  act-idn : ∀ {x : A} (t : term x) → act PG (idn x) t ≡ t
+  act-idn : ∀ {x : A} (t : term x) → act (idn x) t ≡ t
   act-idn t i = t .fst , pcom.idemr (t .snd) i
 
   rep-idem⁻ : ∀ x → reflect (idn x) ≡ composite⁻ PG (idn x) (idn x)
@@ -636,20 +568,20 @@ idempotence read under `reflect`, and the fiber's uniqueness names it.
 
 Readback restricted to the identities is evaluation at `refl`, and a
 family over every `(y , p : x ≡ y)` is determined by its value there —
-`AnchorPin`'s singleton contraction, which needs no hypothesis on `A`.
-The two readback types differ only in whether the endpoints are
-written, so the packages are interconvertible by η.
+singleton contraction, which needs no hypothesis on `A`. The two
+readback types differ only in whether the endpoints are written, so
+the packages are interconvertible by η.
 
 ```agda
   stable-package
     : (t₀ : ∀ (x : A) → emb (refl {x = x}) x refl x refl ≡ refl)
     → is-contr (Σ rd ∶ (∀ (x y : A) (p : x ≡ y) → emb p x refl y refl ≡ p)
                , (∀ x → rd x x refl ≡ t₀ x))
-  stable-package t₀ = AP.pin-contr (λ {x} {y} p → emb p x refl y refl) t₀
+  stable-package t₀ = pin.pin-contr (λ {x} {y} p → emb p x refl y refl) t₀
 
   bridge
     : (t₀ : ∀ (x : A) → eval (reflect (idn x)) ≡ idn x)
-    → (Σ u ∶ readback PG , (∀ x → u (idn x) ≡ t₀ x))
+    → (Σ u ∶ readback , (∀ x → u (idn x) ≡ t₀ x))
     ≃ (Σ rd ∶ (∀ (x y : A) (p : x ≡ y) → emb p x refl y refl ≡ p)
       , (∀ x → rd x x refl ≡ t₀ x))
   bridge t₀ = iso→equiv (λ (u , k) → (λ _ _ p → u p) , k)
@@ -666,10 +598,10 @@ written, so the packages are interconvertible by η.
   PG-stable-pair = PG-stable , PG-stable⁺
 ```
 
-Restriction itself is an equivalence, with `AnchorPin`'s J-extension
-as inverse — the singleton contraction of the slices, needing no
-hypothesis on `A`. That is the tier in equivalence form, and every
-pinned package follows from it as a fiber.
+Restriction itself is an equivalence, with the J-extension as inverse
+— the singleton contraction of the slices, needing no hypothesis on
+`A`. That is the tier in equivalence form, and every pinned package
+follows from it as a fiber.
 
 ```agda
   T : ∀ {x y : A} → x ≡ y → x ≡ y
@@ -678,17 +610,17 @@ pinned package follows from it as a fiber.
   t₀ : ∀ (x : A) → T (refl {x = x}) ≡ refl
   t₀ x = pcom.unit refl
 
-  rb≃ : readback PG ≃ (∀ (x y : A) (p : x ≡ y) → T p ≡ p)
+  rb≃ : readback ≃ (∀ (x y : A) (p : x ≡ y) → T p ≡ p)
   rb≃ = iso→equiv (λ u _ _ p → u p) (λ rd p → rd _ _ p) (λ _ → refl) (λ _ → refl)
 
-  at-refl-equiv : is-equiv (AP.at-refl T t₀)
+  at-refl-equiv : is-equiv (pin.at-refl T t₀)
   at-refl-equiv =
-    iso→equiv (AP.at-refl T t₀) (AP.extend T t₀)
-              (AP.extend-retract T t₀)
-              (λ v → funext (AP.extend-refl T t₀ v)) .snd
+    iso→equiv (pin.at-refl T t₀) (pin.extend T t₀)
+              (pin.extend-retract T t₀)
+              (λ v → funext (pin.extend-refl T t₀ v)) .snd
 
   PG-is-stable : stable.is-stable PG
-  PG-is-stable = (rb≃ ∙e (AP.at-refl T t₀ , at-refl-equiv)) .snd
+  PG-is-stable = (rb≃ ∙e (pin.at-refl T t₀ , at-refl-equiv)) .snd
 ```
 
 All three tiers, for an arbitrary carrier.

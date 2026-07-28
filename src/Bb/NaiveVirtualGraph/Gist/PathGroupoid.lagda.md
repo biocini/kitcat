@@ -11,7 +11,7 @@ tier holds at every judgment rather than only at the composites.
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
 
-module Test.SpikePathGroupoid where
+module Bb.NaiveVirtualGraph.Gist.PathGroupoid where
 
 open import Core.Type
 open import Core.Base
@@ -25,76 +25,12 @@ open import Core.HLevel.Base using (Π-is-prop; Πi-is-prop; Σ-is-prop; ×-is-h
 open import Core.Transport.Properties using (is-prop→is-set; prop-inhabited→is-contr)
 open import Core.Groupoid.Virtual using (module yon-unbiased)
 
--- The carrier and the tiers, inlined: a spike in an in-development
--- layer carries its own copy of the data it probes, so a change to the
--- layer cannot silently retune it.
-
-record virtual-graph o h : Type₊ (o ⊔ h) where
-  field
-    ob : Type o
-    hom : ob → ob → Type h
-    idn : (x : ob) → hom x x
-
-  term : ob → Type (o ⊔ h)
-  term x = Σ w ∶ ob , hom w x
-
-  coterm : ob → Type (o ⊔ h)
-  coterm y = Σ v ∶ ob , hom y v
-
-  argument : ob → ob → Type (o ⊔ h)
-  argument x y = term x × coterm y
-
-  var : (a : ob) → term a
-  var a = a , idn a
-
-  covar : (y : ob) → coterm y
-  covar y = y , idn y
-
-  conclusion : ∀ {x y} → argument x y → Type h
-  conclusion γ = hom (γ .fst .fst) (γ .snd .fst)
-
-  judgment : ob → ob → Type (o ⊔ h)
-  judgment x y = (γ : argument x y) → conclusion γ
-
-  field
-    reflect : ∀ {x y} → hom x y → judgment x y
-
-module sequents {o h} (G : virtual-graph o h) where
-  open virtual-graph G
-
-  argue : ∀ {x y} → term x → coterm y → argument x y
-  argue h k = h , k
-
-  intro : ∀ {x y} → hom x y → term y
-  intro {x} f = x , f
-
-  elim : ∀ {x y} → hom x y → coterm x
-  elim {y = y} f = y , f
-
-  eval : ∀ {x y} → judgment x y → hom x y
-  eval {x} {y} α = α (var x , covar y)
-
-  is-representable : ∀ {x y} → judgment x y → Type (o ⊔ h)
-  is-representable = fiber reflect
-
-  normal : ∀ {x y} (f : hom x y) → is-representable (reflect f)
-  normal f = f , refl
+open import Bb.NaiveVirtualGraph.Base
 
 module _ {o h} (G : virtual-graph o h) where
   open virtual-graph G
   open sequents G
-
-  coact-π : ∀ {x y} → hom x y → (γ : coterm y) → hom x (γ .fst)
-  coact-π {x} f γ = reflect f (argue (var x) γ)
-
-  act-π : ∀ {x y} → hom x y → (t : term x) → hom (t .fst) y
-  act-π {y = y} f t = reflect f (argue t (covar y))
-
-  coact : ∀ {x y} → hom x y → coterm y → coterm x
-  coact {x} f e = elim (reflect f (argue (var x) e))
-
-  act : ∀ {x y} → hom x y → term x → term y
-  act {y = y} f t = intro (reflect f (argue t (covar y)))
+  open vocab G
 
   inj⁻ : ∀ {x y z} → judgment x y → hom y z → judgment x z
   inj⁻ α p γ = α (argue (γ .fst) (coact p (γ .snd)))
@@ -107,9 +43,6 @@ module _ {o h} (G : virtual-graph o h) where
 
   composite⁺ : ∀ {x y z} → hom x y → hom y z → judgment x z
   composite⁺ f g = inj⁺ f (reflect g)
-
-  readback : Type (o ⊔ h)
-  readback = ∀ {x y} (f : hom x y) → eval (reflect f) ≡ f
 
   record is-composable : Type (o ⊔ h) where
     field
@@ -216,6 +149,7 @@ module _ {u} (A : Type u) where
 
   open virtual-graph PG
   open sequents PG
+  open vocab PG
 ```
 
 ## Representability is total
@@ -275,11 +209,11 @@ contractible without any further argument.
   slot-swap≃ = iso→equiv (λ α γ t → α (t , γ)) (λ Φ δ → Φ (δ .snd) (δ .fst))
                          (λ _ → refl) (λ _ → refl)
 
-  coact-π-equiv : ∀ x → is-equiv (coact-π PG {x} {x})
+  coact-π-equiv : ∀ x → is-equiv (coact-π {x} {x})
   coact-π-equiv x =
     ((reflect , reflect-equiv) ∙e slot≃ ∙e Π-contr-dom (term-contr x)) .snd
 
-  act-π-equiv : ∀ x → is-equiv (act-π PG {x} {x})
+  act-π-equiv : ∀ x → is-equiv (act-π {x} {x})
   act-π-equiv x =
     ((reflect , reflect-equiv) ∙e slot-swap≃ ∙e Π-contr-dom (coterm-contr x)) .snd
 
@@ -294,7 +228,7 @@ Evaluation at the axiom is the ternary composite with both flanks
 reflexive, which is `pcom`'s unit law.
 
 ```agda
-  PG-readback : readback PG
+  PG-readback : readback
   PG-readback f = pcom.unit f
 ```
 
@@ -307,10 +241,10 @@ projected unit.
 ```agda
   open is-unital PG-unital
 
-  idn-absorbs⁻ : ∀ x (γ : coterm x) → coact-π PG (idn x) γ ≡ γ .snd
+  idn-absorbs⁻ : ∀ x (γ : coterm x) → coact-π (idn x) γ ≡ γ .snd
   idn-absorbs⁻ x γ = pcom.ideml (γ .snd)
 
-  idn-absorbs⁺ : ∀ x (t : term x) → act-π PG (idn x) t ≡ t .snd
+  idn-absorbs⁺ : ∀ x (t : term x) → act-π (idn x) t ≡ t .snd
   idn-absorbs⁺ x t = pcom.idemr (t .snd)
 
   idn-is-unit⁻ : ∀ x → idn x ≡ unit⁻ x
@@ -325,9 +259,9 @@ projected unit.
 Because `reflect` is an equivalence here, left-cancellability is
 immediate rather than a consequence of the unit laws: the fiber over a
 reflection contains both the normal point and any competitor. The
-engine of `Cat.Logic.Gist.ReflectFiber` recovers this from composability and
-the flank absorptions in the general case, where representability is
-only propositional.
+engine of `Cat.Logic.Gist.ReflectFiber` recovers this from
+composability and the flank absorptions in the general case, where
+representability is only propositional.
 
 ```agda
   open is-composable PG-composable
@@ -341,7 +275,7 @@ only propositional.
     : ∀ {x y z w} (f : hom x y) (g : hom y z) (h : hom z w)
     → composite⁻ PG (f ⨾⁻ g) h ≡ composite⁻ PG f (g ⨾⁻ h)
   composite⁻-assoc f g h = funext λ γ →
-    (λ i → reflect-⨾⁻ f g i (argue (γ .fst) (coact PG h (γ .snd))))
+    (λ i → reflect-⨾⁻ f g i (argue (γ .fst) (coact h (γ .snd))))
     ∙ (λ i → reflect f (argue (γ .fst) (coact-⨾⁻ g h (γ .snd) (~ i))))
 
   assoc⁻ : ∀ {x y z w} (f : hom x y) (g : hom y z) (h : hom z w)
@@ -355,7 +289,7 @@ only propositional.
     : ∀ {x y z w} (f : hom x y) (g : hom y z) (h : hom z w)
     → composite⁺ PG f (g ⨾⁺ h) ≡ composite⁺ PG (f ⨾⁺ g) h
   composite⁺-assoc f g h = funext λ γ →
-    (λ i → reflect-⨾⁺ g h i (argue (act PG f (γ .fst)) (γ .snd)))
+    (λ i → reflect-⨾⁺ g h i (argue (act f (γ .fst)) (γ .snd)))
     ∙ (λ i → reflect h (argue (act-⨾⁺ f g (γ .fst) (~ i)) (γ .snd)))
 
   assoc⁺ : ∀ {x y z w} (f : hom x y) (g : hom y z) (h : hom z w)
@@ -419,18 +353,19 @@ module groupoid-carrier {u} {A : Type u} (A-gpd : is-groupoid A) where
 
   open virtual-graph (PG A)
   open sequents (PG A)
+  open vocab (PG A)
 
   path-prop : ∀ {x y : A} (p q : hom x y) → is-prop (p ≡ q)
   path-prop {x} {y} = A-gpd x y
 
-  readback-prop : is-prop (readback (PG A))
+  readback-prop : is-prop readback
   readback-prop = Πi-is-prop λ _ → Πi-is-prop λ _ → Π-is-prop λ _ → path-prop _ _
 
-  coh-holds : (v : readback (PG A)) → absorb-coh (PG A) (PG-unital A) v
+  coh-holds : (v : readback) → absorb-coh (PG A) (PG-unital A) v
   coh-holds v x .fst = path-prop _ _ _ _
   coh-holds v x .snd = path-prop _ _ _ _
 
-  coh-prop : (v : readback (PG A)) → is-prop (absorb-coh (PG A) (PG-unital A) v)
+  coh-prop : (v : readback) → is-prop (absorb-coh (PG A) (PG-unital A) v)
   coh-prop v = Π-is-prop λ _ →
     ×-is-hlevel 1 (is-prop→is-set (path-prop _ _) _ _)
                   (is-prop→is-set (path-prop _ _) _ _)

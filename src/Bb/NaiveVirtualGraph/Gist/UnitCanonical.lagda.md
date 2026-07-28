@@ -25,7 +25,7 @@ way on both hands.
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
 
-module Test.SpikeUnitCanonical where
+module Bb.NaiveVirtualGraph.Gist.UnitCanonical where
 
 open import Core.Type
 open import Core.Base
@@ -35,64 +35,12 @@ open import Core.Path.Base
 open import Core.HLevel.Base using (Π-is-prop; Πi-is-prop; Σ-is-prop)
 open import Core.Transport.Properties using (is-contr-is-prop)
 
--- The carrier, inlined: a spike in an in-development layer carries its
--- own copy of the data it probes, so a change to the layer cannot
--- silently retune it.
-
-record virtual-graph o h : Type₊ (o ⊔ h) where
-  field
-    ob : Type o
-    hom : ob → ob → Type h
-    idn : (x : ob) → hom x x
-
-  term : ob → Type (o ⊔ h)
-  term x = Σ w ∶ ob , hom w x
-
-  coterm : ob → Type (o ⊔ h)
-  coterm y = Σ v ∶ ob , hom y v
-
-  argument : ob → ob → Type (o ⊔ h)
-  argument x y = term x × coterm y
-
-  var : (a : ob) → term a
-  var a = a , idn a
-
-  covar : (y : ob) → coterm y
-  covar y = y , idn y
-
-  conclusion : ∀ {x y} → argument x y → Type h
-  conclusion γ = hom (γ .fst .fst) (γ .snd .fst)
-
-  judgment : ob → ob → Type (o ⊔ h)
-  judgment x y = (γ : argument x y) → conclusion γ
-
-  field
-    reflect : ∀ {x y} → hom x y → judgment x y
-
-module sequents {o h} (G : virtual-graph o h) where
-  open virtual-graph G
-
-  argue : ∀ {x y} → term x → coterm y → argument x y
-  argue h k = h , k
-
-  intro : ∀ {x y} → hom x y → term y
-  intro {x} f = x , f
-
-  elim : ∀ {x y} → hom x y → coterm x
-  elim {y = y} f = y , f
-
-  eval : ∀ {x y} → judgment x y → hom x y
-  eval {x} {y} α = α (var x , covar y)
-
-  is-representable : ∀ {x y} → judgment x y → Type (o ⊔ h)
-  is-representable = fiber reflect
-
-  normal : ∀ {x y} (f : hom x y) → is-representable (reflect f)
-  normal f = f , refl
+open import Bb.NaiveVirtualGraph.Base
 
 module _ {o h} (G : virtual-graph o h) where
   open virtual-graph G
   open sequents G
+  open vocab G
 ```
 
 ## The action maps, at the level of edges
@@ -101,14 +49,6 @@ Each hand's action holds one slot of the argument at its axiom half.
 Stated on edges rather than on terms and coterms, the anonymous
 endpoint is a parameter rather than a component, so a fiber over one
 of these maps is a plain fiber with no `Σ` to unpack.
-
-```agda
-  coact-π : ∀ {x y} → hom x y → (γ : coterm y) → hom x (γ .fst)
-  coact-π {x} f γ = reflect f (argue (var x) γ)
-
-  act-π : ∀ {x y} → hom x y → (t : term x) → hom (t .fst) y
-  act-π {y = y} f t = reflect f (argue t (covar y))
-```
 
 Evaluation at the axiom is either action applied to `idn`. Both are
 definitional, and they are what carries readback into the argument
@@ -128,12 +68,6 @@ Carried along for the bundle at the end: the two composite judgments
 and the contractibility of their representability fibers.
 
 ```agda
-  coact : ∀ {x y} → hom x y → coterm y → coterm x
-  coact {x} f e = elim (reflect f (argue (var x) e))
-
-  act : ∀ {x y} → hom x y → term x → term y
-  act {y = y} f t = intro (reflect f (argue t (covar y)))
-
   composite⁻ : ∀ {x y z} → hom x y → hom y z → judgment x z
   composite⁻ f g γ = reflect f (argue (γ .fst) (coact g (γ .snd)))
 
@@ -189,11 +123,6 @@ proposition at each object, and a product of propositions is one.
 The stability tier's projection, assumed here in its bare family form
 — weaker than the pinned fiber, so a derivation from it holds a
 fortiori of the tier.
-
-```agda
-  readback : Type (o ⊔ h)
-  readback = ∀ {x y} (f : hom x y) → eval (reflect f) ≡ f
-```
 
 ## The chosen edge is the canonical unit
 

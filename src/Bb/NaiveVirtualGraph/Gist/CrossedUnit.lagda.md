@@ -14,7 +14,7 @@ arbitrary choice of family.
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
 
-module Test.SpikeCrossedUnit where
+module Bb.NaiveVirtualGraph.Gist.CrossedUnit where
 
 open import Core.Type
 open import Core.Base
@@ -26,60 +26,7 @@ open import Core.Equiv.Base using (_≃_; is-equiv; eqv-fibers; iso→equiv)
 open import Core.Equiv.Properties using (_∙e_; Π-contr-dom)
 open import Core.Groupoid.Virtual using (module yon-unbiased)
 
--- The carrier, inlined: a spike in an in-development layer carries its
--- own copy of the data it probes, so a change to the layer cannot
--- silently retune it.
-
-record virtual-graph o h : Type₊ (o ⊔ h) where
-  field
-    ob : Type o
-    hom : ob → ob → Type h
-    idn : (x : ob) → hom x x
-
-  term : ob → Type (o ⊔ h)
-  term x = Σ w ∶ ob , hom w x
-
-  coterm : ob → Type (o ⊔ h)
-  coterm y = Σ v ∶ ob , hom y v
-
-  argument : ob → ob → Type (o ⊔ h)
-  argument x y = term x × coterm y
-
-  var : (a : ob) → term a
-  var a = a , idn a
-
-  covar : (y : ob) → coterm y
-  covar y = y , idn y
-
-  conclusion : ∀ {x y} → argument x y → Type h
-  conclusion γ = hom (γ .fst .fst) (γ .snd .fst)
-
-  judgment : ob → ob → Type (o ⊔ h)
-  judgment x y = (γ : argument x y) → conclusion γ
-
-  field
-    reflect : ∀ {x y} → hom x y → judgment x y
-
-module sequents {o h} (G : virtual-graph o h) where
-  open virtual-graph G
-
-  argue : ∀ {x y} → term x → coterm y → argument x y
-  argue h k = h , k
-
-  intro : ∀ {x y} → hom x y → term y
-  intro {x} f = x , f
-
-  elim : ∀ {x y} → hom x y → coterm x
-  elim {y = y} f = y , f
-
-  eval : ∀ {x y} → judgment x y → hom x y
-  eval {x} {y} α = α (var x , covar y)
-
-  is-representable : ∀ {x y} → judgment x y → Type (o ⊔ h)
-  is-representable = fiber reflect
-
-  normal : ∀ {x y} (f : hom x y) → is-representable (reflect f)
-  normal f = f , refl
+open import Bb.NaiveVirtualGraph.Base
 ```
 
 ## The coterm-hand, on the chosen family
@@ -91,9 +38,7 @@ the second projection.
 module _ {o h} (G : virtual-graph o h) where
   open virtual-graph G
   open sequents G
-
-  coact-π : ∀ {x y} → hom x y → (γ : coterm y) → hom x (γ .fst)
-  coact-π {x} f γ = reflect f (argue (var x) γ)
+  open vocab G
 
   is-unital⁻ : Type (o ⊔ h)
   is-unital⁻ = ∀ x → is-contr (fiber (coact-π {x} {x}) snd)
@@ -108,6 +53,7 @@ chosen family is not consulted a second time.
 module _ {o h} (G : virtual-graph o h) (U⁻ : is-unital⁻ G) where
   open virtual-graph G
   open sequents G
+  open vocab G
 
   unit⁻ : (x : ob) → hom x x
   unit⁻ x = U⁻ x .center .fst
@@ -136,9 +82,6 @@ coterm slot through `coact`, which consults the chosen family and
 nothing else. So its composability is statable here verbatim.
 
 ```agda
-  coact : ∀ {x y} → hom x y → coterm y → coterm x
-  coact f γ = γ .fst , coact-π G f γ
-
   composite⁻ : ∀ {x y z} → hom x y → hom y z → judgment x z
   composite⁻ f g γ = reflect f (γ .fst , coact g (γ .snd))
 
@@ -232,6 +175,7 @@ module path {u} {A : Type u} (a : (x : A) → x ≡ x) where
 
   open virtual-graph PG
   open sequents PG
+  open vocab PG
 ```
 
 Terms and coterms are the based path spaces. Recentring a contractible
@@ -275,7 +219,7 @@ and every fiber of it is contractible.
   slot-swap≃ = iso→equiv (λ α γ t → α (t , γ)) (λ Φ δ → Φ (δ .snd) (δ .fst))
                          (λ _ → refl) (λ _ → refl)
 
-  coact-π-equiv : ∀ x → is-equiv (coact-π PG {x} {x})
+  coact-π-equiv : ∀ x → is-equiv (coact-π {x} {x})
   coact-π-equiv x =
     ( (reflect , reflect-equiv)
     ∙e slot≃
@@ -301,7 +245,7 @@ term-hand's candidate at the axiom half of the term. The two are the
 same ternary composite with its flanks exchanged, which is `pcom.lr`.
 
 ```agda
-  centre⁻ : ∀ x → coact-π PG (unit⁻ PG PG-unital⁻ x) ≡ snd
+  centre⁻ : ∀ x → coact-π (unit⁻ PG PG-unital⁻ x) ≡ snd
   centre⁻ x = PG-unital⁻ x .center .snd
 
   centre⁻-pt
@@ -342,13 +286,15 @@ contains exactly what the first tier's centre was built against.
 
 The self-referential form fails precisely where this one does not.
 Filling both held slots with the same edge asks it to absorb against
-itself — `Test.SpikeSelfUnit` computes that to squaring — while filling
-them with the two *different* edges asks them to absorb against each
-other, which is a statement about a pair and carries no square.
+itself — `Bb.NaiveVirtualGraph.Gist.SelfUnit` computes that to
+squaring — while filling them with the two *different* edges asks them
+to absorb against each other, which is a statement about a pair and
+carries no square.
 
-The same difference disposes of `Test.SpikeAbsorbObstruction` here. That
-argument perturbs the chosen family and finds the absorption statement
-moving by the doubling of the perturbation, because the chosen edge
-occurs twice in it. In the crossed form the derived filler is a function
-of the chosen family, so a perturbation moves both sides of `crossed`
-together and the doubling does not arise.
+The same difference disposes of
+`Bb.NaiveVirtualGraph.Gist.AbsorbObstruction` here. That argument
+perturbs the chosen family and finds the absorption statement moving by
+the doubling of the perturbation, because the chosen edge occurs twice
+in it. In the crossed form the derived filler is a function of the
+chosen family, so a perturbation moves both sides of `crossed` together
+and the doubling does not arise.
