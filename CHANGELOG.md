@@ -46,7 +46,7 @@ delivery.
 gained its first Content digests section); `just resources-verify`
 now reports both "audited — load-bearing capable" (was "NOT
 audited"). `TODO.md`'s "the two duploid source audits" line checked
-off. Commit: see `git log` for this session's commit.
+off. Commit: `2611d7e`.
 
 Session log:
 [`notes/2026-07-28-duploids-statement-audit.md`](notes/2026-07-28-duploids-statement-audit.md).
