@@ -16,6 +16,45 @@ concise, and honest about verification status (`verified` /
 
 ---
 
+## 2026-07-28 — duploid source audit: both entries cleared to load-bearing
+
+**Statement-level audit of both duploid papers in `resources/`**, run
+via `/deepresearch` (2 parallel `researcher` subagents, then
+`verifier`, then `reviewer`, then a revision pass). `verified`:
+`mmmm-classical-notions`'s seven existing Content digests, 7/7,
+against `article.tex`; `munch-maccagnoni-duploids`'s 24 numbered
+statements, 24/24, against `duploids.pdftext` — this entry had no
+digests before this pass, now does. Two source-level errors found in
+the published papers themselves (confirmed against rendered PDF
+pages, not extraction artifacts): a codomain typo in
+`mmmm-classical-notions`'s composition-law diagram
+(`article.tex:1531`), and a "linear"/"thunkable" slip in
+Munch-Maccagnoni's Proposition 8 proof (`duploids.pdftext:434-436`).
+`unverified`, flagged open rather than asserted: whether
+`mmmm-classical-notions`'s duploid definition actually coincides with
+either of Munch-Maccagnoni's two equivalent forms — the paper itself
+concedes only "a slight variant of" (`article.tex:1817`). The
+`reviewer` pass found four MAJOR issues (a wrong citation inventory,
+an incomplete comparison space, a false "no dead anchors" claim, an
+uncorrected error in a supporting research file) and three MINOR; all
+fixed in a revision pass and independently re-verified on disk before
+delivery.
+
+**Barrier removed.** `Statements verified:` fields written to both
+`resources/mmmm-classical-notions/README.md` and
+`resources/munch-maccagnoni-duploids/README.md` (the latter also
+gained its first Content digests section); `just resources-verify`
+now reports both "audited — load-bearing capable" (was "NOT
+audited"). `TODO.md`'s "the two duploid source audits" line checked
+off. Commit: see `git log` for this session's commit.
+
+Session log:
+[`notes/2026-07-28-duploids-statement-audit.md`](notes/2026-07-28-duploids-statement-audit.md).
+Next: a future pass on whether `mmmm-classical-notions`'s
+universal-property duploid definition is equivalent to
+Munch-Maccagnoni's Definition 7 (the more likely bridge, per the
+audit).
+
 ## 2026-07-28 — the euler subagents: models pinned, skill access repaired
 
 **Models pinned** (Lane). No agent in `.claude/agents/` set `model:`,

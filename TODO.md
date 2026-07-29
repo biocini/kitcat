@@ -36,8 +36,11 @@ module's ledger, and the research program lives in
 - [ ] Rule on `reference/magmoid-formulation/Data`, the
   pre-Yoneda fork point: its own `Bb` tree, or it stays in
   `reference/`.
-- [ ] The two duploid source audits, statement-level. They gate
-  every ledger citation that leans on those sources.
+- [x] The two duploid source audits, statement-level. They gate
+  every ledger citation that leans on those sources. Done
+  2026-07-28: `outputs/duploids-statement-audit.md`, `Statements
+  verified:` fields written to both `resources/mmmm-classical-notions/README.md`
+  and `resources/munch-maccagnoni-duploids/README.md`.
 - [ ] Correct the Rx promotion plan notes per the 2026-07-24
   audit (stage arithmetic, the cut-line reason, the Tier-1
   boundary). Gates the Core reformation (roadmap project 2).

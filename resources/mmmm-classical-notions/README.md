@@ -50,8 +50,15 @@ PROVISIONAL. Ingested 2026-07-24 by Claude (Fable 5) at Lane's
 direction, from a Lane-supplied tarball verified byte-identical to the
 live arXiv e-print (sha256 match against a fresh fetch of `fetch-url`,
 same session). The introduction's thunkable/linear material and §2–§3
-were read in the vendored `article.tex` during ingestion; no
-independent statement audit has been run.
+were read in the vendored `article.tex` during ingestion.
+
+Statements verified: 7/7 CONFIRMED (digest-level), 2026-07-28, by
+Claude (Sonnet 5), @ 8d9edc19055a. All seven Content digests below
+were independently re-read against `article.tex` at their cited
+anchors and confirmed verbatim; two anchor-precision corrections and
+one source-level typo (a codomain slip in the composition-law diagram
+at l.1531, already given correctly in the digest below) are recorded
+in `outputs/duploids-statement-audit.md`.
 
 ## Files
 
@@ -115,7 +122,7 @@ Jump note: `sed -n 'A,Bp' article.tex`.
   composition `M(Y,Z) × M(X,Y) → M(X,Z)` satisfying only the
   neutrality equations `f ∘ id_X = f = id_Y ∘ f`, where `id` is the
   chosen map of the reflexive graph. `M^op` reverses the maps.
-- **Association, thunkable, linear** (l.1084–1093, l.1551–1570): a
+- **Association, thunkable, linear** (l.1084–1093, l.1552–1562): a
   path `(f,g,h)` of length 3 *associates* when `(h ∘ g) ∘ f = h ∘ (g ∘
   f)`. A map `f` is **thunkable** when every length-3 path starting
   with `f` associates; dually `h` is **linear** when every length-3
@@ -139,7 +146,7 @@ Jump note: `sed -n 'A,Bp' article.tex`.
   independent operations. Notations are fixed for the subcategories of
   linear maps, of thunkable maps, and the full subcategories of
   positive and of negative objects.
-- **Adjunctions and duploids** (theorem l.1860, after Munch-Maccagnoni):
+- **Adjunctions and duploids** (theorem l.1857, after Munch-Maccagnoni):
   every non-associative category arising from an adjunction `L ⊣ R`
   carries a duploid structure whose positive part is equivalent to the
   Kleisli category of `T = R∘L` and whose negative part is equivalent
