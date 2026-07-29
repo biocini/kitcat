@@ -113,25 +113,27 @@ open _⇒_
 ```
 
 An object is initial when the type of maps out of it is contractible
-at every target *of its own size*. The morphism record is polymorphic
-in all four levels, so the restriction below is the predicate's, not
-the record's, and a level-polymorphic form would land in `Typeω`.
+at every target. The target's levels are named, not tied to the
+source's: the morphism record is already polymorphic in all four, so
+nothing forces a source to answer only for targets its own size, and
+naming the two keeps the statement in `Type` rather than `Typeω`.
 Contractibility is a proposition, so initiality is one too: a system
 is initial or it is not, and the demand carries no coherence data of
 its own.
 
 ```agda
-is-initial : ∀ {o h} → virtual-graph o h → Type₊ (o ⊔ h)
-is-initial {o} {h} G = (G' : virtual-graph o h) → is-contr (G ⇒ G')
+is-initial : ∀ {o h} (o' h' : Level) → virtual-graph o h → Type (o ⊔ h ⊔ o' ₊ ⊔ h' ₊)
+is-initial o' h' G = (G' : virtual-graph o' h') → is-contr (G ⇒ G')
 
-is-initial-is-prop : ∀ {o h} (G : virtual-graph o h) → is-prop (is-initial G)
-is-initial-is-prop G = Π-is-prop λ _ → is-contr-is-prop _
+is-initial-is-prop : ∀ {o h} (o' h' : Level) (G : virtual-graph o h)
+                   → is-prop (is-initial o' h' G)
+is-initial-is-prop o' h' G = Π-is-prop λ _ → is-contr-is-prop _
 
-module Initial {o h} {G : virtual-graph o h} (init : is-initial G) where
+module Initial {o h o' h'} {G : virtual-graph o h} (init : is-initial o' h' G) where
   ¡ : ∀ {G'} → G ⇒ G'
   ¡ = init _ .center
 
-  ¡-ind : ∀ {u} {G' : virtual-graph o h} (P : G ⇒ G' → Type u) → P ¡ → ∀ m → P m
+  ¡-ind : ∀ {u} {G' : virtual-graph o' h'} (P : G ⇒ G' → Type u) → P ¡ → ∀ m → P m
   ¡-ind = contr-ind (init _)
 
   ¡-unique : ∀ {G'} (m : G ⇒ G') → ¡ ≡ m
@@ -140,9 +142,11 @@ module Initial {o h} {G : virtual-graph o h} (init : is-initial G) where
 
 The empty graph is initial: every component of a map out of it is a
 function from the empty type, and so is every component of a path
-between two such maps. The argument is level-generic, so the
-level-zero statement below understates it by exactly the restriction
-in `is-initial`.
+between two such maps. Nothing in that argument mentions a level, so
+one level-zero empty graph answers for targets of every size. The
+absurd patterns are load-bearing. `ex-falso` would leave the `paths`
+boundary an obligation, since it equals the given map only
+propositionally.
 
 ```agda
 empty : virtual-graph 0ℓ 0ℓ
@@ -153,17 +157,17 @@ empty .virtual-graph.twist⁺ ()
 empty .virtual-graph.twist⁻ ()
 empty .virtual-graph.readback ()
 
-empty-is-initial : is-initial empty
-empty-is-initial G' .center .map ()
-empty-is-initial G' .center .hmap ()
-empty-is-initial G' .center .pres-twist⁺ ()
-empty-is-initial G' .center .pres-twist⁻ ()
-empty-is-initial G' .center .pres-reflect ()
-empty-is-initial G' .paths m i .map ()
-empty-is-initial G' .paths m i .hmap ()
-empty-is-initial G' .paths m i .pres-twist⁺ ()
-empty-is-initial G' .paths m i .pres-twist⁻ ()
-empty-is-initial G' .paths m i .pres-reflect ()
+empty-is-initial : (o' h' : Level) → is-initial o' h' empty
+empty-is-initial o' h' G' .center .map ()
+empty-is-initial o' h' G' .center .hmap ()
+empty-is-initial o' h' G' .center .pres-twist⁺ ()
+empty-is-initial o' h' G' .center .pres-twist⁻ ()
+empty-is-initial o' h' G' .center .pres-reflect ()
+empty-is-initial o' h' G' .paths m i .map ()
+empty-is-initial o' h' G' .paths m i .hmap ()
+empty-is-initial o' h' G' .paths m i .pres-twist⁺ ()
+empty-is-initial o' h' G' .paths m i .pres-twist⁻ ()
+empty-is-initial o' h' G' .paths m i .pres-reflect ()
 ```
 
 The codiscrete graph on two points: every hom type is the unit type,
@@ -209,7 +213,7 @@ codisc-hom-not-contr : ¬ is-contr (codisc ⇒ codisc)
 codisc-hom-not-contr c =
   id-hom≢not-hom (sym (c .paths id-hom) ∙ c .paths not-hom)
 
-codisc-not-initial : ¬ is-initial codisc
+codisc-not-initial : ¬ is-initial 0ℓ 0ℓ codisc
 codisc-not-initial init = codisc-hom-not-contr (init codisc)
 ```
 
@@ -276,6 +280,12 @@ forces system maps to form a proposition. Contractibility can hold
 only as a fact about a particular source, which is what initiality
 asserts.
 
+The predicate names its target's levels. Tying them to the source's
+would have cost the empty graph its generality for nothing: the
+morphism record is polymorphic in all four levels already, so one
+level-zero empty graph answers for targets of any size, and no
+lifted carrier or `Typeω` is needed to say so.
+
 Open: whether a mapping type can be non-trivially higher, with two
 maps equal in more than one way. A loop in the target's *homs* is
 not what that takes. Put a type with a non-trivial loop in the
@@ -286,6 +296,6 @@ contractible, and paths in the mapping type reduce to paths in
 built, and none is built here.
 
 Open, and untouched by that: whether the free system attains
-contractibility against every wild target of its own size. Nothing
-here decides the free case. The countermodel only shows that the
-axioms alone never will.
+contractibility against every wild target. Nothing here decides the
+free case. The countermodel only shows that the axioms alone never
+will.
