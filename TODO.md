@@ -8,6 +8,11 @@ module's ledger, and the research program lives in
   pattern. Known debt: em-dash headings in the changelogs, the
   `docs/guidelines/` bodies, the module TODO ledgers. Sweep with
   the skill's `prose-lint.py`, largest scores first.
+- [ ] Guideline `src/` citations. The guideline register
+  (`docs/guidelines/CLAUDE.md`) bars live-tree locations, and
+  `module-anatomy.md` cites a `src/Core` pragma site. Sweep the
+  guidelines for `src/` references and restate each example in
+  the abstract.
 - [ ] `Data.Thin`: close the open interaction metas in
   `Category`, `Cover`, `Properties`, `Separated`. Pre-existing
   debt, visible since `just check-tree` swept the whole tree.
