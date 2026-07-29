@@ -9,19 +9,24 @@ An experiment with univalent programming and open source mathematics in cubical 
 Kitcat is a research library at the intersection of higher category
 theory, homotopy type theory, and programming language foundations,
 written in Cubical Agda. It is a testbed for new ideas in these
-areas, a reference for formalized mathematics, and an ergonomic
-environment for functional programming, with machine-checked proof
-as its standard of evidence.
+areas, a reference for formalized mathematics and type theory with
+machine-checked proof as its standard of evidence.
 
 ## Research provenance
 
-This repository is developed with substantial AI assistance under
-the direction and review of its human owner, and aims to be an
-exemplar of transparent, ethical AI-assisted mathematics research:
-machine-checking is the trust boundary for mathematical claims,
-references are human-vetted before anything rests on them, and AI
-contributions are disclosed. [`docs/provenance.md`](docs/provenance.md)
-is the binding standard.
+This repository is developed with substantial AI assistance under the direction
+and review of its human owner, and aims to be an exemplar of transparent
+AI-assisted mathematics research. As such, it is a living entry into the
+conversation about ethical practice in this domain. Machine-checking is the
+trust boundary for mathematical claims, and references are human-vetted before
+anything rests on them, and AI contributions are disclosed
+[`docs/provenance.md`](docs/provenance.md) is the binding standard. I will
+take every opportunity to credit authorship and theoretical provenance. The
+research that the library actively cites and draws upon is cataloged in the
+resources directory.
+
+This is a best-effort attempt on my part. I welcome feedback and discussion on
+how to improve any aspect of the library, as well as human contributions.
 
 ## Building
 
@@ -44,11 +49,15 @@ The category theory framework is built on a confluence of ideas from:
 - [Petrakis](https://arxiv.org/abs/2205.06651) and
 - Sterling's [virtual bicategory theory](https://www.jonmsterling.com/005B) &
   ([reflexive graph lenses](https://arxiv.org/abs/2303.10986))
-- among other references
+- among other references (see: resources directory)
 
 ## Acknowledgments
 
-Kitcat incorporates and adapts code from the following projects:
+While many lemmas are original (I've rewritten the Core library several times
+in the course of development), Kitcat has adapted or otherwise drawn upon code
+from the following projects, which are exemplars of open source mathematics and
+deserve ample credit for their contributions to the corpus of Homotopy Type
+Theory and Univalent Foundations. They are excellent, go look at them.
 
 - [**1lab**](https://1lab.dev/) (Amélia Liao et al., AGPL-3.0) — Definitions and
   proofs across `Core.Function.Embedding`, `Core.HLevel`, `Core.Trait.Trunc`,
@@ -59,20 +68,13 @@ Kitcat incorporates and adapts code from the following projects:
   from `Lifting.Construction`/`Lifting.Monad`; `Core.Retract` follows
   `UF.Retracts`; `Core.Discrete` follows `UF.DiscreteAndSeparated`; and
   `Core.Function.Embedding` adapts `UF.LeftCancellable`
-- [**agda-prelude**](https://github.com/UlfNorell/agda-prelude) (Ulf Norell,
-  MIT) — `Core.Function.Base` and `Core.Trait.Ord` are adapted from
-  `Prelude.Function` and the prelude's ordering conventions
-- [**TOTBWF's Segal conditions gist**](https://gist.github.com/TOTBWF/018347c1ef1da6cd9e7a43f2e4295513) —
-  simplicial-set and Segal-condition definitions were adapted for an
-  earlier development, currently parked in `Stash/`
 
-The primary HoTT reference used throughout is Rijke's _Introduction to Homotopy Type Theory_.
+The primary HoTT reference used throughout is Rijke's _Introduction to Homotopy Type Theory_, which we take as our standard reference for identifiers and structural
+organization of the theory whenever possible.
 
-## Related work
+## Related work not otherwise mentioned
 
-- [1lab](https://1lab.dev/) — Formalised mathematics as explorable reference,
-  to whom this library is much indebted
 - [agda-unimath](https://unimath.github.io/agda-unimath/) —
-  Univalent foundations at scale
+  Univalent foundations at scale, a lovely reference
 - [agda-categories](https://github.com/agda/agda-categories) —
   Category theory library for Agda
