@@ -8,11 +8,24 @@ module's ledger, and the research program lives in
   pattern. Known debt: em-dash headings in the changelogs, the
   `docs/guidelines/` bodies, the module TODO ledgers. Sweep with
   the skill's `prose-lint.py`, largest scores first.
-- [ ] Guideline `src/` citations. The guideline register
-  (`docs/guidelines/CLAUDE.md`) bars live-tree locations, and
-  `module-anatomy.md` cites a `src/Core` pragma site. Sweep the
-  guidelines for `src/` references and restate each example in
-  the abstract.
+- [ ] Move the remaining standing plans into `docs/plans/`, per its
+  README. Three candidates, each cited from `docs/roadmap.md` and so
+  each needing a citation sweep with the move:
+  `notes/2026-07-20-lb-certification-program.md` (4 inbound),
+  `notes/2026-07-20-ribbon-arc.md` (3 inbound), and
+  `docs/composite-rx-refactor/` (8 inbound, four of them in frozen
+  `Bb` trees, so each needs a `CHANGELOG.md` entry). After the move,
+  `notes/` holds dated session records only.
+- [ ] The documentation restructuring, a program in three steps:
+  split the theorem ledger into per-namespace `lemmata.md` and
+  `gloss.md`, triage `docs/deductive-systems/` into
+  `src/Cat/Logic/gloss.md`, and sweep the `src/` citations out of
+  seven `docs/guidelines/` files. The map is
+  `docs/plans/documentation-restructuring.md`. It carries the
+  standard, the verified inventory, and the gates. `just lint
+  citations` is the gate that keeps the result from rotting. This
+  item supersedes the guideline-citation sweep and both `gloss.md`
+  items below.
 - [ ] `Data.Thin`: close the open interaction metas in
   `Category`, `Cover`, `Properties`, `Separated`. Pre-existing
   debt, visible since `just check-tree` swept the whole tree.
@@ -20,9 +33,8 @@ module's ledger, and the research program lives in
   Pre-existing debt, same sweep.
 - [ ] `Core.Path.Coherence`: a `ModuleDoesntExport` warning fails
   under `-Werror`. Pre-existing debt, same sweep.
-- [ ] `docs/gloss.md`: entries for the record-cut theorems
-  (`axioms→stable`, the four unit laws, the cancellations) and
-  for the (D′) profile verdict at the free balanced point.
+- [x] `docs/gloss.md`: entries for the record-cut theorems and the
+  profile verdict. Landed as T32 to T35.
 - [ ] `bin/lint` changed mode: per-file single-pathspec diffs
   lose rename pairing, so a renamed file scans as wholly added.
   Teach it one rename-aware whole-tree diff.
@@ -51,7 +63,8 @@ module's ledger, and the research program lives in
 - [ ] The WIP-module probe sections (`Core.Path.Composition` and
   siblings) move to `Test/`, then distribute per spike zero.
 - [ ] The conservativity battery re-migration.
-- [ ] `docs/gloss.md` audit: T22 and T23 cite `Gloss.*` names.
-  Verify those modules exist in the checked tree. The T21
-  precedent says they may be phantoms of the retired promotion
-  scheme.
+- [x] `docs/gloss.md` audit: the `Gloss.*` names are phantoms, as
+  the T21 precedent suggested. All seven were deleted with the
+  namespace in `cb96805` and are readable at `60410b7`. Thirteen of
+  the ledger's 22 cited paths dangle; `just lint citations` reports
+  them. Disposition is the restructuring item above.
