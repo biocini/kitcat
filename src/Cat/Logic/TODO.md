@@ -732,15 +732,67 @@ The work items, in order.
    `is-initial-is-prop`.
 
    Three verdicts, machine-checked. Initiality truncates no hom: it
-   is contractibility demanded of one fiber, the mechanism
-   `is-composable` already uses, not an h-level hypothesis on the
-   theory. It is satisfiable, `empty-is-initial`. It is not
-   vacuous: the codiscrete graph on two points carries the full
-   axioms (`contr⁺`, `contr⁻`, `fiber⁻`, `fiber⁺`) and has two
+   asks contractibility of one type, not an h-level of the theory's
+   homs. It is satisfiable, `empty-is-initial`. It is not vacuous:
+   the codiscrete graph on two points restates the four axiom
+   leaves (`contr⁺`, `contr⁻`, `fiber⁻`, `fiber⁺`) and has two
    distinct self-maps, so `codisc-hom-not-contr` and
    `codisc-not-initial`. No axiom of the theory makes system maps a
    proposition, so contractibility can only be a fact about a
    particular source.
+
+   Reviewed 2026-07-28, adversarially, `reviewer` at xhigh. The
+   record is at `outputs/.drafts/system-morphisms-review.md`. The
+   kernel evidence is sound and the inlined carrier does not drift.
+   Six findings, and two of them are false statements rather than
+   gaps. Fix both before the spike leaves `Test/`.
+
+   - FATAL. `is-initial` binds its target at the *source's* levels,
+     `(G' : virtual-graph o h)`, while `_⇒_` is polymorphic in all
+     four. The prose says "every target" and means it. The damage
+     is asymmetric: `empty-is-initial` is weakened to level-zero
+     targets, for nothing, since its proof is level-generic;
+     `codisc-not-initial` is unharmed, since refuting the smaller
+     statement refutes the larger. `Typeω` is available
+     (`Core.Type`), so the unrestricted form is statable. Decide
+     the level policy, then make the prose match the quantifier.
+   - The spike's own open question is false as posed. A higher
+     mapping type does *not* need a target hom with a loop. Put
+     `Circle` in the object slot of the `codisc` pattern, keep
+     `hom _ _ = ⊤`: no target hom carries a loop, and yet the
+     mapping type reduces to `Bool → Circle`, which is not a set.
+     `winding` and `winding-loopⁿ` in `HData.Circle.Properties`
+     separate the two paths. Roughly twenty lines on a `--cubical`
+     variant, and the machinery is already on the shelf.
+   - No result exercises `pres-twist⁺`, `pres-twist⁻` or
+     `pres-reflect`. `empty` discharges them by absurd pattern and
+     `codisc` by `refl` into `⊤`. Every theorem survives deleting
+     all three fields, so nothing here is evidence about the record
+     itself. A probe needs a target with non-contractible homs.
+   - `_⇒_` constrains no readback. Over untruncated homs that
+     square is real content, not a consequence: `ap hmap` of the
+     source readback and the target readback give two paths with
+     the same endpoints, and nothing identifies them. So the record
+     is *lax*. That may be right, and the choice is undisclosed.
+     Settle it when `Cat.Logic.Morphism` is written, together with
+     the reviewer's question of whether a morphism should preserve
+     `var` and `covar` on the nose, which would make
+     `argument-map (var x , covar y)` reduce and simplify the
+     square.
+   - "Carries the full deductive-system axioms" is an eyeball
+     claim. The spike imports no `Cat.Logic` module, so the kernel
+     confirms no part of it, and the inlined carrier can never be
+     fed to the live predicate. A conversion plus one term of type
+     `is-deductive-system` would make it checked and would double
+     as a drift alarm on every inlined copy.
+   - Minor: the closing conclusion is about propositionality while
+     the theorem refutes contractibility, which is stronger, so
+     state `¬ is-prop (codisc ⇒ codisc)`; the `is-composable`
+     analogy overstates a shared mechanism where only "no h-level
+     on homs" is shared; `Core.Data.Bool.Properties` already has
+     the Bool disequality the spike re-derives; and the top-level
+     `open _⇒_` publishes `map` and `hmap`, which collide on
+     promotion.
 
    Remaining, and the next session starts here. The live module,
    `Cat.Logic.Morphism`: the same record with every
@@ -760,11 +812,13 @@ The work items, in order.
    favour of the live record.
 
    Open from the spike: whether a mapping type is ever
-   non-trivially higher, two maps equal in more than one way. That
-   needs a target whose homs carry a loop. The circle model of
-   `Gist.ThunkableSquare` supplies one and this spike does not build
-   it. Whether the free system attains contractibility against every
-   wild target is item 3.
+   non-trivially higher, two maps equal in more than one way. The
+   answer is close, and the earlier statement of this question here
+   was wrong. Loops in the target's *homs* are not what it takes. A
+   target with `Circle` for objects and `⊤` for every hom already
+   makes the mapping type `Bool → Circle`, which is not a set.
+   Build it and the question closes. Whether the free system
+   attains contractibility against every wild target is item 3.
 3. The free system as an untruncated HIT, its initiality, and the
    coherence theorem: free equivalent to the word model. This is
    where the conjecture is decided.
