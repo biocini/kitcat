@@ -16,6 +16,65 @@ concise, and honest about verification status (`verified` /
 
 ---
 
+## 2026-07-28 — morphisms opened, a polarity alarm answered, the doc set reconciled
+
+**Initiality landed, `verified`** (`Test.SpikeMorphismInitial`,
+recorded `just check`, zero obligations): the morphism record
+(`map`, `hmap`, `pres-twist±`, `pres-reflect`) and
+`is-initial G = ∀ G' → is-contr (G ⇒ G')`, itself a proposition.
+Initiality truncates no hom. It asks one fiber to be contractible.
+The empty graph is initial. The codiscrete graph on two points
+carries the full axioms and still has two distinct self-maps, so no
+axiom makes system maps a proposition. `Cat.Logic.Morphism` did
+**not** land. The polarity report stopped both agents, and T1 had
+written nothing.
+
+**The reported polarity error was a false alarm with a real cause.**
+`inj⁺`/`inj⁻` and the whole composition register carry correct
+labels, and no proof moved. The missing fact was the order
+convention. Munch-Maccagnoni composes applicatively and this library
+diagrammatically, so transcribing Definition 1's (•◦) clause without
+reversing the order reads the word backwards. That inverts the
+labels on sight. `verified` that `(f ⨾⁻ g) ⨾⁺ h ≡ f ⨾⁻ (g ⨾⁺ h)` is
+that clause verbatim, so `⁻ = ◦` and `⁺ = •` both stand. The
+convention now sits in `towers.md` and the TODO.
+
+**What did cause it: prose that justified a label by the held
+axiom.** Four sites said "coact holds `var`, hence…", which reads as
+binding `var` to coactions and inverts the standard. All corrected.
+Ruling (Lane): `act` and `coact` keep their names, since the types
+force that binding, making it implementation and not semantics.
+`framing.md` now derives the framing gloss from traced crossings
+(`twist⁺` a buffer, `twist⁻` a future), `CONJECTURED`, since
+*Asynchronous Games 3* is still not vendored.
+
+**Docs debt paid, not deferred** (Lane: "we do pay for docs debt
+like this"). Eleven of twelve `docs/deductive-systems/` files were
+stale against the record cut. `the-package.md` carried the pre-cut
+three-field record and cited `FramedCut` as inhabitant, which
+readback rules out. `composability.md` showed the stability-indexed
+record. `towers.md` claimed one unit law per hand, now four.
+`invertibility.md` and `framing.md` each claimed nothing decides
+whether a centre is the other twist, which T33 refutes.
+`README.md` omitted `readback` entirely. The retired `pin`, `K`,
+`unital` and `absorption` names left `docs/` and
+`Cat.Logic.Type`'s register list.
+
+**`(D′)` retired** (Lane). It named a position only against the
+rejected `(C)` and `(D)`, so it read as a variant when it is the
+definition. Live prose and `docs/roadmap.md` now say "deductive
+system". The TODO keeps the letters as the record of the decision.
+`Cat.Logic.Gist.BalancedWord` opens with the construction instead.
+
+`verified`: `check-tree src/Cat` 21/21, `check-tree src/Test` 9/9,
+`lint changed` clean, all twelve doc files and `roadmap.md` at or
+under the 2.0 prose gate. `unverified`: the morphism signature's
+implicit/explicit calls (elaboration probes unrun) and
+`pres-⨾⁺`/`pres-⨾⁻` (unattempted). Next: `Cat.Logic.Morphism` from
+`outputs/.plans/system-morphisms-T1.md`, then promote the spike to
+`Cat.Logic.Gist.MorphismInitial`. Session log:
+[`notes/2026-07-28-morphisms-polarity-docs.md`](notes/2026-07-28-morphisms-polarity-docs.md).
+
 ## 2026-07-28 — the free balanced word model: the (D′) profile closes, refuted
 
 **The oracle ran, `verified`** (`Test.SpikeBalancedWord`, 948
