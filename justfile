@@ -22,7 +22,6 @@ profile module *flags:
     bin/profile {{module}} {{flags}}
 
 # Typecheck every module under a directory (default: whole library), listing failures.
-# Interim whole-library check while the All aggregator is retired (see check-all).
 check-tree dir="src":
     #!/usr/bin/env bash
     set -uo pipefail
@@ -48,11 +47,6 @@ check-tree dir="src":
       exit 1
     fi
 
-# The All.lagda.md aggregator is retired pending module-organisation decisions
-# (the Cat.Depreciated relocation is unresolved). Use `check-tree` meanwhile.
-check-all:
-    @echo "check-all is retired — use 'just check-tree' (or 'just check-tree <dir>')."
-
 # Create a new module
 new module *flags:
     bin/new-module {{module}} {{flags}}
@@ -60,10 +54,6 @@ new module *flags:
 # Move/rename a module
 mv old new *flags:
     bin/mmv {{old}} {{new}} {{flags}}
-
-# Sync All.lagda.md with filesystem (retired; see check-all)
-sync *flags:
-    bin/sync-all {{flags}}
 
 # Module statistics
 stats:

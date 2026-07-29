@@ -4,9 +4,8 @@ A ledger of results proven in and about this development. Each
 entry: statement, where it is proven, status, date. Statuses:
 
 - ✅ machine-checked, committed (module cited)
-- 🧪 machine-checked evidence module in `Gloss/` (tracked, in
-  `All`, self-contained modulo Core, `Cat.*` definitions frozen at
-  the cited commit)
+- 🧪 machine-checked evidence module in `Gloss/` (self-contained
+  modulo Core, `Cat.*` definitions frozen at the cited commit)
 - 📐 established by rigorous argument (countermodel or hand-checked
   path algebra), not mechanized
 - ⚠️ partially conjectured, with the honest boundary stated

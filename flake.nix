@@ -57,10 +57,9 @@
 
           shellHook = ''
             echo "kitcat dev shell — $(agda --version)"
-            echo "  just check-all      # typecheck the library via All.lagda.md"
+            echo "  just check-tree     # typecheck the whole library"
             echo "  just check <Mod>    # typecheck one module"
             echo "  just lint           # width + flags"
-            echo "  just sync           # All.lagda.md drift gate"
           '';
         };
       }

@@ -26,7 +26,7 @@ while [ $# -gt 0 ]; do
         --check) shift; checks+=("$1"); shift ;;
         --changed|changed) changed_mode=true; shift ;;
         -h|--help)
-            echo "Usage: lint [width] [flags] [authoring] [frontmatter] [changed]"
+            echo "Usage: lint [width] [flags] [authoring] [frontmatter] [citations] [changed]"
             echo "  No args      run width + flags over the whole src/ tree."
             echo "  changed      non-regression gate: only files modified vs"
             echo "               HEAD, and width only on added/modified lines"
@@ -40,6 +40,12 @@ while [ $# -gt 0 ]; do
             echo "               not yet an error. Timestamped Test/ scratch is"
             echo "               exempt. Individually invocable, out of the"
             echo "               default aggregate (Phase 1 of the convention)."
+            echo "  citations    opt-in: scans every gloss.md and lemmata.md under"
+            echo "               docs/ and src/ for backticked module paths. A path"
+            echo "               with no matching src/ file or directory is a"
+            echo "               dangling citation. Individually invocable, out of"
+            echo "               the default aggregate (the ledger split has not"
+            echo "               landed)."
             exit 0 ;;
         *) checks+=("$1"); shift ;;
     esac
@@ -406,6 +412,38 @@ run_frontmatter() {
     done <<< "$fm_files"
 }
 
+# ── citations check (dangling module citations in the ledgers) ──
+# Opt-in (`lint citations`): every gloss.md and lemmata.md under
+# docs/ and src/ names modules by backticked dotted path
+# (`Foo.Bar.Baz`, capitalized segments). A path `A.B.C` resolves if
+# `src/A/B/C.lagda.md` exists, or `src/A/B/C/` is a directory;
+# anything else is a dangling citation. Kept out of the default
+# aggregate: the ledger split has not landed, so the current
+# docs/gloss.md's known dangles would fail the build now.
+run_citations() {
+    echo "── citations ──"
+    local ledgers
+    ledgers="$(fd '^(gloss|lemmata)\.md$' docs src | sort)"
+    if [ -z "$ledgers" ]; then
+        echo "  no gloss.md or lemmata.md found under docs/ or src/"
+        return 0
+    fi
+    while IFS= read -r f; do
+        [ -f "$f" ] || continue
+        local -A seen=()
+        while IFS=: read -r lineno path; do
+            [ -n "$lineno" ] || continue
+            [ -n "${seen[$path]:-}" ] && continue
+            seen[$path]=1
+            local resolved="src/${path//./\/}"
+            if [ ! -f "${resolved}.lagda.md" ] && [ ! -d "$resolved" ]; then
+                echo "  ${f}:${lineno}: dangling citation \`${path}\`"
+                issues=$((issues + 1))
+            fi
+        done <<< "$(rg_allow_empty -n -o -P '(?<=`)[A-Z][A-Za-z0-9]*(?:\.[A-Z][A-Za-z0-9]*)+(?=`)' "$f")"
+    done <<< "$ledgers"
+}
+
 # Run requested checks
 for check in "${checks[@]}"; do
     case "$check" in
@@ -413,6 +451,7 @@ for check in "${checks[@]}"; do
         flags) run_flags ;;
         authoring) run_authoring ;;
         frontmatter) run_frontmatter ;;
+        citations) run_citations ;;
         *) echo "Unknown check: $check" >&2; exit 1 ;;
     esac
 done

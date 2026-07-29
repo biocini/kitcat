@@ -20,9 +20,6 @@ module's ledger, and the research program lives in
   Pre-existing debt, same sweep.
 - [ ] `Core.Path.Coherence`: a `ModuleDoesntExport` warning fails
   under `-Werror`. Pre-existing debt, same sweep.
-- [ ] `justfile`: the `check-all` comment still calls the
-  `Cat.Depreciated` relocation unresolved. It is resolved. Decide
-  the aggregator's fate at the same time.
 - [ ] `docs/gloss.md`: entries for the record-cut theorems
   (`axioms→stable`, the four unit laws, the cancellations) and
   for the (D′) profile verdict at the free balanced point.

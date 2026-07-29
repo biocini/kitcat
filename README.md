@@ -49,7 +49,7 @@ direnv:
 
 ```sh
 direnv allow      # puts bin/ on PATH
-just check-all    # typecheck the whole library
+just check-tree   # typecheck the whole library
 just --list       # everything else
 ```
 
