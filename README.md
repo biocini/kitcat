@@ -6,11 +6,14 @@ An experiment with univalent programming and open source mathematics in cubical 
 
 ## Contents
 
-Kitcat is a research library at the intersection of higher category
-theory, homotopy type theory, and programming language foundations,
-written in Cubical Agda. It is a testbed for new ideas in these
-areas, a reference for formalized mathematics and type theory with
-machine-checked proof as its standard of evidence.
+Kitcat is a research library at the intersection of higher category theory,
+homotopy type theory, and programming language foundations, written in Cubical
+Agda. It is a testbed for new ideas in these areas, a reference for formalized
+mathematics and type theory with machine-checked proof as its standard of
+evidence. In many aspects it is my personal playground and blackboard for
+exploring the design space of univalent type theory and higher category theory,
+and I hope it will be useful to downstream researchers and practitioners in
+these areas as well.
 
 ## Research provenance
 
@@ -20,13 +23,23 @@ AI-assisted mathematics research. As such, it is a living entry into the
 conversation about ethical practice in this domain. Machine-checking is the
 trust boundary for mathematical claims, and references are human-vetted before
 anything rests on them, and AI contributions are disclosed
-[`docs/provenance.md`](docs/provenance.md) is the binding standard. I will
-take every opportunity to credit authorship and theoretical provenance. The
-research that the library actively cites and draws upon is cataloged in the
-resources directory.
+[`docs/provenance.md`](docs/provenance.md) is the WIP standard (we will audit
+according to it on an ongoing basis once it has taken final shape).
 
-This is a best-effort attempt on my part. I welcome feedback and discussion on
-how to improve any aspect of the library, as well as human contributions.
+The research that the library actively cites and draws upon is catalogued in
+the resources directory. I will take every opportunity to credit authorship and
+theoretical provenance of ideas. This is a best-effort attempt on my part made
+in good faith; please reach out if there is any portion of the library you feel
+deserves more specific citation than I was able to provide, as it is very
+important to me that authors are correctly credited for their work. The library
+is often a fast-moving target however and lapses of documentation may happen; I
+will be very clear when taking credit for a specific construction, otherwise it
+is fair to assume I regard it as either folklore or general knowledge in the
+field. In general, I will be very clear when a given construction is derived
+from a specific source, and will provide reference to the original.
+
+I welcome feedback and discussion on how to improve any aspect of the library,
+as well as any human contributions.
 
 ## Building
 
