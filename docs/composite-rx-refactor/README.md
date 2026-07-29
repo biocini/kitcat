@@ -1,7 +1,12 @@
 # The Composite–Rx refactor
 
-2026-07-24. Status: **proposed**, awaiting rulings on
-[decisions](decisions.md) and a focused audit of this document set.
+2026-07-24. Status: **gated**, and intended. Two things land first:
+the deductive-system line reaches the category presentation, where
+the two twists coincide, and that presentation gives the refactor
+its shape. Expect this document set to be rewritten against that
+shape rather than executed as written. The rulings on
+[decisions](decisions.md) and the audit of this document set stay
+open behind the same gate.
 
 This directory is the plan of record for the refactor. The refactor
 promotes the reflexive-graph suite into `Core` and disciplines the
