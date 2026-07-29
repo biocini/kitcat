@@ -23,8 +23,8 @@
   canary (`just lint frontmatter`) validates the core where a block
   is present. Frontmatter lines carry the same 100-char width cap as
   prose and code (`bin/lint`). The tree-wide
-  conversion of the header-less and prose-header files is
-  docs/roadmap.md target 6.
+  conversion of the header-less and prose-header files is tracked
+  in the root `TODO.md`.
 - **Pragma tracks the stratum**: default
   `--safe --erased-cubical --no-guardedness`. Pure-MLTT foundation
   leaves use `--cubical-compatible`
