@@ -14,6 +14,7 @@ open import Core.Data.Dec
 open Dec
 open import Core.Data.Empty
 open import Core.Data.Sum.Type
+open import Core.Data.Bool.Base using (So)
 open import Core.Data.Nat.Type
 open import Core.Data.Nat.Base
 
@@ -204,6 +205,52 @@ module max where
   ≤r Z     m     = suc
   ≤r (S n) Z     = lt.z<s
   ≤r (S n) (S m) = s<s (≤r n m)
+
+```
+
+`_≤ᵇ_` and `_==ᵇ_` decide the order and equality relations. Each
+boolean check is sound and complete against its propositional
+counterpart.
+
+```agda
+
+≤ᵇ-sound : ∀ m n → So (m ≤ᵇ n) → m ≤ n
+≤ᵇ-sound Z     n     s = lt.z<s
+≤ᵇ-sound (S m) Z     s = ex-falso s
+≤ᵇ-sound (S m) (S n) s = s<s (≤ᵇ-sound m n s)
+
+≤ᵇ-complete : ∀ m n → m ≤ n → So (m ≤ᵇ n)
+≤ᵇ-complete Z     n     p = tt
+≤ᵇ-complete (S m) Z     p = lt.¬n<z (lt.peel Z p)
+≤ᵇ-complete (S m) (S n) p = ≤ᵇ-complete m n (lt.peel (S n) p)
+
+==ᵇ-sound : ∀ m n → So (m ==ᵇ n) → m ≡ n
+==ᵇ-sound Z     Z     s = refl
+==ᵇ-sound Z     (S n) s = ex-falso s
+==ᵇ-sound (S m) Z     s = ex-falso s
+==ᵇ-sound (S m) (S n) s = ap S (==ᵇ-sound m n s)
+
+==ᵇ-refl : ∀ m → So (m ==ᵇ m)
+==ᵇ-refl Z     = tt
+==ᵇ-refl (S m) = ==ᵇ-refl m
+
+==ᵇ-complete : ∀ m n → m ≡ n → So (m ==ᵇ n)
+==ᵇ-complete m n p = subst (λ k → So (m ==ᵇ k)) p (==ᵇ-refl m)
+
+```
+
+`a` is below `a + b`, and monus recovers `max` when added back.
+
+```agda
+
+le-plus : ∀ a b → a ≤ (a + b)
+le-plus Z     b = lt.z<s
+le-plus (S a) b = s<s (le-plus a b)
+
+monus-max : ∀ a b → (a - b) + b ≡ max a b
+monus-max a     Z     = add.unitr a ∙ sym max.unitr
+monus-max Z     (S b) = refl
+monus-max (S a) (S b) = add.+suc (a - b) b ∙ ap S (monus-max a b)
 
 ```
 

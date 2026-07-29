@@ -9,6 +9,7 @@ module Core.Data.Nat.Base where
 open import Core.Type
 
 open import Core.Data.Nat.Type
+open import Core.Data.Bool.Type using (Bool)
 
 open import Agda.Builtin.Nat public
   using (_+_; _*_; _-_; div-helper; mod-helper)
@@ -40,3 +41,9 @@ max : Nat → Nat → Nat
 max Z     n     = n
 max (S m) Z     = S m
 max (S m) (S n) = S (max m n)
+
+_≤ᵇ_ : Nat → Nat → Bool
+m ≤ᵇ n = LtBool m (S n)
+
+_==ᵇ_ : Nat → Nat → Bool
+_==ᵇ_ = EqBool

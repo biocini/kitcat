@@ -70,3 +70,35 @@ abs m = pos (to-nat m)
 {-# INLINE abs #-}
 
 ```
+
+## Successor and predecessor
+
+```agda
+
+zsuc : Int → Int
+zsuc (pos n)        = pos (S n)
+zsuc (negsuc Z)     = pos Z
+zsuc (negsuc (S n)) = negsuc n
+{-# INLINE zsuc #-}
+
+zpred : Int → Int
+zpred (pos Z)     = negsuc Z
+zpred (pos (S n)) = pos n
+zpred (negsuc n)  = negsuc (S n)
+{-# INLINE zpred #-}
+
+```
+
+## Difference of naturals
+
+`_⊖_` is the difference of two naturals as an integer.
+
+```agda
+
+_⊖_ : Nat → Nat → Int
+m   ⊖ Z   = pos m
+Z   ⊖ S n = negsuc n
+S m ⊖ S n = m ⊖ n
+{-# INLINE _⊖_ #-}
+
+```

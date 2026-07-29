@@ -9,15 +9,17 @@ module Core.Data.List.Properties where
 open import Core.Type hiding (id)
 open import Core.Data.Nat.Type using (Nat; S; Z)
 open import Core.Base
-  using (_≡_; refl; ap; sym; is-contr; center; paths; _∧_)
+  using (_≡_; refl; ap; sym; is-contr; is-set; center; paths; _∧_)
 open import Core.Kan using (_∙_)
 open import Core.Transport using (subst)
 open import Core.Equiv using (_≃_; Equiv; esym; is-contr-equiv)
 open import Core.IdSys
   using ( is-based-identity-system; to-path; to-path-over
         ; Ids-based→equiv )
-open import Core.Data.Sigma using (_×_; Σ; _,_)
+open import Core.Data.Sigma using (_×_; Σ; _,_; fst; snd)
 open import Core.Data.Empty using (⊥; ex-falso)
+open import Core.Data.Dec
+open Dec
 open import Core.Data.List.Type
 open import Core.Data.List.Base
 
@@ -198,4 +200,36 @@ List-is-hlevel n ahl (x ∷ xs) (y ∷ ys) =
     inner : is-hlevel (S n) ((x ≡ y) × (xs ≡ ys))
     inner = ×-is-hlevel (S n) (ahl x y)
       (List-is-hlevel n ahl xs ys)
+```
+
+## Decidable equality
+
+Decidable equality on the element type lifts to lists, by structural
+recursion: `cons-injective` splits a cons equality into its head and
+tail, and the empty list is apart from every cons.
+
+```agda
+
+DecEq-List : ∀ {u} {A : Type u} → DecEq A → DecEq (List A)
+DecEq-List _ []       []       = yes refl
+DecEq-List _ []       (y ∷ ys) =
+  no (λ e → subst discrim e tt)
+  where
+    discrim : List _ → Type
+    discrim []      = ⊤
+    discrim (_ ∷ _) = ⊥
+DecEq-List _ (x ∷ xs) []       =
+  no (λ e → subst discrim (sym e) tt)
+  where
+    discrim : List _ → Type
+    discrim []      = ⊤
+    discrim (_ ∷ _) = ⊥
+DecEq-List d (x ∷ xs) (y ∷ ys) with d x y | DecEq-List d xs ys
+... | yes p | yes q = yes (λ i → p i ∷ q i)
+... | yes p | no ¬q = no (λ e → ¬q (cons-injective e .snd))
+... | no ¬p | _     = no (λ e → ¬p (cons-injective e .fst))
+
+set : ∀ {u} {A : Type u} → DecEq A → is-set (List A)
+set d = hedberg (DecEq-List d)
+
 ```

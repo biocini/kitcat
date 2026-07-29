@@ -32,6 +32,19 @@ set = hedberg DecEq-Bool
 
 ```
 
+## Boolean witnesses
+
+`So b` is a proposition: `true` names the contractible case, `false`
+the empty one.
+
+```agda
+
+so-prop : ∀ b → is-prop (So b)
+so-prop true  x y = refl
+so-prop false x y = ex-falso x
+
+```
+
 ## Negation
 
 ```agda
