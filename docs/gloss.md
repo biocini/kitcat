@@ -383,110 +383,11 @@ Test/ sweep retains the spike while this entry stands.
 
 ## 7. The framed deductive-system theory
 
-Entries in this section are machine-checked in the working tree
-and not yet commit-pinned. Each ✅ upgrades when the tree lands.
-The theory is documented in `docs/deductive-systems/`.
-
-**T25: Propositionality of every tier and of the package.** Each
-of `is-stable`, `is-invertible⁻`/`is-invertible⁺`/`is-invertible`
-is a proposition outright. `is-composable` is one over the
-stability that indexes it. `is-deductive-system` is a proposition,
-its composability component filled by a path over the moving
-stability. Hence `deductive-system` splits as one structure field
-and one property field, and `opᴰ` is an involution. `opⱽ-invol`
-and `op-eval` are `refl`, and `opᴰ-invol` is `refl` on the carrier
-with the axioms component by propositionality.
-
-✅ `Cat.Logic.Base` (2026-07-25).
-
-**T26: The framing is two reflexive graphs.** A twist is a
-reflexivity datum, so a virtual graph carries two reflexive-graph
-structures on one underlying graph. Fans and cofans name no
-reflexivity, so the term and coterm families come from either
-graph. The *centers* split: `var` is the cofan center of the
-negative graph and `covar` the fan center of the positive one, so
-the axiom pairs one from each.
-
-Univalence is framing-blind
-(`univalence-shared` is `refl`), and the opposite is the swap of
-the two graphs composed with `rx.op` (`op-graph⁺`, `op-graph⁻`,
-both `refl`). The two-sided base is
-`rx.binary-product (rx.op graph⁻) graph⁺`, whose reflexive edge
-**is** the framing: at a diagonal vertex, the axiom rule as one
-edge.
-
-✅ `Cat.Logic.Graph` (2026-07-25), every claim `refl`.
-
-**T27: Each family is a lens over the graph of the twist it does
-not hold, and each cut is a fibration.** A lens states its unitor
-at its base's reflexive edge, and each action sits at the twist
-its own axiom half does not carry: `term-lens` is oplax covariant
-over `graph⁻`, `coterm-lens` lax contravariant over `graph⁺`, each
-unitor that side's cancellation. Both displays are univalent with
-no condition on the base, the families being discrete.
-
-The coslice
-display takes its displayed reflexivity from the cancellation
-alone. Its covariant lifting condition is exactly stability
-(uniqueness) plus the coterm cut (existence). `push` is the
-composition and `lift` the head-rewriting witness, both on the
-nose. The absorptions consume no tier and sit over the pins and
-the cancellation alone.
-
-✅ `Cat.Logic.Display`, `Cat.Logic.Base` (`absorption`)
-(2026-07-25).
-
-**T28: Stability is an embedding condition.** `is-stable` is
-`reflect` having propositional fibers at every pair of objects
-(`stable-is-embedding` is `refl`). Over hom-sets the judgments
-form sets, so the tier reduces to injectivity of transmission, the
-edge surrounded by one twist of each sign
-(`stable-from-hom-sets`).
-
-✅ `Cat.Logic.Base` (2026-07-25). Discharges the shape of the
-truncated-regime obligation in
-`notes/2026-07-22-deductive-system-design.md` (O4).
-
-**T29: Interchange is a cospan coherence.** Over the two-sided
-base each composite judgment is the transport with one leg held at
-its twist, applied to one factor's reflection. The two land in the
-fiber at the outer pair from distinct vertices with legs pointing
-the same way. Agreement of the two cuts is agreement of that
-cospan's two pushforwards, both directions.
-
-The two-sided
-transport composes, but onto a base edge taking one hand's
-composition on one coordinate and the other's on the other. No
-single composition therefore makes the lens functorial. What a
-mediation buys, read here, is that functoriality.
-
-✅ `Cat.Logic.Display` (`push-is-composite⁻`/`⁺`,
-`cospan-from-cuts`, `cuts-from-cospan`, `bipush-comp`)
-(2026-07-25).
-
-📐 that no display of `judgment` can carry the agreement as an
-edge. A displayed edge relates data over the two ends of one base
-edge, and the reflections compared sit at distinct vertices. A
-base making them diagonal would make composability reflexive. The
-argument, not a formalized impossibility.
-
-**T30: Framing collapse is weaker than mediation.** The derivation
-of `twists-agree` uses a left and a right unit for *one*
-composition, so it goes through on either missing unit law alone,
-with no interchange: `collapse⁺`, `collapse⁻`. Since a mediation
-supplies those laws, each hypothesis is weaker as a statement than
-interchange. Two collapses separate: the twists becoming one edge,
-and the compositions becoming one operation. Interchange gives
-both. A missing unit law gives only the first.
-
-✅ `Cat.Logic.Base` (2026-07-25). Corrects the "nothing between"
-reading in `docs/deductive-systems/mediation.md`.
-
-⚠️ whether the two collapses are separable is OPEN. In the group
-model of T31 they are equivalent, and the reason localizes the
-search. There `reflect` is an associative product, so the cuts
-differ only by the junction's twist. A separating model needs a
-`reflect` not of that form.
+The theory is documented in `docs/deductive-systems/`. T25 to T30
+and T32 to T36 moved to `src/Cat/Logic/lemmata.md` and
+`src/Cat/Logic/gloss.md`, under the same numbers. T31 stays here:
+its citation retired to the archive, and it awaits
+`Bb.WeakDeductiveSystem`'s own ledger.
 
 **T31: The framed package on wild fans, with both boundaries
 arithmetic.** An abelian group read as a one-object virtual graph,
@@ -505,69 +406,6 @@ inverse.
 archive 2026-07-28: the free-framing models live in
 `Bb.WeakDeductiveSystem.Gist`, beside the path-groupoid witness
 `Bb.WeakDeductiveSystem.Gist.FramedCut`.
-
-**T32: Stability is a theorem of the contractible negative cut.**
-`axioms→stable : is-deductive-system → is-stable`. The negative
-composite at the twist is a reflection (`composite⁻-twist`), so the
-cut's contractible fiber transports to every image fiber of
-`reflect`. `image-fibers-contr→is-embedding`
-(`Core.Function.Embedding`) then closes the embedding. Stability is
-not a field of the package.
-
-✅ `Cat.Logic.Base` (`axioms→stable`,
-`contr-cut⁻.stable-from-contr-cut⁻`) (2026-07-28).
-
-**T33: The cancellations are theorems of the tiers.** Each tier's
-centre reads back as the other twist: `centre⁻-twist⁺` and
-`centre⁺-twist⁻`. Both cancellations (`cancel⁻`, `cancel⁺`) and
-both twist absorptions (`absorb⁻`, `absorb⁺`) follow from the two
-invertibility tiers alone.
-
-✅ `Cat.Logic.Base` (`tower.balanced`) (2026-07-28). The certified
-spike is `Cat.Logic.Gist.BalancedProfile`.
-
-**T34: The four unit laws.** Each hand is two-sided unital with its
-own twist as unit. `unitr⁺` and `unitl⁻` hold in `tower` with no
-tier, from readback and each hand's cut. Under the two invertibility
-tiers, `tower.balanced` adds `unitl⁺` and `unitr⁻`. Two unital
-magmoids on one graph, offset by the double twist.
-
-✅ `Cat.Logic.Base` (`tower`, `tower.balanced`) (2026-07-28).
-
-**T35: The associativity profile is the pre-duploid triple.** The
-deductive-system axioms (`is-deductive-system`) prove exactly
-`assoc⁺`, `assoc⁻`, and `mixed-assoc`, and no more: the generic
-`associates` property (associativity of a length-3 path regardless
-of the middle edge's polarity) is independent, refuted by two finite
-countermodels. The projection model (constant reflection over
-`Bool`, both hands projections) satisfies the towers and the
-readback record of `Bb.WeakDeductiveSystem.Gist.FramedInterchange`,
-computes `associates f g h` to `h ≡ f`, and has no thunkable or
-linear edge, refuting both `associates` and the invertibility tier
-at once. The four-reader model (`Bool × Bool`) is a full
-`is-deductive-system` whose tier centres are its only
-thunkable/linear edges, refuting `associates` for every middle edge
-without refuting invertibility.
-
-✅ `Bb.WeakDeductiveSystem.Gist.AssociatesCountermodel` (2026-07-27,
-`just check` re-run clean 2026-07-28). The profile is Munch-Maccagnoni's
-Definition 1 (pre-duploid): three associativity laws fixed to a
-polarity pattern on the middle two objects, `(••)`, `(◦◦)`, `(•◦)`,
-matching `assoc⁺`, `assoc⁻`, `mixed-assoc` respectively — SOURCE-CHECKED
-against `resources/munch-maccagnoni-duploids` (Definition 1, l.180 —
-that entry's certification was withdrawn 2026-07-28, but its
-Definition 1 digest is among those an independent read confirmed
-faithful) and cross-checked
-against `resources/mmmm-classical-notions`'s independent transcription
-of the same triple (§2, l.1552-1562; `Statements verified: 7/7
-CONFIRMED`, 2026-07-28). The transcription reverses composition order:
-the sources compose applicatively, kitcat diagrammatically, so
-`(h • g) ◦ f = h • (g ◦ f)` over `A -f→ N -g→ P -h→ B` becomes
-`(f ⨾⁻ g) ⨾⁺ h ≡ f ⨾⁻ (g ⨾⁺ h)`, which is `mixed-assoc`. Whether the
-generic-`associates` refutation itself has a counterpart in either
-source is not addressed by either paper's statement audit and is not
-claimed here — this identification covers only the associativity
-profile, not a broader duploid-source theorem.
 
 ## Standing results from earlier strata (pre-2026-07-10)
 

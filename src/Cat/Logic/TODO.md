@@ -12,9 +12,9 @@ vendored staging tree.
 
 `Cat.Logic.Gist` is new: the certified spikes on `Cat.Logic`'s
 definitions, vendored out of `Test` with the `Spike` prefixes
-dropped. Eight modules: `BalancedBase`, `BalancedProfile`,
-`BalancedWord`, `FramedInterchange`, `ReadbackTorsor`,
-`ReflectFiber`, `RxDict`,
+dropped. Nine modules: `AssociatesDefect`, `BalancedBase`,
+`BalancedProfile`, `BalancedWord`, `FramedInterchange`,
+`ReadbackTorsor`, `ReflectFiber`, `RxDict`,
 `ThunkableSquare`. Five more live only in the archive, the
 retired block below. The one-twist trio is archived at
 `Bb.OneTwist`: it probes the rejected rival carrier, not these
@@ -416,6 +416,64 @@ readback, the two-field predicate, stability through
   `outputs/.notes/balanced-word-model-*`), with formal
   initiality deferred to items 2 and 3 of the initial-model
   program.
+
+## Settled: the associates defect is a framing word, per flanking edge
+
+Measured 2026-07-29, `Cat.Logic.Gist.AssociatesDefect`, over the free
+balanced word model. The 2026-07-27 independence said the two
+bracketings differ. This session says how. Each bracketing
+determines the other up to a twist word, and the word reads one
+flanking edge alone. Sixteen placements of a correcting word
+connect `L = (f ⨾⁺ g) ⨾⁻ h` and `R = f ⨾⁺ (g ⨾⁻ h)`. Eight flank
+the whole word, eight sit at a seam. All are well typed at the
+point, and one-sided invertibility keeps them pairwise distinct.
+Exactly two survive, one per hand, each at every triple with no
+failure hypothesis.
+
+- `defect⁺`: `R ≡ w⁺ (rise f) ⨾⁺ L`, where `rise f` is the value
+  of the leading edge at zero.
+- `defect⁻`: `L ≡ R ⨾⁻ w⁻ (zrunW h)`, where `zrunW h` is the
+  length of the zero plateau of the trailing edge.
+
+The corrections are twist words by construction, powers of the
+bicyclic defect. `w⁺ (S Z)` is the reverse bicyclic composite
+`t⁻ ⨾⁺ (t⁺ ⨾⁻ t⁺)` on the nose, the recorded obstruction of the
+profile block above. The defect is not a framing constant.
+`no-uniform⁺` and `no-uniform⁻` refute one word for all triples.
+The fourteen dead placements each fail for every `w` at one
+concrete triple (`A1`-`A8`, `S1`-`S8`, legend in the spike).
+
+Triviality is the two closures, exactly. `w⁺` is the unit at
+`rise f ≡ 0`, which is thunkability of `f` (`thunkable→rise`,
+`rise→thunkable`). `w⁻` is the negative unit at `zrunW h ≡ 0`,
+which is linearity of `h`. So the universal closures of
+`associates` attach to the leading and the trailing edge. Those
+are the edges whose corrections can vanish.
+
+Balance kills the measured defect. `shift-associates`: the two
+bracketings agree in winding grade at every triple, so the whole
+defect lives in the fiber the grade forgets. `shift-w⁺` and
+`shift-w⁻` compute the grades of the matching units.
+
+The grade map is the collapse in which the reverse bicyclic
+composite becomes the unit, i.e. the twists cancel two-sidedly.
+`bicyclic-persists` holds the word model strictly above that
+collapse. The ℤ image itself satisfies `associates` at all
+sampled triples, computed only
+(`outputs/.notes/associates-defect-*`). The ℤ point carries no
+deductive-system instance, so that claim has no kernel witness.
+Net: at the free point the pre-duploid profile has a reason
+rather than a bare countermodel. `associates` fails by exactly
+the one-sided-invertibility residue, and the collapse that makes
+the inverses two-sided erases it.
+
+Scope. This is a theorem about the free balanced point. The
+correction indices read the model's edges, so nothing here
+transfers verbatim to an arbitrary deductive system. The bare
+point has no generators either. The generator-bearing word model
+(initial-model program, item 1 sequels) is the instrument for the
+next strength. verified: `just check Cat.Logic.Gist.AssociatesDefect`,
+2026-07-29, zero warnings, no holes, no postulates.
 
 ## Lines of investigation: toward higher duploids
 
@@ -940,7 +998,8 @@ The lines of inquiry.
   load-bearing citation. Not yet Lane-vetted (no `Vetted:` line — `just
   resources-verify` reports "audited — load-bearing capable; Lane
   discretion open"). The duploid dictionary above leans on it.
-  `docs/gloss.md` T35 cites the pre-duploid identification against it.
+  `src/Cat/Logic/gloss.md` T35 cites the pre-duploid identification
+  against it.
 - `resources/mmmm-classical-notions/` — vendored 2026-07-24. Statement-
   audited 2026-07-28: 7/7 CONFIRMED, digest-level, same report and same
   standing as above. The duploid dictionary above cross-checks its

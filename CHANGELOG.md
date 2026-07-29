@@ -23,6 +23,61 @@ it in one step when needed.
 
 ---
 
+## 2026-07-29 — the defect promoted, and the Cat.Logic ledger split starts
+
+**`Cat.Logic.Gist.AssociatesDefect` is live.** Promoted from
+`Test.SpikeAssociatesDefect`: `just mv`, then a rewritten opener
+that leads with the result's significance instead of the bare
+statement. `verified`: `just check
+Cat.Logic.Gist.AssociatesDefect`, zero warnings, no holes, no
+postulates, prose at 1.50/100w.
+
+Every stale reference to the old name swept from `TODO.md`, this
+file, and `outputs/.notes/associates-defect-results.md`. A
+repository-wide search confirms none survive.
+
+**The `Cat.Logic` ledger split starts**, per
+`docs/plans/documentation-restructuring.md`. New:
+`src/Cat/Logic/lemmata.md` (bare statement and citation) and
+`src/Cat/Logic/gloss.md` (extended commentary), same numbering as
+`docs/gloss.md`.
+
+T25 to T30 and T32 to T35 moved out, T36 added for the new result.
+T31 and T21 to T24 stay in `docs/gloss.md`. Their citations resolve
+to archived `Bb` modules with no ledger of their own yet. The plan
+document now records this as the open remainder of step 4.
+`verified`: `just lint citations` finds zero dangling citations in
+the two new files, and `just lint changed` passes clean.
+
+**Process note.** A subagent stopped by Lane mid-run does not
+resume through `SendMessage`. It returns `success: false` and
+requires an explicit relaunch. A subagent that pauses itself
+resumes fine. Recorded in the `restart-means-same-agent` memory
+file.
+Session log: [`2026-07-29-associates-defect-promotion.md`](notes/2026-07-29-associates-defect-promotion.md).
+
+## 2026-07-29 — the associates defect is a framing word, per flanking edge
+
+**The bare independence is now a measured defect.** Over the free
+balanced point (`Cat.Logic.Gist.BalancedWord`), each bracketing of
+`associates` determines the other up to a twist word, one word per
+hand, and the word reads one flanking edge alone. `defect⁺`
+corrects on the leading side by `w⁺ (rise f)`. `defect⁻` corrects
+on the trailing side by `w⁻ (zrunW h)`. Both hold at every triple.
+The corrections are powers of the reverse bicyclic composite, and
+they are units exactly at the thunkable/linear closures. No
+uniform word exists in any of the sixteen placements, and fourteen
+placements fail outright. The winding grade never separates the
+bracketings (`shift-associates`), so the two-sided-cancellation
+collapse erases the defect. `verified`: `just check
+Cat.Logic.Gist.AssociatesDefect`, zero warnings, no holes, no
+postulates. The placement census and the ℤ-collapse sample are
+script-level (`outputs/.notes/associates-defect-*`). The scope is
+the free point itself. The verdict sits in `src/Cat/Logic/TODO.md`
+under the settled profile block. Next step: the generator-bearing
+word model (initial-model program, item 1 sequels), to test the
+per-edge factorization beyond the point.
+
 ## 2026-07-29 — the audit chain refuses, and documents get registers
 
 **Three passes, a defect at each.** A source-fidelity certification on

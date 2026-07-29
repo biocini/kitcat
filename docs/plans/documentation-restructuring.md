@@ -62,8 +62,19 @@ entries belonging to no namespace.
 
 ### Step 4. Split the ledger
 
-**Gated.** `docs/gloss.md`'s duploid entries are under review. Do not
-split a moving target. Clear when the third-pass audit settles.
+**Gated, partially executed.** `docs/gloss.md`'s duploid entries are
+under review. Do not split a moving target until the third-pass audit
+settles. Started 2026-07-29 for the slice with no such entry: T25 to
+T30 and T32 to T36 moved to `src/Cat/Logic/lemmata.md` and
+`src/Cat/Logic/gloss.md`, prompted by a new theorem (T36) that landed
+there. T31 stayed in `docs/gloss.md`: its only citation is already
+archived, so it belongs in a future `src/Bb/WeakDeductiveSystem/
+lemmata.md`, not yet created. T21 to T24 (the faithful-stratum arc)
+are untouched, for the same reason: their citations resolve under
+`Bb.CatsWithExplicitInterchange`, whose own ledger does not exist yet.
+Remaining: T1 to T20 to the `Bb` trees, T31 and T21-24 once their
+trees have ledgers, and the gate below for anything touching the
+duploid entries.
 
 34 entries go to three destinations. Assign each by where its subject
 matter now lives, not by entry number.
