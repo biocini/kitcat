@@ -1,29 +1,27 @@
-Lane Biocini
-July 2026
+Spike: the free framed point at (D′) strength has a computable word
+model. The model is decidable and set-truncated, with no quotient
+anywhere.
 
-The word model of the bare framed point at (D′) strength: one object,
-no generating edges beyond the two twists, both cuts admissible. The
-carrier is the type of eventual-translation descriptors — a finite
-prefix of explicit values together with the value at the first tail
-position, constrained to be weakly monotone and minimal — and these
-descriptors are the normal forms: no quotient anywhere. Composition is
-normalization by evaluation into the monoid of functions `Nat → Nat`,
-where the negative cut acts through the shifted composition `φ`, with
+The carrier is the type of eventual-translation descriptors. Each
+descriptor pairs a finite prefix of explicit values with the value at
+the first tail position. Two constraints make the descriptors
+canonical: weak monotonicity and minimality. Composition is
+normalization by evaluation into the monoid of functions `Nat → Nat`.
+The negative cut acts through the shifted composition `φ`, defined by
 `φ f Z = Z` and `φ f (S n) = f n`.
 
-The module instantiates `virtual-graph` and `is-deductive-system`
-(`Cat.Logic`) on this carrier and then measures the model: the
-`associates` triple `(τ̂ , ε̂ , ε̂)` is refuted, so the
-positive-then-negative mixed word does not reassociate in general;
-the double twist is a one-sided inverse to the negative twist (the
-bicyclic pair); the descriptor shift is a ℤ-grading, additive for
-the positive cut and decremented by `φ`; and the two twists are
-distinct edges.
+`virtual-graph` and `is-deductive-system` (`Cat.Logic`) instantiate on
+this carrier. The `associates` triple `(τ̂ , ε̂ , ε̂)` is refuted, so
+the positive-then-negative mixed word does not reassociate in
+general. The double twist is a one-sided inverse to the negative
+twist, the bicyclic pair. The descriptor shift is a ℤ-grading,
+additive for the positive cut and decremented by `φ`. The two twists
+are distinct edges.
 
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
 
-module Test.SpikeBalancedWord where
+module Cat.Logic.Gist.BalancedWord where
 
 open import Core.Type
 open import Core.Base
@@ -42,75 +40,15 @@ open import Core.HLevel.Base using (Π-is-prop; Π-is-hlevel; Σ-is-hlevel)
 open import Cat.Logic.Type
 open import Cat.Logic.Base
 
-open Nat using (_+_; _-_; _<_; _≤_; s<s; suc; step)
+open Nat
+  using ( _+_; _-_; _<_; _≤_; s<s; suc; step
+        ; _≤ᵇ_; _==ᵇ_; ≤ᵇ-sound; ≤ᵇ-complete; ==ᵇ-sound; ==ᵇ-complete
+        ; le-plus; monus-max )
 open List using (length)
-open Bool using (not; and; _&&_)
-```
-
-## Boolean witnesses
-
-`So` sends a boolean check to the proposition it decides. Core carries
-no `So`/`T`, so it is defined here, with the conjunction kit and the
-two comparison tests the constraints use.
-
-```agda
-So : Bool → Type
-So true  = ⊤
-So false = ⊥
-
-so-prop : ∀ b → is-prop (So b)
-so-prop true  x y = refl
-so-prop false x y = ex-falso x
-
-so-and : ∀ a b → So a → So b → So (a && b)
-so-and true  b sa sb = sb
-so-and false b sa sb = ex-falso sa
-
-so-fst : ∀ a b → So (a && b) → So a
-so-fst true  b s = tt
-so-fst false b s = ex-falso s
-
-so-snd : ∀ a b → So (a && b) → So b
-so-snd true  b s = s
-so-snd false b s = ex-falso s
-
-so-absurd : ∀ b → So b → So (not b) → ⊥
-so-absurd true  s ns = ns
-so-absurd false s ns = s
-
-_≤ᵇ_ : Nat → Nat → Bool
-Z   ≤ᵇ n   = true
-S m ≤ᵇ Z   = false
-S m ≤ᵇ S n = m ≤ᵇ n
-
-_==ᵇ_ : Nat → Nat → Bool
-Z   ==ᵇ Z   = true
-Z   ==ᵇ S n = false
-S m ==ᵇ Z   = false
-S m ==ᵇ S n = m ==ᵇ n
-
-≤ᵇ-sound : ∀ m n → So (m ≤ᵇ n) → m ≤ n
-≤ᵇ-sound Z     n     s = Nat.lt.z<s
-≤ᵇ-sound (S m) Z     s = ex-falso s
-≤ᵇ-sound (S m) (S n) s = s<s (≤ᵇ-sound m n s)
-
-≤ᵇ-complete : ∀ m n → m ≤ n → So (m ≤ᵇ n)
-≤ᵇ-complete Z     n     p = tt
-≤ᵇ-complete (S m) Z     p = Nat.lt.¬n<z (Nat.lt.peel Z p)
-≤ᵇ-complete (S m) (S n) p = ≤ᵇ-complete m n (Nat.lt.peel (S n) p)
-
-==ᵇ-sound : ∀ m n → So (m ==ᵇ n) → m ≡ n
-==ᵇ-sound Z     Z     s = refl
-==ᵇ-sound Z     (S n) s = ex-falso s
-==ᵇ-sound (S m) Z     s = ex-falso s
-==ᵇ-sound (S m) (S n) s = ap S (==ᵇ-sound m n s)
-
-==ᵇ-refl : ∀ m → So (m ==ᵇ m)
-==ᵇ-refl Z     = tt
-==ᵇ-refl (S m) = ==ᵇ-refl m
-
-==ᵇ-complete : ∀ m n → m ≡ n → So (m ==ᵇ n)
-==ᵇ-complete m n p = subst (λ k → So (m ==ᵇ k)) p (==ᵇ-refl m)
+open Bool using (not; and; _&&_; So; so-prop; so-and; so-fst; so-snd; so-absurd)
+open Int
+  using ( add; zsuc; zpred; zero-l; add-succ; add-pred
+        ; _⊖_; ⊖-suc; ⊖-pred; ⊖-hom; cancel-l; ⊖-balance )
 ```
 
 ## The carrier
@@ -173,29 +111,9 @@ nil? : List Nat → Type
 nil? []      = ⊤
 nil? (_ ∷ _) = ⊥
 
-hd : Nat → List Nat → Nat
-hd d []      = d
-hd d (x ∷ _) = x
-
-tl : List Nat → List Nat
-tl []      = []
-tl (_ ∷ p) = p
-
-DecEq-List : DecEq (List Nat)
-DecEq-List []      []      = yes refl
-DecEq-List []      (y ∷ q) = no λ e → subst nil? e tt
-DecEq-List (x ∷ p) []      = no λ e → subst nil? (sym e) tt
-DecEq-List (x ∷ p) (y ∷ q) with Nat.DecEq-Nat x y | DecEq-List p q
-... | yes e | yes f = yes λ i → e i ∷ f i
-... | yes e | no ¬f = no λ h → ¬f (ap tl h)
-... | no ¬e | yes f = no λ h → ¬e (ap (hd Z) h)
-... | no ¬e | no ¬f = no λ h → ¬e (ap (hd Z) h)
-
-List-set : is-set (List Nat)
-List-set = hedberg DecEq-List
-
 DecEq-W : DecEq W
-DecEq-W (p , t , c) (q , u , d) with DecEq-List p q | Nat.DecEq-Nat t u
+DecEq-W (p , t , c) (q , u , d)
+  with List.DecEq-List Nat.DecEq-Nat p q | Nat.DecEq-Nat t u
 ... | yes e | yes f =
   yes λ i → e i , f i
       , is-prop→PathP (λ j → so-prop (can? (e j) (f j))) c d i
@@ -204,26 +122,13 @@ DecEq-W (p , t , c) (q , u , d) with DecEq-List p q | Nat.DecEq-Nat t u
 ... | no ¬e | no ¬f = no λ h → ¬e (ap fst h)
 
 W-set : is-set W
-W-set = Σ-is-hlevel (S (S Z)) List-set λ p →
+W-set = Σ-is-hlevel (S (S Z)) (List.set Nat.DecEq-Nat) λ p →
         Σ-is-hlevel (S (S Z)) Nat.set λ t →
         is-prop→is-set (so-prop (can? p t))
 
 w-inc : (A : W) → So (incr? (A .fst) (A .snd .fst))
 w-inc A = so-fst (incr? (A .fst) (A .snd .fst))
                  (min? (A .fst) (A .snd .fst)) (A .snd .snd)
-```
-
-## Arithmetic support
-
-```agda
-le-plus : ∀ a b → a ≤ (a + b)
-le-plus Z     b = Nat.lt.z<s
-le-plus (S a) b = s<s (le-plus a b)
-
-monus-max : ∀ a b → (a - b) + b ≡ Nat.max a b
-monus-max a     Z     = Nat.add.unitr a ∙ sym Nat.max.unitr
-monus-max Z     (S b) = refl
-monus-max (S a) (S b) = Nat.add.+suc (a - b) b ∙ ap S (monus-max a b)
 ```
 
 ## The denotation is an eventual translation
@@ -695,119 +600,6 @@ open tower BW BW-stable BW-comp⁺ BW-comp⁻
   using (_⨾⁺_; _⨾⁻_; associates; thunkable; linear)
 ```
 
-## Integer kernel
-
-Successor and predecessor on `Int` commute with addition, by
-induction over the `pos-negsuc` helper. `_⊖_` is the difference of
-naturals as an integer, a homomorphism from pairs under pointwise
-addition.
-
-```agda
-iadd = Int.add
-pn   = Int.add.pos-negsuc
-
-zero-l : ∀ x → iadd (pos Z) x ≡ x
-zero-l (pos n)    = refl
-zero-l (negsuc n) = refl
-
-zsuc : Int → Int
-zsuc (pos n)        = pos (S n)
-zsuc (negsuc Z)     = pos Z
-zsuc (negsuc (S n)) = negsuc n
-
-zpred : Int → Int
-zpred (pos Z)     = negsuc Z
-zpred (pos (S n)) = pos n
-zpred (negsuc n)  = negsuc (S n)
-
-pn-succ : ∀ m n → pn (S m) n ≡ zsuc (pn m n)
-pn-succ Z     Z     = refl
-pn-succ (S m) Z     = refl
-pn-succ Z     (S n) = refl
-pn-succ (S m) (S n) = pn-succ m n
-
-pn-zero : ∀ n → zsuc (pn n Z) ≡ pos n
-pn-zero Z     = refl
-pn-zero (S n) = refl
-
-succ-pn : ∀ n m → zsuc (pn n (S m)) ≡ pn n m
-succ-pn Z     m     = refl
-succ-pn (S n) Z     = pn-zero n
-succ-pn (S n) (S m) = succ-pn n m
-
-pred-pos : ∀ n → zpred (pos n) ≡ pn n Z
-pred-pos Z     = refl
-pred-pos (S n) = refl
-
-pred-pn : ∀ m n → zpred (pn (S m) n) ≡ pn m n
-pred-pn Z     Z     = refl
-pred-pn (S m) Z     = refl
-pred-pn Z     (S n) = refl
-pred-pn (S m) (S n) = pred-pn m n
-
-pred-pn-r : ∀ n m → zpred (pn n m) ≡ pn n (S m)
-pred-pn-r Z     m     = refl
-pred-pn-r (S n) Z     = pred-pos n
-pred-pn-r (S n) (S m) = pred-pn-r n m
-
-add-succ : ∀ m n → iadd (zsuc m) n ≡ zsuc (iadd m n)
-add-succ (pos m)        (pos n)    = refl
-add-succ (pos m)        (negsuc n) = pn-succ m n
-add-succ (negsuc Z)     (pos n)    = sym (pn-zero n)
-add-succ (negsuc Z)     (negsuc n) = refl
-add-succ (negsuc (S m)) (pos n)    = sym (succ-pn n m)
-add-succ (negsuc (S m)) (negsuc n) = refl
-
-add-pred : ∀ m n → iadd (zpred m) n ≡ zpred (iadd m n)
-add-pred (pos Z)     (pos n)    = sym (pred-pos n)
-add-pred (pos Z)     (negsuc n) = refl
-add-pred (pos (S m)) (pos n)    = refl
-add-pred (pos (S m)) (negsuc n) = sym (pred-pn m n)
-add-pred (negsuc m)  (pos n)    = sym (pred-pn-r n m)
-add-pred (negsuc m)  (negsuc n) = refl
-
-_⊖_ : Nat → Nat → Int
-m   ⊖ Z   = pos m
-Z   ⊖ S n = negsuc n
-S m ⊖ S n = m ⊖ n
-
-⊖-suc : ∀ a b → (S a ⊖ b) ≡ zsuc (a ⊖ b)
-⊖-suc a     Z         = refl
-⊖-suc Z     (S Z)     = refl
-⊖-suc Z     (S (S b)) = refl
-⊖-suc (S a) (S b)     = ⊖-suc a b
-
-⊖-pred : ∀ a b → (a ⊖ S b) ≡ zpred (a ⊖ b)
-⊖-pred Z     Z     = refl
-⊖-pred Z     (S b) = refl
-⊖-pred (S a) Z     = refl
-⊖-pred (S a) (S b) = ⊖-pred a b
-
-⊖-hom : ∀ a b c d → iadd (a ⊖ b) (c ⊖ d) ≡ ((a + c) ⊖ (b + d))
-⊖-hom Z     Z         c d = zero-l (c ⊖ d)
-⊖-hom (S a) Z         c d =
-  add-succ (pos a) (c ⊖ d) ∙ ap zsuc (⊖-hom a Z c d)
-  ∙ sym (⊖-suc (a + c) d)
-⊖-hom Z     (S Z)     c d =
-  add-pred (pos Z) (c ⊖ d) ∙ ap zpred (zero-l (c ⊖ d)) ∙ sym (⊖-pred c d)
-⊖-hom Z     (S (S b)) c d =
-  add-pred (negsuc b) (c ⊖ d) ∙ ap zpred (⊖-hom Z (S b) c d)
-  ∙ sym (⊖-pred c (S (b + d)))
-⊖-hom (S a) (S b)     c d = ⊖-hom a b c d
-
-cancel-l : ∀ k a b → ((k + a) ⊖ (k + b)) ≡ (a ⊖ b)
-cancel-l Z     a b = refl
-cancel-l (S k) a b = cancel-l k a b
-
-⊖-balance : ∀ a b c d → a + d ≡ (c + b) → (a ⊖ b) ≡ (c ⊖ d)
-⊖-balance a b c d e =
-    sym (cancel-l d a b)
-  ∙ ap (_⊖ (d + b)) (Nat.add.comm d a)
-  ∙ ap (_⊖ (d + b)) e
-  ∙ (λ i → Nat.add.comm c b i ⊖ Nat.add.comm d b i)
-  ∙ cancel-l b c d
-```
-
 ## The winding grade
 
 The shift of a descriptor is its eventual translation defect
@@ -854,7 +646,7 @@ gN-val A B =
      ∙ Nat.add.comm (B .snd .fst - length (A .fst)) (length (A .fst)) )
   ∙ ev-past (A .fst) (A .snd .fst) (B .snd .fst - length (A .fst))
 
-shift-⨾⁺ : ∀ A B → shift (A ⨾⁺ B) ≡ iadd (shift A) (shift B)
+shift-⨾⁺ : ∀ A B → shift (A ⨾⁺ B) ≡ add (shift A) (shift B)
 shift-⨾⁺ A B =
     trim-shift (tabulate (onset A B) (gW A B)) (gW A B (onset A B))
   ∙ ap (gW A B (onset A B) ⊖_) (tab-len (onset A B) (gW A B))
@@ -888,10 +680,10 @@ shift-φ ([] , S Z , c)     = refl
 shift-φ ([] , S (S u) , c) = refl
 shift-φ (x ∷ p , t , c)    = ⊖-pred t (S (length p))
 
-shift-⨾⁻ : ∀ A B → shift (A ⨾⁻ B) ≡ zpred (iadd (shift A) (shift B))
+shift-⨾⁻ : ∀ A B → shift (A ⨾⁻ B) ≡ zpred (add (shift A) (shift B))
 shift-⨾⁻ A B =
     shift-⨾⁺ (φW A) B
-  ∙ ap (λ z → iadd z (shift B)) (shift-φ A)
+  ∙ ap (λ z → add z (shift B)) (shift-φ A)
   ∙ add-pred (shift A) (shift B)
 
 zeros : Nat → List Nat

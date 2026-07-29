@@ -2,7 +2,7 @@
 
 State as of 2026-07-28, end of the word-model session. `src/Cat`
 typechecks, 20 modules, with `Cat.Depreciated` moved to the
-archive. `src/Test` typechecks, 9 modules, under the spike-zero
+archive. `src/Test` typechecks, 8 modules, under the spike-zero
 policy of `src/Test/CLAUDE.md`. `src/Bb` typechecks, 98 modules:
 six frozen trees and the `Bb.index` aggregator, each tree with a
 README and CHANGELOG per `src/Bb/CLAUDE.md`. Lint is clean at
@@ -12,8 +12,9 @@ vendored staging tree.
 
 `Cat.Logic.Gist` is new: the certified spikes on `Cat.Logic`'s
 definitions, vendored out of `Test` with the `Spike` prefixes
-dropped. Seven modules: `BalancedBase`, `BalancedProfile`,
-`FramedInterchange`, `ReadbackTorsor`, `ReflectFiber`, `RxDict`,
+dropped. Eight modules: `BalancedBase`, `BalancedProfile`,
+`BalancedWord`, `FramedInterchange`, `ReadbackTorsor`,
+`ReflectFiber`, `RxDict`,
 `ThunkableSquare`. Five more live only in the archive, the
 retired block below. The one-twist trio is archived at
 `Bb.OneTwist`: it probes the rejected rival carrier, not these
@@ -341,7 +342,7 @@ reaches it, which is what the circle provides.
 
 ## Settled: the (D′) profile, at the free balanced point
 
-Measured 2026-07-28, `Test.SpikeBalancedWord`: the word model of
+Measured 2026-07-28, `Cat.Logic.Gist.BalancedWord`: the word model of
 the bare framed point at (D′) strength. Normal forms are
 eventual-translation descriptors, both cuts admissible functions
 on them, no quotient, equality decidable, the carrier a set. The
@@ -365,7 +366,7 @@ readback, the two-field predicate, stability through
   is one-sided invertibility on the nose:
   `(t⁺ ⨾⁻ t⁺) ⨾⁺ t⁻ ≡ t⁺` by `refl`, and the reverse composite
   is not `t⁺`.
-- verified: `just check Test.SpikeBalancedWord`, 2026-07-28,
+- verified: `just check Cat.Logic.Gist.BalancedWord`, 2026-07-28,
   zero warnings, no holes, no postulates. inferred: that this
   model is the free object — certified empirically through six
   leaves (64 classes, 64 distinct descriptors, reachability
@@ -664,7 +665,7 @@ Two structural constraints pin the construction.
 
 The work items, in order.
 
-1. EXECUTED 2026-07-28 as `Test.SpikeBalancedWord`, results in
+1. EXECUTED 2026-07-28 as `Cat.Logic.Gist.BalancedWord`, results in
    the settled profile block. The spec that ran, kept for the
    generator-bearing sequels: the word model of the framed
    point, as a spike. Generating
