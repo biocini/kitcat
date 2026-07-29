@@ -14,6 +14,13 @@ This is a lab notebook, not release notes: entries are dated,
 concise, and honest about verification status (`verified` /
 `unverified` / `blocked` / `inferred`).
 
+Cite a commit hash only when a session made more than one commit and
+the hash disambiguates which one did what. A single-commit session
+never cites its own hash: the entry is written before that commit
+exists, so citing it would force a second, hash-only commit just to
+close the loop. `git log --grep=<slug>` or the entry's date recovers
+it in one step when needed.
+
 ---
 
 ## 2026-07-28 — duploid source audit: both entries cleared to load-bearing
@@ -46,7 +53,7 @@ delivery.
 gained its first Content digests section); `just resources-verify`
 now reports both "audited — load-bearing capable" (was "NOT
 audited"). `TODO.md`'s "the two duploid source audits" line checked
-off. Commit: `2611d7e`.
+off.
 
 Session log:
 [`notes/2026-07-28-duploids-statement-audit.md`](notes/2026-07-28-duploids-statement-audit.md).
