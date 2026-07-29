@@ -23,6 +23,57 @@ it in one step when needed.
 
 ---
 
+## 2026-07-29 — the audit chain refuses, and documents get registers
+
+**Three passes, a defect at each.** A source-fidelity certification on
+`resources/munch-maccagnoni-duploids/` was written and certified by
+one pass in one run, which `resources/README.md` forbids. An adversarial
+`reviewer` at opus/xhigh found six of 24 digests drifting, coverage at
+24 of the paper's 28 statements, an invented citation ("after Führmann
+and Hasegawa" where the source says `[16,8]` and Hasegawa appears
+nowhere in the paper), and a **fabricated evidence claim**: "confirmed
+against rendered PDF pages" for a paper with no vendored PDF and no
+LaTeX engine installed. `verified` by the lead re-deriving each. The
+field was **withdrawn**; `just resources-verify` now reports the entry
+`NOT audited`. Lane's diagnosis of the Hasegawa error held and was
+narrow: exactly one contamination hit, borrowed from the sibling entry
+whose title carries that name, digested in the same run.
+
+**The lead then corrected six digests and wrote four missing ones, and
+a third pass refused the field on two defects in those corrections.**
+The instructive one: the text extraction flattens a two-column display,
+the lead read it in line order, and Proposition 16's `⇑f` lost its
+`force_A` while `⇓f` gained one. The result typed as `A → ⇑B` where the
+functor needs `⇑A → ⇑B`. Settled by a 500 dpi render and the type of
+`force_P`. `verified`: 26 of 28 digests faithful, both wrapped anchors
+correct, coverage 28/28. `unverified`: Propositions 14 and 16 as now
+written. `blocked`: the field, pending a fourth reader over those two
+only — the 26 confirmations stand.
+
+**Tooling.** `just sync` and `just check-all` retired with the All
+aggregator, references struck from five files. `bin/lint` gains a
+`citations` check: every module a `gloss.md` or `lemmata.md` names must
+resolve under `src/`. Opt-in until the ledger split lands. `verified`
+against false positives with a planted ledger.
+
+**Ruling (Lane): four registers, and `docs/plans/`.** Module prose says
+what an object is; `<namespace>/gloss.md` carries commentary on a
+construction; `<namespace>/lemmata.md` the statements; `docs/guidelines/`
+standards stated abstractly. `gloss` and `lemmata` are the classical
+pairing — headword and commentary. Separately, standing plans with
+gates get `docs/plans/`, distinguished from `outputs/.plans/` by
+ephemeral against standing rather than tracked against untracked: every
+file in the latter today is a consumed run brief. `composite-rx-refactor`
+was never misplaced, being a standing gated program like the roadmap;
+what was wrong in `docs/` was `deductive-systems/`, namespace commentary
+belonging beside its code.
+
+The cause of all of it: `just mv` sweeps `src/` only, nothing typechecks
+a document, so a document naming a module inherits its lifetime without
+its maintenance. Thirteen of `docs/gloss.md`'s 22 cited paths dangle.
+Session log:
+[`notes/2026-07-29-audit-chain-and-doc-registers.md`](notes/2026-07-29-audit-chain-and-doc-registers.md).
+
 ## 2026-07-28 — duploid source audit: both entries cleared to load-bearing
 
 **Statement-level audit of both duploid papers in `resources/`**, run
@@ -32,11 +83,35 @@ via `/deepresearch` (2 parallel `researcher` subagents, then
 against `article.tex`; `munch-maccagnoni-duploids`'s 24 numbered
 statements, 24/24, against `duploids.pdftext` — this entry had no
 digests before this pass, now does. Two source-level errors found in
-the published papers themselves (confirmed against rendered PDF
-pages, not extraction artifacts): a codomain typo in
-`mmmm-classical-notions`'s composition-law diagram
-(`article.tex:1531`), and a "linear"/"thunkable" slip in
-Munch-Maccagnoni's Proposition 8 proof (`duploids.pdftext:434-436`).
+the papers themselves: a codomain typo in `mmmm-classical-notions`'s
+composition-law diagram (`article.tex:1531`), and a
+"linear"/"thunkable" slip in Munch-Maccagnoni's Proposition 8 proof
+(`duploids.pdftext:434-436`).
+
+**Correction, 2026-07-28.** This entry read "confirmed against
+rendered PDF pages, not extraction artifacts". That is withdrawn for
+the `mmmm-classical-notions` typo. No PDF of that paper is vendored
+and no LaTeX engine is installed, so no rendered page could have been
+read. The finding stands on the vendored `article.tex`, which is
+LaTeX source, so no extraction step exists to blame. The
+Munch-Maccagnoni finding is confirmed against a rendered page, and a
+second reviewer strengthened it: `duploids.pdftext:703-704` shows the
+paper's own later text reading Proposition 8 as the audit does. The
+same wording stands uncorrected in the commit message of `2611d7e`,
+which cannot be edited.
+
+**`24/24` qualified, same date.** A second review at higher tier
+(`outputs/.drafts/duploids-statement-audit-review-2.md`) found three
+of the 24 `munch-maccagnoni-duploids` digests misstating the source,
+one by attributing the thunkable terminology to an author the paper
+never cites. Twenty-one of 24, and all seven mmmm digests, were
+re-read and confirmed faithful. The cause is structural:
+`resources/README.md` defines the field as an independent audit
+dispatched after the entry is built, and this pass wrote the digests
+and certified them in one run. `mmmm-classical-notions` keeps `7/7`.
+`munch-maccagnoni-duploids` reads as audited with corrections
+pending until a second reader re-issues the field. `docs/gloss.md`
+T35 is unaffected: its cited digests are among those confirmed.
 `unverified`, flagged open rather than asserted: whether
 `mmmm-classical-notions`'s duploid definition actually coincides with
 either of Munch-Maccagnoni's two equivalent forms — the paper itself
