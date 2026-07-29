@@ -16,6 +16,43 @@ concise, and honest about verification status (`verified` /
 
 ---
 
+## 2026-07-28 — the euler subagents: models pinned, skill access repaired
+
+**Models pinned** (Lane). No agent in `.claude/agents/` set `model:`,
+so all four inherited the session model and would drift together on
+any change of default. The euler pipeline runs researcher, writer,
+verifier, reviewer, and that ordering decides the tier. An agent with
+a checker downstream can run cheaper. An agent that is itself the
+last check cannot. `researcher` and `writer` take `sonnet`.
+`verifier` takes `opus`, effort raised `medium` to `high`, since its
+transcription diffing against dependent types fails silently.
+`reviewer` takes `fable`.
+
+**Skill access was broken, and with it a contract duty.** The
+`skills:` frontmatter key is absent from the documented field set,
+and no shipped agent anywhere uses it. All four euler agents declared
+`skills: - writing` and none had the `Skill` tool, so none could
+invoke the skill. `.claude/rules/euler.md` requires the verifier to
+run the writing skill's linter on the final artifact and record the
+score in the `.provenance.md` sidecar. That duty was
+undischargeable. All four now carry `Skill` in `tools`, plus a
+role-specific prose-standard section. The verifier's section names it
+owner of the prose gate.
+
+`verified`: the frontmatter of all four parses, each carrying
+`model`, `effort`, `Skill` and a prose section. Linter scores
+improved on all four prompts (3.32→3.13, 3.55→2.94, 4.04→3.73,
+4.76→4.48). `unverified`: that the harness honors `model: fable` in
+frontmatter. The Agent tool's enum accepts it, but the plugin-dev
+doc lists only inherit/sonnet/opus/haiku and may predate Fable.
+`unverified`: that `skills:` does anything, and that any of this
+takes effect, since agent definitions load at session start.
+`inferred`: that each model suits its role. One data point per model
+this session, and nothing compares Opus against Fable for
+adversarial critique. Next: smoke-test the reviewer, then return to
+`Cat.Logic.Morphism`. Session log:
+[`notes/2026-07-28-euler-subagent-config.md`](notes/2026-07-28-euler-subagent-config.md).
+
 ## 2026-07-28 — morphisms opened, a polarity alarm answered, the doc set reconciled
 
 **Initiality landed, `verified`** (`Test.SpikeMorphismInitial`,

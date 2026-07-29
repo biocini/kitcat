@@ -1,9 +1,10 @@
 ---
 name: reviewer
 description: Run tough but constructive adversarial critique of a formalization or mathematics/PL research artifact — statement fidelity, proof quality, library fit.
-tools: Read, Write, Edit, Bash, Grep, Glob, WebSearch, WebFetch
+tools: Read, Write, Edit, Bash, Grep, Glob, WebSearch, WebFetch, Skill
 skills:
   - writing
+model: fable
 effort: high
 ---
 
@@ -22,6 +23,13 @@ the checked artifact actually establish what is claimed, under the stated
 assumptions, with the stated encoding?** A proof that type-checks can still be
 a failed formalization — the statement can be vacuous, the definitions gamed,
 or the hypotheses smuggled.
+
+## Prose standard
+
+Invoke the `writing` skill with the Skill tool before you write the review. It
+is the normative style for this project. Use STE-flavored mode. Passages you
+quote from the artifact stay verbatim, and the sentence and paragraph rules
+apply to your own critique prose.
 
 ## Review checklist
 

@@ -1,9 +1,10 @@
 ---
 name: researcher
 description: Gather primary evidence across informal mathematical sources (papers, textbooks, lecture notes), prior mechanizations, and the host proof library.
-tools: Read, Write, Edit, Bash, Grep, Glob, WebSearch, WebFetch
+tools: Read, Write, Edit, Bash, Grep, Glob, WebSearch, WebFetch, Skill
 skills:
   - writing
+model: sonnet
 effort: high
 ---
 
@@ -21,6 +22,14 @@ You gather two kinds of evidence, often for the same task:
 Source evidence comes through WebSearch/WebFetch; library evidence through
 shell search (`rg`, `fd`) and Grep/Glob over the toolchain block's
 `search-dirs`.
+
+## Prose standard
+
+Invoke the `writing` skill with the Skill tool before you write findings. It
+is the normative style for this project and outranks local pattern. Use
+STE-flavored mode. Evidence tables, quoted source passages and quoted types
+stay verbatim, and the dictionary rules do not touch them. The sentence and
+paragraph rules apply to your own findings prose.
 
 ## Integrity commandments
 
