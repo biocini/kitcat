@@ -53,6 +53,25 @@ distribution, the Bb archive process, and two tooling rulings.
    raised from 72; `bin/lint`, `docs/guidelines/api-surface.md`);
    `just check-tree` sweeps every `.lagda*` form, which surfaced
    the broken probes the old `.lagda.md`-only glob hid.
+7. **The general lemmas vendored home, the spike promoted.** The
+   `So` kit to `Core.Data.Bool`, the Nat comparators bridged to
+   the builtin `EqBool`/`LtBool` with their soundness lemmas,
+   `DecEq-List` generalized over any decidable carrier in
+   `Core.Data.List.Properties`, and the Int kernel with `_⊖_` to
+   `Core.Data.Int`. The rewired spike then moved to
+   `Cat.Logic.Gist.BalancedWord`, prose in the Gist register, the
+   ledger re-pointed.
+8. **The canon and the refresh.** Root `CLAUDE.md` rewritten to
+   the `writing` skill (6.01 → 1.45 violations per 100 words)
+   with a new Delegation section (subagent tiers, brief
+   discipline, sequencing) and the prose-law priority: the skill
+   outranks local pattern, and deviation is debt. The root
+   `TODO.md` opened as the repo-level ledger, eleven items. The
+   roadmap re-founded: the deductive-system line folds under
+   project 1 as its foundation track, the Core reformation
+   (composite-rx) is project 2 gated behind the
+   `hcategory`-without-interchange design, project 3 re-gates
+   onto the new spine, and housekeeping moved to `TODO.md`.
 
 ## Strongest findings and decisions
 
@@ -101,20 +120,25 @@ distribution, the Bb archive process, and two tooling rulings.
 
 ## Verification state
 
-- verified: `Test.SpikeBalancedWord` by recorded
-  `just check Test.SpikeBalancedWord` (2026-07-28, exit 0, zero
-  warnings; the lead re-ran it independently of the builder).
-  `src/Bb` 98 of 98 by `just check-tree src/Bb`. `src/Test` 9 of
-  9. `Bb.index` green. `just lint changed` clean at the
-  100-column width. Prose gates ≤ 2.0 on every touched `docs/`
-  file. Obligation inventory for everything added today: zero
-  holes, zero postulates, zero unsafe flags.
-- verified, pre-existing failure: the whole-tree
-  `just check-tree` stands at 319 of 323; the four failures are
+- verified: the word model by recorded `just check` (2026-07-28,
+  exit 0, zero warnings; the lead re-ran it independently of the
+  builder), landed as `Cat.Logic.Gist.BalancedWord` with
+  `src/Cat` 21 of 21 after the promotion. `src/Bb` 98 of 98 by
+  `just check-tree src/Bb`. `src/Test` 8 of 8 after the
+  distribution. `src/Core` 137 of 139 after the vendoring, the
+  two failures pre-existing. `Bb.index` green. `just lint
+  changed` clean at the 100-column width. Prose gates ≤ 2.0 on
+  every touched `docs/` file. Obligation inventory for everything
+  added today: zero holes, zero postulates, zero unsafe flags.
+- verified, pre-existing failures: the whole-tree
+  `just check-tree` stands at 317 of 323. The six failures, all
+  untouched today and all itemized in the root `TODO.md`:
   `Data.Thin.{Category,Cover,Properties,Separated}` with open
-  interaction metas, untouched today, the known deferred chore —
-  visible now because the whole-tree sweep runs where recent
-  sessions checked per directory.
+  interaction metas, `Core.Coherence.Paths` with open interaction
+  metas, and `Core.Path.Coherence` with a `ModuleDoesntExport`
+  warning fatal under `-Werror`. Visible now because the
+  whole-tree sweep runs where recent sessions checked per
+  directory.
 - inferred: the descriptor model is the free balanced point —
   empirically certified through six leaves (64/64, reachability
   complete); formal initiality is line 9 items 2 and 3. The
@@ -124,23 +148,27 @@ distribution, the Bb archive process, and two tooling rulings.
   theorems (two-line unit-law computations, not yet Base
   lemmas); the portability of the february26 `Prod` embedding
   proof into the archive.
-- Commits: none. The entire session sits uncommitted on
-  `cat-logic-polarity`.
+- Commits, on `cat-logic-polarity`: the archive and word-model
+  series `4dd6bd0` through `cfc2147` (ten commits: the strata,
+  the process, the distribution, the tooling, the mathematics,
+  the records), then the close-out series `d2c6499` (Core
+  vendoring), `7436984` (the promotion), `e57dce1` (the canon),
+  `47a7033` (the roadmap), and the notes commit that carries
+  this correction.
 
 ## Open questions and risks
 
 1. Line 9 items 2 and 3: morphisms of systems, then the free
    system and initiality — the coherence theorem as an NbE
    result, now with its concrete target.
-2. `Test.SpikeBalancedWord` is a spike-zero candidate for
-   promotion to `Cat.Logic.Gist` once its results enter the
-   ledger.
-3. `docs/gloss.md` still lacks entries for the record-cut
+2. `docs/gloss.md` still lacks entries for the record-cut
    theorems and for today's profile verdict. Ledger chore.
-4. The `Data.Thin` four remain red with open metas; deferred.
-5. The february26 `Prod` proof reclamation, and the Bb candidacy
+3. Six modules stay red with pre-existing debt, itemized in the
+   root `TODO.md`: the `Data.Thin` four, `Core.Coherence.Paths`,
+   `Core.Path.Coherence`.
+4. The february26 `Prod` proof reclamation, and the Bb candidacy
    of `reference/magmoid-formulation/Data`, await rulings.
-6. The two duploid source audits remain overdue.
+5. The two duploid source audits remain overdue.
 
 ## Next steps
 
@@ -151,7 +179,9 @@ all three.
 
 ## Artifacts
 
-- Library: `src/Test/SpikeBalancedWord.lagda.md`;
+- Library: `src/Cat/Logic/Gist/BalancedWord.lagda.md` (the word
+  model, promoted); the vendored Core lemmas in
+  `Core.Data.{Bool,Nat,List,Int}`;
   `src/Bb/{NaiveVirtualGraph,UnitalMagmoids}/` (new trees);
   `src/Bb/CatsWithExplicitInterchange/` (moved tree + `Gist`);
   `src/Bb/CLAUDE.md`, `src/Bb/index.lagda.md`, per-tree READMEs

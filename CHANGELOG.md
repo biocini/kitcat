@@ -44,12 +44,26 @@ its `Gist` (gloss T21 now cites checked code); the Magmoid suite
 CHANGELOGs, `Bb.index` — `src/Bb` 98 of 98, `src/Test` 9 of 9,
 four removals with grounds, `CatData` resolved as a planning
 name never adopted. Rulings executed: width 100 everywhere,
-`check-tree` sweeps `.lagda*` (which surfaced the four
-`Data.Thin` holes, pre-existing, still deferred). Whole tree:
-319 of 323. Lint clean. No commits.
+`check-tree` sweeps `.lagda*`. The whole-tree sweep surfaced six
+pre-existing reds (the `Data.Thin` four, `Core.Coherence.Paths`,
+`Core.Path.Coherence`), itemized in the root `TODO.md`. Whole
+tree: 317 of 323. Lint clean.
+
+**Close-out, `verified`**: the spike's general lemmas vendored
+home (`So` to Bool, the comparators bridged to builtins in Nat,
+`DecEq-List` generalized, the Int kernel with `_⊖_`), the spike
+promoted to `Cat.Logic.Gist.BalancedWord` (`src/Cat` 21 of 21,
+`src/Core` 137 of 139, the two failures pre-existing). Root
+`CLAUDE.md` rewritten to the `writing` skill (6.01 → 1.45 per
+100 words) with the Delegation section and the prose-law
+priority; the root `TODO.md` opened; the roadmap re-founded (the
+foundation track under project 1, the Core reformation gated as
+project 2). Commits: `4dd6bd0`..`cfc2147` (the ten), then
+`d2c6499`, `7436984`, `e57dce1`, `47a7033`, and the notes
+commit.
 
 Next: line 9 item 2 (morphisms), the gloss entries for the cut
-and the profile, the spike's promotion. Log:
+and the profile. Log:
 [notes/2026-07-28-balanced-word-model.md](notes/2026-07-28-balanced-word-model.md).
 
 ## 2026-07-28 — Cat.Logic: line 2 settled, the Gist namespace, the balance dossier, custody
