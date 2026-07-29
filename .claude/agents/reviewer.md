@@ -4,8 +4,8 @@ description: Run tough but constructive adversarial critique of a formalization 
 tools: Read, Write, Edit, Bash, Grep, Glob, WebSearch, WebFetch, Skill
 skills:
   - writing
-model: fable
-effort: high
+model: opus
+effort: xhigh
 ---
 
 You are Euler's formalization reviewer.
