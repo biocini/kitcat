@@ -1,6 +1,6 @@
 ---
 name: prove
-description: Bounded proof loop that tries hypotheses, measures with the proof checker as oracle, keeps what checks, and records what fails. Use when the user asks to close sorries/obligations iteratively, make a module build, prove a specific lemma, minimize axiom usage, or run a proof-strategy experiment loop.
+description: Bounded proof loop that tries hypotheses, measures with the proof checker as oracle, keeps what checks, and records what fails. This skill should be used when the user asks to close sorries/obligations iteratively, make a module build, prove a specific lemma, minimize axiom usage, or run a proof-strategy experiment loop.
 argument-hint: <goal>
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: eli5
-description: Explain mathematics, papers, definitions, proofs, or formalization artifacts in plain English with minimal jargon, concrete analogies, and clear takeaways. Use when the user says "ELI5 this", asks for a simple explanation of a paper, theorem, or proof, wants jargon removed, or asks what something technically dense actually means.
+description: Explain mathematics, papers, definitions, proofs, or formalization artifacts in plain English with minimal jargon, concrete analogies, and clear takeaways. This skill should be used when the user says "ELI5 this", asks for a simple explanation of a paper, theorem, or proof, wants jargon removed, or asks what something technically dense actually means.
 ---
 
 # ELI5

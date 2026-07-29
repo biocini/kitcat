@@ -1,6 +1,6 @@
 ---
 name: formalize
-description: Formalize an informal theorem, paper, or chapter into the proof library with kernel-checked delivery. Use when the user asks to formalize a result, mechanize a proof, port a paper's mathematics into the library, or produce a verified development with provenance.
+description: Formalize an informal theorem, paper, or chapter into the proof library with kernel-checked delivery. This skill should be used when the user asks to formalize a result, mechanize a proof, port a paper's mathematics into the library, or produce a verified development with provenance.
 argument-hint: <target>
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: audit
-description: Audit a formalization against its informal source. Use when the user asks to check a mechanization's faithfulness, find statement-level mismatches or definition gaming, inventory sorries/axioms/unsafe flags, or verify that a library development reproduces what a paper claims.
+description: Audit a formalization against its informal source. This skill should be used when the user asks to check a mechanization's faithfulness, find statement-level mismatches or definition gaming, inventory sorries/axioms/unsafe flags, or verify that a library development reproduces what a paper claims.
 argument-hint: <formalization-and-source>
 ---
 

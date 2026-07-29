@@ -1,6 +1,6 @@
 ---
 name: recipe
-description: Find ranked, implementable proof strategies for a theorem or formalization goal from literature, prior mechanizations, and the local library. Use when the user wants to know how to prove something, which induction principle or encoding to use, what prerequisites a proof needs, or whether a formalization is feasible in this library.
+description: Find ranked, implementable proof strategies for a theorem or formalization goal from literature, prior mechanizations, and the local library. This skill should be used when the user wants to know how to prove something, which induction principle or encoding to use, what prerequisites a proof needs, or whether a formalization is feasible in this library.
 argument-hint: <theorem-or-goal>
 ---
 

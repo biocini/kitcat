@@ -1,6 +1,6 @@
 ---
 name: watch
-description: Create a research watch baseline for a mathematical topic or mechanization area, and optionally schedule follow-up checks when scheduling tools are visible. Use when the user asks to monitor a field, track new papers or mechanizations, watch an upstream library, or set up alerts.
+description: Create a research watch baseline for a mathematical topic or mechanization area, and optionally schedule follow-up checks when scheduling tools are visible. This skill should be used when the user asks to monitor a field, track new papers or mechanizations, watch an upstream library, or set up alerts.
 argument-hint: <topic>
 ---
 

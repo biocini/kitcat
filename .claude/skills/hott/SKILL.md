@@ -1,16 +1,18 @@
 ---
 name: hott
-description: "Use when users want to understand, learn, or reason about dependent type theory, homotopy type theory (HoTT), or univalent foundations — especially \"why\", \"how\", or \"what's the deal with\" questions. Trigger for: foundational questions about equality (judgmental vs propositional), identity types, type-theoretic proofs and reasoning; HoTT exercises (especially from Rijke's book); proving equivalences or characterizing identity types; path induction, transport, contractibility, truncation levels (propositions/sets), function extensionality, univalence, higher inductive types; comparative questions (\"coming from set theory, why does type theory...\"). Use even for generic \"type theory\" questions when they involve identity types, equality, or understanding foundational concepts."
+description: "Domain knowledge for dependent type theory, homotopy type theory (HoTT), and univalent foundations: a reasoning toolkit plus topic-indexed digests of Egbert Rijke's Introduction to Homotopy Type Theory, covering identity types, path induction, transport and paths-over, the fundamental theorem of identity types, equivalences, contractibility and fibers, truncation levels (propositions, sets, k-types), function extensionality, univalence, propositional truncation and the logic of mere existence, higher inductive types, the circle and loop spaces, W-types, set quotients, universes, finite types, and groups. This skill should be loaded whenever the work turns on these concepts and the exact statement or the correct technique matters, and not only when the user asks about them: before characterizing an identity type, choosing an induction principle, claiming a type is a proposition or a set, asserting what is or is not provable (UIP, axiom K), invoking function extensionality or univalence, distinguishing judgmental from propositional equality, or reasoning about a higher inductive type. It applies to informal prose mathematics and to the univalent-foundations content behind a proof-assistant development alike, since the concepts are the same either way. It should also be used when the user asks directly about any of these topics, including conceptual and comparative questions about foundations."
 ---
 
 # Homotopy Type Theory
 
-You are working with a user on homotopy type theory (HoTT) in the style of
-Egbert Rijke's *Introduction to Homotopy Type Theory* (arXiv:2212.11082) —
-informal but fully rigorous univalent mathematics, written as prose with
-precise types, not proof-assistant code. This file grounds you in the
-discipline of HoTT reasoning; the `${CLAUDE_SKILL_DIR}/references/` directory holds digested
-chapter notes that you read selectively, per the topic map below.
+This file states the discipline of homotopy type theory (HoTT) in the
+style of Egbert Rijke's *Introduction to Homotopy Type Theory*
+(arXiv:2212.11082), rigorous univalent mathematics written with precise
+types. The material applies to informal prose mathematics and to
+proof-assistant developments alike. The reasoning toolkit below names
+the moves and says when to reach for each. The digested chapter notes in
+`${CLAUDE_SKILL_DIR}/references/` carry the detail. Read them
+selectively, per the topic map.
 
 ## The homotopy interpretation
 
@@ -50,11 +52,11 @@ Consequences to internalize:
   induction (on ℕ, etc.) or by path induction. Example: `add 0 n = n`
   needs induction on `n`; it is not judgmental.
 
-When a user says "equal", figure out which one is meant, and be explicit
-in your answer about which one you are establishing. A classic tell:
-associativity of `add` is propositional (proved by induction), while the
-defining equations of `add` are judgmental. Sloppiness here is the most
-common beginner error — flag it when you see it.
+When a source says "equal", determine which one is meant, and state
+which one is being established. A classic tell: associativity of `add`
+is propositional (proved by induction), while the defining equations of
+`add` are judgmental. Sloppiness here is the most common error. Flag it
+wherever it appears.
 
 ## Notation
 
@@ -140,7 +142,7 @@ the base case: `A` is contractible iff `A → 𝟏`-style terminality holds,
 and singletons `Σ (x:A). a = x` are the canonical contractible types.
 → `${CLAUDE_SKILL_DIR}/references/equivalences.md`
 
-### 6. Truncation-level discipline — know where your goal lives
+### 6. Truncation-level discipline — know where the goal lives
 
 Before proving, ask: is the goal a proposition, a set, or a general type?
 
@@ -163,8 +165,8 @@ An axiom (not provable in bare Martin-Löf type theory). In informal
 proofs this licenses: "to show `f = g`, it suffices to show `f x = g x`
 for arbitrary `x`." Equivalent to weak function extensionality (a
 product of contractible types is contractible); implies k-types are
-closed under `Π`. Flag its use explicitly — users tracking axiom
-dependencies care.
+closed under `Π`. Flag every use explicitly, so that the axiom
+dependencies of a development stay visible.
 → `${CLAUDE_SKILL_DIR}/references/funext.md`
 
 ### 8. Univalence — `(A = B) ≃ (A ≃ B)`
@@ -207,14 +209,14 @@ characterize the loop space of a HIT by a cleverly chosen family —
 generalizes.
 → `${CLAUDE_SKILL_DIR}/references/circle.md`
 
-## Topic map — load only what the question needs
+## Topic map — load only what the task needs
 
-Read the reference file(s) matching the user's topic before answering in
-depth. For a conceptual question, one file usually suffices; for a proof,
-read the file for the *technique* plus the file for the *domain*. Files
-are listed roughly in dependency order.
+Read the reference file(s) matching the topic before working in depth.
+For a conceptual point, one file usually suffices. For a proof, read the
+file for the *technique* plus the file for the *domain*. Files are
+listed roughly in dependency order.
 
-| User asks about… | Read |
+| Topic | Read |
 |---|---|
 | Judgments, contexts, structural rules, substitution, λ-calculus, Π-types | `${CLAUDE_SKILL_DIR}/references/dependent-type-theory.md` |
 | ℕ and induction, unit/empty/bool, coproducts, Σ, ×, pattern of inductive definitions | `${CLAUDE_SKILL_DIR}/references/inductive-types.md` |
@@ -233,31 +235,28 @@ are listed roughly in dependency order.
 | Circle, higher inductive types, universal cover, loop spaces, π₁(S¹) = ℤ, synthetic homotopy | `${CLAUDE_SKILL_DIR}/references/circle.md` |
 | Curry–Howard in practice, decidability, modular arithmetic, gcd, primes, strong induction | `${CLAUDE_SKILL_DIR}/references/number-theory.md` |
 
-If the user's question spans several rows, read the relevant files only —
-do not bulk-load the whole directory. If nothing matches well, answer
-from the principles in this file.
+When a task spans several rows, read those files only. Do not bulk-load
+the whole directory. When nothing matches well, work from the principles
+in this file.
 
-## How to write answers
+## Applying the theory
 
-- Match the user's register, but keep the Rijke discipline: state claims
-  as types ("We construct an element of type …"), name what you
-  construct, and give its type before its definition.
-- Prose proofs, not code — unless the user asks for a proof assistant
-  encoding, in which case say that this skill's grounding is the informal
-  theory and adapt carefully.
+- Keep the Rijke discipline: state claims as types ("We construct an
+  element of type …"), name what is constructed, and give its type
+  before its definition.
 - Use `≡`/`:=` for judgmental matters and `=` for the identity type,
   consistently. Use equational chains with `∙`, `⁻¹`, `ap`, `tr` for path
   algebra, justifying each step.
-- Explicitly flag every use of an axiom: funext, univalence, propositional
-  truncation, replacement. A proof that avoids them is strictly more
-  informative; say when one does.
-- For proof requests, first locate the goal on the truncation hierarchy
-  and pick the technique accordingly (toolkit items 4–6 handle most
-  "identity type" and "equivalence" goals).
-- Warn about the classics: assuming axiom K/UIP, confusing `Σ` with `∃`,
+- Flag every use of an axiom: funext, univalence, propositional
+  truncation, replacement. A derivation that avoids them is strictly
+  more informative, so say when one does.
+- Locate the goal on the truncation hierarchy first, then pick the
+  technique. Toolkit items 4–6 handle most "identity type" and
+  "equivalence" goals.
+- Watch for the classics: assuming axiom K/UIP, confusing `Σ` with `∃`,
   proving `is-equiv` by the wrong structure, or claiming judgmental
   equality where only propositional equality holds.
 
-The reference digests were prepared from Egbert Rijke, *Introduction to
-Homotopy Type Theory*, arXiv:2212.11082 (2022; revised version published
-by Cambridge University Press, 2025).
+The reference digests come from Egbert Rijke, *Introduction to Homotopy
+Type Theory*, arXiv:2212.11082 (2022). Cambridge University Press
+published the revised version in 2025.

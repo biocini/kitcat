@@ -1,6 +1,6 @@
 ---
 name: source-comparison
-description: Compare multiple mathematical sources and produce a grounded comparison matrix. Use when the user asks to compare papers, definitions, encodings, mechanizations, proof assistants, or claims across multiple sources — including whether "the same theorem" is actually the same across texts.
+description: Compare multiple mathematical sources and produce a grounded comparison matrix. This skill should be used when the user asks to compare papers, definitions, encodings, mechanizations, proof assistants, or claims across multiple sources — including whether "the same theorem" is actually the same across texts.
 argument-hint: <topic>
 ---
 

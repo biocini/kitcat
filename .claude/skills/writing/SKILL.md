@@ -1,6 +1,6 @@
 ---
 name: writing
-description: Write, edit, or rewrite technical prose (docs, READMEs, module prose, PR descriptions, error messages, release notes, comments, never code) in ASD-STE100 Simplified Technical English. Load BEFORE any creation or edit of such prose, not only on request - and when asked to remove "AI slop", make docs clear or plain, or enforce a controlled writing style. Two modes, strict (procedures/safety) and STE-flavored (general prose). Bundles prose-lint.py, the repository's only prose linter and gate.
+description: Write, edit, or rewrite technical prose (docs, READMEs, module prose, PR descriptions, error messages, release notes, comments, never code) in ASD-STE100 Simplified Technical English. This skill should be loaded BEFORE any creation or edit of such prose, not only on request, and it should be used when the user asks to remove "AI slop", make docs clear or plain, or enforce a controlled writing style. Two modes, strict (procedures/safety) and STE-flavored (general prose). Bundles prose-lint.py, the repository's only prose linter and gate.
 ---
 
 # writing

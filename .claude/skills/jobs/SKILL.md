@@ -1,6 +1,6 @@
 ---
 name: jobs
-description: Inspect visible research and formalization run state, scheduled follow-ups when available, and durable artifacts on disk. Use when the user asks what's running, wants proof-loop status, or wants a rundown of active research state.
+description: Inspect visible research and formalization run state, scheduled follow-ups when available, and durable artifacts on disk. This skill should be used when the user asks what's running, wants proof-loop status, or wants a rundown of active research state.
 ---
 
 # Jobs
