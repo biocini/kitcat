@@ -113,9 +113,12 @@ open _⇒_
 ```
 
 An object is initial when the type of maps out of it is contractible
-at every target. Contractibility is a proposition, so initiality is
-one too: a system is initial or it is not, and the demand carries no
-coherence data of its own.
+at every target *of its own size*. The morphism record is polymorphic
+in all four levels, so the restriction below is the predicate's, not
+the record's, and a level-polymorphic form would land in `Typeω`.
+Contractibility is a proposition, so initiality is one too: a system
+is initial or it is not, and the demand carries no coherence data of
+its own.
 
 ```agda
 is-initial : ∀ {o h} → virtual-graph o h → Type₊ (o ⊔ h)
@@ -137,7 +140,9 @@ module Initial {o h} {G : virtual-graph o h} (init : is-initial G) where
 
 The empty graph is initial: every component of a map out of it is a
 function from the empty type, and so is every component of a path
-between two such maps.
+between two such maps. The argument is level-generic, so the
+level-zero statement below understates it by exactly the restriction
+in `is-initial`.
 
 ```agda
 empty : virtual-graph 0ℓ 0ℓ
@@ -272,8 +277,15 @@ only as a fact about a particular source, which is what initiality
 asserts.
 
 Open: whether a mapping type can be non-trivially higher, with two
-maps equal in more than one way. That needs a target hom with a
-non-trivial loop, and no such target is built here. Open: whether
-the free system attains contractibility against every wild target.
-Nothing here decides the free case. The countermodel only shows
-that the axioms alone never will.
+maps equal in more than one way. A loop in the target's *homs* is
+not what that takes. Put a type with a non-trivial loop in the
+object slot of the `codisc` pattern and keep every hom the unit
+type: no target hom carries a loop, the preservation fields stay
+contractible, and paths in the mapping type reduce to paths in
+`Bool → ob`. So the question closes as soon as such a target is
+built, and none is built here.
+
+Open, and untouched by that: whether the free system attains
+contractibility against every wild target of its own size. Nothing
+here decides the free case. The countermodel only shows that the
+axioms alone never will.
