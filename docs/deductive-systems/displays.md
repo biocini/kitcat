@@ -2,14 +2,14 @@
 
 `Cat.Logic.Display` states the two argument families in lens
 vocabulary and each cut as a lifting condition. It consumes the seam
-of [graphs.md](graphs.md), the two pins and the cancellation. The
-fibration reading also consumes stability and one cut.
+of [graphs.md](graphs.md) and the two cancellations. The fibration
+reading also consumes stability and one cut.
 
 ## Each family is a lens over the graph of the twist it does not hold
 
-A lens states its unitor at the base's reflexive edge. Each action
-sits at the twist its own axiom half does not carry, so the base is
-the *other* graph and the unitor is a cancellation.
+A lens states its unitor at the base's reflexive edge. Each family's
+lens takes the other graph as its base. The unitor is then a
+cancellation, not an identity.
 
 VERIFIED (`Cat.Logic.Display`):
 
@@ -30,13 +30,14 @@ the base of a deductive system is not in general a path object, and
 every uniqueness theorem about lens *structure* hypothesizes that it
 is.
 
-## The absorptions consume no tier
+## The absorptions consume no cut and no tier
 
-`absorption` sits directly over the two pins and the two
-cancellation equations: neither representation's uniqueness nor
-either cut's existence appears in it. VERIFIED (`Cat.Logic.Base`):
-`absorb⁻` and `absorb⁺` live there, and the unit-law module opens
-them rather than restating them.
+`framed` takes the two cancellations and nothing else. Neither
+representation's uniqueness nor either cut's existence appears in
+it. VERIFIED (`Cat.Logic.Display`): `absorb⁻` and `absorb⁺` follow
+there from the cancellations alone. Over a deductive system the two
+tiers prove those cancellations, so the hypotheses arrive
+discharged. See [invertibility.md](invertibility.md).
 
 ## The coslice, and the cut as a lift
 

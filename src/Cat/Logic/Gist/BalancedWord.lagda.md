@@ -1,22 +1,47 @@
-Spike: the free framed point at (D′) strength has a computable word
-model. The model is decidable and set-truncated, with no quotient
-anywhere.
+Spike: the free framed point has a computable word model. The model
+is decidable and set-truncated, with no quotient anywhere.
 
-The carrier is the type of eventual-translation descriptors. Each
-descriptor pairs a finite prefix of explicit values with the value at
-the first tail position. Two constraints make the descriptors
-canonical: weak monotonicity and minimality. Composition is
-normalization by evaluation into the monoid of functions `Nat → Nat`.
-The negative cut acts through the shifted composition `φ`, defined by
-`φ f Z = Z` and `φ f (S n) = f n`.
+The construction runs over one object, and its edges are eventual
+translations. An eventual translation is a function on the naturals
+that adds a constant past some finite prefix. A descriptor `(p , t)`
+presents one. The list `p` gives the values below its length. Past
+the prefix, the value at offset `m` is `m + t`.
 
-`virtual-graph` and `is-deductive-system` (`Cat.Logic`) instantiate on
-this carrier. The `associates` triple `(τ̂ , ε̂ , ε̂)` is refuted, so
-the positive-then-negative mixed word does not reassociate in
-general. The double twist is a one-sided inverse to the negative
-twist, the bicyclic pair. The descriptor shift is a ℤ-grading,
-additive for the positive cut and decremented by `φ`. The two twists
-are distinct edges.
+Two decidable constraints make that presentation canonical. Weak
+monotonicity bounds each explicit value by the next value of the
+denotation. Minimality forbids a last explicit value one below the
+tail value, so no prefix shortens. Distinct descriptors then denote
+distinct functions. Equality is decidable and the carrier is a set
+by Hedberg, so the model needs no quotient.
+
+Composition is normalization by evaluation into the monoid of
+functions `Nat → Nat`. The composite of two eventual translations is
+again one. Past the onset `length pB + (length pA ∸ tB)` the inner
+descriptor has left both prefixes behind. Tabulate the composite
+below that onset, take its value there as the new tail value, and
+trim. The negative cut composes through the shifted composition `φ`,
+where `φ f Z = Z` and `φ f (S n) = f n`.
+
+Reflection surrounds the edge with its argument. The coterm half
+composes on the inside, and the term half through `φ` on the
+outside. The positive twist is the identity descriptor, and the
+negative twist is the unit translation. Readback is the sandwich
+collapse, since `φ` of the negative twist computes to the identity.
+
+Stability comes from the hom sets. Evaluating a reflection
+sandwiches the edge between the two twists, and the unit laws make
+that injective. Both cuts are representable, and each invertibility
+fiber has its own twist as centre. So `virtual-graph` and
+`is-deductive-system` instantiate on the carrier.
+
+The `associates` triple `(τ̂ , ε̂ , ε̂)` is refuted, so the
+positive-then-negative mixed word does not reassociate in general.
+The negative twist is not thunkable, and the identity is not linear.
+The double twist inverts the negative twist on one side only, the
+bicyclic pair. The descriptor shift `t ⊖ length p` is a ℤ-grading,
+additive for the positive cut and decremented by `φ`. Every grade is
+inhabited, and the double twist is the `+1` generator. The two
+twists are distinct edges.
 
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}

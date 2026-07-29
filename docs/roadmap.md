@@ -24,16 +24,17 @@ or when a ruling re-gates a project. Do not update it per session.
 
    **The foundation track (folded in, Lane 2026-07-28).** The
    deductive-system line in `Cat.Logic` carries the program's
-   foundations: virtual graphs with readback, the (D′) record
-   (contractible cuts plus invertibility, stability a theorem), and
-   the free balanced word model (`Cat.Logic.Gist.BalancedWord`) as
-   the profile oracle. The (D′) profile is settled: pre-duploid
+   foundations: virtual graphs with readback, the deductive-system
+   record (contractible cuts plus invertibility, stability a
+   theorem), and the free balanced word model
+   (`Cat.Logic.Gist.BalancedWord`) as the profile oracle. The
+   associativity profile is settled: pre-duploid
    plus `mixed-assoc`, the four unit laws, and the twist-flanked
    family, with generic `associates` refuted at the free point.
    Open, in order: morphisms of systems, the free system and
    initiality (the coherence theorem as an NbE result), and the
    `Mag` rebuild: `hcategory` without interchange as the
-   θ²-collapsed one-twist instance of (D′), program of record
+   θ²-collapsed one-twist instance of that record, program of record
    `src/Bb/VgCategoryShape/README.md`. The working ledger is
    `src/Cat/Logic/TODO.md`.
 
@@ -56,7 +57,7 @@ or when a ruling re-gates a project. Do not update it per session.
      not on the archived category tree.
    - **4** duploids + braided Hasegawa–Thielecke (⟨open-1⟩
      machine-checked). Re-gated (Lane, 2026-07-28): enters through
-     the (D′) profile verdict and the reflection theorem (line 7
+     the associativity profile verdict and the reflection theorem (line 7
      of `src/Cat/Logic/TODO.md`). The balanced duploid is the
      target notion.
    - **5** the free instance and kernel soundness: `Gₙ` in Agda +
@@ -82,7 +83,7 @@ or when a ruling re-gates a project. Do not update it per session.
    staged plan is `docs/composite-rx-refactor/`, with
    `Bb.CatsWithExplicitInterchange` the porting reference
    throughout. The gate: the design of `hcategory` without
-   interchange, clarified through the (D′) apparatus (the
+   interchange, clarified through the deductive-system apparatus (the
    foundation track above), lands first. Precondition: the Rx
    promotion plan carries audit findings from 2026-07-24; correct
    its notes before the program opens (tracked in `TODO.md`).

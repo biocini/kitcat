@@ -77,11 +77,12 @@ module _ {o h} (G : virtual-graph o h) where
 
 Each side's tier sits elsewhere: the fiber of that side's action map
 over the second projection, asked to be contractible. Its centre is the
-uniquely determined edge acting as the identity on that family. Since
-`coact-π` holds `var`, the negative centre is what cancels the negative
-twist, and the positive centre cancels the positive one — so the tier is
-invertibility of the framing, one side each. No twist enters the demand,
-and nothing here says a centre is the other twist.
+uniquely determined edge acting as the identity on that family. Read
+through the argument, the negative tier says its centre is a right
+inverse of the negative twist, and the positive tier says its centre is
+a left inverse of the positive twist. So the tier is invertibility of
+the framing, one side each. No twist enters the demand, and nothing
+here says a centre is the other twist.
 
 ```agda
   is-invertible⁻ : Type (o ⊔ h)
@@ -151,15 +152,15 @@ the edge surrounded by one twist of each sign.
 
 ## The two cuts
 
-A positive cut absorbs its second factor into the coterm and keeps the
-first reflected; a negative cut absorbs its first into the term and
-keeps the second. Each absorption closes the opposite argument half at
-its axiom — the positive through `coact`, which holds `var` and so
-carries the negative twist, the negative through `act`, which holds
-`covar` and carries the positive one. So the positive cut goes through
-a pending read and the negative through a pending write. Their windings
-are opposite, and identifying them would be the coherence this fragment
-forgets.
+A positive cut keeps its first factor reflected and absorbs the second
+into the coterm. A negative cut keeps its second factor reflected and
+absorbs the first into the term. The reflected factor is the one that
+runs, so the positive cut runs its leading edge and holds the trailing
+one as a continuation. The negative cut runs its trailing edge and
+holds the leading one as data. That is call-by-value against
+call-by-name, and it is what the two signs name. Each cut carries one
+twist at its junction, the two of opposite sign, so identifying them
+would be the coherence this fragment forgets.
 
 ```agda
   inj⁺ : ∀ {x y z} → judgment x y → hom y z → judgment x z

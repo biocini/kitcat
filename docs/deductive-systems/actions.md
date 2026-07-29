@@ -5,8 +5,8 @@ form of that side. Bundling the far endpoint back in gives the
 family transport.
 
 ```agda
-coact-π f γ = reflect f (var x , γ)      -- holds the future  (twist⁻)
-act-π   f t = reflect f (t , covar y)    -- holds the buffer  (twist⁺)
+coact-π f γ = reflect f (var x , γ)      -- ranges over coterms
+act-π   f t = reflect f (t , covar y)    -- ranges over terms
 
 coact f γ = γ .fst , coact-π f γ         -- coterm y → coterm x   (contravariant)
 act   f t = t .fst , act-π   f t         -- term   x → term   y   (covariant)
@@ -27,7 +27,7 @@ A lens states its unitor at its base's reflexive edge, and each
 action holds one twist at its own axiom half. So a family's lens
 sits over the graph of the twist its action does *not* hold, and the
 unitor is a cancellation rather than an identity. VERIFIED
-(`Cat.Logic.Display`), under the two pins and the cancellations:
+(`Cat.Logic.Display`), under the two cancellations:
 
 ```agda
 term-lens   : oplax-cov-lens (graph⁻ G) (term-fam   G)   -- unitor = absorb⁺
@@ -41,10 +41,10 @@ each cut as a lift, and the two-sided base.
 ## The two cuts
 
 Each cut absorbs one factor into an argument half and keeps the
-other reflected. The positive absorbs its second into the coterm,
-holding the future. The negative absorbs its first into the term,
-holding the buffer. These are the two composite judgments, the two
-**cuts**.
+other reflected. The positive absorbs its second factor into the
+coterm and keeps the first reflected. The negative absorbs its first
+factor into the term and keeps the second reflected. These are the
+two composite judgments, the two **cuts**.
 
 ```agda
 inj⁺ α p γ = α (γ .fst , coact p (γ .snd))

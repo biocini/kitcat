@@ -1,8 +1,8 @@
 # Cat.Logic — open items
 
-State as of 2026-07-28, end of the word-model session. `src/Cat`
-typechecks, 20 modules, with `Cat.Depreciated` moved to the
-archive. `src/Test` typechecks, 8 modules, under the spike-zero
+State as of 2026-07-28, end of the morphisms session. `src/Cat`
+typechecks, 21 modules, with `Cat.Depreciated` moved to the
+archive. `src/Test` typechecks, 9 modules, under the spike-zero
 policy of `src/Test/CLAUDE.md`. `src/Bb` typechecks, 98 modules:
 six frozen trees and the `Bb.index` aggregator, each tree with a
 README and CHANGELOG per `src/Bb/CLAUDE.md`. Lint is clean at
@@ -20,8 +20,10 @@ retired block below. The one-twist trio is archived at
 `Bb.OneTwist`: it probes the rejected rival carrier, not these
 definitions.
 
-Committed through `61c1a17` on `cat-logic-polarity`. The
-word-model session's work sits in the working tree, uncommitted.
+Committed through `f12dfcd` on `master`. This session's work sits
+in the working tree, uncommitted: the polarity prose corrections,
+the `docs/deductive-systems/` reconciliation, and
+`Test.SpikeMorphismInitial` (staged).
 
 Prose is gated by the `writing` skill alone. Its bundled linter is
 the only prose gate: a changed `docs/` file must score at or under
@@ -34,6 +36,16 @@ module prose under `src/`, which the retired porcelain gate never
 measured either.
 
 ## Settled: the record cut
+
+Naming (Lane, 2026-07-28): the label `(D′)` is retired from the live
+tree and from `docs/roadmap.md`. It named a position only against
+the rejected `(C)` and `(D)`, so it reads as one variant among
+several when it is in fact the definition. Live prose says
+"deductive system", and the archived weaker notion is already marked
+by the `Bb.WeakDeductiveSystem` namespace. Where the difference
+needs naming, the live carrier bears readback and the archived
+stratum is readback-free. This ledger keeps the letters below as a
+record of the decision.
 
 Cut 2026-07-28, adopting position (D′). `virtual-graph` carries
 `readback`, stated through `reflect` at `var`/`covar`, so it is
@@ -179,12 +191,25 @@ unstarted pass. This block supersedes that item.
 
 ## Docs reconciliation
 
-- `Cat.Logic.Base`'s header, `docs/deductive-systems/README.md`,
-  `framing.md`, `towers.md` still describe the form-A tier. Under the
-  ribbon layer they are describing the balanced layer, not the base
-  notion — relocate rather than rewrite.
-- `invertibility.md` and `Cat.Logic.Base`'s mid-file prose already
-  describe form B; they need the rename only.
+Swept 2026-07-28, whole of `docs/deductive-systems/`, against the
+record cut. Eleven of the twelve files were stale and are now
+current: `README.md` (the carrier omitted `readback` and the diagram
+drew `is-stable` as a tier), `the-package.md` (the pre-cut
+three-field record, and `FramedCut` cited as the inhabitant, which
+readback rules out — now `Gist.BalancedWord`), `composability.md`
+(the stability-indexed record and `op-composable`), `stability.md`
+(stability as a tier that "comes first"), `towers.md` (one unit law
+per hand, now four), `invertibility.md` and `framing.md` (the centre
+left to the framing, now `centre⁻-twist⁺` and `centre⁺-twist⁻`),
+`displays.md`, `actions.md`, `graphs.md`, `mediation.md`. The
+retired `pin`, `K`, `unital` and `absorption` names are gone from
+`docs/` and from the register list in `Cat.Logic.Type`. All twelve
+files pass the prose gate. The one surviving `pins` reference, in
+`mediation.md`, correctly describes the archived `NeutralUnit`,
+which does take those hypotheses.
+
+Remaining items, none of them record-cut debt:
+
 - **Interchange is the ultra-thin / involutive line, not the cyclic
   line.** It is `θ⊥² = id`; cyclic is `θ⊥ = id` and is strictly
   stronger. Correct wherever glossed.
@@ -248,8 +273,14 @@ one-twist carrier is exactly the centre-agreement path family.
 A statement-level pass over the brief's §9 anchors ran 2026-07-27,
 in both vendored sources. Confirmed: the valid mixed word is
 Definition 1's (•◦) clause, junction for junction, with ⁻ as ◦ and
-⁺ as •. The failing word is the one whose middle map runs positive
-to negative. Thunkable and linear close over all length-3 paths at
+⁺ as •. The transcription reverses the order, since the source
+composes applicatively and this library diagrammatically: over
+`A -f→ N -g→ P -h→ B`, `(h • g) ◦ f = h • (g ◦ f)` becomes
+`(f ⨾⁻ g) ⨾⁺ h ≡ f ⨾⁻ (g ⨾⁺ h)`, which is `mixed-assoc`. A
+transcription that keeps the source order reads the word backwards
+and makes the two labels look inverted (re-checked 2026-07-28, after
+that reading raised a false alarm against the whole suite). The
+failing word is the one whose middle map runs positive to negative. Thunkable and linear close over all length-3 paths at
 a fixed leading or trailing edge. A unital magmoid carries a
 two-sided identity. The shift unit ω has a two-sided pointwise
 inverse and is still not an isomorphism, since that notion asks
@@ -693,12 +724,47 @@ The work items, in order.
    twist. Payoff immediately: a derivability bound for line 3.
    Refutation in the word model kills a candidate outright.
    Inhabitation is evidence only, until item 3 upgrades it.
-2. Morphisms. None exist: `Display` and `Graph` carry lenses and
-   the reflexive-graph reading, not maps of systems. Design:
-   path-level preservation of `reflect` and the twists. System
-   maps are graph maps, since the axioms are props. Initiality is
-   fiber-shaped, contractibility of the mapping type. Read
-   `docs/guidelines/elaboration.md` before fixing signatures.
+2. Morphisms. Started 2026-07-28, half landed.
+   `Test.SpikeMorphismInitial` carries the statement level, with
+   its own inlined carrier per the spike convention: `_⇒_` with
+   `map`, `hmap`, `pres-twist⁺`, `pres-twist⁻`, `pres-reflect`,
+   then `is-initial G = ∀ G' → is-contr (G ⇒ G')` and
+   `is-initial-is-prop`.
+
+   Three verdicts, machine-checked. Initiality truncates no hom: it
+   is contractibility demanded of one fiber, the mechanism
+   `is-composable` already uses, not an h-level hypothesis on the
+   theory. It is satisfiable, `empty-is-initial`. It is not
+   vacuous: the codiscrete graph on two points carries the full
+   axioms (`contr⁺`, `contr⁻`, `fiber⁻`, `fiber⁺`) and has two
+   distinct self-maps, so `codisc-hom-not-contr` and
+   `codisc-not-initial`. No axiom of the theory makes system maps a
+   proposition, so contractibility can only be a fact about a
+   particular source.
+
+   Remaining, and the next session starts here. The live module,
+   `Cat.Logic.Morphism`: the same record with every
+   implicit/explicit call settled by the probes of
+   `docs/guidelines/elaboration.md`, which have not been run; the
+   derived `pres-var`, `pres-covar`, `pres-act`, `pres-coact`;
+   identity and composition; and the composition-preservation
+   theorem `pres-⨾⁺`/`pres-⨾⁻`. That last one has a price.
+   `f ⨾⁺ g` is a fiber centre, so passing from equal reflections to
+   equal edges needs `reflect-lc`, hence the target's stability,
+   hence a deductive system on the target rather than a bare graph
+   map. State that hypothesis rather than weakening the theorem.
+   The brief is `outputs/.plans/system-morphisms-T1.md`, its shared
+   context and style divergences `outputs/.plans/system-morphisms.md`.
+   On promotion the spike becomes `Cat.Logic.Gist.MorphismInitial`
+   under the spike-zero policy, and its inlined carrier retires in
+   favour of the live record.
+
+   Open from the spike: whether a mapping type is ever
+   non-trivially higher, two maps equal in more than one way. That
+   needs a target whose homs carry a loop. The circle model of
+   `Gist.ThunkableSquare` supplies one and this spike does not build
+   it. Whether the free system attains contractibility against every
+   wild target is item 3.
 3. The free system as an untruncated HIT, its initiality, and the
    coherence theorem: free equivalent to the word model. This is
    where the conjecture is decided.
@@ -842,7 +908,13 @@ The lines of inquiry.
   place the future/buffer gloss could be source-checked at all —
   *future*, *buffer*, and any treatment of asynchrony, buffering,
   scheduling or delay appear nowhere in the six Melliès-authored
-  sources currently on the shelf.
+  sources currently on the shelf. Meanwhile the gloss carries an
+  intrinsic rationale, recorded 2026-07-28 in
+  `docs/deductive-systems/framing.md`: a twist is a traced crossing
+  and a crossing orders two events, so `twist⁺` (over-under, send
+  before receive) is the buffer and `twist⁻` the future. That reading
+  is the theory's own and is CONJECTURED, not source-checked. It is
+  what fixes `var` to `twist⁻` against the sorts' opposite polarity.
 - What the gloss does shadow, and can be honestly re-anchored to, is
   the classical-notions paper's order-of-evaluation semantics: CBN
   parks a **"frozen"**

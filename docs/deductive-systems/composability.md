@@ -9,23 +9,28 @@ is-composable⁻ = ∀ {x y z} (f : hom x y) (g : hom y z)
                → is-representable (composite⁻ f g)
 ```
 
-## Existence only
+## Existence, against the contractible form
 
-The statement asks for an inhabitant, not a contraction. On its own
-that is data. It becomes a proposition exactly once a stability is
-in hand, and so a stability indexes the record:
+The two predicates above ask for an inhabitant, not a contraction.
+On its own each is data, and each becomes a proposition once a
+stability is in hand. VERIFIED (`Cat.Logic.Base`):
+`is-composable⁺-is-prop` and `is-composable⁻-is-prop`, each taking
+that stability.
+
+The record asks for more. It demands each cut's representability
+*contractibly*, the representative and its uniqueness in one datum,
+so it is a proposition outright and carries no stability index:
 
 ```agda
-record is-composable (S : is-stable) where
-  field contr⁺ : is-composable⁺
-        contr⁻ : is-composable⁻
+record is-composable where
+  field contr⁺ : ∀ f g → is-contr (is-representable (composite⁺ f g))
+        contr⁻ : ∀ f g → is-contr (is-representable (composite⁻ f g))
 ```
 
-VERIFIED (`Cat.Logic.Base`): `is-composable⁺-is-prop`,
-`is-composable⁻-is-prop` and `is-composable-is-prop`, each taking
-the stability that indexes the record.
-[stability.md](stability.md) states uniqueness once, and
-`contr-from-stable` recovers it wherever wanted.
+VERIFIED (`Cat.Logic.Base`): `is-composable-is-prop`, fieldwise from
+`contr⁺-is-prop` and `contr⁻-is-prop`. The contractible negative cut
+also proves stability, so the tier this record once carried is a
+theorem. See [stability.md](stability.md).
 
 Reading it as a fibration: for each object the coslice family sits
 displayed over the graph. The displayed edge over `p` from `u` to
@@ -42,7 +47,7 @@ stability across.
 VERIFIED (`Cat.Logic.Base`):
 
 ```agda
-op-composable G S : is-composable G S → is-composable (opⱽ G) (op-stable G S)
+op-composable G : is-composable G → is-composable (opⱽ G)
 ```
 
 with the two fields crossing: the opposite's `contr⁺` comes from the
@@ -53,6 +58,6 @@ original's `contr⁻`, and conversely.
 The two compositions, and with them everything in
 [towers.md](towers.md): distributivity of each action over the hand
 it builds, associativity for both hands and for the valid mixed
-word, and the pentagon. The unit laws per hand arrive with the
-cancellation hypotheses. The theory declares none of it and reads
-each off a fiber.
+word, and the pentagon. Two of the four unit laws come from readback
+and each hand's own cut. The other two follow from the invertibility
+tiers. The theory declares none of it and reads each off a fiber.

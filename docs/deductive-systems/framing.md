@@ -26,6 +26,32 @@ one of each. `eval (reflect f)` is `f` transmitted: winding-neutral,
 and formable, because its payload is three edges and its twists are
 one of each sign.
 
+### Why each twist takes the side it does
+
+A twist is a traced crossing, and a crossing orders two channels in
+time. The channel that passes over happens first. So each sign of
+twist reads as an order of events.
+
+- `twist⁺` is the traced positive crossing. The wire loops around
+  and passes under itself, so the send precedes the receive. That is
+  a **buffer**: the value waits after its write.
+- `twist⁻` is the traced negative crossing. The wire loops around
+  and passes over itself, so the receive precedes the send. That is
+  a **future**: a read waits on a value that has not arrived.
+
+A variable uses a value that has not arrived. That is a receive
+before a send, so `var` takes `twist⁻`. A covariable runs a
+continuation that has not arrived. That is a send before a receive,
+so `covar` takes `twist⁺`.
+
+Two registers meet here, and they do not agree. A term is positively
+polarized and a coterm negatively. Yet the term's axiom carries the
+*negative* twist, and the coterm's carries the *positive* one. The
+sign of a twist orders events. The polarity of a sort says which half
+of an argument it fills. Reading either sign off the other inverts
+the theory, which is why `Cat.Logic.Type` declares the two registers
+apart.
+
 ## Winding
 
 Give `twist⁺` the winding `+1`, `twist⁻` the winding `−1`, and an
@@ -52,8 +78,15 @@ the theory forms carries its winding.
 
 ## What the framing is not asked to be
 
-Nothing in the axioms constrains the twists, and this holds on both
-sides of the path-object boundary.
+Over the live carrier the axioms do constrain the twists. Each
+tier's centre reads back as the *other* twist, so the two are
+mutually inverse. VERIFIED (`Cat.Logic.Base`, `tower.balanced`):
+`centre⁻-twist⁺` and `centre⁺-twist⁻`. See
+[invertibility.md](invertibility.md).
+
+The rest of this section is the readback-free stratum, which the
+archive holds. There nothing in the axioms constrains the twists,
+and that holds on both sides of the path-object boundary.
 
 VERIFIED (`Bb.WeakDeductiveSystem.Gist.FramedCut`): the path groupoid on an arbitrary
 type, framed by two arbitrary families of loops, satisfies every
@@ -80,11 +113,11 @@ So the two cuts differ there by exactly the framing's own
 discrepancy, and `both→` says holding both forces each element to be
 its own inverse.
 
-What the theory *does* is give each twist a uniquely determined
-one-sided inverse: the center of that side's tier. Nothing above
+What the tiers alone give is a uniquely determined one-sided inverse
+per twist, the center of that side's tier. Without readback nothing
 decides whether that center *is* the other twist. That is one
-equation per side, the framing's own content, and the theory holds
-either way.
+equation per side, and over the archived carriers it is the
+framing's own content.
 
 The two sides are moreover independent. VERIFIED
 (`Bb.OneTwist.Cancel`), over the one-twist carrier of

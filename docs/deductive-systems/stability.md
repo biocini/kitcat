@@ -23,10 +23,13 @@ VERIFIED (`Cat.Logic.Base`):
 - `contr-from-stable`: an inhabited fiber of `reflect` is
   contractible.
 
-That last is why stability comes *first*. Composability then needs
-only to say that each cut is representable. It does not restate
-uniqueness at every composite. The propositional weight of the whole
-package sits in one place.
+Stability is not a field of the record. Each cut arrives with a
+contractible representability fiber, and the negative composite at
+the twist is a reflection, so that contractibility transports to
+every image fiber of `reflect`. VERIFIED (`Cat.Logic.Base`):
+`composite⁻-twist`, then `contr-cut⁻.stable-from-contr-cut⁻` through
+`image-fibers-contr→is-embedding`, and `axioms→stable` for the
+package. See [the-package.md](the-package.md).
 
 ## It is an embedding condition
 

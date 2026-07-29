@@ -1,14 +1,17 @@
 # The elementary theory of deductive systems
 
-A *virtual graph* is a graph with two additions. The first is a
+A *virtual graph* is a graph with three additions. The first is a
 two-sided representable embedding of its edges into judgments. The
 second is a **framing**: two families of endo-edges, one at each half
-of an argument. A *deductive system* is a virtual graph whose framing
-behaves: each twist with a uniquely determined one-sided inverse,
-representation unique where it occurs, both cuts representable.
+of an argument. The third is **readback**, which says that reifying
+an edge at its own axiom returns that edge. A *deductive system* is a
+virtual graph whose framing behaves: each twist with a uniquely
+determined one-sided inverse, and both cuts representable
+contractibly. Representation is then unique where it occurs, as a
+theorem rather than a demand.
 
-The framing is the only structure. Everything asked of it is
-property, and the package is a proposition.
+The framing and the readback are the structure. Everything asked of
+them is property, and the package is a proposition.
 
 These documents lay out the theory as it stands. Claims marked
 VERIFIED name the module that checks them, in the discipline of
@@ -22,15 +25,15 @@ seam is `Cat.Logic.Graph`, and the displays over it
 | | |
 | --- | --- |
 | [virtual-graphs.md](virtual-graphs.md) | Terms, coterms, arguments, judgments, `reflect`, representability, the opposite |
-| [framing.md](framing.md) | The two twists, futures and buffers, the axiom and evaluation, winding and what it forbids |
+| [framing.md](framing.md) | The two twists, futures and buffers and the crossing that fixes them, the axiom and evaluation, winding and what it forbids |
 | [graphs.md](graphs.md) | The framing as two reflexive graphs, the fan dictionary, the opposite, the two-sided base |
 | [actions.md](actions.md) | `act` and `coact` as displayed graphs on the term and coterm families, and the two cuts |
 | [displays.md](displays.md) | Each family as a lens over the graph of the twist it does not hold, each cut as a fibration, interchange as a cospan |
-| [stability.md](stability.md) | Representation unique where it occurs, cancellation, where the propositional weight sits |
-| [invertibility.md](invertibility.md) | The two tiers over the projection, the cells, and what is left to the framing |
-| [composability.md](composability.md) | The two cuts' representability, existence only, indexed by a stability |
+| [stability.md](stability.md) | Representation unique where it occurs, cancellation, and why it is a theorem |
+| [invertibility.md](invertibility.md) | The two tiers over the projection, the cells, and how readback places each centre |
+| [composability.md](composability.md) | The two cuts' representability, existence against the contractible form |
 | [the-package.md](the-package.md) | `is-deductive-system`, its propositionality, `deductive-system`, and the strict involution |
-| [towers.md](towers.md) | The two compositions, distributivity, associativity and the valid mixed word, the unit law each hand gets, the pentagon |
+| [towers.md](towers.md) | The two compositions, distributivity, associativity and the valid mixed word, the four unit laws, the pentagon |
 | [mediation.md](mediation.md) | Interchange: what identifying the two cuts adds, and what it collapses |
 
 ## The shape of the theory
@@ -54,15 +57,13 @@ and every tier that pairs them reads one against the other:
 [graphs.md](graphs.md).
 
 ```
-  virtual-graph      ob, hom, reflect, twist⁺, twist⁻
+  virtual-graph      ob, hom, reflect, twist⁺, twist⁻, readback
     │
-    ├── is-stable      representation unique where it occurs
-    │
-    ├── is-composable  both cuts representable         (over a stability)
-    │                    ⇝ the two compositions
+    ├── is-composable  both cuts representable, contractibly
+    │                    ⇝ the two compositions, and stability
     │
     └── is-invertible  two contractible fibers of the action maps
-                         ⇝ each side's centre, uniquely determined
+                         ⇝ each side's centre, which is the other twist
 ```
 
 The theory never identifies the two hands' compositions. That

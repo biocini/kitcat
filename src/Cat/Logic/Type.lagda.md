@@ -84,19 +84,23 @@ agree with one another:
 - `twist⁺`, `twist⁻` name the twists themselves, after the winding
   sign of balanced categories. `twist⁻` fills `var`, `twist⁺` fills
   `covar`.
-- The **framing** register — `cell`, `pin`, `K`, `absorb`,
+- The **framing** register — `cell`, `absorb`, `cancel`, `centre`,
   `is-invertible`, `fiber` — is indexed by the argument side the
-  construction lives on: `⁻` is the coterm side, built through
-  `coact`; `⁺` the term side, built through `act`.
+  construction lives on. `⁻` is the coterm side, built through
+  `coact`. `⁺` is the term side, built through `act`.
 - The **composition** register — `composite`, `inj`, `is-composable`,
   `contr`, `_⨾_`, `assoc`, `unitl`, `unitr`, `tri`, `collapse`,
   `pentagon`, `pair` — is the polarity of the hand, in the duploid
   sense. `⁺` is call-by-value, `⁻` call-by-name.
 
-The last two registers are crossed: the `⁺` hand is built from the
-coterm-side coaction, hence carries the *negative* twist, and the `⁻`
-hand carries the positive one. That crossing is what the framing is,
-not an artefact of naming.
+The last two registers are crossed. The `⁺` hand is built from the
+coterm-side coaction and cuts through the implicit `twist⁻`, taking
+from a future. The `⁻` hand is built from the term-side action and
+cuts through the implicit `twist⁺`, putting into a buffer. Each hand
+crosses its twist's semantics rather than carrying it, and the unit
+it gains is the twist of its own sign: `twist⁺` for the `⁺` hand,
+`twist⁻` for the `⁻` hand. That crossing is what the framing is, not
+an artefact of naming.
 
 ```agda
   var : (x : ob) → term x

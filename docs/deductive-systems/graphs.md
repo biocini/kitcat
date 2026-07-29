@@ -40,8 +40,10 @@ Any statement pairing them therefore reads one graph against the
 other. The cells are exactly that comparison: each is one graph's
 reflexivity read through the other graph's action. Over a path
 object, each reflexivity is the unique edge whose action lands on
-the cell of the other side (VERIFIED `Bb.WeakDeductiveSystem.Gist.FramedCut`). In
-general that placement is the pins, the framing's own content.
+the cell of the other side (VERIFIED
+`Bb.WeakDeductiveSystem.Gist.FramedCut`). Over the live carrier
+readback fixes that placement outright, and each tier's centre is
+the other twist (VERIFIED `Cat.Logic.Base`, `tower.balanced`).
 
 ## Univalence
 

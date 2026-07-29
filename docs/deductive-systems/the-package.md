@@ -2,21 +2,20 @@
 
 ```agda
 record is-deductive-system (G : virtual-graph o h) where
-  field stable     : is-stable G
-        composable : is-composable G stable
+  field composable : is-composable G
         invertible : is-invertible G
 ```
 
-Stability comes first because it indexes the composability field.
-Neither cut's existence is a proposition on its own. The stability
-the record carries is what makes it one.
+Two flat fields, both propositions outright. `is-composable` asks
+each cut for a *contractible* representability fiber, which carries
+the representative and its uniqueness in one datum, so the field
+needs no stability index. Stability is then a theorem rather than a
+tier. See [stability.md](stability.md).
 
 VERIFIED (`Cat.Logic.Base`): `is-deductive-system-is-prop`. Being a
-deductive system is a **property** of a virtual graph. The stability
-field moves under the proof, so a path over the moving stability
-fills the composability field, rather than a path in a constant
-type. That is the content of indexing the record rather than listing
-four flat fields.
+deductive system is a **property** of a virtual graph. Both fields
+are propositions in a constant type, so the proof is fieldwise and
+takes no path over a moving index.
 
 ## Structure and property
 
@@ -36,10 +35,11 @@ opᴰ D .graph  = opⱽ (graph D)
 opᴰ D .axioms = op-axioms _ (axioms D)
 ```
 
-`op-axioms` assembles `op-stable`, `op-composable` and
-`op-invertible`. The first two reindex along the exchange of
-argument halves. The last swaps its two fields, since the two
-invertibility tiers exchange definitionally.
+`op-axioms` assembles `op-composable` and `op-invertible`. The first
+reindexes along the exchange of argument halves. The second swaps
+its two fields, since the two invertibility tiers exchange
+definitionally. `op-stable` crosses stability the same way, and the
+tower consumes it as a theorem.
 
 VERIFIED (`Cat.Logic.Base`): `opᴰ-invol : opᴰ (opᴰ D) ≡ D`. The
 carrier component is `refl`, because the opposite of a virtual graph
@@ -52,9 +52,15 @@ is what the split is for.
 
 ## Inhabited
 
-VERIFIED (`Bb.WeakDeductiveSystem.Gist.FramedCut`): the path groupoid on an arbitrary
-type, framed by two arbitrary families of loops, gives
-`PG-deductive` and hence `PG-system : deductive-system u u`.
-Representability there is total (`reflect` is an equivalence).
-Stability, both cuts and both unit tiers therefore hold, with no
-assumption on the framing and none on the carrier's h-level.
+VERIFIED (`Cat.Logic.Gist.BalancedWord`): the free framed point, a
+carrier of eventual-translation descriptors with decidable equality.
+`BW : virtual-graph` carries readback, and `BW-deductive :
+is-deductive-system BW` assembles `BW-composable` and
+`BW-invertible`. Stability arrives through `stable-from-hom-sets`,
+since the carrier is a set.
+
+The path groupoid no longer serves. VERIFIED
+(`Bb.WeakDeductiveSystem.Gist.FramedCut`): it is a full system at
+every framing over the readback-free carrier, and that framing
+freedom is what readback removes. At `t⁻ = loop` readback fails by
+`loop-nontrivial`.

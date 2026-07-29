@@ -20,9 +20,11 @@ composabilities, the two pins and the cancellation:
 **The two compositions become one.** `⨾-agree : f ⨾⁺ g ≡ f ⨾⁻ g`, by
 `reflect-lc`: agreeing judgments have equal representatives.
 
-**Each hand gains the unit law it was missing.** `unitl⁺` and
-`unitr⁻`, each the other hand's law transported across `⨾-agree`. So
-the single composition is unital on both sides.
+**The single composition is unital on both sides.** `unitl⁺` and
+`unitr⁻` transport across `⨾-agree`. Under the two invertibility
+tiers both laws already hold (`tower.balanced`), so a mediation
+restates them for the merged operation rather than supplying them.
+See [towers.md](towers.md).
 
 **A shared neutral unit.** The composite of the two twists (either
 juxtaposition, since the compositions are one) is a two-sided unit
@@ -87,9 +89,9 @@ collapses is untested.
 ## Where the boundary sits
 
 The deductive-system fragment is the first case: two cuts, opposite
-windings, one unit law per hand, and no tier relating them. Each
-hand carries its own tower, and `ι` is what appears the moment the
-fragment is left.
+windings, each hand two-sided unital at its own twist, and no tier
+relating the two. Each hand carries its own tower, and `ι` is what
+appears the moment the fragment is left.
 
 That is also where the asynchronous reading stops being a metaphor.
 The two cuts are two disciplines (take from a future, put into a

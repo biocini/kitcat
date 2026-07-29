@@ -14,9 +14,11 @@ is-invertible⁺ = ∀ x → is-contr (fiber (act-π   {x} {x}) snd)
 ```
 
 A side's center is therefore the uniquely determined edge whose
-action on that family is the identity. Equivalently, it is a
-one-sided inverse of the twist the action holds. No twist appears in
-the demand, so the tiers constrain the framing not at all.
+action on that family is the identity. Read through the argument,
+the negative center is a right inverse of `twist⁻`. The positive
+center is a left inverse of `twist⁺`. No twist appears in the demand
+itself. Readback then places each center on a twist, which the last
+section states.
 
 ## The cells
 
@@ -61,40 +63,43 @@ VERIFIED (`Cat.Logic.Base`):
   is the same demand read from either end, on the nose. So
   `op-invertible` transports one by swapping its two fields.
 
-## The tower does not consume it
+## What the tower consumes
 
-`tower`'s unit laws (`unitr⁺`, `unitl⁻`, `pair⁺`, `pair⁻`) come from
-the `unital` module, whose hypotheses are the two pins and the two
-cancellations. No derivation in `Cat.Logic.Base` reads the center a
-tier supplies. There the package carries the tier and
-`op-invertible` crosses it. A unit law drawn from a tier directly is
-`neutral⁻-unitr` and `neutral⁺-unitl`, VERIFIED
-(`Bb.WeakDeductiveSystem.Gist.FramedCut`).
+Readback and each hand's own cut give the first two unit laws and
+the two pairings, with no tier: `unitr⁺`, `unitl⁻`, `pair⁺` and
+`pair⁻`. The rest is `tower.balanced`. It takes both tiers and
+returns the two cancellations, the two absorptions, and the
+remaining unit laws. So the tower does consume the tiers, and it
+reads the centers they supply. See [towers.md](towers.md).
 
-## What is left to the framing
+## Readback settles it
 
-Whether a side's center *is* a twist is one further equation (that
-the cancellation is the identity), and it is the framing's own
-content, not a consequence of the tiers. The two sides are moreover
-independent. VERIFIED (`Bb.OneTwist.Cancel`), over the
-one-twist carrier: a twisted reflection on the Klein four-group has
-one cancellation and refutes the other. Neither side's
-identification buys the other.
+Whether a side's center *is* a twist was once a further equation,
+the framing's own content. Readback decides it. VERIFIED
+(`Cat.Logic.Base`, `tower.balanced`): `centre⁻-twist⁺` and
+`centre⁺-twist⁻` derive each identification from the tiers alone. So
+both cancellations are theorems, and the twists are mutually
+inverse. The live carrier leaves nothing here to the framing.
 
-Over the path groupoid the sides do meet in one equation. VERIFIED
-(`Bb.WeakDeductiveSystem.Gist.FramedCut`): `cancels` gives both `trivial⁻` and
-`trivial⁺`. The tier's center is a unit for its hand's composition
-at every framing (`neutral⁻-unitr`, `neutral⁺-unitl`), and it
-coincides with the twist exactly when the equation holds
-(`twist-is-neutral⁻`, `twist-is-neutral⁺`).
+The results below describe the readback-free stratum, which the
+archive holds. They record what the tiers alone can do over a
+carrier the live one has replaced.
+
+The two sides are independent there. VERIFIED
+(`Bb.OneTwist.Cancel`), over the one-twist carrier: a twisted
+reflection on the Klein four-group has one cancellation and refutes
+the other. Neither side's identification buys the other.
+
+Over the path groupoid the sides meet in one equation. VERIFIED
+(`Bb.WeakDeductiveSystem.Gist.FramedCut`): `cancels` gives both
+`trivial⁻` and `trivial⁺`. The tier's center is a unit for its
+hand's composition at every framing (`neutral⁻-unitr`,
+`neutral⁺-unitl`). It coincides with the twist exactly when the
+equation holds (`twist-is-neutral⁻`, `twist-is-neutral⁺`).
 
 Off the path-object regime the same split is arithmetic. VERIFIED
-(`Bb.WeakDeductiveSystem.Gist.FramedGroup`): in an abelian group framed by an arbitrary
-pair, each tier's center is the inverse of the twist its action map
-holds (`ι t⁻` for `coact-π`, `ι t⁺` for `act-π`), and
-`absorber⁻-is-twist⁺` carries the first back to `t⁺` exactly under
-the cancellation.
-
-A framed system therefore has a unit that need not be a twist. What
-the cells pin is the framing. The unit is a fiber of the same map
-over the projection.
+(`Bb.WeakDeductiveSystem.Gist.FramedGroup`), in an abelian group
+framed by an arbitrary pair. Each tier's center is the inverse of
+that side's own twist: `ι t⁻` for the negative side, `ι t⁺` for the
+positive. Then `absorber⁻-is-twist⁺` carries the first back to `t⁺`,
+exactly under the cancellation.

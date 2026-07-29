@@ -1,5 +1,6 @@
-Spike: position (D) rehearsed at the base. A virtual graph carries
-readback as a structure field beside the framing.
+Spike: readback as a structure field of the carrier. A virtual
+graph carries it beside the framing, and this measures what the
+base gains from it.
 
 The opposite is a strict involution on the nose, the readback leg
 crossing unchanged. With one cut per hand, readback buys that

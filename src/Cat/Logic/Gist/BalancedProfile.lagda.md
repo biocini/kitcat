@@ -1,6 +1,6 @@
-Spike: the associativity profile at position (D′) strength —
-readback, contractible cuts, both invertibility tiers, stability
-a theorem.
+Spike: the associativity profile of a deductive system. The axioms
+in play are readback, contractible cuts and both invertibility
+tiers, and stability is a theorem of them.
 
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
