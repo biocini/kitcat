@@ -55,7 +55,8 @@ were read in the vendored `article.tex` during ingestion.
 Statements verified: 7/7 CONFIRMED (digest-level), 2026-07-28, by
 Claude (Sonnet 5), @ 8d9edc19055a. All seven Content digests below
 were independently re-read against `article.tex` at their cited
-anchors and confirmed verbatim; two anchor-precision corrections and
+anchors and confirmed against it, three of them as accurate
+paraphrase rather than quotation; two anchor-precision corrections and
 one source-level typo (a codomain slip in the composition-law diagram
 at l.1531, already given correctly in the digest below) are recorded
 in `outputs/duploids-statement-audit.md`.
@@ -93,10 +94,10 @@ Jump note: `sed -n 'A,Bp' article.tex`.
   Hasegawa-Thielecke theorem (l.1347), contributions (l.1468).
 - l.1511–1677 — §2 Non-associative categories: the definition
   (l.1526), the opposite, path association, linear and thunkable maps
-  (l.1551–1570).
+  (l.1552–1562).
 - l.1678–1878 — §3 Duploids: polarity (definition l.1694), positive
   and negative shifts (l.1712), **duploid** (l.1819), duploid functors
-  (l.1841), and the adjunction characterisation (theorem l.1860).
+  (l.1841), and the adjunction characterisation (theorem l.1857).
 - l.1879–1998 — §4 Symmetric monoidal duploids (definition l.1975).
 - l.1999–2268 — §5–§6 Graph morphisms and adjunctions between them;
   symmetric monoidal closed duploids.

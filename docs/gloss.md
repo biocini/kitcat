@@ -554,8 +554,10 @@ without refuting invertibility.
 Definition 1 (pre-duploid): three associativity laws fixed to a
 polarity pattern on the middle two objects, `(••)`, `(◦◦)`, `(•◦)`,
 matching `assoc⁺`, `assoc⁻`, `mixed-assoc` respectively — SOURCE-CHECKED
-against `resources/munch-maccagnoni-duploids` (Definition 1, l.180;
-`Statements verified: 24/24 CONFIRMED`, 2026-07-28) and cross-checked
+against `resources/munch-maccagnoni-duploids` (Definition 1, l.180 —
+that entry's certification was withdrawn 2026-07-28, but its
+Definition 1 digest is among those an independent read confirmed
+faithful) and cross-checked
 against `resources/mmmm-classical-notions`'s independent transcription
 of the same triple (§2, l.1552-1562; `Statements verified: 7/7
 CONFIRMED`, 2026-07-28). The transcription reverses composition order:

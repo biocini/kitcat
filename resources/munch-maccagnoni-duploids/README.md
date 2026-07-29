@@ -44,19 +44,32 @@ title page and abstract, read to build the bibliographic record above;
 the section map's line anchors below, produced mechanically over the
 extraction and spot-checked against the numbered statements they name.
 
-Statements verified: 24/24 CONFIRMED (digest-level), 2026-07-28, by
-Claude (Sonnet 5), @ a39faa7cfe1f. All 24 numbered statements were
-read in full against `duploids.pdftext` at their section-map anchors;
-every anchor confirmed correct, no drift found. Two source-level
-findings from that pass: Proposition 8's own statement is correct,
-but its proof's closing sentence ("Hence `wrap_N` is linear") is a
-genuine error in the published text, confirmed against a direct
-render of `duploids.pdf` page 8 rather than the extraction alone; and
-mmmm-classical-notions's duploid definition, credited "a slight
-variant of" this paper's (`article.tex:1817`), is not verified to
-coincide with either of this paper's two duploid definitions
-(Definition 7, Definition 9) — see `outputs/duploids-statement-audit.md`
-for the full audit.
+No statement audit stands. A field claiming 24/24 was issued
+2026-07-28 and withdrawn the same day. The pass that issued it also
+wrote the digests it certified, which `resources/README.md` does not
+permit, and an independent read then found six of the 24 digests
+drifting from the source. Re-issue needs three things: the six
+corrections below, digests for the four missing statements, and a
+fresh audit at 28-statement scope by a reader who wrote none of it.
+
+What does hold, from that pass and the independent read. The identity
+is hash-verified and the extraction reproduces byte-identically
+(`pdftotext`, Poppler 26.06.0). All 24 section-map anchors to numbered
+statements are exact. Eighteen of the 24 digests are faithful to the
+source. So the entry is sound as a pointer into the paper, and unsound
+where a digest is read as the statement.
+
+Proposition 8's own statement is correct, but its proof's closing
+sentence ("Hence `wrap_N` is linear") is a genuine error in the
+published text, confirmed against a direct render of `duploids.pdf`
+page 8 rather than the extraction alone. The paper's own later text
+reads the proposition as thunkable (`duploids.pdftext:703-704`).
+
+Whether mmmm-classical-notions's duploid definition, credited "a
+slight variant of" this paper's (`article.tex:1817`), coincides with
+Definition 7 or Definition 9 is open. That sentence credits the
+paper, not either definition. See `outputs/duploids-statement-audit.md`
+and `outputs/.drafts/duploids-statement-audit-review-2.md`.
 
 ## Files
 
@@ -95,11 +108,12 @@ Anchors index `duploids.pdftext`. Jump with
 `sed -n 'A,Bp' duploids.pdftext`.
 
 - HAL cover page — `l.1`
-- Title, author, abstract — `l.28`
-- Introduction — `l.40`
+- Title, author, abstract — `l.24` (title), `l.29` (abstract)
+- Introduction — `l.39`
 - **Definition 1** (pre-duploid) — `l.180`
 - **Definition 2** (linear morphism) — `l.233`
 - **Definition 3** (the sub-categories of a pre-duploid) — `l.246`
+- **Proposition 4** (hom-sets extend to a profunctor) — `l.257`
 - **Definition 5** (thunk, after Führmann) — `l.286`
 - **Proposition 6** (thunkable for thunk-force = thunkable for
   pre-duploids) — `l.315`
@@ -113,6 +127,10 @@ Anchors index `duploids.pdftext`. Jump with
 - **Proposition 12** (every adjunction determines a duploid) — `l.607`
 - **Proposition 13** (thunkability criterion) — `l.614`
 - **Proposition 14** (linearity criterion) — `l.647`
+- **Corollary 15** (the duploid is a category iff the adjunction is
+  idempotent) — `l.653`
+- **Proposition 16** (`⇑`, `⇓` as adjoint equivalences) — `l.707`
+- **Proposition 17** (the shift profunctor isomorphisms) — `l.731`
 - **Definition 18** (functor of pre-duploids) — `l.768`
 - **Proposition 19** — `l.772`
 - **Definition 20** (the category `Dupl`) — `l.786`
@@ -148,20 +166,28 @@ reverse of this repository's diagrammatic convention.
   `f(gh) = (fg)h` for all `g,h`; `f` is thunkable when `h(gf) = (hg)f`
   for all `g,h`. Any `f : P → A` (positive source) is automatically
   linear; any `f : A → N` (negative target) is automatically thunkable.
-  Both classes are closed under composition and identity. Terminology
-  after Führmann and Hasegawa.
+  Both classes are closed under composition and identity. The source
+  borrows the terminology from `[16,8]` (l.244), which its reference
+  list gives as Thielecke (l.957) and Führmann (l.943).
+- **Proposition 4** (l.257): the hom-sets of a pre-duploid extend to a
+  profunctor `D(−,=) : D_t^op × D_l → Set`, with
+  `D(f,g)(h) = g h f` for `f ∈ D_t(A,B)`, `g ∈ D_l(C,D)`. This is the
+  profunctor whose naturality Proposition 19 asserts.
 - **Sub-categories** (Definition 3, l.246): `D_l`, `D_t` — linear,
   thunkable morphisms of `D`; `N_l` — linear morphisms of `N`; `P_t` —
   thunkable morphisms of `P`. `N`/`N_l` are the full subcategories of
   `D_t`/`D_l` restricted to negative objects; `P`/`P_t` symmetrically
   for `D_l`/`D_t` restricted to positive objects.
 - **Thunk** (Definition 5, l.286, after Führmann): a functor `L : P →
-  P` with `ε : L → 1`, `ϑ : 1 → L`, `ϑ_L : L → L²` natural, satisfying
+  P` with a *natural* transformation `ε : L → 1` and a transformation
+  `ϑ : 1 → L`, such that `ϑ_L : L → L²` is natural, satisfying
   `ε•ϑ = id`, `Lε•ϑ_L = id_L`, `ϑ_L•ϑ = Lϑ•ϑ`; induces a comonad
   `(L,ε,ϑ_L)`. A thunk-force category `(P,•,id,L,ϑ,ε)` builds a
   pre-duploid: positive objects are `P`'s objects, negative objects a
   disjoint copy `⇑|P|`, with Führmann's own "thunkable" (`Lf•ϑ_P =
-  ϑ_Q•f`) recalled for comparison against Definition 2.
+  ϑ_Q•f`) recalled for comparison against Definition 2. `ϑ` is not
+  natural in general (l.313), which is what leaves morphisms
+  non-thunkable.
 - **Proposition 6** (l.315): for the pre-duploid built from a
   thunk-force category, `f : P → Q` is thunkable in Führmann's sense
   iff thunkable per Definition 2. Corollary: `ϑ` is natural iff the
@@ -169,9 +195,11 @@ reverse of this repository's diagrammatic convention.
 - **Duploid, first form** (Definition 7, l.418): a pre-duploid `D` with
   mappings `⇓ : |N|→|P|`, `⇑ : |P|→|N|` and, for all `P,N`, morphisms
   `delay_P : P→⇑P`, `force_P : ⇑P→P`, `wrap_N : N→⇓N`, `unwrap_N :
-  ⇓N→N` satisfying `force_P◦(delay_P•f) = f`, `(f◦unwrap_N)•wrap_N =
-  f`, `delay_P•force_P = id_⇑P`, `wrap_N◦unwrap_N = id_⇓N`. Superseded
-  by the equivalent Definition 9.
+  ⇓N→N` satisfying `force_P◦(delay_P•f) = f` for all `f ∈ D(A,P)`,
+  `(f◦unwrap_N)•wrap_N = f` for all `f ∈ D(N,A)`,
+  `delay_P•force_P = id_⇑P`, `wrap_N◦unwrap_N = id_⇓N`. The source
+  calls Definition 9 "the following equivalent definition" (l.439) and
+  keeps using `delay` and `unwrap` afterward.
 - **Proposition 8** (l.434): for any `N`, `wrap_N` is thunkable; dually
   for any `P`, `force_P` is linear. Proof (for `wrap_N`): `h◦(g•wrap_N)
   = (h◦(g•wrap_N)◦unwrap_N)•wrap_N = (h◦(g•wrap_N◦unwrap_N))•wrap_N =
@@ -189,9 +217,10 @@ reverse of this repository's diagrammatic convention.
   invertible thunkable maps `wrap_N : N→⇓N`," introduced as "the
   following equivalent definition of a duploid" — equivalent to
   Definition 7 via Proposition 8, with `delay_P`, `unwrap_N` recovered
-  as `force_P⁻¹`, `wrap_N⁻¹`. This is the definition
-  `mmmm-classical-notions`'s README credits as "a slight variant of"
-  (`article.tex:1817`); the correspondence is not verified — see
+  as `force_P⁻¹`, `wrap_N⁻¹`. `mmmm-classical-notions` credits "a
+  slight variant of" this paper's duploid definition
+  (`article.tex:1817`). That sentence names the paper, not Definition
+  7 or Definition 9, so which one it varies is open — see
   `outputs/duploids-statement-audit.md`.
 - **The duploid construction** (Proposition 10, l.576, from §3.2):
   given an adjunction `F ⊣ G : C1 → C2` with `♯ : C1(F−,=) → C2(−,G=)`
@@ -215,17 +244,33 @@ reverse of this repository's diagrammatic convention.
 - **Proposition 14, linearity criterion** (l.647): for `F ⊣_{(η,ε)} G :
   C1 → C2` and its duploid `D`: `f ∈ D(N,A)` is linear iff
   `f◦ε_{FGN} = f◦FGε_N`; `f ∈ D(A,P)` is thunkable iff its transpose
-  `f♯ ∈ C2(A⁺,GFP)` satisfies `η_{GFP}◦f♯ = GFη_P◦f♯`. (Immediately
-  after, Corollary 15 — not independently audited — gives: the
-  associated duploid is a category iff the adjunction is idempotent.)
+  `f♯ ∈ C2(A⁺,GFP)` satisfies `η_{GFP}◦f♯ = GFη_P◦f♯`.
+- **Corollary 15** (l.653): for `F ⊣_{(η,ε)} G : C1 → C2`, the
+  associated duploid is a category if and only if the adjunction is
+  idempotent.
+- **Proposition 16** (l.707): in a duploid `D`, the assignments
+  `⇑f = delay_B f force_A` and `⇓f = wrap_B f unwrap_A` define functors
+  `⇑ : D_l → N_l` and `⇓ : D_t → P_t` taking part in adjoint
+  equivalences `I ⊣_{(delay,force)} ⇑` and `I ⊣_{(wrap,unwrap)} ⇓`,
+  with `I` the inclusions. Consumed by the proofs of Propositions 21
+  and 22. (The extraction flattens this two-column display, so the
+  `force_A` at l.718 belongs to `⇑f`, not to `⇓f`; the source forms
+  are the ones that typecheck, since `force_A : ⇑A → A` and
+  `unwrap_A : ⇓A → A`.)
+- **Proposition 17** (l.731): natural isomorphisms of profunctors
+  `D_t(−, I⇑=) ≃ D(−,=) ≃ D_l(I⇓−, =) : D_t^op × D_l → Set`, with `I`
+  the inferrable inclusions. Leaving the inclusions implicit gives the
+  shift adjunctions. Consumed by the proof of Proposition 22.
 - **Functor of pre-duploids** (Definition 18, l.768): a
   polarity-preserving `|F| : |D1|→|D2|` with `F_{A,B} : D1(A,B) →
   D2(FA,FB)` preserving identities and composition. A **functor of
   duploids** additionally sends `force_P` to a linear morphism and
   `wrap_N` to a thunkable morphism.
-- **Proposition 19** (l.772): `F` is a functor of duploids iff it
-  restricts to functors `F_t : D_t→D'_t`, `F_l : D_l→D'_l` with `F :
-  D(−,=) → D'(F_t−,F_l=)` natural.
+- **Proposition 19** (l.772): given duploids `D`, `D'` and a mapping
+  `F` whose object part preserves polarities, together with mappings
+  `F_{A,B} : D(A,B) → D'(FA,FB)` on morphisms, `F` is a functor of
+  duploids iff it restricts to functors `F_t : D_t→D'_t`,
+  `F_l : D_l→D'_l` with `F : D(−,=) → D'(F_t−,F_l=)` natural.
 - **The category `Dupl`** (Definition 20, l.786): objects duploids,
   morphisms duploid functors (Definition 18).
 - **Proposition 21** (l.827): for a duploid `D`, `↑ : P_t→N_l` (the
@@ -235,13 +280,18 @@ reverse of this repository's diagrammatic convention.
   constructed (Proposition 10/Remark 11) from the adjunction `↑ ⊣ ↓` of
   Proposition 21.
 - **Equalising requirement** (Definition 23, l.851): an adjunction `F
-  ⊣_{(η,ε)} G` satisfies it when, for all `P`, `η_P` equalises
-  `η_{GFP}` and `GFη_P`, and for all `N`, `ε_N` co-equalises `ε_{FGN}`
-  and `FGε_N`.
-- **Proposition 24** (l.854): the equalising requirement holds iff (1)
-  every `ε_N` epi and `η_P` mono (`F`,`G` faithful), (2) every linear
-  `f ∈ D(N,A)` factors as `g◦ε_N`, (3) every thunkable `f ∈ D(A,P)`
-  factors as `η_P◦g`.
+  ⊣_{(η,ε)} G` satisfies it when, for all `P`, `η_P` **is an equaliser
+  of** `η_{GFP}` and `GFη_P`, and for all `N`, `ε_N` **is a
+  co-equaliser of** `ε_{FGN}` and `FGε_N`. The universal property, not
+  merely the equation, is what Proposition 24's factorizations
+  consume.
+- **Proposition 24** (l.854): the equalising requirement holds iff, for
+  all `A,P,N`: (1) `ε_N` is epi and `η_P` is mono, equivalently `G` and
+  `F` are faithful; (2) every linear `f ∈ D(N,A)` is `g◦ε_N` for some
+  `g ∈ C1(N,A⁻)`, equivalently the linear morphisms are the image of
+  `G` modulo the adjunction; (3) every thunkable `f ∈ D(A,P)` is,
+  modulo the adjunction, `η_P◦g` for some `g ∈ C2(A⁺,P)`, equivalently
+  the thunkable morphisms are the image of `F`.
 - **Proposition 25** (l.867): the adjunction `↑ ⊣ ↓ : N_l → P_t` of
   Proposition 21 satisfies the equalising requirement.
 - **Pseudo map of adjunctions** (Definition 26, l.880, after Jacobs): a
