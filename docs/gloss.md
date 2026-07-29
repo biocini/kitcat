@@ -535,6 +535,39 @@ magmoids on one graph, offset by the double twist.
 
 ✅ `Cat.Logic.Base` (`tower`, `tower.balanced`) (2026-07-28).
 
+**T35: The associativity profile is the pre-duploid triple.** The
+deductive-system axioms (`is-deductive-system`) prove exactly
+`assoc⁺`, `assoc⁻`, and `mixed-assoc`, and no more: the generic
+`associates` property (associativity of a length-3 path regardless
+of the middle edge's polarity) is independent, refuted by two finite
+countermodels. The projection model (constant reflection over
+`Bool`, both hands projections) satisfies the towers and the
+readback record of `Bb.WeakDeductiveSystem.Gist.FramedInterchange`,
+computes `associates f g h` to `h ≡ f`, and has no thunkable or
+linear edge, refuting both `associates` and the invertibility tier
+at once. The four-reader model (`Bool × Bool`) is a full
+`is-deductive-system` whose tier centres are its only
+thunkable/linear edges, refuting `associates` for every middle edge
+without refuting invertibility.
+
+✅ `Bb.WeakDeductiveSystem.Gist.AssociatesCountermodel` (2026-07-27,
+`just check` re-run clean 2026-07-28). The profile is Munch-Maccagnoni's
+Definition 1 (pre-duploid): three associativity laws fixed to a
+polarity pattern on the middle two objects, `(••)`, `(◦◦)`, `(•◦)`,
+matching `assoc⁺`, `assoc⁻`, `mixed-assoc` respectively — SOURCE-CHECKED
+against `resources/munch-maccagnoni-duploids` (Definition 1, l.180;
+`Statements verified: 24/24 CONFIRMED`, 2026-07-28) and cross-checked
+against `resources/mmmm-classical-notions`'s independent transcription
+of the same triple (§2, l.1552-1562; `Statements verified: 7/7
+CONFIRMED`, 2026-07-28). The transcription reverses composition order:
+the sources compose applicatively, kitcat diagrammatically, so
+`(h • g) ◦ f = h • (g ◦ f)` over `A -f→ N -g→ P -h→ B` becomes
+`(f ⨾⁻ g) ⨾⁺ h ≡ f ⨾⁻ (g ⨾⁺ h)`, which is `mixed-assoc`. Whether the
+generic-`associates` refutation itself has a counterpart in either
+source is not addressed by either paper's statement audit and is not
+claimed here — this identification covers only the associativity
+profile, not a broader duploid-source theorem.
+
 ## Standing results from earlier strata (pre-2026-07-10)
 
 - **Squaring effect** (ternary idempotency ⇒ `e² = 1`, with the
@@ -566,6 +599,9 @@ entry's **statement audit covers the cited identification**. Fidelity
 is checked against the source, not merely present on disk.
 An unaudited entry lifts nothing, and a Lane veto of the entry
 re-imposes ⚠️. This is the external mirror of the 🧪↔`Gloss.*`
-bijection. (Both lifts to date ran under this rule: T16 on the
+bijection. (Two lifts to date ran under this rule: T16 on the
 chiralities audit, 2026-07-13 morning, and T15 on the Kelly audit,
-2026-07-13 evening. No ⚠️ source-identifications remain.)
+2026-07-13 evening. T35, 2026-07-28, is the first entry written
+straight to SOURCE-CHECKED, since the duploid audit landed before the
+ledger entry did — no ⚠️ interval to lift. No ⚠️ source-identifications
+remain.)

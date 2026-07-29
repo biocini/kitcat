@@ -289,9 +289,20 @@ monad. The duploid of an adjunction is associative exactly when the
 monad is idempotent. Idempotent is equivalent to every map
 thunkable, and commutative to every map central, for strong monads.
 Not found in either source: the "∗-autonomous" leg of §9's collapse
-chain. Treat that leg as unchecked. The full statement audits
-remain pending, and the PROVISIONAL standing of both entries is
-unchanged.
+chain. Treat that leg as unchecked.
+
+The full statement audits ran 2026-07-28, independent of this pass
+(`outputs/duploids-statement-audit.md`). Both entries are cleared to
+load-bearing citation (`Statements verified:` on each; `just
+resources-verify` reports "audited"; see Resources below). Four of
+the claims above were independently re-checked against the audit and
+agree: the pre-duploid triple and its transcription (Definition 1),
+`P` as the Kleisli category (Remark 11), and the idempotence
+correspondence (the adjunction-duploid theorem). Three rest on this
+2026-07-27 pass alone, not independently re-verified by the full
+audit: the `ω` two-sided-inverse-not-isomorphism note, the
+idempotent/commutative-central-for-strong-monads claim, and the
+∗-autonomous leg above.
 
 The pass found one defect in the tree, now fixed. `thunkable` and
 `linear` closed over the valid word, and `stable` with the two cuts
@@ -923,14 +934,17 @@ The lines of inquiry.
 ## Resources
 
 - `resources/munch-maccagnoni-duploids/` — vendored 2026-07-27,
-  committed at `0cf05bf`, hash verified. **PROVISIONAL, not audited**,
-  so it supports no load-bearing citation yet. The duploid dictionary
-  above leans on it and on `mmmm-classical-notions`, which is also
-  unaudited. Both need statement audits before any of this reaches the
-  ledger. Nothing in the tree cites either yet, and nothing should
-  until the audits are run. The 2026-07-27 statement pass (the duploid
-  section above) checked the §9 anchors at statement depth. It does
-  not stand in for the audits.
+  committed at `0cf05bf`, hash verified. Statement-audited 2026-07-28:
+  24/24 CONFIRMED, digest-level (`Statements verified:` on the entry;
+  full report `outputs/duploids-statement-audit.md`). Supports
+  load-bearing citation. Not yet Lane-vetted (no `Vetted:` line — `just
+  resources-verify` reports "audited — load-bearing capable; Lane
+  discretion open"). The duploid dictionary above leans on it.
+  `docs/gloss.md` T35 cites the pre-duploid identification against it.
+- `resources/mmmm-classical-notions/` — vendored 2026-07-24. Statement-
+  audited 2026-07-28: 7/7 CONFIRMED, digest-level, same report and same
+  standing as above. The duploid dictionary above cross-checks its
+  transcription of the pre-duploid triple against it too.
 - `resources/kiselyov-having-effect/` — vendored 2026-07-28,
   hash-verified, PROVISIONAL with no statement audit, so it
   supports no load-bearing citation yet. The internal-language
