@@ -44,7 +44,8 @@ by [`mmmm-classical-notions`](../mmmm-classical-notions/README.md).
 
 ## Vetting
 
-Directed agent ingestion, 2026-07-27. **PROVISIONAL.**
+Directed agent ingestion, 2026-07-27. Provisional marker retired
+2026-07-29 (Vetted, below).
 
 Statements verified: 29/29 CONFIRMED (digest-level), 2026-07-29, by
 Claude (Opus 5), @ a39faa7c / eb36ae85. Two prefixes, because the
@@ -259,6 +260,9 @@ the paper.
   `A⊖` and uses it everywhere else. The digest below transcribes `A⁻`
   faithfully, since that is what the page shows. The source itself is
   the one that switches marks.
+
+Vetted: 2026-07-29, Lane (ratified at Lane's explicit direction,
+conveyed in-session).
 
 ## Files
 

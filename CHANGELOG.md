@@ -49,6 +49,42 @@ Committed: `resources/munch-maccagnoni-duploids/README.md`,
 `outputs/duploids-entry-audit.md`. Session log:
 [`notes/2026-07-29-duploid-papers-audit.md`](notes/2026-07-29-duploid-papers-audit.md).
 
+## 2026-07-29 — mmmm-classical-notions closes out, both duploid entries vetted
+
+**`mmmm-classical-notions` is `verified`: 30/30 CONFIRMED
+(digest-level).** Review-2's revision plan landed. The Vetting section
+now discloses a second source typo. The digest preamble names the
+`⟑`/`⟇` substitution, and two digests fix `M` to `ℳ`. The Section map
+gains the `l.3725` `\end{document}` line and the source's own names
+for Joyal's obstruction theorem and §13.
+
+The Dialogue duploid digest's `≃` and the dropped clause in the
+Thunkable-implies-central digest are both restored. An independent
+audit (Claude, Opus 5) then re-derived all 30 digests from
+`article.tex`, from scratch. It confirmed 23 near-verbatim and 7
+paraphrase digests, zero not confirmed, including the six passages the
+revision touched.
+
+**`bin/resources-verify` now parses the `Statements verified: N/M`
+fraction.** It reports a partial standing when `N` is less than `M`.
+It reads the "N confirmed on first pass, K corrected" phrasing as full
+coverage, not partial. `resources/README.md` now names a digest
+addition or revision, beside a re-fetch or a re-extraction, as an
+event that voids the field.
+
+**Both duploid-tier entries carry a `Vetted:` line, at Lane's
+direction.** `munch-maccagnoni-duploids` (29/29, from the prior
+session) and `mmmm-classical-notions` (30/30, this session) both
+retire their PROVISIONAL marker.
+
+Uncommitted, pending Lane's go-ahead:
+`resources/mmmm-classical-notions/README.md`,
+`resources/munch-maccagnoni-duploids/README.md`,
+`resources/README.md`, `bin/resources-verify`,
+`notes/2026-07-25-two-lineages.md` (the downstream anchor fix from
+review-2), and `outputs/classical-notions-entry-audit.md`. Session
+log: [`notes/2026-07-29-classical-notions-audit-complete.md`](notes/2026-07-29-classical-notions-audit-complete.md).
+
 ## 2026-07-29 — the defect promoted, and the Cat.Logic ledger split starts
 
 **`Cat.Logic.Gist.AssociatesDefect` is live.** Promoted from

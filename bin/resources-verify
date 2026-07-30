@@ -156,13 +156,33 @@ for dir in resources/*/; do
     readme="${dir}README.md"
     [ -f "$readme" ] || continue
     entry="$(basename "$dir")"
+
+    # Parse the audited fraction out of a line-anchored "Statements
+    # verified: N/M" field (same anchor as the Vetted check below, so a
+    # README that merely MENTIONS the field name in prose never
+    # acquires standing — found live by the bentzen ingest). Two field
+    # shapes both mean full coverage: a bare "N/M CONFIRMED" with N ==
+    # M, and "N CONFIRMED on first pass, K CORRECTED" where every one
+    # of M items was read and K of them needed a fix (N + K == M). Only
+    # N < M with no CORRECTED clause is a genuine partial audit — some
+    # digests were never independently read at all.
+    field="$(rg_allow_empty -oi '^\s*-?\s*Statements verified:.*' "$readme" | head -1)"
+    fraction="$(printf '%s' "$field" | rg_allow_empty -o '([0-9]+)/([0-9]+)' -r '$1/$2' | head -1)"
+    partial=false
+    if [ -n "$fraction" ]; then
+        n="${fraction%/*}"
+        m="${fraction#*/}"
+        if [ "$n" -lt "$m" ] && ! printf '%s' "$field" | rg -qi 'CORRECTED'; then
+            partial=true
+        fi
+    fi
+
     if rg -qi '^\s*-?\s*Vetted:' "$readme"; then
         standing="vetted (Lane discretion exercised)"
-    elif rg -qi '^\s*-?\s*Statements verified:' "$readme"; then
-        # Line-anchored like the Vetted match above: a README that
-        # merely MENTIONS the field name in prose must not acquire
-        # load-bearing standing (found live by the bentzen ingest).
-        standing="audited — load-bearing capable; Lane discretion open"
+    elif $partial; then
+        standing="PARTIAL audit (${fraction} CONFIRMED) — load-bearing only for the audited digests; Lane discretion open"
+    elif [ -n "$field" ]; then
+        standing="audited — load-bearing capable${fraction:+ (${fraction} CONFIRMED)}; Lane discretion open"
     else
         standing="NOT audited — supports nothing load-bearing"
     fi

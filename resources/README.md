@@ -127,10 +127,14 @@ The body sections:
     statement audit of the content digests (the verifier's
     entry-statement-audit mode, dispatched by the lead after the
     entry is built; the contract's Ingestion section governs).
-    **Load-bearing use requires this field.** A re-fetch or
-    re-extraction changes what the anchors index, so it voids the
-    field until the audit is re-run — the `@ <hash>` binding is
-    what makes that mechanical.
+    **Load-bearing use requires this field.** A re-fetch, a
+    re-extraction, or a digest addition or revision each change what
+    the field's `N` and `M` cover, so each voids the field until the
+    audit is re-run. The `@ <hash>` binding makes a re-fetch or
+    re-extraction mechanical; a digest change is not hash-detectable,
+    so `M` must grow and `N` must fall back whenever a digest is added
+    or edited, by hand, in the same commit as the edit — `just
+    resources-verify` reports a partial standing whenever `N < M`.
   - `Vetted: <date>, Lane` — Lane's discretion record, written only
     by Lane or at Lane's explicit direction; writing it retires the
     PROVISIONAL marker. Discretion is self-initiated, never a gate

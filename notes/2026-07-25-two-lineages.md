@@ -380,7 +380,8 @@ SOURCE-CHECKED (`mangel-classical-notions`, `article.tex`):
 - `l.830–1058` — the duploid of an adjunction: `g ∘ f` is defined **in two
   different ways depending on the polarity of the middle object** — push the
   right factor down when positive, pull the left factor up when negative.
-- `l.3036` — central and thunkable maps coincide in a dialogue duploid.
+- `l.3044` — central and thunkable maps coincide for `⊗` in a dialogue
+  duploid.
 
 **The two protocols are the two cuts.** `composite⁻ f g` keeps `f` as the
 reflected head and transports `g` onto the coterm slot; `composite⁺ f g` keeps
