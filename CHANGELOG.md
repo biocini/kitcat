@@ -23,6 +23,32 @@ it in one step when needed.
 
 ---
 
+## 2026-07-29 — the duploid papers, reviewed and one of them audited
+
+**`munch-maccagnoni-duploids` is `verified`: 29/29 CONFIRMED
+(digest-level).** Ten revision rounds, seven adversarial reviews, and
+one independent statement audit, converging on a tracked correction
+patch and a committed measuring script (`pdf-scan.py`) that turns
+every drawn-mark count in the entry into a `--check`-verified one
+instead of an asserted one. The audit's own find, not caught by any
+review: the Theorem 28 digest's reflection triangle was mirrored,
+traced to two wrong `ToUnicode` font maps inside the PDF itself, fixed
+and disclosed. `just resources-verify` now lists the entry
+`audited — load-bearing capable`, up from `NOT audited`.
+
+**`mmmm-classical-notions` is `unverified`, mid-cycle.** A researcher
+pass and merge raised its digest coverage from 6/44 to 24/44 main-text
+statement environments (7 to 30 Content digests). Its own review-2
+findings (one MAJOR — `bin/resources-verify` cannot parse a
+`Statements verified: N/M` fraction, so a 3/30 entry reads as fully
+audited — and seven MINOR) are recorded but not yet applied, and no
+audit has run over the 23 new digests.
+
+Committed: `resources/munch-maccagnoni-duploids/README.md`,
+`resources/munch-maccagnoni-duploids/pdf-scan.py`,
+`outputs/duploids-entry-audit.md`. Session log:
+[`notes/2026-07-29-duploid-papers-audit.md`](notes/2026-07-29-duploid-papers-audit.md).
+
 ## 2026-07-29 — the defect promoted, and the Cat.Logic ledger split starts
 
 **`Cat.Logic.Gist.AssociatesDefect` is live.** Promoted from
