@@ -475,6 +475,343 @@ point has no generators either. The generator-bearing word model
 next strength. verified: `just check Cat.Logic.Gist.AssociatesDefect`,
 2026-07-29, zero warnings, no holes, no postulates.
 
+## Settled: the h-level of polarity, at two models
+
+Measured 2026-07-29, `Cat.Logic.Gist.PolarityHLevel`, a spike under
+the spike-zero policy. `positive` and `negative` transcribe the
+Polarity definition of Clairambault and Munch-Maccagnoni, *Duploid
+situations in concurrent games* (GaLoP XII, 2017), over the tower
+(`resources/mmmm-classical-notions/article.tex:1694-1700`). An
+object is positive when every edge out is linear, and negative when
+every edge in is thunkable. The transcription truncates nothing. The
+names drop `is-` per the prefix rule above.
+
+This settles the h-level question in line 4 below. The RULED
+note there, that mode separation is not a candidate foundation,
+is a separate and narrower verdict. This block does not touch
+it.
+
+- Circle model: polarity is structure. `mult-assoc` makes every
+  edge thunkable and every edge linear, so both polarities hold
+  at the one object. The `rot`-shift of a witness is a second
+  witness, one winding away (`positive-distinct`,
+  `negative-distinct`). So neither polarity is a proposition,
+  and neither witness space is contractible. The freedom of the
+  thunkability block above is uniform one quantifier up.
+- The freedom reaches consumers. `positive-assoc` reads the
+  mixed associator of a positive-objects subcategory off the
+  positivity witness. `filler-distinct`: the two witnesses fill
+  one `associates` cell in two distinct ways. A subcategory of
+  positive objects over this model carries its associator as a
+  choice, not a law.
+- Word model: polarity is a property, and the property is
+  empty. Hom sets make both polarities propositions
+  (`positive-is-prop`, `negative-is-prop`). A positivity
+  witness yields linearity of `ε̂`. A negativity witness yields
+  thunkability of `τ̂`. The profile block above refutes both,
+  so the free balanced point has no positive and no negative
+  object.
+- Emptiness at the word model measures the free point, not the
+  theory. The circle model is a full deductive system in which
+  both polarities hold. No impossibility claim stands here.
+- verified: `just check Cat.Logic.Gist.PolarityHLevel`, 2026-07-29,
+  zero warnings, no holes, no postulates.
+
+## Settled: polarity is a twist condition, at two strengths
+
+Measured 2026-07-29, `Cat.Logic.Gist.PolarityTwist`, a spike under
+the spike-zero policy. Both twists at an object sit under both
+polarity quantifiers, so instantiation gives four forward
+clauses. The spike proves the converse at two strengths and
+names the one that stays open.
+
+This settles the closure lemma in line 4 below, and it reshapes
+the countermodel question: no deductive system separates the
+twist condition from the polarity.
+
+- Closure, over the bare tower: `thunkable` and `linear` close
+  under both cuts (`thunkable-⨾⁺`, `thunkable-⨾⁻`, `linear-⨾⁺`,
+  `linear-⨾⁻`). No unit law, no hom set, no invertibility. Two
+  closures are one-sided. `linear-⨾⁺` reads only its leading
+  factor, and `thunkable-⨾⁻` only its trailing factor.
+- Generated carriers: `gen` says an edge is a cut word in the
+  twists. Where every edge is generated, two linear twists at
+  `x` make `x` positive, and two thunkable twists make it
+  negative (`positive-generated`, `negative-generated`). The
+  hypotheses sit at `x` alone. `gen-diag` transports them along
+  the loop a derivation forces.
+- Full deductive-system strength: one edge, no generation.
+  `unitl⁺` with `linear-⨾⁺` turns a linear `twist⁺ x` into
+  `positive x`. `unitr⁻` with `thunkable-⨾⁻` turns a thunkable
+  `twist⁻ x` into `negative x` (`full.positive-of-twist⁺`,
+  `full.negative-of-twist⁻`). A countermodel must therefore
+  live below invertibility.
+- The twists generate the word model: `gen-sem` writes every
+  canonical descriptor as a cut word in `ε̂` and `τ̂`, and the
+  recursion consumes weak monotonicity alone (`gen-all`). The
+  two-edge check holds there vacuously. Each hypothesis pair
+  fails on exactly one twist: `τ̂` is linear and `ε̂` is not,
+  `ε̂` is thunkable and `τ̂` is not.
+- Open: a stable and composable carrier that is neither
+  invertible nor generated. A countermodel needs both twists
+  linear at an object and a non-linear edge out of it, or the
+  thunkable dual, on such a carrier. No impossibility claim
+  stands here.
+- Known duplication: `positive`/`negative` restate
+  `Cat.Logic.Gist.PolarityHLevel`'s definitions rather than
+  importing them, since that module is `--cubical` and this one
+  is `--erased-cubical`. The natural future home is one shared
+  definition beside `thunkable`/`linear` in `Cat.Logic.Base`.
+- verified: `just check Cat.Logic.Gist.PolarityTwist`, 2026-07-29,
+  zero warnings, no holes, no postulates.
+
+## Settled: polarity does not split at full strength
+
+Measured 2026-07-29, `Cat.Logic.Gist.PolarityCollapse`, a spike under
+the spike-zero policy. The two twist conditions at an object are
+equivalent, so `positive` and `negative` are one predicate over
+every deductive system. No carrier separates them, and the
+distinguishing-model search closes with the tiers.
+
+This settles the countermodel question in the twist block above, at
+full deductive-system strength. The open case there sits below
+invertibility, and this block does not touch it.
+
+- The framing is a category and one operator. `assoc⁺` with
+  `unitl⁺` and `unitr⁺` makes the edges a category whose identity
+  is `twist⁺`. `mixed-assoc` with `unitl⁺` rewrites every negative
+  cut (`cut⁻-cross`): `f ⨾⁻ g` is `(f ⨾⁻ twist⁺) ⨾⁺ g`. So each
+  polarity statement is a statement about `_⨾⁻ twist⁺`.
+- One direction, `from-linear`: a linear `twist⁺ x` makes that
+  operator a positive cut against `cross⁻ (twist⁺ x)`, on every
+  edge into `x` (`cross⁻-into`). `pair⁻` makes the fixed edge a
+  right inverse of `twist⁻ x` (`twist⁻-centre`). The operator then
+  retracts the negative twist's positive cut (`retract`).
+  `cross⁻-cut⁺` passes the operator through any positive cut at `x`
+  (`cross⁻-left`), which is `thunkable-twist⁻`.
+- The dual direction, `from-thunkable`: the same five steps
+  through `twist⁻ x ⨾⁺_`, `unitl⁻`, and `pair⁺`, ending at
+  `linear-twist⁺`.
+- The polarities follow by the one-edge theorem of the block
+  above (`positive→negative`, `negative→positive`).
+  `no-positive-split` and `no-negative-split` refute a
+  distinguishing model at each candidate object, `p` and `n`.
+- Cross-check at the word model: `word-check` derives
+  `¬ thunkable τ̂` from `linear-refuted`, and `¬ linear ε̂` from
+  `thunkable-refuted`. The free balanced point's two refutations
+  are one fact.
+- The obstruction is a tier, not a carrier. The collapse consumes
+  `mixed-assoc`, `assoc⁺`, `assoc⁻`, `unitr⁺`, `unitl⁻`, `pair⁺`,
+  `pair⁻`, `unitl⁺`, and `unitr⁻`. A stratum where the polarities
+  differ drops one of them: the mixed law, one hand's
+  associativity, or the invertible framing.
+- verified: `just check Cat.Logic.Gist.PolarityCollapse`, 2026-07-29,
+  zero warnings, no holes, no postulates.
+
+## Settled: the carrier is a category with one operator
+
+Measured 2026-07-29, `Cat.Logic.Gist.OperatorCarrier`, a spike under the
+spike-zero policy. The collapse block above rewrote every negative
+cut as one positive cut after `_⨾⁻ twist⁺`. This block states the
+carrier that rewriting leaves, and measures how far it reaches. The
+structure of a deductive system returns in full. The axioms do not.
+The carrier is now stated for the two open questions of the twist
+and collapse blocks, and this block answers neither.
+
+- The record is `presentation`: a wild category (`unit`, `_⨾_`,
+  `assoc`, `unitl`, `unitr`), one endo-operator `cross` on the
+  edges, a second endo-edge family `pivot`, and three laws
+  (`cross-pivot`, `pivot-unitr`, `cross-cut`). No general category
+  record exists elsewhere in `Cat`, so the spike inlines its own,
+  per the spike convention.
+- Forced, not chosen. The category is the positive cut with
+  `twist⁺` for its identity. `cross-pivot` is `pair⁻`,
+  `pivot-unitr` is `cut⁻-cross` against `unitr⁻`, and `cross-cut`
+  is `cross⁻-cut⁺`. The backward direction consumes every field, so
+  no law is idle. `pivot-forced` pins the pivot from one law of each
+  family, so that family is determined up to a path. The one free
+  choice is the operator's direction, and `op-cross` shows `opᴰ`
+  exchanges `cross⁻` and `cross⁺` on the nose.
+- The structure returns with no hypothesis. `carrier.graph` is a
+  virtual graph, readback included: `reflect f γ` is the flanked
+  word `(cross s ⨾ f) ⨾ k`, and readback is that word at the axiom.
+  `composable⁺`, `composable⁻`, `cancel⁻` and `cancel⁺` inhabit all
+  four tier fibers. `reflect-injective`, from readback alone, then
+  forces each fiber's edge (`cut⁺-forced`, `cut⁻-forced`,
+  `centre⁻-forced`, `centre⁺-forced`).
+- The residue is an h-level, not an equation. What the four tiers
+  ask beyond the presentation is `residue`: stability, plus one
+  propositionality demand per invertibility fiber. Contractibility
+  is then `prop-inhabited→is-contr` on the forced witnesses.
+  `hom-sets→residue` discharges all three, so a presentation with
+  hom sets is a full deductive system (`system`). Over wild homs the
+  residue stands open. The spike neither derives it nor refutes it.
+- Round trips, componentwise. Presentation side: `ob`, `hom`,
+  `unit`, `pivot` and the cut return on the nose, and `cross`
+  returns up to `unitr (cross f)`, since the rebuilt negative cut
+  ends at the unit. Graph side: `ob`, `hom`, `twist⁺` and `twist⁻`
+  return on the nose, and `reflect` returns up to `round-reflect`.
+  Its proof is `reflect-word`, every reflection a flanked word, from
+  `⨾⁻-is-act`, `⨾⁺-is-coact` and readback.
+- The record-level identity of graphs is exactly one square,
+  `readback-square`. `round-graph` and `round-system` derive both
+  records from it, the axioms by `is-deductive-system-is-prop`. The
+  homs are wild, so nothing here identifies the two readbacks. No
+  countermodel either, and the same shape blocks the presentation's
+  own law fields.
+- The operator dictionary. `associates f g h` says right
+  multiplication by `h` erases the defect between `cross⁻ (f ⨾⁺ g)`
+  and `f ⨾⁺ cross⁻ g` (`associates→cross`, `cross→associates`).
+  `thunkable f` erases that defect outright, one trailing edge at a
+  time (`thunkable→cross`, `cross→thunkable`). `linear h` erases it
+  by right multiplication, at every pair (`linear→cross`,
+  `cross→linear`). `positive x` and `negative x` are one condition,
+  `represents x`: the operator restricted to the presheaf
+  `hom(-, x)` is right multiplication by a single edge.
+  `represents-forced` pins that edge to `cross⁻ (twist⁺ x)`, the
+  operator's value at the identity, so the representing element is
+  read off the fiber over the identity.
+- Where the balanced laws go. `unitl⁺` is the presentation's
+  `unitl`, spent on readback, on the positive cut, on `cancel⁻`, and
+  on the forcing lemmas. `unitr⁻` enters as `pivot-unitr`, and
+  `cancel⁺` is its only consumer. So a stratum below balance loses
+  the positive invertibility centre first.
+- verified: `just check Cat.Logic.Gist.OperatorCarrier`, 2026-07-29,
+  zero warnings, no holes, no postulates.
+
+## Settled: the readback torsor stops at the presentation
+
+Measured 2026-07-29, `Cat.Logic.Gist.ReadbackShift`, a spike under the
+spike-zero policy. The carrier block above left one obligation,
+`readback-square`. It named `Cat.Logic.Gist.ReadbackTorsor` as the
+one instrument in the library that varies a readback over wild homs.
+This block measures what that instrument reaches. It refutes nothing.
+At the circle model the square holds, at both readbacks.
+
+- The readback is free structure. `is-deductive-system` names
+  `reflect` and the two twists, and never the readback. So
+  `retune-axioms` carries every tier's witness across a change of
+  readback, with no proof. `retune` then gives two deductive systems
+  over the circle model that differ in the readback alone, `rb₀` and
+  its one-winding shift `rb₁` (`readbacks-differ`).
+- The presentation does not follow. Six components return on the nose
+  (`same-ob`, `same-hom`, `same-unit`, `same-pivot`, `same-cut`,
+  `same-cross`). `assoc` returns up to a path, since stability carries
+  it into a fiber that is a set (`same-assoc`). `cross-pivot` and
+  `unitr` each gain one winding and do not return
+  (`cross-pivot-differs`, `unitr-field-differs`). The carrier returns
+  on the nose, so no identification of the two presentations holds the
+  carrier fixed. The torsor produces no refuting pair.
+- Every word the round trip writes at the axiom is a loop at `base`.
+  Both twists sit there and both cuts are the multiplication. That
+  loop space is commutative: every self-path family is central, and
+  `conj` writes each loop as one such family. The bookkeeping is then
+  a signed count of readback occurrences. Each unit word gains one
+  winding, the flanked word loses one, and the stability associators
+  do not move (`mixed-same`).
+- The two sides of the square move together. The derived readback
+  gains `κ₀ ∙ loop ∙ loop` (`derived-shift`). The reflection square
+  against the field gains the same (`round-shift`). `κ₀` is the shift
+  of the positive hand's left unit law, which cancels, so the spike
+  names it and does not compute it. The square therefore transfers
+  both ways (`square→`, `square←`). A wild readback's winding is
+  invisible to it.
+- The square holds at the circle model. At the axiom the two unit
+  laws reduce to the two cut witnesses, and the flanked word to their
+  joint inverse. What is left is the triviality of the mixed
+  associator (`square→mixed`, `mixed→square`). That associator is
+  `refl` (`mixed-base`), because the model reads the positive cut
+  witness through `mult-assoc base`. `square₀` and `square₁` follow,
+  and `round-graph` closes the graph round trip at each readback
+  (`graph-returns₀`, `graph-returns₁`).
+- No truncation enters. The circle is a groupoid and not a set, so the
+  square at an edge is a proposition and not a triviality. What the
+  argument spends is the commutative loop space and the degeneracy of
+  `mult-assoc` at `base`. Both are facts about this model.
+- Open: `readback-square` in general, and with it `round-system` for a
+  presentation without hom sets. A proof needs the same cancellation
+  without a commutative loop space, and without a cut witness that
+  degenerates at the axiom. No impossibility claim stands here.
+- verified: `just check Cat.Logic.Gist.ReadbackShift`, 2026-07-29, zero
+  warnings, no holes, no postulates.
+
+## Stale in light of the polarity collapse
+
+The three polarity gists above settle more than their own headline
+claims. Read together, they close a specific hoped-for route through
+lines 6 and 7 below, and change what "define the subcategories" in
+line 4 can mean. This block names which investigation items that
+touches, and why. Nothing here is a new measurement; it draws the
+consequences of the settled blocks above.
+
+**The chain.** `Cat.Logic.Gist.PolarityCollapse` proves `positive x ⟺
+negative x` at every object of every full deductive system — full
+strength meaning stable, both composability tiers, and both
+invertibility fibers, which is balanced strength (`tower.balanced`,
+the record-cut section above). No deductive system has an object that
+is positive and not negative, or negative and not positive.
+`Cat.Logic.Gist.PolarityTwist`'s open case — a carrier that is stable
+and composable but not invertible — is the only place this could
+still fail, and nothing here touches it.
+
+**Item 4's "subcategories" residue.** That line asked to "define the
+subcategories of thunkable maps, linear maps, positive objects and
+negative objects over the towers." At balanced strength that plan now
+has an answer before it is attempted: the positive-object subcategory
+and the negative-object subcategory, if built as object classes, are
+the same class of objects in every deductive system. A carrier can
+have positive-and-negative objects (the circle) or neither (the free
+balanced point), never one without the other. This is not "still
+open" in the sense the line originally meant — it is closed,
+negatively, at balanced strength. Below invertibility it is genuinely
+open, per the twist block's own unresolved case.
+
+**Item 6, shifts as representability.** BLOCKED. The line's own text
+already named the dependency: "Needs line 4 for `linear` to have
+content." At balanced strength, `linear` at an object's defining
+twist never has content independent of `thunkable` at the same
+twist — one is exactly the other, by the collapse. A shift's
+universal property meant to say something about positive objects that
+is not already true of negative ones cannot be stated non-vacuously
+against object-level polarity in the current framework. The route to
+this line, as written, is closed by a proved theorem, not by absence
+of effort.
+
+**Item 7, the reflection theorem.** BLOCKED, and this is the
+load-bearing one. The target was "the polarized, balanced core of a
+deductive system is a duploid." Balanced is exactly the strength at
+which polarized collapses. There is no polarized-and-balanced core to
+extract a duploid from: any object balanced enough to be usefully
+positive is, in the same breath, negative. A duploid needs P and N to
+differ. This framework's balance and this framework's polarity cannot
+both hold non-trivially at the same object. The reflection theorem as
+targeted has no carrier to land on.
+
+**What this does not touch.** Items 1, 2, 3, 8, and 9 are unaffected —
+none of them depend on polarity separating objects. Item 5's own text
+already named the shape of this outcome ("turns the comparison table
+there into a depolarization theorem") without having the theorem; the
+collapse is arguably that theorem, reached by a different road (twist
+equivalence, not the θ² magmoid merge). Cross-reference, don't
+conflate: item 5's depolarization is the two hands' units merging
+under θ²; the collapse is `linear`/`thunkable` merging at a twist.
+Whether they are the same fact under two descriptions is not
+established here.
+
+**The decision this reopens.** Item 4's RULED note (Lane, 2026-07-28)
+rejected primitive polarity as a foundation on the strength of one
+clause: "Modes return, if at all, as a derived presentation of the
+balanced core through lines 6 and 7." That clause is now false for
+the balanced core as defined. It does not follow that primitive
+polarity is right — only that the alternative the ruling bet on has
+failed the way a ruling can fail: by a proved theorem rather than a
+stalled attempt. Munch-Maccagnoni's own Definition 1 states polarity
+as primitive data, a partition map `ϖ : |D| → {+, ⊖}`, not derived —
+worth weighing now that the derived route is closed. Reopening the
+ruling is Lane's call, not this block's; recorded here so the next
+session does not re-derive the collapse before finding out it already
+answers the question the ruling deferred.
+
 ## Lines of investigation: toward higher duploids
 
 Enumerated 2026-07-27, from the duploid comparison. Each line names
@@ -529,8 +866,33 @@ the ones before it.
    with adjunctions only as what the structure theorem
    reconstructs. Modes return, if at all, as a derived
    presentation of the balanced core through lines 6 and 7.
+   Settled 2026-07-29, the h-level half: polarity is structure
+   at the circle model and an empty property at the word model.
+   See the settled block above and `Cat.Logic.Gist.PolarityHLevel`.
+   Settled 2026-07-29, the closure lemma and the twist
+   reduction: `thunkable` and `linear` close under both cuts
+   over the bare tower, and polarity reduces to its twists on
+   generated carriers, from one twist at full deductive-system
+   strength. See the twist-condition block above and
+   `Cat.Logic.Gist.PolarityTwist`. Settled 2026-07-29, the polarity
+   split: the two twist conditions at an object are equivalent, so
+   the two polarities are one predicate and no deductive system
+   separates them. See the collapse block above and
+   `Cat.Logic.Gist.PolarityCollapse`. The subcategories do not stay
+   open in the sense first meant here — see "Stale in light of the
+   polarity collapse," above this list, for what closes and what
+   does not. The twist reduction below invertibility on
+   non-generated carriers is the one piece that is still genuinely
+   open.
 
-5. **The fully balanced layer.** String computation, unverified:
+5. **The fully balanced layer.** Not blocked — its own content (the
+   unit laws, largely proved by the record cut above; the `Mag`
+   comparison) stands on its own. Its role as a stepping stone toward
+   lines 6 and 7 is diminished, since those are now blocked — see
+   "Stale in light of the polarity collapse," above this list. Its
+   own "depolarization theorem" phrase, below, named the shape of
+   that outcome before this session had the theorem, and is worth
+   reading against it. String computation, unverified:
    with both cancellation orders, each hand is two-sided unital
    with its own twist as unit. That is two unital magmoids on one
    graph, offset by θ². State the layer, check the four unit laws,
@@ -707,18 +1069,26 @@ the ones before it.
    the free balanced word model supplies the countermodel. See
    the settled profile block.
 
-6. **Shifts as representability.** The positive shift's universal
-   property is a unique linear factorization through a thunkable
-   `ω`. State it as a fiber condition in the house style. Needs
-   line 4 for `linear` to have content.
+6. **Shifts as representability.** BLOCKED — see "Stale in light of
+   the polarity collapse," above this list. The positive shift's
+   universal property is a unique linear factorization through a
+   thunkable `ω`. State it as a fiber condition in the house style.
+   Needs line 4 for `linear` to have content, and at balanced
+   strength `linear` at a twist has no content independent of
+   `thunkable` there. Reopens only if line 4's ruling is revisited or
+   the target is restated below invertibility.
 
-7. **The reflection theorem.** The target that makes the
+7. **The reflection theorem.** BLOCKED — see "Stale in light of the
+   polarity collapse," above this list. The target that makes the
    comparison a theorem: the polarized, balanced core of a
    deductive system is a duploid, and the correspondence extends
    the adjunction characterization. Its expected home is the
    notion the two source literatures imply and do not define, a
    balanced duploid, with plain duploids as the trivially framed,
-   polarized, set-level case.
+   polarized, set-level case. At this framework's balanced strength
+   there is no polarized-and-balanced core: balance is exactly what
+   collapses polarity. The theorem has no carrier to land on as
+   targeted.
 
 8. **Prior art on one-sided unitality.** Neither vendored source
    mentions skew structures. Run a literature pass on

@@ -23,6 +23,228 @@ it in one step when needed.
 
 ---
 
+## 2026-07-29 — session close: the polarity collapse, reviewed and vendored
+
+**Session log:** [`notes/2026-07-29-polarity-collapse-and-vendor.md`](notes/2026-07-29-polarity-collapse-and-vendor.md).
+
+Closes the session that produced the five entries below (h-level,
+twist-condition, collapse, operator-carrier, readback-shift), their
+three-reviewer adversarial audit, and the vendor pass. Adds one thing
+not yet in an entry of its own: a staleness diagnosis in
+`src/Cat/Logic/TODO.md`. A new "Stale in light of the polarity
+collapse" block, plus pointers from investigation items 4 through 7.
+Lines 6 (shifts as representability) and 7 (the reflection theorem, a
+deductive system's polarized, balanced core is a duploid) are
+`blocked`, not merely open. Balance is exactly the strength at which
+`PolarityCollapse` proves polarity collapses, so no polarized-and-
+balanced core exists to build a duploid from. Item 4's "subcategories"
+line closes the same way. Items 1, 2, 3, 5, 8, 9 stand unaffected. The
+earlier RULED note against primitive polarity rested on a clause now
+known false. Reopening it is Lane's call, recorded for the next
+session rather than decided here.
+
+`verified`: all five promoted modules check individually, plus
+`just check-tree src/Cat/Logic/Gist` (14 modules) and the whole-library
+`just check-tree`, which is clean except six pre-existing failures
+unrelated to this session (`Core.Coherence.Paths`,
+`Core.Path.Coherence`, `Data.Thin.{Category,Cover,Properties,
+Separated}`). A stale import and unrelated unsolved metas cause them;
+none of the affected files were touched. `just lint changed` clean,
+zero holes or postulates across the session's modules. `blocked`:
+`readback-square` in general. `inferred`, not `verified`: the
+staleness diagnosis is a consequence-drawing pass over already-
+verified results, not a new checker run.
+
+---
+
+## 2026-07-29 — the polarity chain promoted into Cat.Logic.Gist
+
+**Five modules are live**: `Cat.Logic.Gist.PolarityHLevel`,
+`Cat.Logic.Gist.PolarityTwist`, `Cat.Logic.Gist.PolarityCollapse`,
+`Cat.Logic.Gist.OperatorCarrier`, `Cat.Logic.Gist.ReadbackShift`.
+Promoted from their `Test.SpikeXxx` originals, `just mv` in
+dependency order, one module checked before the next rename. Slug
+`vendor-polarity-gists`, brief at
+`outputs/.plans/vendor-polarity-gists.md`.
+
+Three adversarial reviews covered the first three spikes. They found
+the underlying mathematics sound, one wrong citation, and several
+overclaiming or underclaiming prose passages. The promotion applied
+the fix list alongside each rename.
+
+`PolarityHLevel`: the `positive`/`negative` citation no longer names
+Definition 1 of `resources/munch-maccagnoni-duploids`, a primitive
+partition map and not this transcription. It now names Clairambault
+and Munch-Maccagnoni's Polarity definition, *Duploid situations in
+concurrent games* (GaLoP XII, 2017), at
+`resources/mmmm-classical-notions/article.tex:1694-1700`. `shiftP`
+and `shiftN` renamed `shift⁺` and `shift⁻`, the house convention for
+hand-marked names.
+
+`PolarityTwist`: `positive-from-unit` and `negative-from-unit`
+localized to the one object their proof terms actually use. Two new
+lemmas, `positive-empty` and `negative-empty`, make the word model's
+vacuous two-edge check machine-checked. `linear-refuted` and
+`thunkable-refuted` join the import list. A new sentence states the
+`gen-diag` scope limit: the generated-carrier tier is vacuous off a
+loop edge. The closing prose notes the `positive`/`negative`
+duplication against `PolarityHLevel` and leaves it for a later pass.
+
+`PolarityCollapse`: a new `from-deductive-system` module restates
+both collapse directions at the bundled `is-deductive-system` record,
+not only at the raw tiers. "One property"/"one predicate" now reads
+"logically equivalent" (the module proves a two-way implication, not
+identity of the two predicates). `split-refuted` and
+`split-refuted-dual` had byte-identical signatures despite naming two
+distinct facts. Sharper replacements, `no-positive-split` and
+`no-negative-split`, each use only the two hypotheses they need.
+"Category" now reads "unital magmoid", this repository's term for
+the same untruncated-hom structure. Two sentences overclaiming
+necessity now match the module's own "It could instead drop..."
+qualifier. The scaffolding simplification the reviews noted
+(`centre`, `cross⁻-into`, and `twist⁻-centre` are provably
+unnecessary) is deliberately not attempted this pass.
+
+`OperatorCarrier` and `ReadbackShift`: rename only, completed after
+the review batch. Their imports of `PolarityTwist` and
+`OperatorCarrier` came through the `just mv` sweep correctly.
+
+Ledger updated (`src/Cat/Logic/TODO.md`). Every `Test.SpikeXxx`
+reference now reads `Cat.Logic.Gist.Xxx`. The h-level block's
+citation matches the module's fix, and the twist block gained the
+duplication note. `outputs/.plans/polarity-hlevel.md` corrected for
+consistency.
+
+`verified`: `just check` on each of the five modules individually,
+zero warnings, no holes, no postulates. `just check-tree
+src/Cat/Logic/Gist` clean, 14 modules. `just check-tree` over the
+whole library reports the same six pre-existing failures as before
+this session, under `Data.Thin` and `Core.Coherence`/`Core.Path`.
+The causes are a stale `Cat.Type` import and unrelated unsolved
+metas, neither touched here. `just lint changed` passes. `rg -n
+"Test\.Spike(PolarityHLevel|PolarityTwist|PolarityCollapse|OperatorCarrier|ReadbackShift)"
+src/` returns nothing.
+
+## 2026-07-29 — the readback torsor stops at the presentation
+
+**`Test.SpikeReadbackShift` is live** (slug `readback-square`, brief
+at `outputs/.plans/readback-square.md`). The carrier spike below left
+`readback-square` open. It named `Cat.Logic.Gist.ReadbackTorsor` as
+the only instrument that varies a readback over wild homs. This spike
+measures what that instrument reaches. It refutes nothing. At the
+circle model the square holds, at both readbacks.
+
+The readback is free structure. `is-deductive-system` names `reflect`
+and the two twists, and never the readback. So `retune-axioms` carries
+every tier's witness across a change of readback, with no proof. That
+gives two deductive systems over the circle model which differ in the
+readback alone, `rb₀` and its one-winding shift `rb₁`.
+
+The presentation does not follow. Six components return on the nose,
+and `assoc` returns up to a path through stability. `cross-pivot` and
+`unitr` each gain one winding and do not return
+(`cross-pivot-differs`, `unitr-field-differs`). The carrier returns on
+the nose, so no identification of the two presentations holds the
+carrier fixed. There is no refuting pair.
+
+The square's two sides move together. Every word the round trip writes
+at the axiom is a loop at `base`, and that loop space is commutative.
+The shift is then a signed count of readback occurrences. The derived
+readback gains two windings and one uncomputed loop `κ₀`, and the
+reflection square against the field gains the same. `square→` and
+`square←` transfer the square across the retuning.
+
+At the circle model the square reduces to the triviality of the mixed
+associator at the axiom. That holds, because the model reads the
+positive cut witness through `mult-assoc base`. So `square₀` and
+`square₁` hold, and `round-graph` closes the graph round trip at each
+readback. No truncation enters: the circle is a groupoid and not a
+set, so the square is a proposition and not a triviality.
+
+Ledger updated (`src/Cat/Logic/TODO.md`, the readback-torsor block).
+`verified` (`just check Test.SpikeReadbackShift`, 2026-07-29, zero
+warnings, no holes, no postulates). Next: `readback-square` in
+general, which needs the same cancellation without a commutative loop
+space, and without a cut witness that degenerates at the axiom.
+
+## 2026-07-29 — a deductive system as a category with one operator
+
+**`Test.SpikeOperatorCarrier` is live** (slug
+`category-operator-presentation`, brief at
+`outputs/.plans/category-operator-presentation.md`). The collapse
+spike below rewrote every negative cut through one operator. This
+spike states the carrier that rewriting leaves, and measures how far
+it reaches. The structure of a deductive system is a wild category
+with one endo-operator. The axioms are not.
+
+`presentation` is the record: `unit`, `_⨾_`, `assoc`, `unitl`,
+`unitr`, the operator `cross`, a second endo-edge family `pivot`, and
+three laws. Each law is a theorem of a deductive system (`pair⁻`,
+`cut⁻-cross` against `unitr⁻`, `cross⁻-cut⁺`), and the backward
+direction consumes every field. `op-cross` shows `opᴰ` exchanges the
+two readings of the operator on the nose.
+
+Backward, `carrier.graph` is a virtual graph with readback and no
+hypothesis: `reflect f γ` is the flanked word `(cross s ⨾ f) ⨾ k`.
+All four tier fibers are inhabited, and readback forces each fiber's
+edge. What is missing is `residue`: stability, plus one
+propositionality demand per invertibility fiber. `hom-sets→residue`
+discharges it, so a presentation with hom sets is a full deductive
+system. Over wild homs the residue stands open, neither derived nor
+refuted.
+
+Both round trips are componentwise, and two components return only up
+to a path. `cross` returns up to `unitr`, and `reflect` up to
+`round-reflect`. The record-level identity of graphs is exactly one
+square, `readback-square`, from which `round-graph` and `round-system`
+derive both records.
+
+The dictionary reads `associates`, `thunkable` and `linear` as the
+commutation defect of the operator. Polarity becomes
+representability: the operator on `hom(-, x)` is right multiplication
+by one edge, forced to be `cross⁻ (twist⁺ x)`.
+
+Ledger updated (`src/Cat/Logic/TODO.md`, the carrier block).
+`verified` (`just check Test.SpikeOperatorCarrier`, 2026-07-29, zero
+warnings, no holes, no postulates). Next: the readback square, and
+whether the residue admits a countermodel over wild homs.
+
+## 2026-07-29 — polarity does not split at full strength
+
+**`Test.SpikePolarityCollapse` is live** (slug
+`polarity-distinguishing-model`, brief at
+`outputs/.plans/polarity-distinguishing-model.md`). The brief asked
+for a deductive system with one positive object and one negative
+object. No such system exists. The two twist conditions at an object
+are equivalent. So `positive` and `negative` are one predicate, and no
+carrier separates them.
+
+The proof reads the framing as a category plus one operator. `assoc⁺`
+with its two unit laws makes the edges a category whose identity is
+`twist⁺`. `mixed-assoc` with `unitl⁺` rewrites `f ⨾⁻ g` as `(f ⨾⁻
+twist⁺) ⨾⁺ g` (`cut⁻-cross`). A linear `twist⁺ x` pins that operator
+to one positive cut against a right inverse of `twist⁻ x`. The
+operator then passes through every positive cut at `x`, which is a
+thunkable `twist⁻ x` (`from-linear`).
+
+`from-thunkable` runs the dual. `split-refuted` closes the brief's
+four clauses, and `word-check` derives each of the word model's two
+refutations from the other.
+
+A finite-model search preceded the proof and agrees with it
+(`outputs/.notes/polarity-distinguishing-model-search.py`). Take the
+two-object carrier whose hom sets are its two twists, with no edge
+back from the second object. Exactly four deductive systems exist
+there. All four are group-like, and both polarities hold at both
+objects in each one.
+
+Ledger updated (`src/Cat/Logic/TODO.md`, collapse
+block + line 4). `verified` (`just check Test.SpikePolarityCollapse`,
+2026-07-29, zero warnings, no holes, no postulates). Next: a stratum
+where the polarities differ drops one of the consumed laws. The
+candidates are the mixed law, one hand's associativity, and the
+invertible framing.
+
 ## 2026-07-29 — the duploid papers, reviewed and one of them audited
 
 **`munch-maccagnoni-duploids` is `verified`: 29/29 CONFIRMED
@@ -84,6 +306,62 @@ Uncommitted, pending Lane's go-ahead:
 `notes/2026-07-25-two-lineages.md` (the downstream anchor fix from
 review-2), and `outputs/classical-notions-entry-audit.md`. Session
 log: [`notes/2026-07-29-classical-notions-audit-complete.md`](notes/2026-07-29-classical-notions-audit-complete.md).
+
+## 2026-07-29 — polarity is a twist condition, at two strengths
+
+**`Test.SpikePolarityTwist` is live** (slug
+`polarity-twist-condition`, brief at
+`outputs/.plans/polarity-twist-condition.md`). The spike measures
+the converse of the forward instantiation: whether linear twists
+at `x` return `positive x`, and thunkable twists `negative x`.
+
+All four closures check over the bare tower, from the three
+associativity theorems alone: `thunkable` and `linear` under both
+cuts. Two are one-sided (`linear-⨾⁺` reads its leading factor,
+`thunkable-⨾⁻` its trailing factor). The converse follows at two
+strengths. On carriers generated by the twists under the cuts
+(`gen`), both twists decide the polarity. At full deductive-system
+strength the balanced unit laws make one twist decide it, so no
+deductive system separates the twist condition from the polarity.
+`gen-sem` proves the word model generated, where the check is
+vacuous: each hypothesis pair fails on exactly one twist.
+
+Open: the twist reduction below invertibility on non-generated
+carriers. A countermodel needs a stable, composable,
+non-invertible carrier with both twists linear at an object and a
+non-linear edge out of it. Ledger updated
+(`src/Cat/Logic/TODO.md`, twist-condition block + line 4).
+`verified` (`just check Test.SpikePolarityTwist`, 2026-07-29, zero
+warnings, no holes, no postulates). Next: either construct that
+countermodel or take up the polarity subcategories from line 4.
+
+## 2026-07-29 — the h-level of polarity, at two models
+
+**`Test.SpikePolarityHLevel` is live** (slug `polarity-hlevel`,
+brief at `outputs/.plans/polarity-hlevel.md`). `positive` and
+`negative` transcribe the duploids paper's Definition 1 over the
+tower, with no truncation.
+
+Circle model: `mult-assoc` makes every
+edge thunkable and linear, so both polarities hold at the one
+object. The `rot`-shift gives a second witness one winding away.
+So polarity is structure: not a proposition, not contractible.
+`filler-distinct` shows two positivity witnesses fill one
+`associates` cell in two ways. A positive-objects subcategory
+therefore carries its mixed associator as a choice.
+
+Word model: both polarities are propositions over the set-level
+homs, and both are empty (`linear-refuted` at `ε̂`,
+`thunkable-refuted` at `τ̂`). `verified`: `just check
+Test.SpikePolarityHLevel`, 2026-07-29, zero warnings, no holes,
+no postulates, prose at 0.19/100w.
+
+Ledger updated: `src/Cat/Logic/TODO.md` gains the settled block
+"the h-level of polarity, at two models". Line 4 of the
+investigation list points at it. The RULED note on mode
+separation stands untouched. Open next: the polarized
+subcategories and the closure of `thunkable`/`linear` under the
+compositions (line 4's remainder).
 
 ## 2026-07-29 — the defect promoted, and the Cat.Logic ledger split starts
 
