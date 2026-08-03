@@ -27,6 +27,7 @@ interchangeable, and a wrong check command is worse than none.
 | `clean-build` | no | Command for a from-scratch build (deliverability check). |
 | `probe` | no | Cheap environment check, e.g. version command. |
 | `search-dirs` | no | Directories to search when locating declarations. |
+| `style-guide` | no | Two parts: a one-sentence normative `law`, and an `exemplar` file or namespace to imitate. See below. |
 
 Semantics the workflows rely on:
 
@@ -39,6 +40,13 @@ Semantics the workflows rely on:
 - **Unsafe markers downgrade claims.** Any hit in a delivered file must be
   disclosed in the artifact's provenance sidecar; claims of "complete" or
   "fully checked" are false while unaccounted hits exist.
+- **A style guide is a law plus an exemplar, not a rulebook.** If
+  `style-guide` is present, it names one normative sentence (`law`) and one
+  file or namespace (`exemplar`) to imitate — nothing more is required for
+  a workflow to consult it. A deeper style-guide tree, if the host project
+  has one, is optional secondary elaboration a workflow may consult but
+  never must. If `style-guide` is absent, a workflow falls back to
+  surveying the library directly.
 
 ## Example blocks (do not copy blindly — measure your own project)
 
@@ -54,6 +62,10 @@ Semantics the workflows rely on:
 - clean-build: `rm -rf _build && agda --safe --no-libraries Everything.agda`
 - probe: `agda --version`
 - search-dirs: `src/`
+- style-guide:
+  - law: match the local idiom of the module you edit; escalate style
+    questions rather than improvise
+  - exemplar: `Data/Core.agda`
 ```
 
 ### Lean 4

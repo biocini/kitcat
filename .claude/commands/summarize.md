@@ -6,9 +6,8 @@ disable-model-invocation: true
 
 Summarize the following source: $ARGUMENTS
 
-Derive a short slug from the source filename or URL domain (lowercase,
-hyphens, no filler words, ≤5 words — e.g. `homotopy-type-theory-book`). Use
-this slug for all files in this run.
+Derive a slug per euler.md §File naming, from the source filename or URL
+domain. Use this slug for all files in this run.
 
 ## Why this uses the RLM pattern
 
@@ -155,9 +154,8 @@ print(f"[summarize] chunks={len(chunks)} chunk_size={chunk_size} overlap={overla
 ### 3b. Confirm before spawning
 
 Briefly summarize: "Source is ~<chars> chars -> <N> chunks -> <N> researcher
-subagents. Continuing with the chunked pass." Then continue automatically. Do
-not ask for confirmation or wait for a proceed response unless the user
-explicitly requested review before launching.
+subagents. Continuing with the chunked pass." Continue after that per
+euler.md §Invocation semantics.
 
 ### 3c. Dispatch researcher subagents
 

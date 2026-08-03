@@ -38,6 +38,11 @@ Keep this file focused on cross-agent project conventions:
 Do **not** restate per-agent prompt text here unless there is a
 project-wide constraint that applies to all agents.
 
+A policy or convention states its rule exactly once, in the file that
+owns it. Every other file that needs it cites that file rather than
+restating the rule — this applies to command bodies, agent prompts, and
+skill files alike, not only to this one.
+
 Suite files contain **operational rules only** — instructions that shape
 the behavior of the agent executing a workflow at runtime. They never
 contain development history: no renames, no alternatives considered, no
@@ -77,6 +82,18 @@ Before adding a command, prompt, tool, extension, or document page,
 state the core formalization job it serves and the smallest existing
 surface that can absorb it. If the value is not concrete and testable,
 do not add it.
+
+## Invocation semantics
+
+- A command invocation is an execution request, not a request to
+  describe the workflow. Run it; do not narrate what it would do
+  instead of doing it.
+- After presenting a plan, continue immediately by default. Summarize
+  the plan briefly, then proceed. Wait for explicit review only when
+  the user asked for it, or when the workflow itself states a hard
+  gate (`/deepresearch` and `/formalize` gate on toolchain-block
+  resolution and scope confirmation before spending a research or
+  formalization budget).
 
 ## Toolchain contract
 
@@ -216,9 +233,17 @@ delivery:
    check command (exact command, outcome, date).
 
 - Every output from `/formalize`, `/deepresearch`, `/lit`, `/audit`, and
-  `/recipe` must include a `.provenance.md` sidecar.
+  `/recipe` must include a `.provenance.md` sidecar, in the shape given
+  by `.claude/rules/provenance-template.md`. Workflows use that shape
+  and do not restate it.
 - Provenance sidecars record source accounting, the checker runs
   performed, and the final obligation (sorry) inventory.
+- If the toolchain block exposes a documentation-coverage check, its
+  output is mandatory sidecar evidence, on the same footing as the
+  obligation count. Absent such a field, nothing is required.
+- Point-of-use citation (the credit sitting at the exact construction
+  it justifies) is a verifier-stage check, not an assumption. Confirm
+  the host project's own citation convention rather than assuming one.
 - Source verification, transcription checks, and obligation audits
   belong in the `verifier` stage, not in ad hoc edits after delivery.
 - Verification passes happen before delivery when the workflow calls for
@@ -237,9 +262,20 @@ delivery:
 
 - The lead agent plans, delegates, formalizes or synthesizes, and
   delivers.
-- Use subagents when the work is meaningfully decomposable (e.g.
-  independent source extraction, library survey, separate modules); do
-  not spawn them for trivial work.
+- Use subagents for three distinct reasons, not one: work that is
+  meaningfully decomposable (independent source extraction, library
+  survey, separate modules); an independent read worth more than its
+  cost, since a subagent's blank-slate context yields conclusions less
+  anchored to the lead's existing framing; and orchestrator context
+  hygiene, since a subagent's tool output and search results accrue in
+  its own disposable context and reach the lead only as a distilled
+  summary, while the same work done lead-side accrues directly in the
+  orchestrator's context and compounds across a long session. The
+  quantity to optimize is results per unit of orchestrator-session
+  context, not the call count of one task in isolation — a lead-owned
+  lookup is cheap only when its results stay small in the orchestrator's
+  own context, not merely because it takes few tool calls. Do not spawn
+  a subagent for work that is genuinely trivial by all three measures.
 - Prefer file-based handoffs over dumping large intermediate results
   back into parent context. Keep subagent call payloads small; write
   briefs to disk.

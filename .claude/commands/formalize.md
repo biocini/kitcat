@@ -6,13 +6,11 @@ disable-model-invocation: true
 
 Formalize the following target into the proof library: $ARGUMENTS
 
-This is an execution request, not a request to explain or implement the
-workflow instructions. Execute the workflow. Do not answer by describing the
-protocol. Your first actions should be tool calls that resolve the toolchain
-block, create directories, and write the plan artifact.
+This is an execution request (euler.md §Invocation semantics). Your first
+actions should be tool calls that resolve the toolchain block, create
+directories, and write the plan artifact.
 
-Derive a short slug from the target (lowercase, hyphenated, no filler words,
-at most 5 words — e.g. `stlc-type-safety`, `girard-paradox`).
+Derive a slug per euler.md §File naming.
 
 ## Required Artifacts
 
@@ -36,18 +34,15 @@ sidecar. Never end with chat-only output after plan approval. Use
 
 ## Step 0: Resolve the toolchain block
 
-Before anything else, locate the toolchain block: `.euler/TOOLCHAIN.md`,
-or a `## Toolchain` section in the project's `CLAUDE.md`.
+Resolve the toolchain block per euler.md §Toolchain contract before anything
+else.
 
 - If found, adopt its `check`, `check-file`, `sorry-token`, `unsafe-markers`,
   `lib-layout`, and `search-dirs` verbatim. Never weaken the check command's
   flags. If the block defines `probe`, run it now as the environment sanity
   check and record the outcome.
-- If absent, ask the user for: the check command, the single-file check
-  pattern, the sorry token(s), the unsafe markers, and the library layout.
-  Record the answers in `outputs/.plans/<slug>.md` as the resolved toolchain
-  block for this run. Do not proceed without them. Never guess: different
-  proof assistants mark obligations and unsafety differently.
+- If absent, record the resolved answers in `outputs/.plans/<slug>.md` as the
+  toolchain block for this run. Do not proceed without them.
 - If the check command cannot execute (missing binary, broken environment),
   record `Toolchain: BLOCKED` and continue in plan/statements-only mode: you
   may draft definitions and statements, but every mechanical claim is
@@ -92,21 +87,26 @@ formalization — the mapping table deserves this gate.
 ## Step 2: Scale
 
 Decide the scale now and record it in the plan's scale-decision field before
-the task ledger assigns owners.
+the task ledger assigns owners. Call count alone is not the test (euler.md
+§Delegation rules) — a single lemma read from a short, self-contained
+source stays lead-owned; the same lemma read from a long paper or spread
+across many declarations does not, regardless of call count.
 
-Use lead-owned direct work for:
+Use lead-owned direct work when the source and library survey will stay
+small and bounded in your own context — typically a single lemma or
+definition, or a short self-contained chain.
 
-- A single lemma or definition, or a short chain you can handle within 3-10
-  tool calls.
-
-Use subagents only when decomposition clearly helps:
+Use subagents when decomposition clearly helps, an independent read of
+the source is worth more than its cost, or the source/survey would
+otherwise bloat your own context:
 
 - One section or a cluster of related lemmas: 1-2 `researcher` subagents
   (source extraction, library survey).
 - A full paper or chapter: 2-4 `researcher` subagents partitioned by
   source region and library subsystem.
 
-Do not inflate a single-theorem target into a multi-agent survey.
+Do not inflate a single-theorem target into a multi-agent survey when
+none of these apply.
 
 ## Step 3: Gather
 
@@ -162,8 +162,10 @@ Rules of the loop:
   verification log.
 - Keep iterations small enough that `check-file` stays fast; prefer per-file
   checks during the loop and a full `check` at milestones.
-- Respect the host library's conventions (naming, module structure, encoding
-  idioms) found in the library survey.
+- Respect the host library's conventions — consult the toolchain block's
+  `style-guide` field (law + exemplar) if present, alongside whatever the
+  library survey found; if `style-guide` is absent, rely on the survey
+  alone.
 - If the user chose an isolated environment (branch, worktree, container),
   all edits and check runs happen there.
 
@@ -195,8 +197,7 @@ Before verification, sweep the draft:
 
 ## Step 6: Verify
 
-This step is mandatory and must complete before any reviewer runs. Do not run
-the verifier and reviewer in the same parallel dispatch.
+Mandatory before any reviewer run (euler.md §Delegation rules).
 
 If the run was lead-owned and small, you may perform the verifier pass
 yourself; otherwise dispatch the `verifier` agent (Agent call,
@@ -276,22 +277,9 @@ Copy the final candidate to `outputs/<slug>.md`. The report must include:
 - The verification record: every checker run (exact command, outcome, date).
 - Open questions and known limitations.
 
-Write provenance next to it as `outputs/<slug>.provenance.md`:
-
-```markdown
-# Provenance: [target]
-
-- **Date:** [date]
-- **Source anchors:** [informal sources with theorem/page anchors]
-- **Library files delivered:** [paths]
-- **Checker runs:** [commands + outcomes]
-- **Obligation inventory:** [none / list with file:line]
-- **Unsafe-marker inventory:** [none / list with file:line and justification]
-- **Sources consulted / accepted / rejected:** [counts and/or lists]
-- **Verification:** [PASS / PASS WITH NOTES / BLOCKED]
-- **Plan:** outputs/.plans/<slug>.md
-- **Research files:** [files used]
-```
+Write provenance next to it as `outputs/<slug>.provenance.md`, using the
+shape in `.claude/rules/provenance-template.md`'s formalization-extra-fields
+section.
 
 Before responding, verify on disk that all required artifacts exist and that
 any fixes claimed in the provenance are reflected in the final candidate

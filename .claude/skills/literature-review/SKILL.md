@@ -1,6 +1,6 @@
 ---
 name: literature-review
-description: Run a literature review on a mathematical topic, author, lab, or mechanization corpus. This skill should be used when the user asks for a lit review, paper survey, state of the art, academic landscape summary, or a review of what a library or group has formalized.
+description: Run a literature review on a mathematical topic, author, lab, or mechanization corpus. This skill should be used when the user asks for a lit review, paper survey, state of the art, academic landscape summary, or a review of what a library or group has formalized. Not a deep single-question investigation (see deep-research) and not a critique of one artifact (see research-review).
 argument-hint: <topic-or-author-or-corpus>
 ---
 

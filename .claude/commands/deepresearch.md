@@ -6,16 +6,13 @@ disable-model-invocation: true
 
 Run deep research for: $ARGUMENTS
 
-This is an execution request, not a request to explain or implement the
-workflow instructions. Execute the workflow. Do not answer by describing the
-protocol, do not explain these instructions, and do not restate the protocol.
-Your first actions should be tool calls that create directories and write the
-plan artifact.
+This is an execution request (euler.md §Invocation semantics). Your first
+actions should be tool calls that create directories and write the plan
+artifact.
 
 ## Required Artifacts
 
-Derive a short slug from the topic: lowercase, hyphenated, no filler words, at
-most 5 words.
+Derive a slug per euler.md §File naming.
 
 Every run must leave these files on disk:
 
@@ -43,9 +40,11 @@ Create `outputs/.plans/<slug>.md` immediately. The plan must include:
 - Verification log
 - Decision log
 
-Make the scale decision before assigning owners in the plan. If the topic is a
-narrow "what is X" explainer, the plan must use lead-owned direct search tasks
-only; do not allocate researcher subagents in the task ledger.
+Make the scale decision before assigning owners in the plan. For a narrow
+"what is X" explainer, default the task ledger to lead-owned direct search;
+escalate to researcher subagents per Step 2's judgment call (scope,
+context footprint, an explicit request, or the value of an independent
+read).
 
 After writing the plan, stop and ask for explicit confirmation before
 gathering evidence. Summarize the plan briefly and ask via AskUserQuestion
@@ -57,15 +56,21 @@ update `outputs/.plans/<slug>.md` first, then ask for confirmation again.
 
 ## Step 2: Scale
 
-Use direct search for:
+Use direct search only when the results will stay small and bounded in
+your own context — a single fact, a narrow question, a "what is X"
+explainer answerable without fetching multiple long pages. Tool-call
+count alone is not the test (euler.md §Delegation rules): a few calls
+that each return a long page still bloat your context as much as doing
+the work lead-side ever would.
 
-- Single fact or narrow question, including "what is X" explainers
-- Work you can answer with 3-10 tool calls
-
-For "what is X" explainer topics, you MUST NOT spawn researcher subagents
-unless the user explicitly asks for comprehensive coverage, current landscape,
-or mechanization status across assistants. Do not inflate a simple explainer
-into a multi-agent survey.
+For "what is X" explainer topics, prefer direct search when the answer
+stays small. Escalate to a researcher subagent per euler.md §Delegation
+rules: when the topic turns out broader than expected, sources are large
+or numerous enough to bloat your own context, the user asks for
+comprehensive coverage, current landscape, or mechanization status
+across assistants, or an independent read is worth more than the added
+cost. Do not inflate a simple explainer into a multi-agent survey when
+none of these apply.
 
 Use subagents only when decomposition clearly helps:
 
@@ -114,12 +119,9 @@ If subagents were chosen:
   fetch fails, the researcher must continue from metadata, abstracts, and web
   sources and mark full-text parsing as blocked.
 
-Example prompts:
-
-- "Read `outputs/.plans/<slug>-T1.md` and write
-  `outputs/.drafts/<slug>-research-literature.md`."
-- "Read `outputs/.plans/<slug>-T2.md` and write
-  `outputs/.drafts/<slug>-research-mechanizations.md`."
+Prompt each researcher with its brief path and its output file, e.g.
+`{brief: outputs/.plans/<slug>-T<N>.md, output:
+outputs/.drafts/<slug>-research-<topic>.md}`.
 
 After evidence gathering, update the plan ledger and verification log. If
 research failed, record exactly what failed and proceed with a blocked or
@@ -162,8 +164,7 @@ If direct search/no researcher subagents was chosen:
 - Do not spawn the `verifier` subagent for simple direct-search runs.
 
 If researcher subagents were used, run the `verifier` agent after the draft
-exists. This step is mandatory and must complete before any reviewer runs. Do
-not run the `verifier` and `reviewer` in the same parallel dispatch.
+exists. Mandatory before any reviewer run (euler.md §Delegation rules).
 
 Dispatch it as an Agent call with `subagent_type: "verifier"` and this prompt:
 
@@ -224,20 +225,9 @@ otherwise it is `outputs/.drafts/<slug>-verified.md`.
 Copy the final candidate to `outputs/<slug>.md`, or to
 `papers/<slug>.md` for paper-style drafts.
 
-Write provenance next to the final output as `<slug>.provenance.md`:
-
-```markdown
-# Provenance: [topic]
-
-- **Date:** [date]
-- **Rounds:** [number of research rounds]
-- **Sources consulted:** [count and/or list]
-- **Sources accepted:** [count and/or list]
-- **Sources rejected:** [dead, unverifiable, or removed]
-- **Verification:** [PASS / PASS WITH NOTES / BLOCKED]
-- **Plan:** outputs/.plans/<slug>.md
-- **Research files:** [files used]
-```
+Write provenance next to the final output as `<slug>.provenance.md`, using
+the shape in `.claude/rules/provenance-template.md` (research-only extra
+fields).
 
 Before responding, verify on disk that all required artifacts exist. If
 verification could not be completed, set `Verification: BLOCKED` or

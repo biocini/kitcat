@@ -31,13 +31,10 @@ Otherwise, collect the following from the user before doing anything else:
 
 ## Step 2: Toolchain and environment
 
-Resolve the toolchain block first (`.euler/TOOLCHAIN.md` or a
-`## Toolchain` section in the project `CLAUDE.md`). The check command comes
-from it, never from guesswork. If the block defines `probe`, run it now as
-the environment sanity check and record the outcome. If the toolchain block
-is missing, ask the user for the check command and sorry token(s) and record
-them; if the checker cannot execute at all, stop — a proof loop without its
-oracle is pointless. Do not run a degraded loop.
+Resolve the toolchain block per euler.md §Toolchain contract. If the block
+defines `probe`, run it now as the environment sanity check and record the
+outcome. If the checker cannot execute at all, stop — a proof loop without
+its oracle is pointless. Do not run a degraded loop.
 
 Then ask the user (AskUserQuestion) where to run:
 

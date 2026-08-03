@@ -6,8 +6,8 @@ disable-model-invocation: true
 
 Investigate the following topic, author, or corpus as a literature review: $ARGUMENTS
 
-Derive a short slug from the topic (lowercase, hyphens, no filler words, ≤5
-words). Use this slug for all files in this run.
+Derive a slug per euler.md §File naming. Use this slug for all files in this
+run.
 
 ## Workflow
 
@@ -18,10 +18,8 @@ words). Use this slug for all files in this run.
    mechanization corpus (a library, an archive, a group's repository), run the
    review as a **corpus review**: resolve the identity first, collect the
    reachable publication/development list, then map the trajectory across that
-   corpus. Write the plan to `outputs/.plans/<slug>.md`. Briefly summarize the
-   plan to the user and continue immediately. Do not ask for confirmation or
-   wait for a proceed response unless the user explicitly requested plan
-   review.
+   corpus. Write the plan to `outputs/.plans/<slug>.md`. Continue after the plan
+   per euler.md §Invocation semantics.
    - When updating the plan ledger later, keep edits small and valid. If an
      edit fails with a parse error or the replacement would require embedding
      a large markdown block, rewrite the full corrected plan file instead,

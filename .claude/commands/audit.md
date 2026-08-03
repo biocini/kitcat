@@ -6,11 +6,10 @@ disable-model-invocation: true
 
 Audit the formalization against its informal source for: $ARGUMENTS
 
-Derive a short slug from the audit target (lowercase, hyphens, no filler
-words, ≤5 words). Use this slug for all files in this run.
+Derive a slug per euler.md §File naming. Use this slug for all files in this
+run.
 
-This is an execution request, not a request to explain the workflow. Continue
-immediately.
+This is an execution request (euler.md §Invocation semantics).
 
 An audit answers one question: **does the checked code actually establish what
 the informal source claims?** A green build is necessary but nowhere near
@@ -25,19 +24,18 @@ sufficient.
 
 ## Workflow
 
-1. **Toolchain** — Resolve the toolchain block (`.euler/TOOLCHAIN.md`,
-   or a `## Toolchain` section in the project `CLAUDE.md`). If absent, ask the
-   user for the check command, sorry token(s), and unsafe markers. If the
-   checker cannot run, mark mechanical checks `BLOCKED` and continue with
-   source-layer and on-disk audits only.
+1. **Toolchain** — Resolve the toolchain block per euler.md §Toolchain
+   contract. If the checker cannot run, mark mechanical checks `BLOCKED` and
+   continue with source-layer and on-disk audits only.
 2. **Plan** — Write `outputs/.plans/<slug>.md`: which informal source, which
    library files, which claimed correspondences to check, and the audit
    dimensions (fidelity, obligations, axioms, definitions, reproducibility).
    If the toolchain block defines `probe`, run it as the environment sanity
-   check. Briefly summarize the plan and continue immediately. Do not ask for
-   confirmation unless the user explicitly requested plan review.
+   check. Continue after the plan per euler.md §Invocation semantics.
 3. **Gather** — Use the `researcher` subagent when the source or codebase is
-   large; for narrow targets, read directly. Extract the informal statements
+   large, or an independent read is worth more than the cost (euler.md
+   §Delegation rules); for narrow targets that stay small in your own
+   context, read directly. Extract the informal statements
    with anchors (theorem numbers, pages) and the claimed formal counterparts
    with `file:line`. Write evidence notes to
    `outputs/.drafts/<slug>-audit-evidence.md` before writing the report:
@@ -67,12 +65,14 @@ sufficient.
    counterpart or an acknowledged gap; every formal declaration in the audited
    files plays a role or is flagged as scaffolding. Compare against the run's
    informal→formal mapping table when one exists.
-7. **Source verification** — When the audit is non-trivial, dispatch the
-   `verifier` agent to run the source layer over the evidence notes: confirm
-   every informal anchor resolves and supports the quoted statement, and every
-   `file:line` still shows the quoted declaration. For narrow audits, do this
-   pass yourself. Record confirmed and dead/stale anchors in the evidence
-   notes.
+7. **Source verification** — Dispatch the `verifier` agent to run the
+   source layer over the evidence notes when the audit is non-trivial or
+   the evidence notes are large enough to bloat your own context (euler.md
+   §Delegation rules): confirm every informal anchor resolves and supports
+   the quoted statement, and every `file:line` still shows the quoted
+   declaration. For narrow audits that stay small in your own context, do
+   this pass yourself. Record confirmed and dead/stale anchors in the
+   evidence notes.
 8. **Report** — Write exactly one audit artifact to
    `outputs/<slug>-audit.md`:
    - Summary verdict

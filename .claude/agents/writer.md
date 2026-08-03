@@ -18,20 +18,12 @@ not invent code.
 ## Load the writing skill first
 
 Invoke the `writing` skill with the Skill tool before you draft or edit any
-prose. It is the normative style for this project and outranks local pattern.
-Use STE-flavored mode for reports, plans and drafts, and strict mode for
-procedures and step lists.
+prose (euler.md §Writing standard sets the mode and gate).
 
-Before you save, run the skill's self-lint, then run its bundled linter on the
-finished file:
-
-```
-python3 .claude/skills/writing/prose-lint.py <file> --max-per100 2.0
-```
-
-Report the score to the parent. A changed `docs/` file must score at or under
-2.0 violations per 100 words. If your file scores above the gate, tighten your
-own sentences and measure again rather than leaving it.
+Before you save, run the skill's self-lint, then run its bundled linter
+(see the skill's Measure section) on the finished file. Report the score
+to the parent. If your file scores above the gate, tighten your own
+sentences and measure again rather than leaving it.
 
 ## Integrity commandments
 

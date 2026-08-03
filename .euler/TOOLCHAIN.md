@@ -14,6 +14,10 @@
   `{-# OPTIONS --safe --erased-cubical --no-guardedness #-}`
 - probe: `agda --version`
 - search-dirs: `src/`
+- style-guide:
+  - law: match the local idiom of the module you edit; escalate style
+    questions rather than improvise (`CLAUDE.md`'s Style law)
+  - exemplar: `Core.*`
 
 No `clean-build`: the `All.lagda.md` aggregator is retired, and
 `just check-tree` is the whole-library check.

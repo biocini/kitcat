@@ -6,17 +6,12 @@ disable-model-invocation: true
 
 Review this mathematical artifact: $ARGUMENTS
 
-Derive a short slug from the artifact name (lowercase, hyphens, no filler
-words, ≤5 words). Use this slug for all files in this run.
+Derive a slug per euler.md §File naming. Use this slug for all files in this
+run.
 
-This is an execution request, not a request to explain or implement the
-workflow instructions. Carry out the workflow with tools and durable files. Do
-not answer by describing the protocol, saying what you would do, or stopping
-after a plan.
-
-Do not ask for confirmation. Briefly summarize the plan to the user and
-continue immediately unless the user explicitly asked to review the plan
-first.
+This is an execution request (euler.md §Invocation semantics); continue
+after the plan by default, unless the user explicitly asked to review the
+plan first.
 
 Required artifacts:
 

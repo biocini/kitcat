@@ -25,11 +25,11 @@ shell search (`rg`, `fd`) and Grep/Glob over the toolchain block's
 
 ## Prose standard
 
-Invoke the `writing` skill with the Skill tool before you write findings. It
-is the normative style for this project and outranks local pattern. Use
-STE-flavored mode. Evidence tables, quoted source passages and quoted types
-stay verbatim, and the dictionary rules do not touch them. The sentence and
-paragraph rules apply to your own findings prose.
+Invoke the `writing` skill with the Skill tool before you write findings
+(euler.md §Writing standard sets the mode and gate). Evidence tables,
+quoted source passages, and quoted types stay verbatim — the dictionary
+rules do not touch them. The sentence and paragraph rules apply to your
+own findings prose.
 
 ## Integrity commandments
 
@@ -57,9 +57,9 @@ paragraph rules apply to your own findings prose.
 ## Search strategy
 
 1. **Start wide.** Map the landscape: what are the standard references for this
-   result, and has it been mechanized before anywhere? Use varied-angle queries
-   simultaneously when a search tool supports it — never one query at a time
-   when exploring.
+   result, and has it been mechanized before anywhere? Prefer varied-angle
+   queries in parallel when a search tool supports it, especially early in
+   a search.
 2. **Evaluate availability.** After the first round, assess what source types
    exist (informal text vs. prior mechanization vs. library material) and which
    are highest quality. Adjust strategy accordingly.
@@ -100,26 +100,9 @@ IDs consistently so downstream agents can trace claims to exact anchors.
 ### Proof recipe mode
 
 When the parent asks for proof strategies, formalization recipes, or
-feasibility assessments, organize findings around candidate recipes instead of
-a generic summary. For each candidate recipe, capture:
-
-- Informal statement, with source anchor (theorem number, page)
-- Required definitions and their status in the library: located (`file:line`)
-  or missing
-- The key construction: induction principle, invariant, measure/well-founded
-  relation, encoding choice (e.g. bundled vs. unbundled, intrinsic vs.
-  extrinsic syntax), or central lemma
-- Prerequisite lemmas with exact names and types as located in the library —
-  quote the type from disk, never paraphrase it — or mark as `missing`
-- Prior mechanization references: assistant, library, file/URL, key idea
-- Known pitfalls and side conditions (nonemptiness, finiteness, decidability,
-  freshness/α-conversion, universe or size constraints)
-- Verification status: `verified`, `unverified`, `blocked`, or `inferred`
-
-Rank recipe candidates by feasibility: prerequisite coverage in the local
-library, expected proof length, and definitional/axiomatic gap risk. Do not
-describe a prerequisite as available unless you located it, or clearly mark
-that check as missing.
+feasibility assessments, read `.claude/agents/checklists/recipe-mode.md`
+before writing findings — it covers the per-recipe capture fields and the
+feasibility ranking.
 
 ### Evidence table
 
@@ -148,8 +131,8 @@ Numbered list matching the evidence table:
   move on.
 - When a fetched page or source is large, extract relevant quotes (with
   theorem/page anchors) and discard the rest immediately.
-- If your search produces 10+ results, triage by title/snippet first. Only
-  fetch full text for the top candidates.
+- When a search produces numerous results, triage by title/snippet first,
+  and fetch full text only for the strongest candidates.
 - Return a one-line summary to the parent, not full findings. The parent reads
   the output file.
 - If you were assigned multiple questions, track them explicitly in the file

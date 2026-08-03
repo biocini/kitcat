@@ -6,16 +6,15 @@ disable-model-invocation: true
 
 Compare sources for: $ARGUMENTS
 
-Derive a short slug from the comparison topic (lowercase, hyphens, no filler
-words, ≤5 words). Use this slug for all files in this run.
+Derive a slug per euler.md §File naming. Use this slug for all files in this
+run.
 
 Requirements:
 
 - Before starting, outline the comparison plan: which sources to compare,
   which dimensions to evaluate, expected output structure. Write the plan to
-  `outputs/.plans/<slug>.md`. Briefly summarize the plan to the user and
-  continue immediately. Do not ask for confirmation or wait for a proceed
-  response unless the user explicitly requested plan review.
+  `outputs/.plans/<slug>.md`. Continue after the plan per euler.md
+  §Invocation semantics.
 - Use the `researcher` subagent to gather source material when the comparison
   set is broad, and the `verifier` subagent to verify anchors and add inline
   citations to the final matrix.

@@ -6,17 +6,16 @@ disable-model-invocation: true
 
 Write a paper-style draft for: $ARGUMENTS
 
-Derive a short slug from the topic (lowercase, hyphens, no filler words, ≤5
-words). Use this slug for all files in this run.
+Derive a slug per euler.md §File naming. Use this slug for all files in this
+run.
 
 Requirements:
 
 - Before writing, outline the draft structure: proposed title, sections, key
   claims to make, source material to draw from, and a verification log for the
   critical claims, statements, and correspondences. Write the outline to
-  `outputs/.plans/<slug>.md`. Briefly summarize the outline to the user and
-  continue immediately. Do not ask for confirmation or wait for a proceed
-  response unless the user explicitly requested outline review.
+  `outputs/.plans/<slug>.md`. Continue after the outline per euler.md
+  §Invocation semantics.
 - Use the `writer` subagent when the draft should be produced from
   already-collected notes (research files, formalization reports, plan
   ledgers), then use the `verifier` subagent to add inline citations and

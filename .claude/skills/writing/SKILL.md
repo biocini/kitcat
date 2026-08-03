@@ -27,10 +27,11 @@ WORDS
   demonstrate), also (not additionally/furthermore/moreover).
 - Give each word one meaning. "fall" means to move down, not to
   decrease.
-- No marketing adjectives: seamless, robust, powerful, cutting-edge,
-  effortless, world-class, next-generation, revolutionary.
-- Banned phrase: "load-bearing". Name what depends on the item
-  instead.
+- No marketing adjectives (seamless, robust, cutting-edge, and
+  similar) and no banned phrases (including "load-bearing" — name
+  what depends on the item instead). These examples are
+  representative, not exhaustive. `prose-lint.py`'s `MARKETING` and
+  `BANNED` arrays are the enforced, exhaustive lists.
 - American spelling.
 
 VERBS

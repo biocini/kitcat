@@ -19,7 +19,7 @@ Requirements:
   obligation inventory is.
 - If any external claims matter, include direct source anchors (URLs, theorem
   numbers).
-- Derive a short slug from the session's main objective, and save the log to
+- Derive a slug per euler.md §File naming, and save the log to
   `notes/<date>-<slug>.md` so concurrent sessions never collide.
 - Append a matching entry to `CHANGELOG.md` (newest first): a concise summary
   of the session in the notebook's idiom — what changed, what checked, what

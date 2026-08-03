@@ -6,11 +6,10 @@ disable-model-invocation: true
 
 Find implementable proof strategies for: $ARGUMENTS
 
-Derive a short slug from the target (lowercase, hyphens, no filler words,
-≤5 words). Use this slug for all files in this run.
+Derive a slug per euler.md §File naming. Use this slug for all files in this
+run.
 
-This is an execution request, not a request to explain the workflow. Continue
-immediately.
+This is an execution request (euler.md §Invocation semantics).
 
 A proof recipe links a target theorem to the exact strategy that should
 discharge it in this library: the key construction, the prerequisite lemmas
@@ -28,8 +27,8 @@ Recipes start from evidence of feasibility, not from wishful outlines.
 
 1. **Plan** — Write `outputs/.plans/<slug>-recipe.md` with the target
    statement (as given, flagged if it is a paraphrase), candidate source
-   types, feasibility constraints, and a task ledger. Continue automatically
-   after writing the plan.
+   types, feasibility constraints, and a task ledger. Continue after the plan
+   per euler.md §Invocation semantics.
 2. **Research** — Use the `researcher` subagent when the target needs a broad
    literature/mechanization sweep; for narrow targets, gather evidence
    directly. The research must cover both directions: informal routes (how the

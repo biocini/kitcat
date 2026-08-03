@@ -26,63 +26,17 @@ or the hypotheses smuggled.
 
 ## Prose standard
 
-Invoke the `writing` skill with the Skill tool before you write the review. It
-is the normative style for this project. Use STE-flavored mode. Passages you
-quote from the artifact stay verbatim, and the sentence and paragraph rules
-apply to your own critique prose.
+Invoke the `writing` skill with the Skill tool before you write the review
+(euler.md §Writing standard sets the mode and gate). Passages you quote
+from the artifact stay verbatim; the sentence and paragraph rules apply to
+your own critique prose.
 
 ## Review checklist
 
-Evaluate fidelity, rigor, completeness, and likely skeptical-reader pushback.
-Do not praise vaguely. Every positive claim should be tied to specific evidence.
-
-### Statement fidelity (highest priority)
-
-Look for:
-
-- **Vacuous statements** — hypotheses that cannot be instantiated, unused
-  hypotheses that make the theorem trivially applicable, conclusions weaker
-  than the informal claim, or existential statements whose witness type is
-  empty or trivial.
-- **Definition gaming** — a definition crafted so the "theorem" becomes
-  definitional or trivial (e.g. defining the target property as the proved
-  fact, baking the conclusion into a hypothesis, or encoding the object so
-  lossily that the theorem is about something else).
-- **Smuggled assumptions** — extra hypotheses not present in the informal
-  statement; decidability, finiteness, or well-foundedness side conditions
-  silently added or silently dropped.
-- **Quantifier and binder drift** — ∀/∃ order swapped, implicit arguments
-  changing the reading, scoping that narrows the claim.
-- **Encoding risk** — representation choices (intrinsic vs. extrinsic,
-  bundled vs. unbundled, setoid vs. strict equality) that change what the
-  theorem says compared to the informal source.
-- **Missing side conditions** the informal proof uses implicitly.
-
-### Proof quality
-
-- open obligations (sorries, holes, admits) in any delivered file
-- unsafe markers: axioms, postulates, disabled termination/positivity checks,
-  escape hatches — each must be justified and disclosed
-- brittleness: proofs that check only by fragile reduction behavior, unnamed
-  auto-generated lemmas the artifact depends on
-- duplicated functionality: proved helpers that already exist in the library
-  (located via search, with `file:line` for the existing version)
-
-### Library fit
-
-- naming and module placement consistent with host library conventions
-- visibility/export discipline; no leakage of internal scaffolding
-- encoding style consistent with the library's established idioms
-- reusable lemmas exposed at the right generality rather than inlined one-offs
-
-### Artifact integrity
-
-- claims that outrun the checker evidence ("verified" without a recorded run)
-- sections, tables, or diagrams that survive from earlier drafts without support
-- obligation counts or coverage claims that disagree with grep-able reality
-- informal prose that quietly strengthens the formal result (e.g. "the theorem
-  holds for all structures" when the formal statement fixes one)
-- notation drift between the write-up and the code
+Read `.claude/agents/checklists/review.md` before evaluating an artifact —
+it covers statement fidelity (highest priority), proof quality, library
+fit, and artifact integrity. Do not praise vaguely. Every positive claim
+should be tied to specific evidence.
 
 Distinguish between fatal issues, strong concerns, and polish issues. Keep
 looking after you find the first major problem — do not stop at one issue if
@@ -135,19 +89,9 @@ Quote specific passages or declarations from the artifact and annotate them:
 ```markdown
 ## Inline Annotations
 
-> "theorem sqrt2-irrational : Irrational (sqrt 2) := trivial"
-**[W1] FATAL:** Definition gaming — `Irrational` is defined in this module as
-the predicate proved by `trivial`, so the statement carries no mathematical
-content. Compare the informal claim (source [2], Theorem 1.1).
-
-> "We have fully formalized Section 3"
-**[W2] MAJOR:** `grep` finds two open obligations in `Section3.agda:141,209`.
-"Fully" is false; downgrade and enumerate.
-
-> "lemma subst-preserves-typing ..."
-**[Q1]:** The informal proof (source [1], Lemma 4.2) requires a weakening
-lemma as a side condition. Where is it discharged? Not located in the plan
-ledger or the library survey.
+> "<exact quoted passage or declaration>"
+**[W1] FATAL:** <specific critique tied to evidence, with a `file:line` or
+source anchor>
 ```
 
 Reference the weakness/question IDs from Part 1 so annotations link back to
