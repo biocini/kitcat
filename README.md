@@ -15,44 +15,6 @@ exploring the design space of univalent type theory and higher category theory,
 and I hope it will be useful to downstream researchers and practitioners in
 these areas as well.
 
-## Research provenance
-
-This repository is developed with substantial AI assistance under the direction
-and review of its human owner, and aims to be an exemplar of transparent
-AI-assisted mathematics research. As such, it is a living entry into the
-conversation about ethical practice in this domain. Machine-checking is the
-trust boundary for mathematical claims, and references are human-vetted before
-anything rests on them, and AI contributions are disclosed
-[`docs/provenance.md`](docs/provenance.md) is the WIP standard (we will audit
-according to it on an ongoing basis once it has taken final shape).
-
-The research that the library actively cites and draws upon is catalogued in
-the resources directory. I will take every opportunity to credit authorship and
-theoretical provenance of ideas. This is a best-effort attempt on my part made
-in good faith; please reach out if there is any portion of the library you feel
-deserves more specific citation than I was able to provide, as it is very
-important to me that authors are correctly credited for their work. The library
-is often a fast-moving target however and lapses of documentation may happen; I
-will be very clear when taking credit for a specific construction, otherwise it
-is fair to assume I regard it as either folklore or general knowledge in the
-field. In general, I will be very clear when a given construction is derived
-from a specific source, and will provide reference to the original.
-
-I welcome feedback and discussion on how to improve any aspect of the library,
-as well as any human contributions.
-
-## Building
-
-Requires Agda with cubical support (no external libraries — Agda
-builtins only). With [just](https://github.com/casey/just) and
-direnv:
-
-```sh
-direnv allow      # puts bin/ on PATH
-just check-tree   # typecheck the whole library
-just --list       # everything else
-```
-
 ## Foundations
 
 The category theory framework is built on a confluence of ideas from:
@@ -66,14 +28,17 @@ The category theory framework is built on a confluence of ideas from:
 
 ## Acknowledgments
 
+The primary HoTT reference used throughout is Rijke's _Introduction to Homotopy Type Theory_, which we take as our standard reference for identifiers and structural
+organization of the theory whenever possible.
+
 While many lemmas are original (I've rewritten the Core library several times
 in the course of development), Kitcat has adapted or otherwise drawn upon code
 from the following projects, which are exemplars of open source mathematics and
-deserve ample credit for their contributions to the corpus of Homotopy Type
-Theory and Univalent Foundations. They are excellent, go look at them.
+deserve ample credit for their contributions to the foudnational corpus of formalized
+Homotopy Type Theory and Univalent Foundations. They are excellent, go look at them.
 
-- [**1lab**](https://1lab.dev/) (Amélia Liao et al., AGPL-3.0) — Definitions and
-  proofs across `Core.Function.Embedding`, `Core.HLevel`, `Core.Trait.Trunc`,
+- [**1lab**](https://1lab.dev/) (Amélia Liao et al., AGPL-3.0) — Definitions
+  and proofs across `Core.Function.Embedding`, `Core.HLevel`, `Core.Trait.Trunc`,
   `Core.Data.Fin`, `Core.Path`, and `Core.Transport.Properties` are derived from
   or influenced by 1lab's formalizations
 - [**TypeTopology**](https://github.com/martinescardo/TypeTopology) (Martín
@@ -82,12 +47,13 @@ Theory and Univalent Foundations. They are excellent, go look at them.
   `UF.Retracts`; `Core.Discrete` follows `UF.DiscreteAndSeparated`; and
   `Core.Function.Embedding` adapts `UF.LeftCancellable`
 
-The primary HoTT reference used throughout is Rijke's _Introduction to Homotopy Type Theory_, which we take as our standard reference for identifiers and structural
-organization of the theory whenever possible.
-
 ## Related work not otherwise mentioned
 
 - [agda-unimath](https://unimath.github.io/agda-unimath/) —
-  Univalent foundations at scale, a lovely reference
+  Univalent foundations at scale, a lovely reference, and one with considerable involvement from the author of the aforementioned _Intro to HoTT_ textbook.
 - [agda-categories](https://github.com/agda/agda-categories) —
   Category theory library for Agda
+
+## AI policy (updated 2026-07-04)
+
+See [ai-policy](docs/ai.md) for my personally authored statement on the use of AI in this project.
