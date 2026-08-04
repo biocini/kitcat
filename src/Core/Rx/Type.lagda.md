@@ -6,7 +6,7 @@ of edges between them, and a chosen edge at every vertex.
 
 {-# OPTIONS --safe --erased-cubical --no-guardedness --no-sized-types #-}
 
-module Cat.Graph.Refl.Type where
+module Core.Rx.Type where
 
 open import Core.Type
 

@@ -24,8 +24,8 @@ open import Core.Transport.Base using (is-prop→PathP)
 open import Core.Transport.J using (J)
 open import Core.Transport.Properties using (is-contr-is-prop)
 
-open import Cat.Graph.Refl.Type
-open import Cat.Graph.Refl.Base
+open import Core.Rx.Type
+open import Core.Rx.Base
 
 open import Bb.NaiveVirtualGraph.Base
 
@@ -336,7 +336,7 @@ component supplies.
       (is-deductive-system.stable D) (is-deductive-system.stable D') i
 ```
 
-## Appendix — the tiers in `Cat.Graph.Refl` terms
+## Appendix — the tiers in `Core.Rx` terms
 
 The predicate above is stated entirely in the sequent vocabulary, but
 each of its parts is an instance of a notion the reflexive-graph

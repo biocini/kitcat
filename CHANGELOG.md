@@ -23,6 +23,181 @@ it in one step when needed.
 
 ---
 
+## 2026-08-04 — Bb.VirtualGraphs opened: carrier landed, consolidation surveyed
+
+**Slug:** virtual-graphs-vendor. Phase 1 of the virtual-graph
+consolidation: survey and plan, one module of Agda.
+
+`Test.NewDs.Carrier` ported to `Bb.VirtualGraphs.Type`, mathematical
+content unchanged. Tree opened per the `Bb` contract (README,
+CHANGELOG, `Bb.index` section). `verified`: `just check
+Bb.VirtualGraphs.Type` and `just check Bb.index`, both exit 0.
+
+Every result about a virtual-graph-shaped carrier across the
+thirteen 2026-08-02/03 spikes, `Test.NewDs`, and `Cat.Logic.*` with
+its fourteen `Gist` modules is cataloged in
+`outputs/.plans/virtual-graphs-vendor.md`: 118 entries (74 general,
+44 model-level) with `file:line` anchors, the minimal
+hypothesis-telescope group each needs to be stated, and 17 flagged
+duplicate clusters. Eleven hypothesis groups proposed, from the bare
+carrier through framing, tower, readback, balanced, neutral,
+natural, presentation, chosen-edge, reflexive-graph-dictionary, and
+models, each a flat explicit telescope over the three-field carrier.
+No record beside `virtual-graph` anywhere in the planned tree. The
+torsor-correction rule is applied throughout: theorem statements
+carry over, contaminated circle-verdict language does not.
+
+Next: phase 2 writes the theorem modules per the plan's §6 layout,
+gating each on a green checker run.
+
+## 2026-08-03 — VG+DS: the torsor-criterion correction
+
+**Slug:** vgds-torsor-correction. No Agda proof landed; correction
+and consolidation only. Session log:
+[`notes/2026-08-03-vgds-torsor-correction.md`](notes/2026-08-03-vgds-torsor-correction.md).
+
+Lane identified a methodological error running through the whole
+`Test.Spike*` circle-model sequence (`SpikeNeutralReadback` through
+`SpikeGluingCharacteristic`): non-contraction of the recognized-pair
+Σ at the circle was scored as flat candidate failure, when the
+correct criterion is whether the free pairs form a torsor under the
+group the canonical pair itself generates — literal contractibility
+would demand that generator have no content. `unverified`: the
+corrected criterion is stated only in prose, not yet a checkable
+predicate. `blocked`: rewriting the five contaminated spikes'
+verdicts (`SpikeCandidateGenerator`, `SpikeFramedShape`,
+`SpikeEdgeCoherence`'s habitat prose, `SpikeGluingCharacteristic`'s
+circle-clause reading, and the mediation trio's circle contractions)
+on that criterion. `SpikeGradeSelector`, the eliminative arc, and all
+word-model results are unaffected.
+
+Also established, `Cat.Logic.Base`/`Type` (`virtual-graph` with
+primitive `twist⁺`/`twist⁻`) is a proven dead end for the duploid
+target (`src/Cat/Logic/TODO.md` item 7: balanced strength collapses
+polarity) and is not adequate to the concept it names, despite being
+machine-checked. `docs/deductive-systems/` deleted as premature
+documentation of it. Retirement banners added to
+`src/Cat/Logic/{lemmata,gloss,Base}` (statuses untouched, scope
+narrowed). `verified`: `just check Cat.Logic.Base`, exit 0, after the
+header edit. The full genealogy —
+`Bb.NaiveVirtualGraph → Bb.WeakDeductiveSystem → {Cat.Logic,
+Bb.OneTwist, Bb.VgCategoryShape}`, and today's recognition line's
+place outside it — is in the session log, sourced from the `Bb/*`
+READMEs.
+
+Next: Lane pins the formal torsor criterion (session log §"Open
+questions," item 1) before anything downstream — spike rewrites,
+`Cat.Logic`'s vendoring into `Bb.*`, the `Cat.Logic.Gist.BalancedWord`
+carrier/proof split — moves.
+
+## 2026-08-03 — the gluing spike: the mixed-pair play, and the clause that over-excludes
+
+**Slug:** gluing-characteristic. New `Test.SpikeGluingCharacteristic`,
+verified (`just check Test.SpikeGluingCharacteristic`, exit 0, zero
+warnings, no holes, no postulates; prose lint 1.36/100w).
+
+States the pair grammar per ordered pair of objects (`cross`,
+`sand`, the two fibers) with the gluing characteristic internalized
+as clauses (`glue⁻`, `glue⁺`), final condition `pred`, level (c).
+The transposed Kraus play closes (`grammar.play`): the gluing
+clause manufactures the mixed diagonal sandwich, and the fiber
+centers pin both components, so pair equality at the diagonal Σ is
+GENERAL over a wild carrier. Consumption measured: (c) for the
+mixed term, (b) for the anchors. The word model holds the condition
+and contracts (`word.predᵂ`, `word.recoverᵂ`, `word.contractionᵂ`,
+SHADOW, Nat rung). The general uniqueness theorem did not close:
+off-diagonal inhabitants are parallel, not adjacent, and inhabitant
+equality lacks condition-level rigidity (no `e-vs-I` transpose).
+The crux computes emptiness, not freedom: the internal clause reads
+every adjacent sandwich uniformly, so the circle refutes every pair
+(`circle.no-predᶜ`, `circle.not-contrᶜ`, COUNTERMODEL) while the
+level (b) freedom keeps its winding (`circle.freedomᵇ`, the ℤ in
+the untwist slot). The sleeve confirms the characteristic across
+the sleeve (`sleeve.glue-sleeveˡ/ʳ`), pins the components the
+coherence was blind to (`sleeve.out-pins-d/c`), and then loses
+everything to the empty direction: no recognition at all
+(`sleeve.no-pred-ttᴱ`, `sleeve.no-recognizedᴱ`, BOOL-RUNG).
+
+Verdict: the candidate fails, horn two. Mixing by internal clause
+buys the play its term and over-excludes above the word rung.
+
+Next: the wild probative instrument, with gluing carried as record
+data, not demanded as a pointwise clause. The family-level play
+(adjacent instances drawn from `recognized` itself) is the untested
+route.
+
+## 2026-08-03 — the edge spike: coh on the first two-object carrier
+
+**Slug:** edge-coherence. New `Test.SpikeEdgeCoherence`, verified
+(`just check Test.SpikeEdgeCoherence`, exit 0, zero warnings, no
+holes, no postulates; prose lint 1.73/100w).
+
+Builds the first instrument above the shadow: `ob = Bool`, both endo
+homs and the connecting hom the word model's descriptors, the
+reverse direction empty, reflection the word sandwich everywhere.
+The whole committed record instantiates (`deductiveᴱ`), and
+`cross-reads` realizes the mis-split by `refl`: a connecting
+instance reads `true`'s negative component and `false`'s positive
+component.
+
+Measured rows: the diagonal pins per object (word pinning), so
+`is-framed` is a proposition for the boring reason (`framed-prop`).
+`coh`, the off-diagonal residue (`residue`, `rb-residue`), is blind
+to the two components it does not read (`coh-blind`) and pins the
+two it does read (`coh-pins`, recognition strength, no tier). The
+census perturbations at `false` (ω̂, ε̂, δ̂ in the negative slot)
+all pass `coh` and all fail flanks. The interesting case is empty:
+the diagonal at both objects implies `coh` (`diag→coh`). Transposed
+play: the GENERAL content is sandwich agreement (`play.agree`); the
+Bool-rung closure gives one component per object (`play-pins`); the
+far components are provably free (`snd-free`, `fst-free`). Seat
+verdict: option (ii), `coherent R = rbᶠ (frame-of R)` beside the
+framing (`amended.is-coherent-deductive-system`), conservative at
+this instrument (`complete`, `strip`). New tag BOOL-RUNG in use.
+
+Pragma note: `--cubical`, by Lane's call this session. The committed
+shape and the pinning live in `--cubical` modules, and an
+`--erased-cubical` importer gets their names only erased (probe
+recorded `DefinitionIsErased`).
+
+Next: the wild probative instrument, with a sharpened brief. `coh`
+constrains only the outer components, so the wild carrier must
+measure what pins the inner two.
+
+## 2026-08-03 — the shape spike: is-framed in Kraus's grammar
+
+**Slug:** framed-shape. New `Test.SpikeFramedShape`, verified
+(`just check Test.SpikeFramedShape`, exit 0, zero warnings, no
+holes, no postulates; prose lint 1.96/100w).
+
+Commits the candidate record over the bare carrier (`ob`, `hom`,
+`reflect`): `pair`, `is-twist = flanks × (inv⁻ᵗ × inv⁺ᵗ)`,
+`is-framed = (x : ob) → Σ (pair x) is-twist`, and
+`is-deductive-system = is-stable × Σ is-framed cuts`, with the cuts
+as contractible reflect-fibers over the reframed carrier.
+Factorization verdict: the sandwich is mis-split per object (each
+instance reads two pairs), so `is-twist` keeps the diagonal
+(endo) fragment, and the off-diagonal residue is the multi-object
+coherence question (Bool rung, open).
+
+Verified rows: word model instantiates the whole record, pair forced
+to `(τ̂ , ε̂)` by flanks alone, `is-framed` a proposition
+(Kraus's chain), cuts definitionally the model's compositions,
+`associates (τ̂ , ε̂ , ε̂)` still failing. Circle instantiates too,
+but the recognized pairs form a circle: Σ not contractible,
+`is-framed` not a proposition, uniqueness refuted at an
+invertible-framing carrier. `cancel⁻`/`cancel⁺` transpose Kraus's
+neutrality derivation and yield `unitr⁺`/`unitl⁻` through
+`tower.unital` (GENERAL); the idem⁻ rung holds and the chain does
+not complete. Pre-duploid checklist: three associativities and the
+four closure lemmas PROVED over the recognized cuts; Prop. 4
+profunctor CITED as target; clause-4 neutrality the declared
+departure.
+
+Next: the wild probative instrument (distinct twists, failing
+associates, wild homs). It settles which branch of the uniqueness
+question is forced.
+
 ## 2026-07-29 — session close: the polarity collapse, reviewed and vendored
 
 **Session log:** [`notes/2026-07-29-polarity-collapse-and-vendor.md`](notes/2026-07-29-polarity-collapse-and-vendor.md).

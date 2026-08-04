@@ -77,7 +77,7 @@ or when a ruling re-gates a project. Do not update it per session.
 
 2. **The Core reformation (composite-rx), GATED (Lane,
    2026-07-28).** Reformulate the Core systems under composites
-   and reflexive graphs, and port `Cat.Graph.Refl` to `Core.Rx` in
+   and reflexive graphs, and port `Core.Rx` to `Core.Rx` in
    the endeavor: an engine for the whole proof-theoretic
    apparatus, skew to the LB line but not orthogonal to it. The
    staged plan is `docs/composite-rx-refactor/`, with

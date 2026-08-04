@@ -4,7 +4,7 @@ terms?
 Three questions, each answered by conversion alone.
 
 Does `Cat.Logic.Type`'s sequent vocabulary — terms, coterms, the two
-axiom halves — already name structure that `Cat.Graph.Refl` has names
+axiom halves — already name structure that `Core.Rx` has names
 for? Do the two actions a virtual graph generates assemble into the
 transport data of the two lens variances? And is the composability
 tier, stated as contractibility of a representability fiber, the same
@@ -31,8 +31,8 @@ open import Core.Base
 open import Core.Data.Sigma
 open import Core.Path.Base
 
-open import Cat.Graph.Refl.Type
-open import Cat.Graph.Refl.Base
+open import Core.Rx.Type
+open import Core.Rx.Base
 -- The carrier, inlined: a spike in an in-development layer carries its
 -- own copy of the data it probes, so a change to the layer cannot
 -- silently retune it.

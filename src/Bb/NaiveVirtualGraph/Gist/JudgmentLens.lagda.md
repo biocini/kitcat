@@ -25,10 +25,10 @@ open import Core.Data.Sigma
 open import Core.Kan using (_∙_)
 open import Core.Path.Base
 
-open import Cat.Graph.Refl.Type
-open import Cat.Graph.Refl.Base
-open import Cat.Graph.Refl.Properties
-open import Cat.Graph.Refl.Lens
+open import Core.Rx.Type
+open import Core.Rx.Base
+open import Core.Rx.Properties
+open import Core.Rx.Lens
 
 open import Bb.NaiveVirtualGraph.Base
 ```

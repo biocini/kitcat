@@ -48,6 +48,14 @@
   (< ~60 lines) use no headings. Section prose states the
   mathematics of the next block. Single-sentence fence-splits are
   free. Tree ratio ≈ 1 prose : 3.8 code.
+- **Base/Properties split**: once a type accumulates enough lemmas
+  about it to roughly match or exceed the size of its own
+  definition, move the lemmas into a sibling `Properties` module and
+  keep only the type, its eliminator, and its core operations in
+  `Base`. A consumer that only needs the type and its operations
+  then avoids importing the lemma set. Below that threshold, keep
+  everything in one module; splitting a type with only a couple of
+  lemmas just scatters it.
 - **Aggregators** contain only pragma, header, re-exports. Three
   shapes. Data-type aggregators namespace operations under the
   type's name and export the bare type flat

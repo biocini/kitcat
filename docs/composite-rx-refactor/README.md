@@ -54,7 +54,7 @@ mirror the fact, already true at the refl level, that they are one:
   the center, `hfil` is the contraction, `J` is transport along it,
   and `transp` is the statement that type families lift
   contractibly.
-- **Structurally** (`Cat.Graph.Refl`, promoted to `Core.Rx`, after
+- **Structurally** (`Core.Rx`, promoted to `Core.Rx`, after
   Sterling, *Reflexive Graph Lenses*,
   `resources/sterling-reflexive-graph-lenses`): the vocabulary that
   *states* the principle: fans and cofans with centers, univalence

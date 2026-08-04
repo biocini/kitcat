@@ -37,4 +37,4 @@ files that cite the five point here. Session log:
 
 **Risk, recorded and accepted.** `Graph`, `Display`,
 `Gist.FramedGroup`, and `Gist.RxDict` import the live
-`Cat.Graph.Refl`. A change there can break this tree.
+`Core.Rx`. A change there can break this tree.

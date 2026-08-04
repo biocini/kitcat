@@ -37,7 +37,7 @@ the move re-points the citations in `docs/composite-rx-refactor/`.
 `Cat.Depreciated` was itself a relocation. On 2026-07-24, at
 commit `55038a9`, the pre-refactor `Cat.*` development moved there
 whole. It stands as the reference tree for the new foundations,
-`Cat.Logic` and `Cat.Graph.Refl`. Nothing outside the tree
+`Cat.Logic` and `Core.Rx`. Nothing outside the tree
 imported it then, and nothing does now. It measured 49 modules
 and 15,545 lines at that move, and every module checked clean.
 

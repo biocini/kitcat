@@ -1,4 +1,4 @@
-# Cat.Graph.Refl — what is implicit, and why
+# Core.Rx — what is implicit, and why
 
 The convention governing two questions the suite's signatures face repeatedly.
 When a parameter `A` precedes an argument whose type mentions `A`, is `A` implicit?

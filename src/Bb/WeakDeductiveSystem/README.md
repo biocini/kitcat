@@ -80,6 +80,6 @@ and `Bb.OneTwist.Models` against `Gist.FramedCut` and
 `Bb.VgCategoryShape` is the one-twist collapse of the same
 material, where the double twist is the identity.
 
-Four modules here import the live `Cat.Graph.Refl`: `Graph`,
+Four modules here import the live `Core.Rx`: `Graph`,
 `Display`, `Gist.FramedGroup`, and `Gist.RxDict`. A change there
 can break this tree. The session log records that risk, accepted.

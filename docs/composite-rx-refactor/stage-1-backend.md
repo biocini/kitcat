@@ -1,18 +1,18 @@
 # Stage 1: backend, `Core.Rx`
 
-The promotion of `Cat.Graph.Refl.*` into `Core`, split at the Kan
+The promotion of `Core.Rx.*` into `Core`, split at the Kan
 cut. Precondition: Stage 0 complete (0.4 especially).
 
 ## 1.1 Rename
 
-`Cat.Graph.Refl.*` → `Core.Rx.*`, module by module with `just mv`,
+`Core.Rx.*` → `Core.Rx.*`, module by module with `just mv`,
 which sweeps `src/`, covering the suite's internal imports and the
 two certificate importers (`Test.KanIdentities`, `Test.RxBundle`).
 
 By hand, outside the sweep ([evidence](evidence.md) inventory):
 
 - `bin/profile` line 12: the usage-string example names
-  `Cat.Graph.Refl.Lens`.
+  `Core.Rx.Lens`.
 - `docs/guidelines/elaboration.md`,
   `docs/guidelines/profiling.md`: if 0.4 abstracted these sites, the
   entries are already gone. Verify rather than assume.

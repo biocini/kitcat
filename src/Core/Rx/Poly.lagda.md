@@ -15,16 +15,16 @@ regularity gap of `to-edge` on `refl`.
 ```agda
 {-# OPTIONS --safe --erased-cubical #-}
 
-module Cat.Graph.Refl.Poly where
+module Core.Rx.Poly where
 
 open import Core.Type
 open import Core.Base
 open import Core.Data.Sigma using (fst)
 open import Core.Equiv using (Equiv)
-open import Cat.Graph.Refl.Type
-open import Cat.Graph.Refl.Base
-open import Cat.Graph.Refl.Properties
-open import Cat.Graph.Refl.Lens
+open import Core.Rx.Type
+open import Core.Rx.Base
+open import Core.Rx.Properties
+open import Core.Rx.Lens
 ```
 
 ## Covariant partial product

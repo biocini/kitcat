@@ -16,7 +16,7 @@ Move into `Core.Base`:
 All three are pure (no `transp`, no `hcom`), VERIFIED in
 `Test.RxTier1`, which defines them with imports restricted to
 `Core.Type`/`Core.Base`/`Core.Data.Sigma`. Today
-`Cat.Graph.Refl.Properties` imports the first two from those two
+`Core.Rx.Properties` imports the first two from those two
 unrelated modules. After the move the backend's only contractibility
 imports are `Core.Base`'s own.
 
@@ -32,17 +32,17 @@ VERIFIED as `refl`, `Test.KanIdentities` probe 4.
 ## 0.2 Lift `fibration-is-prop`
 
 `fibration-is-prop : (D : rx.disp G w z) → is-prop (rx.is-cov-fibration G D)`
-sits `private` in `Cat.Graph.Refl.Univalent`, on `--cubical`. It
+sits `private` in `Core.Rx.Univalent`, on `--cubical`. It
 uses only `Π-is-prop` and `is-contr-is-prop`, nothing from `ua`. It
 is the `is-composable` propositionality proof (Stage 3.3/3.5). Left
 where it is, `deductive-system` would land on full cubical.
 
-Destination: `Cat.Graph.Refl.Properties` now, becoming
+Destination: `Core.Rx.Properties` now, becoming
 `Core.Rx.Properties` at Stage 1 (its inputs live at
 `Core.HLevel.Base`/`Core.Transport.Properties`, so it sits above
 `Core.Kan`, a forced placement, [architecture](architecture.md)).
 
-*Acceptance:* `Cat.Graph.Refl.Univalent` still checks on `--cubical`
+*Acceptance:* `Core.Rx.Univalent` still checks on `--cubical`
 with the lemma imported. No other module changes.
 
 ## 0.3 Fix the mis-attributed import

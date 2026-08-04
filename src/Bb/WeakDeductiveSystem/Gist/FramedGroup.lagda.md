@@ -24,8 +24,8 @@ open import Core.HLevel.Base using (Π-is-hlevel; is-prop-equiv)
 open import Core.Function.Embedding using (injective→is-embedding)
 open import Core.Transport.Properties using (prop-inhabited→is-contr)
 
-open import Cat.Graph.Refl.Type
-open import Cat.Graph.Refl.Base
+open import Core.Rx.Type
+open import Core.Rx.Base
 
 open import Bb.WeakDeductiveSystem.Type
 open import Bb.WeakDeductiveSystem.Base

@@ -8,7 +8,7 @@ the components, and carries the fibration back to a lens on its diagonal family.
 ```agda
 {-# OPTIONS --safe --erased-cubical #-}
 
-module Cat.Graph.Refl.Fibration where
+module Core.Rx.Fibration where
 
 open import Core.Type
 open import Core.Data.Sigma
@@ -21,10 +21,10 @@ open import Core.IdSys
 open import Core.Transport.Base using (transport; module Path-over)
 open import Core.Transport.J using (subst)
 open import Core.Transport.Properties using (prop-inhabited→is-contr)
-open import Cat.Graph.Refl.Type
-open import Cat.Graph.Refl.Base
-open import Cat.Graph.Refl.Properties
-open import Cat.Graph.Refl.Lens
+open import Core.Rx.Type
+open import Core.Rx.Base
+open import Core.Rx.Properties
+open import Core.Rx.Lens
 
 module _ {v v' e e'} {G : reflexive-graph v e} (D : rx.disp G v' e') where
   private

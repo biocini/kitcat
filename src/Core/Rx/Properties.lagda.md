@@ -7,7 +7,7 @@ reached as `P.edge≃path`, `P.is-univalent→op`, and so on.
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
 
-module Cat.Graph.Refl.Properties where
+module Core.Rx.Properties where
 
 open import Core.Type
 open import Core.Data.Sigma
@@ -20,8 +20,8 @@ open import Core.Transport.Properties
 open import Core.Groupoid using (Singl-contr-cofan)
 open import Core.Transport.Base using (Singl-contr; transport)
 open import Core.HLevel.Base using (Σ-is-prop; ⊤-is-prop; Π-is-prop; retract→is-hlevel; is-prop-equiv)
-open import Cat.Graph.Refl.Type
-open import Cat.Graph.Refl.Base
+open import Core.Rx.Type
+open import Core.Rx.Base
 
 module po {v e} (G : reflexive-graph v e) where
   private module G = reflexive-graph G

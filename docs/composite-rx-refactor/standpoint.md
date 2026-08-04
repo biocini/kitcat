@@ -19,7 +19,7 @@ VERIFIED, `Test.KanIdentities`, probes 1–6.
 | `Core.Kan` | `Total-sys φ s = Σ x , sys-composite φ s ≡ x` | `(composite , plid)` | `p i , λ j → p (i ∧ j)` |
 | reference | `Comp φ u = Σ s , composite φ u ≡ s` | `(composite , plid)` | `p i , λ j → p (i ∧ j)` |
 | `Core.Transport.Base` | `Singl x = Σ y , x ≡ y` | `(x , refl)` | `q i , λ j → q (i ∧ j)` |
-| `Cat.Graph.Refl` | `rx.fan (discrete A) x` | `fan-center x` | via `prop-inhabited→is-contr` |
+| `Core.Rx` | `rx.fan (discrete A) x` | `fan-center x` | via `prop-inhabited→is-contr` |
 
 Not an analogy: `Total-sys φ s` is
 `rx.fan (discrete A) (sys-composite φ s)` and `Total-sys-contr φ s`

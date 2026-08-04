@@ -26,6 +26,7 @@ resources/**/*.gz
 resources/**/*.tar
 resources/**/*.pdftext
 resources/**/*.tex
+resources/**/*.agda
 resources/**/*.sty
 resources/**/*.cls
 resources/**/*.html

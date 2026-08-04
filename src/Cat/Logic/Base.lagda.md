@@ -1,3 +1,12 @@
+**Retired, 2026-08-03.** This construction cannot express duploidal
+structure: balanced strength collapses polarity, so no carrier has P
+and N genuinely distinct, and a duploid needs exactly that
+(`src/Cat/Logic/TODO.md`, item 7, the reflection theorem). The
+definitions and theorems below remain machine-checked facts about
+this construction. The human vouching for its correspondence to
+*deductive system* (`docs/provenance.md`, practice 3) is withdrawn:
+read this module as a frozen record, not a foundation to build on.
+
 A deductive system is a virtual graph whose framing behaves: each twist
 has a uniquely determined one-sided inverse, and both cuts are uniquely
 representable. All of it is property; the framing and the readback are

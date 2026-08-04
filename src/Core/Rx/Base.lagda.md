@@ -6,7 +6,7 @@ of edges between them, and a chosen edge at every vertex.
 
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
 
-module Cat.Graph.Refl.Base where
+module Core.Rx.Base where
 
 open import Core.Type
 open import Core.Data.Sigma
@@ -16,7 +16,7 @@ open import Core.Equiv using (_≃_; aut)
 open import Core.Transport.Base using (transport; transport-filler)
 open import Core.Transport.Properties using (prop-inhabited→is-contr)
 
-open import Cat.Graph.Refl.Type
+open import Core.Rx.Type
 
 ```
 

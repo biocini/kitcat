@@ -181,7 +181,7 @@ form that makes them agree.
 ## Worked example
 
 `notes/2026-07-24-refl-inference-policy.md` applies both axes to
-`Cat.Graph.Refl` in full: the per-base endpoint-retention table, the
+`Core.Rx` in full: the per-base endpoint-retention table, the
 tier assignment for every construction in the suite, and the probe
 behind each. That document is the worked application. This one is
 the rule.

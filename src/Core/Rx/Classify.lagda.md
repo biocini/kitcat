@@ -5,7 +5,7 @@ image is a path object and identifications in `U` are equivalences of fibres.
 ```agda
 {-# OPTIONS --safe --erased-cubical #-}
 
-module Cat.Graph.Refl.Classify where
+module Core.Rx.Classify where
 
 open import Core.Type
 open import Core.Data.Sigma
@@ -13,11 +13,11 @@ open import Core.Base
 open import Core.Equiv using (_≃_; Equiv)
 open import Core.Data.Bool using (Bool)
 open import Core.Data.Trunc using (∥_∥; squash)
-open import Cat.Graph.Refl.Type
-open import Cat.Graph.Refl.Base
-open import Cat.Graph.Refl.Properties
-open import Cat.Graph.Refl.Lens
-open import Cat.Graph.Refl.Poly
+open import Core.Rx.Type
+open import Core.Rx.Base
+open import Core.Rx.Properties
+open import Core.Rx.Lens
+open import Core.Rx.Poly
 
 module _ {ℓ ℓ'} {U : Type ℓ} (E : U → Type ℓ') (U-univ : is-univalent-family E) where
   private

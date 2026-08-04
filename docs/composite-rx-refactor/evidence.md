@@ -125,7 +125,7 @@ Consumers to re-point at the collapse: `Core.Composite`,
   all pure (VERIFIED, `Test.RxTier1`): `Singl-contr`
   (`Core.Transport.Base`), `Singl-contr-cofan` (`Core.Groupoid`),
   `prop-inhabited→is-contr` (`Core.Transport.Properties`).
-  `Cat.Graph.Refl.Properties` imports the first two from those
+  `Core.Rx.Properties` imports the first two from those
   unrelated homes.
 - The ternary representable action, three curryings
   ([standpoint](standpoint.md) Tier 3): two full `iso→equiv` proofs
@@ -147,7 +147,7 @@ Fates: decisions D9, D10.
 
 ## Rename inventory (Stage 1)
 
-Agda importers of `Cat.Graph.Refl.*`: the suite itself,
+Agda importers of `Core.Rx.*`: the suite itself,
 `Test.KanIdentities`, `Test.RxBundle`, all under `just mv`'s `src/`
 sweep. Outside the sweep, by hand: `bin/profile` line 12
 (usage-string example), `docs/guidelines/elaboration.md`,

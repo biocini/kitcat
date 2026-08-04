@@ -24,8 +24,8 @@ module Test.RxBundle where
 open import Core.Type
 open import Core.Base
 open import Core.Data.Sigma
-open import Cat.Graph.Refl.Type
-open import Cat.Graph.Refl.Base
+open import Core.Rx.Type
+open import Core.Rx.Base
 
 -- (A) bundled: the graph is a field
 record vg-bundled o h : Type₊ (o ⊔ h) where

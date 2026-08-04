@@ -383,7 +383,7 @@ Test/ sweep retains the spike while this entry stands.
 
 ## 7. The framed deductive-system theory
 
-The theory is documented in `docs/deductive-systems/`. T25 to T30
+T25 to T30
 and T32 to T36 moved to `src/Cat/Logic/lemmata.md` and
 `src/Cat/Logic/gloss.md`, under the same numbers. T31 stays here:
 its citation retired to the archive, and it awaits

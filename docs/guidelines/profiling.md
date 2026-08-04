@@ -20,7 +20,7 @@ just profile <Mod> --internal   # decompose the Miscellaneous line
 just profile <Mod> --warm       # keep the interface; measures a no-op
 ```
 
-`<Mod>` is a dot-path (`Cat.Graph.Refl.Lens`) or a file path. The
+`<Mod>` is a dot-path (`Core.Rx.Lens`) or a file path. The
 underlying script is `bin/profile`.
 
 **Cold means: discard the module's own interface, leave its

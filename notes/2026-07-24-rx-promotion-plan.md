@@ -92,7 +92,7 @@ makes the library say so.
 `prop-inhabited→is-contr` (from `Core.Transport.Properties`) into
 `Core.Base`. All three are pure — VERIFIED in `Test.RxTier1`, which
 defines them with imports restricted to `Core.Type`, `Core.Base`,
-`Core.Data.Sigma`. Today `Cat.Graph.Refl.Properties` imports the first
+`Core.Data.Sigma`. Today `Core.Rx.Properties` imports the first
 two from unrelated modules.
 *Acceptance:* whole-`Core` check unchanged; `Core.Kan.Total-sys-contr`
 becomes `Singl-contr (sys-composite φ s)` — VERIFIED in
@@ -149,8 +149,8 @@ names; it lists `rx.to-edge` by its current home. The guidelines are
 *Acceptance:* `Core.Kan` imports `Core.Rx.Base` with no cycle;
 whole-library check unchanged.
 
-*Open (D1):* whether `Cat.Graph.Refl.Classify` and
-`Cat.Graph.Refl.Simplex` promote with the machinery or stay outside
+*Open (D1):* whether `Core.Rx.Classify` and
+`Core.Rx.Simplex` promote with the machinery or stay outside
 `Core` — they are instances (`U`-small classifiers, augmented
 simplices, lists) and pull in `Core.Data.Trunc`, `Core.Data.Bool`,
 `Core.Data.Fin.Monotone.*`.
@@ -309,7 +309,7 @@ O1, and `is-contr-is-prop`. Available helpers: `is-contr-is-prop` and
 **3.7 `Cat.Logic.Univalent`** on `--cubical`, by the segmentation
 rule: the record's propositionality collapses identity of deductive
 systems to identity of virtual graphs, and the reflexive-graph half
-needs `ua` (`Cat.Graph.Refl.Univalent` today).
+needs `ua` (`Core.Rx.Univalent` today).
 
 Then the roadmap-0–7 content: the two-handed calculus, the
 associahedron towers, mediation, duploids.
@@ -376,7 +376,7 @@ typecheck, `Cat.Depreciated` included** — 49 modules, 15,545 lines,
 and green, which is why the deletion schedule holds what it holds;
 `Core.Kan` elaborates cold in 1,025–1,072 ms across runs (treat ±50 ms
 as noise) with the displaced-composition family at ≈300 ms;
-`Cat.Graph.Refl` has two external Agda importers, `Test.KanIdentities`
+`Core.Rx` has two external Agda importers, `Test.KanIdentities`
 and `Test.RxBundle` (the certificates), plus textual references in
 `bin/profile`, `docs/guidelines/`, and these notes.
 

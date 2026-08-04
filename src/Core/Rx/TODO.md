@@ -1,4 +1,4 @@
-# Cat.Graph.Refl — remaining work
+# Core.Rx — remaining work
 
 Formalisation of Sterling, *Reflexive Graph Lenses*. This tracks what is not yet
 done. Difficulty tags: `[easy]` mechanical, `[mod]` a real but bounded proof,

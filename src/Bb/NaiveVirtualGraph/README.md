@@ -75,6 +75,6 @@ which aligns the reflection with the edge. This carrier never had
 it. Readback is what makes the unit laws and interchange theorems,
 and its absence is what the dossier above measures.
 
-Three modules here import the live `Cat.Graph.Refl`:
+Three modules here import the live `Core.Rx`:
 `Gist.DeductiveSystem`, `Gist.JudgmentLens`, and `Gist.TwoSided`.
 A change there can break this tree.

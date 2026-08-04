@@ -3,7 +3,7 @@ are two reflexive-graph structures on one underlying graph, and the
 sequent vocabulary is that graph's fan calculus: a term is a cofan, a
 coterm a fan, and the two argument halves are the centres the two
 framings supply, one from each. Nothing here consumes an axiom, and this
-is where the theory names `Cat.Graph.Refl`.
+is where the theory names `Core.Rx`.
 
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
@@ -14,8 +14,8 @@ open import Core.Type
 open import Core.Base
 open import Core.Data.Sigma
 
-open import Cat.Graph.Refl.Type
-open import Cat.Graph.Refl.Base
+open import Core.Rx.Type
+open import Core.Rx.Base
 
 open import Bb.WeakDeductiveSystem.Type
 open import Bb.WeakDeductiveSystem.Base using (opⱽ)

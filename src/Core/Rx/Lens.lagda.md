@@ -7,7 +7,7 @@ reflexive graph over `G`, and the two are dual under the total opposite.
 ```agda
 {-# OPTIONS --safe --erased-cubical #-}
 
-module Cat.Graph.Refl.Lens where
+module Core.Rx.Lens where
 
 open import Core.Type
 open import Core.Data.Sigma
@@ -17,9 +17,9 @@ open import Core.Equiv
 open import Core.HLevel.Base using (Π-is-prop; Σ-is-prop; is-prop-equiv)
 open import Core.Transport.Base using (transport)
 open import Core.Transport.Properties using (prop-inhabited→is-contr)
-open import Cat.Graph.Refl.Type
-open import Cat.Graph.Refl.Base
-open import Cat.Graph.Refl.Properties
+open import Core.Rx.Type
+open import Core.Rx.Base
+open import Core.Rx.Properties
 
 module _ {v e w z} (G : reflexive-graph v e) (B : rx.vfam G w z) where
   private

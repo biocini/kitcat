@@ -36,7 +36,7 @@ under later additions.
 
 ## Layer 2 is two modules, not one
 
-The axiom-free material splits on whether it mentions `Cat.Graph.Refl`:
+The axiom-free material splits on whether it mentions `Core.Rx`:
 
 - **Sequent-only.** `opⱽ`, `act`/`coact`/`act-π`/`coact-π`,
   `inj⁻`/`inj⁺`, `composite⁻`/`composite⁺`, `readback`. Every one is
@@ -45,7 +45,7 @@ The axiom-free material splits on whether it mentions `Cat.Graph.Refl`:
   that consume them.
 - **The reflexive-graph seam.** `graph`, the fan/cofan dictionary,
   `judgment±`/`hom±`, `two-sided`, `bipush`. This is where the
-  `Cat.Graph.Refl` import belongs and where it should be confined.
+  `Core.Rx` import belongs and where it should be confined.
 
 Confining the import is the reason for the split. Layers 3 and 4 have
 no business knowing about reflexive graphs, and the seam has no

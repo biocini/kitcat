@@ -13,7 +13,7 @@ monotone equivalence — a definitional lens, unital on the nose at the identity
 
 {-# OPTIONS --safe --erased-cubical #-}
 
-module Cat.Graph.Refl.Simplex where
+module Core.Rx.Simplex where
 
 open import Core.Type
 open import Core.Base
@@ -26,9 +26,9 @@ open import Core.Data.Fin.Monotone.Gaunt
   using (mono-unique; mono-card; is-monotone-is-prop)
 open import Core.Equiv using (_≃_; Equiv; aut; equiv-path)
 open import Core.HLevel.Base using (Σ-prop-path)
-open import Cat.Graph.Refl.Type
-open import Cat.Graph.Refl.Base
-open import Cat.Graph.Refl.Poly
+open import Core.Rx.Type
+open import Core.Rx.Base
+open import Core.Rx.Poly
 
 ```
 

@@ -6,7 +6,7 @@ Everything that does without it stays in the ordinary scheme.
 ```agda
 {-# OPTIONS --cubical --safe --no-guardedness --no-sized-types #-}
 
-module Cat.Graph.Refl.Univalent where
+module Core.Rx.Univalent where
 
 open import Core.Type
 open import Core.Base
@@ -16,11 +16,11 @@ open import Core.HLevel.Base using (Π-is-prop)
 open import Core.Transport.Base using (module Path-over; is-prop→PathP)
 open import Core.Transport.Properties using (is-contr-is-prop; is-prop-is-prop)
 open import Core.Univalence using (ua; ua-β)
-open import Cat.Graph.Refl.Type
-open import Cat.Graph.Refl.Base
-open import Cat.Graph.Refl.Properties
-open import Cat.Graph.Refl.Lens
-open import Cat.Graph.Refl.Fibration
+open import Core.Rx.Type
+open import Core.Rx.Base
+open import Core.Rx.Properties
+open import Core.Rx.Lens
+open import Core.Rx.Fibration
 
 private
   family-univ-is-prop : ∀ {ℓ w z} {X : Type ℓ} (B : dep-rx w z X)

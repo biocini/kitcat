@@ -97,7 +97,7 @@ stratum, and settle the fate of the spikes the cut breaks.
 2. `docs/gloss.md` has no entries yet for the new theorems
    (`axioms→stable`, the four unit laws, the cancellations). Ledger
    chore.
-3. The archive imports the live `Cat.Graph.Refl`. A future change
+3. The archive imports the live `Core.Rx`. A future change
    there can break the frozen tree. Risk, accepted for now.
 4. The handedness swap remains a separate pass, unstarted. The
    `Mag` rebuild remains pending.

@@ -104,7 +104,12 @@ comment at the definition that realizes it. The house forms:
 -- Credit: 1lab, Equiv.Fibrewise
 -- Following Rijke, Theorem 11.2.4
 -- From Capriotti–Kraus (arXiv:1707.03693), Section 3.2
+-- resources/rijke-hott, Thm 11.2.4
 ```
+
+The fourth form cites a `resources/<slug>/` entry directly, once one
+exists for the source. Use one of the first three for a source not
+yet promoted to `resources/`.
 
 The obligation travels with the construction. A construction that
 reaches the implementer through an intermediary (an analyzer memo,

@@ -24,8 +24,8 @@ open import Core.Kan
 open import Core.Transport.Base using (Singl-contr)
 open import Core.Transport.Properties using (SinglP-contr)
 open import Core.Composite
-open import Cat.Graph.Refl.Type
-open import Cat.Graph.Refl.Base
+open import Core.Rx.Type
+open import Core.Rx.Base
 
 private variable
   u v : Level

@@ -111,7 +111,7 @@ that ratified the (D′) record cut executed by a sibling session.
    oracle is the free balanced word model.
 2. The two duploid source audits gate every ledger citation that
    leans on them.
-3. The archive imports the live `Cat.Graph.Refl`, accepted risk.
+3. The archive imports the live `Core.Rx`, accepted risk.
 4. The C-F paper (TACS 1994) is a candidate entry, cited at l.514
    of the vendored Kiselyov page.
 

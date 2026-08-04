@@ -13,7 +13,7 @@ the material it does not schedule.
 Sources triangulated: `Core.Kan`, `Core.Path.*`, `Core.Composite`,
 `Core.Groupoid`, `Core.Groupoid.Virtual`, `Core.Coherence.*`,
 `Core.Transport.*`; the reference construction at
-`reference/core-category/Composite.lagda.md`; and `Cat.Graph.Refl.*`.
+`reference/core-category/Composite.lagda.md`; and `Core.Rx.*`.
 
 The reference tree is not expected to typecheck — it is retained as
 notes. Only the first block of `Composite.lagda.md` (the
@@ -31,7 +31,7 @@ Certificates: `Test.KanIdentities`, `Test.RxTier1`, `Test.RxVirtual`,
 | `Core.Kan` | `Total-sys φ s = Σ x , sys-composite φ s ≡ x` | `(composite , plid)` | `p i , λ j → p (i ∧ j)` |
 | reference | `Comp φ u = Σ s , composite φ u ≡ s` | `(composite , plid)` | `p i , λ j → p (i ∧ j)` |
 | `Core.Transport.Base` | `Σ y , x ≡ y` | `(x , refl)` | `q i , λ j → q (i ∧ j)` |
-| `Cat.Graph.Refl` | `rx.fan (discrete A) x` | `fan-center x` | via `prop-inhabited→is-contr` |
+| `Core.Rx` | `rx.fan (discrete A) x` | `fan-center x` | via `prop-inhabited→is-contr` |
 
 Not an analogy. VERIFIED (`Test.KanIdentities`): `Total-sys φ s` is
 `rx.fan (discrete A) (sys-composite φ s)` and `Total-sys-contr φ s` is
@@ -41,7 +41,7 @@ Not an analogy. VERIFIED (`Test.KanIdentities`): `Total-sys φ s` is
 Reading: a Kan operation is a choice of centre in a contractible fan.
 `hcom` picks the centre, `hfil` is the contraction, and every
 uniqueness lemma in `Core.Kan` is `is-contr→is-prop` at some fan.
-`Cat.Graph.Refl` already has that vocabulary; `Core.Kan` re-derives it.
+`Core.Rx` already has that vocabulary; `Core.Kan` re-derives it.
 
 ## `Sys` is the reference's `Cyl`
 
@@ -256,7 +256,7 @@ Live and staying: `Sys`, `sys-base`, `sys-composite`, `sys-filler`
 ### Duplicated contractibility
 
 `Singl-contr` (`Core.Transport.Base`) and `Singl-contr-cofan`
-(`Core.Groupoid`) live in unrelated modules; `Cat.Graph.Refl.Properties`
+(`Core.Groupoid`) live in unrelated modules; `Core.Rx.Properties`
 imports one from each. Both are pure — no `transp`, no `hcom` —
 and belong in `Core.Base` (VERIFIED: `Test.RxTier1` defines both with
 imports restricted to `Core.Type`/`Core.Base`/`Core.Data.Sigma`).
@@ -297,7 +297,7 @@ practice.
 `just check-tree src/Cat` — 59 of 59 pass, `Cat.Depreciated` included
 (49 modules, 15,545 lines, green). `just profile Core.Kan` —
 1,025–1,072 ms cold across four runs; treat ±50 ms as noise rather
-than reading a single figure as a baseline. `Cat.Graph.Refl` — two
+than reading a single figure as a baseline. `Core.Rx` — two
 external Agda importers, `Test.KanIdentities` and `Test.RxBundle`,
 plus textual references in `bin/profile`, `docs/guidelines/`, and
 these notes.

@@ -7,6 +7,16 @@ themselves, with their citations, are in
 
 ## The framed deductive-system theory
 
+**Retired, 2026-08-03.** `virtual-graph`/`is-deductive-system`
+(`Cat.Logic.Type`, `Cat.Logic.Base`) cannot express duploidal
+structure: balanced strength collapses polarity, so no carrier has
+P and N genuinely distinct, and a duploid needs exactly that
+(`src/Cat/Logic/TODO.md`, item 7, the reflection theorem). The
+entries below remain machine-checked facts about that construction.
+The human vouching for its correspondence to *deductive system*
+(`docs/provenance.md`, practice 3) is withdrawn: read this section as
+a frozen record, not a foundation to build on.
+
 **T25.** `deductive-system` splits as one structure field and one
 property field, and `opᴰ` is an involution. `opⱽ-invol` and
 `op-eval` are `refl`. `opᴰ-invol` is `refl` on the carrier, with

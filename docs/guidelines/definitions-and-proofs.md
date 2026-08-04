@@ -69,6 +69,8 @@
   with the colon opening the continuation and `→` starting
   continuation lines, indented 2.
 - **Chain-reasoning blocks** (`Chain`) serve long calculational
-  displays only. Everything else composes directly.
+  displays only. Everything else composes directly. A proof term
+  inside a step's `⟨ ⟩` does not count toward the width cap: let it
+  run long rather than break it just to fit.
 - Local idiom, permitted not required: `outS do …` low-precedence
   application in the Kan/transport stratum only.

@@ -8,7 +8,7 @@
 > `mmmm-classical-notions`, 2026-07-28.
 
 Where the framed deductive-system theory stands with respect to (1) the
-reflexive-graph theory of `Cat.Graph.Refl`, after Sterling, and (2) the
+reflexive-graph theory of `Core.Rx`, after Sterling, and (2) the
 Melliès corpus — ribbon tensorial logic, balanced dialogue categories,
 dialogue chiralities, and the dialogue duploids of Mangel–Melliès–
 Munch-Maccagnoni.
@@ -160,7 +160,7 @@ halves of contractibility**, existence from the cut and uniqueness from
 stability. The fibration's operations are the hand's own on the nose:
 `push-is-cut` and `lift-is-witness` are `refl`, so the composition *is* the
 pushforward and the head-rewriting witness *is* the lift. A free consequence,
-from `Cat.Graph.Refl.Fibration`: the coslice is univalent as a display, base
+from `Core.Rx.Fibration`: the coslice is univalent as a display, base
 unconstrained.
 
 Separately, VERIFIED (`Cat.Logic.Base`): `stable-is-embedding` is `refl` —
@@ -185,7 +185,7 @@ The base graph of a deductive system is not univalent: fans propositional
 fails wherever an object carries distinct outgoing edges, and §2.4's model
 makes that explicit. Every one of Sterling's *coherence* results hypothesises
 univalence of the base — `cov-`/`ctrv-`/`unb-lens-structure-is-prop` in
-`Cat.Graph.Refl.Lens`, and the classifying path objects and SIP case studies
+`Core.Rx.Lens`, and the classifying path objects and SIP case studies
 in `Classify`. So for `Cat.Logic` the Sterling axis is **a language and a set
 of constructions, not a theorem supply**.
 
@@ -194,7 +194,7 @@ the total-opposite duality, and every univalence-of-a-*display* result, since
 those hypothesise the components rather than the base — which is why §1.3 and
 §1.4's four univalence certificates are unconditional.
 
-One substantive theorem is in reach. `Cat.Graph.Refl.Univalent`'s
+One substantive theorem is in reach. `Core.Rx.Univalent`'s
 `characterisation-of-fibs` assumes no univalence of the base (`TODO.md` §3),
 so the fibration ⟺ univalent-lens correspondence applies to the coslice: each
 hand's composability data is *equivalent* to a lens of path objects over its

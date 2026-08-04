@@ -182,3 +182,17 @@ import Bb.WeakDeductiveSystem.Gist.TwistFidelity
 import Bb.WeakDeductiveSystem.Graph
 import Bb.WeakDeductiveSystem.Type
 ```
+
+## Virtual graphs
+
+The minimal virtual-graph carrier: a graph `ob`, `hom` and the
+representability axiom `reflect`, which sends every edge to a
+judgment over its own endpoints. Terms, coterms, arguments,
+conclusions, and judgments all derive from the graph fields. The
+tree collects results over this carrier, with every further
+hypothesis an explicit module parameter and `virtual-graph` the
+only record.
+
+```agda
+import Bb.VirtualGraphs.Type
+```
