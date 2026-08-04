@@ -71,12 +71,9 @@ Dependencies: Agda builtins only. No agda-stdlib, no cubical library.
 | `just check <Mod>` | Typecheck one module (dot-path or file path) |
 | `just check-tree [dir]` | Typecheck every module under a directory, listing failures |
 | `just profile <Mod>` | Elaboration time, cold (`--total [N]`, `--internal`, `--warm`) |
-| `just new <Mod> [--aggregator]` | New module with correct boilerplate |
 | `just mv Old New [--dry-run]` | Move or rename, updating references |
 | `just lint [width\|flags\|authoring\|frontmatter\|citations\|changed]` | Lint. `changed` is the pre-commit gate. `citations` checks that every module a ledger names still exists. The `writing` skill's bundled linter gates prose, not this |
 | `just resources-verify [--remote]` | Custody check on `resources/` |
-| `just stats` / `just wip` | Inventories |
-| `just html` / `just html-serve` | Docs site |
 
 Use the tools, not raw invocations. Before a commit, run `just lint
 changed` and `just check <Mod>` on every touched module. The `just mv`

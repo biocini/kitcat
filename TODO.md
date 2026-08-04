@@ -68,3 +68,21 @@ module's ledger, and the research program lives in
   namespace in `cb96805` and are readable at `60410b7`. Thirteen of
   the ledger's 22 cited paths dangle; `just lint citations` reports
   them. Disposition is the restructuring item above.
+- [ ] A dependency-guard lint for cross-namespace imports: per-file
+  and per-namespace inclusion declarations (what a module may depend
+  on; anything undeclared fails), not an exclusion list. Needs both
+  a per-file annotation mechanism and a generic per-namespace
+  default; `Core.Data.*`'s frontmatter discipline is a model worth
+  studying first. Blocked on `Cat.*` settling — `Data.*` currently
+  imports `Cat.*`, which the guard should catch as a violation, not
+  grandfather in as an initial allowance.
+- [ ] A stuff/structure/property layering guideline for algebraic
+  structures, once `Cat.*` has enough worked examples to state the
+  convention abstractly (per `docs/guidelines/CLAUDE.md`'s
+  no-citation rule). Kitcat already applies the instinct informally;
+  it is not yet written down.
+- [ ] A doc-coverage measurement (what fraction of declarations
+  carry a comment), passive only, no gate or threshold. Kitcat's
+  comment register is conditional (comment only when the why is
+  non-obvious), unlike a mandate to document everything, so no
+  target percentage is meaningful yet. Revisit only if that changes.

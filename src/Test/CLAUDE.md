@@ -1,7 +1,7 @@
 # Test — scratch and regression witnesses
 
-`Test.*` is the scratch namespace: spikes, probes, and regression
-witnesses. It is exempt from the pre-commit gate.
+`Test.*` holds spikes, probes, and regression witnesses. It is
+exempt from the pre-commit gate.
 
 ## Spike zero
 

@@ -1,9 +1,8 @@
 # Bb — the Blackboard archive
 
-`Bb.*` holds archived strata: superseded carriers, rejected
-proposals, and reference trees. A tree here keeps the state it
-reached. It does not follow the live library. The rules below hold
-for the whole namespace.
+`Bb.*` holds superseded carriers, rejected proposals, and reference
+trees, each frozen at the state it reached. It does not follow the
+live library. The rules below hold for the whole namespace.
 
 ## A README in every tree
 
