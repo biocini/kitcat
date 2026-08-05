@@ -24,6 +24,10 @@ the `TODO.md`. An archive has no open items, so it keeps no
 open-item list. Where the live line still owns those items, the
 README names the live file that holds them.
 
+One exception: `Bb.VirtualGraphs` keeps a `TODO.md`. It is the
+live consolidation target, not a frozen stratum, so it carries an
+open-item list the way any active tree would.
+
 ## A CHANGELOG in every tree
 
 Each tree carries `CHANGELOG.md`, newest entry first, in the

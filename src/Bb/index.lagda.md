@@ -194,5 +194,34 @@ hypothesis an explicit module parameter and `virtual-graph` the
 only record.
 
 ```agda
+import Bb.VirtualGraphs.Diagonal
+import Bb.VirtualGraphs.Cancellation
+import Bb.VirtualGraphs.Bool.Heap
+import Bb.VirtualGraphs.Bool.Klein
+import Bb.VirtualGraphs.Bool.Readers
+import Bb.VirtualGraphs.Circle.Model
+import Bb.VirtualGraphs.Circle.Polarity
+import Bb.VirtualGraphs.Circle.Shift
+import Bb.VirtualGraphs.Circle.Thunkable
+import Bb.VirtualGraphs.Circle.Torsor
+import Bb.VirtualGraphs.Display
+import Bb.VirtualGraphs.Engine
+import Bb.VirtualGraphs.Extraction
+import Bb.VirtualGraphs.Framing
+import Bb.VirtualGraphs.Graph
+import Bb.VirtualGraphs.Group.Abelian
+import Bb.VirtualGraphs.Groupoid.Path
+import Bb.VirtualGraphs.Interchange
+import Bb.VirtualGraphs.Pentagon
+import Bb.VirtualGraphs.Polarity
+import Bb.VirtualGraphs.Presentation
+import Bb.VirtualGraphs.Readback
+import Bb.VirtualGraphs.Embedding
+import Bb.VirtualGraphs.Tower
 import Bb.VirtualGraphs.Type
+import Bb.VirtualGraphs.UnitShape
+import Bb.VirtualGraphs.Word.Carrier
+import Bb.VirtualGraphs.Word.Defect
+import Bb.VirtualGraphs.Word.Model
+import Bb.VirtualGraphs.Word.Polarity
 ```
