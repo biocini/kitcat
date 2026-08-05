@@ -109,9 +109,8 @@ Not dead, and why:
   `Core.Function.Connected`.
 - `cone`: zero live consumers, kept as Stage 3.4's transcription
   target (the gist's `ι`).
-- `contr-face`: held only by `Core.Coherence.Paths` (red, imported
-  only by the retired `src/All.lagda.md`). Stage-5 material, not
-  live surface.
+- `contr-face`: held only by `Core.Coherence.Paths` (red, no live
+  importer). Stage-5 material, not live surface.
 - `is-contr→extend`: one live consumer.
 
 Aliases: `sys-composite` = `hcom` bare, `sys-filler` = `hfil`
@@ -134,7 +133,7 @@ Consumers to re-point at the collapse: `Core.Composite`,
 
 ## Module liveness
 
-Dead already (importer is the retired `src/All.lagda.md` only):
+Dead already (no live importer):
 `Core.Path.Composition`, `Core.Path.Coherence` (red),
 `Core.Coherence.Paths` (red), `Core.Coherence.Base`.
 

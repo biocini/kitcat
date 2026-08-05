@@ -31,7 +31,7 @@ check-tree dir="src":
       echo "  (arguments are positional: just check-tree src/Test)" >&2
       exit 2
     fi
-    files=$(fd '\.lagda(\.[a-z]+)?$' "$dir" -E All.lagda.md) || exit 2
+    files=$(fd '\.lagda(\.[a-z]+)?$' "$dir") || exit 2
     if [ -z "$files" ]; then
       echo "check-tree: no .lagda* modules under $dir" >&2
       exit 2
@@ -61,9 +61,7 @@ stats:
     set -euo pipefail
     total=$(fd -e lagda.md . src/ | grep -v Stash | grep -v '^src/Test/' | wc -l | tr -d ' ')
     namespaces=$(fd -e lagda.md --min-depth 2 . src/ | grep -v Stash | sed 's|^src/||;s|/.*||' | sort -u | tr '\n' ' ')
-    wip=$(rg -c '^-- import' src/All.lagda.md || { [ $? -eq 1 ] && echo 0; })
     echo "Modules:    $total"
-    echo "WIP:        $wip"
     echo "Namespaces: $namespaces"
 
 # Run all lint checks
@@ -73,15 +71,3 @@ lint *checks:
 # (--remote also reports latest arXiv versions for drift)
 resources-verify *flags:
     bin/resources-verify {{flags}}
-
-# List WIP modules
-wip:
-    @rg '^\-\- import' src/All.lagda.md
-
-# Build HTML documentation
-html:
-    bin/html-build
-
-# Preview HTML documentation locally (builds first if needed)
-html-serve:
-    bin/html-serve

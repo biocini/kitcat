@@ -7,8 +7,7 @@ refactor (ruled).
 
 ## The broken modules
 
-Both committed red, both imported only by the retired
-`src/All.lagda.md`:
+Both committed red, both with no live importer:
 
 - `Core.Path.Coherence`: triangle and pentagon by `HComposite`
   contractibility. Nine holes (after 0.3 the import failure is gone

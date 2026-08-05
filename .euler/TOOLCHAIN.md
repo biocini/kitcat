@@ -19,5 +19,4 @@
     questions rather than improvise (`CLAUDE.md`'s Style law)
   - exemplar: `Core.*`
 
-No `clean-build`: the `All.lagda.md` aggregator is retired, and
-`just check-tree` is the whole-library check.
+No `clean-build`: `just check-tree` is the whole-library check.
