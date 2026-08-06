@@ -6,7 +6,7 @@ argument-hint: <theorem-or-goal>
 
 # Recipe
 
-Run the recipe workflow: read `.claude/commands/recipe.md` and follow it as the active instructions for: $ARGUMENTS
+Run the recipe workflow: read `.euler/euler.md` (the suite contract) and `.claude/commands/recipe.md`, and follow both as the active instructions for: $ARGUMENTS
 
 Agents used: `researcher`, optionally `verifier`
 

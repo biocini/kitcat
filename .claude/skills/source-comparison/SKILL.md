@@ -6,7 +6,7 @@ argument-hint: <topic>
 
 # Source Comparison
 
-Run the compare workflow: read `.claude/commands/compare.md` and follow it as the active instructions for: $ARGUMENTS
+Run the compare workflow: read `.euler/euler.md` (the suite contract) and `.claude/commands/compare.md`, and follow both as the active instructions for: $ARGUMENTS
 
 Agents used: `researcher`, `verifier`
 

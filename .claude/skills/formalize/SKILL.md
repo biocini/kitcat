@@ -6,7 +6,7 @@ argument-hint: <target>
 
 # Formalize
 
-Run the formalize workflow: read `.claude/commands/formalize.md` and follow it as the active instructions for: $ARGUMENTS
+Run the formalize workflow: read `.euler/euler.md` (the suite contract) and `.claude/commands/formalize.md`, and follow both as the active instructions for: $ARGUMENTS
 
 Requires a toolchain block (`.euler/TOOLCHAIN.md`, or a `## Toolchain` section in the project `CLAUDE.md`); the workflow asks the user for one when missing and never invents check commands.
 

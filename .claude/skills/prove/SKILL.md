@@ -6,7 +6,7 @@ argument-hint: <goal>
 
 # Prove
 
-Run the prove workflow: read `.claude/commands/prove.md` and follow it as the active instructions for: $ARGUMENTS
+Run the prove workflow: read `.euler/euler.md` (the suite contract) and `.claude/commands/prove.md`, and follow both as the active instructions for: $ARGUMENTS
 
 Requires a toolchain block; the loop refuses to run without an executable check command, since the checker is the only oracle.
 

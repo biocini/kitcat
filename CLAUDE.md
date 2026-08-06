@@ -82,6 +82,9 @@ you move a cited module.
 
 ## Delegation
 
+Invoking a euler command authorizes the subagent dispatches its body
+specifies. The tiers below govern which tier, not whether.
+
 Subagent tiers, by task shape:
 
 | Task | Tier |
@@ -145,8 +148,11 @@ artifacts before any stop.
 - `outputs/`, `papers/`: research and formalization reports with
   `.provenance.md` sidecars, and paper-style drafts. The euler
   workflows produce them (`.claude/` commands, skills, agents).
-  Their contract is `.claude/rules/euler.md`.
+  Their contract is `.euler/euler.md`.
 - `TODO.md`: repo-level maintenance tasks.
+- `CHANGELOG.md`: the lab notebook. Read it before you resume
+  substantial work. Append after meaningful progress, a failed
+  strategy, a major verification result, or a new blocker.
 - `notes/`: session logs (`<date>-<slug>.md`).
 - `resources/`: vetted sources, cited by entry.
   `resources/README.md` is the format authority.

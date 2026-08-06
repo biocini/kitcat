@@ -6,7 +6,7 @@ argument-hint: <topic>
 
 # Paper Writing
 
-Run the draft workflow: read `.claude/commands/draft.md` and follow it as the active instructions for: $ARGUMENTS
+Run the draft workflow: read `.euler/euler.md` (the suite contract) and `.claude/commands/draft.md`, and follow both as the active instructions for: $ARGUMENTS
 
 Agents used: `writer`, `verifier`
 

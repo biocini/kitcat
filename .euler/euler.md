@@ -234,7 +234,7 @@ delivery:
 
 - Every output from `/formalize`, `/deepresearch`, `/lit`, `/audit`, and
   `/recipe` must include a `.provenance.md` sidecar, in the shape given
-  by `.claude/rules/provenance-template.md`. Workflows use that shape
+  by `.euler/provenance-template.md`. Workflows use that shape
   and do not restate it.
 - Provenance sidecars record source accounting, the checker runs
   performed, and the final obligation (sorry) inventory.

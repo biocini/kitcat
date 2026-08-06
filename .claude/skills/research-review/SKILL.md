@@ -6,7 +6,7 @@ argument-hint: <artifact>
 
 # Research Review
 
-Run the review workflow: read `.claude/commands/review.md` and follow it as the active instructions for: $ARGUMENTS
+Run the review workflow: read `.euler/euler.md` (the suite contract) and `.claude/commands/review.md`, and follow both as the active instructions for: $ARGUMENTS
 
 Agents used: `researcher`, `reviewer`
 

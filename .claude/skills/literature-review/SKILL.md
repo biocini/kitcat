@@ -6,7 +6,7 @@ argument-hint: <topic-or-author-or-corpus>
 
 # Literature Review
 
-Run the lit workflow: read `.claude/commands/lit.md` and follow it as the active instructions for: $ARGUMENTS
+Run the lit workflow: read `.euler/euler.md` (the suite contract) and `.claude/commands/lit.md`, and follow both as the active instructions for: $ARGUMENTS
 
 Agents used: `researcher`, `verifier`, `reviewer`
 

@@ -5,6 +5,6 @@ description: Write a durable session log capturing completed work, findings, dis
 
 # Session Log
 
-Run the log workflow: read `.claude/commands/log.md` and follow it as the active instructions.
+Run the log workflow: read `.euler/euler.md` (the suite contract) and `.claude/commands/log.md`, and follow both as the active instructions.
 
 Output: session log in `notes/`.

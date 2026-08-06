@@ -5,6 +5,6 @@ description: Inspect visible research and formalization run state, scheduled fol
 
 # Jobs
 
-Run the jobs workflow: read `.claude/commands/jobs.md` and follow it as the active instructions.
+Run the jobs workflow: read `.euler/euler.md` (the suite contract) and `.claude/commands/jobs.md`, and follow both as the active instructions.
 
 Shows process/scheduler state when those tools are available, plus durable watch/prove/formalize artifacts on disk. If process or scheduling tools are unavailable, the workflow reports that capability as blocked instead of claiming background state exists.

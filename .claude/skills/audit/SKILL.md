@@ -6,7 +6,7 @@ argument-hint: <formalization-and-source>
 
 # Audit
 
-Run the audit workflow: read `.claude/commands/audit.md` and follow it as the active instructions for: $ARGUMENTS
+Run the audit workflow: read `.euler/euler.md` (the suite contract) and `.claude/commands/audit.md`, and follow both as the active instructions for: $ARGUMENTS
 
 Agents used: `researcher`, optionally `verifier`
 

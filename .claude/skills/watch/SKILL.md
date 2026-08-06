@@ -6,6 +6,6 @@ argument-hint: <topic>
 
 # Watch
 
-Run the watch workflow: read `.claude/commands/watch.md` and follow it as the active instructions for: $ARGUMENTS
+Run the watch workflow: read `.euler/euler.md` (the suite contract) and `.claude/commands/watch.md`, and follow both as the active instructions for: $ARGUMENTS
 
 Output: baseline survey in `outputs/`, plus a scheduled follow-up only when a scheduling tool is available. If scheduling is unavailable, the workflow records that block instead of claiming a recurring watch exists.

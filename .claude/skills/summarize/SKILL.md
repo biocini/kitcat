@@ -6,7 +6,7 @@ argument-hint: <source> [--window-size <chars>] [--overlap <chars>] [--tier1-thr
 
 # Summarize
 
-Run the summarize workflow: read `.claude/commands/summarize.md` and follow it as the active instructions for: $ARGUMENTS
+Run the summarize workflow: read `.euler/euler.md` (the suite contract) and `.claude/commands/summarize.md`, and follow both as the active instructions for: $ARGUMENTS
 
 Agents used: `researcher` (Tier 3 only)
 

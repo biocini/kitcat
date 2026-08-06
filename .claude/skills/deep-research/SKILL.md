@@ -6,7 +6,7 @@ argument-hint: <topic>
 
 # Deep Research
 
-Run the deepresearch workflow: read `.claude/commands/deepresearch.md` and follow it as the active instructions for: $ARGUMENTS
+Run the deepresearch workflow: read `.euler/euler.md` (the suite contract) and `.claude/commands/deepresearch.md`, and follow both as the active instructions for: $ARGUMENTS
 
 Agents used: `researcher`, `verifier`, `reviewer`
 
