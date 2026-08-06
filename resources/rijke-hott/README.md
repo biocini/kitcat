@@ -204,7 +204,7 @@ Key items:
 
 Develops the Curry-Howard interpretation of logic (∃/∀ as Σ/Π) by building divisibility, the congruence relations on ℕ, the standard finite types Fin k, the effective split-surjective quotient map ℕ → Fin(k+1), and the cyclic groups ℤ/k as abelian groups.
 
-*Subsections:* The Curry-Howard interpretation (`:7`), The congruence relations on $\N$ (`:155`), The standard finite types (`:214`), The natural numbers modulo $k+1$ (`:300`), The cyclic groups (`:491`)
+*Subsections:* The Curry-Howard interpretation (`:7`), The congruence relations on ℕ (`:155`), The standard finite types (`:214`), The natural numbers modulo k+1 (`:300`), The cyclic groups (`:491`)
 
 Key items:
 - Definition — divisibility on ℕ (d ∣ n as a Σ-type) — the flagship Curry-Howard translation of ∃ `:19`
@@ -245,7 +245,7 @@ Key items:
 
 Introduces homotopies and the groupoid/whiskering structure on them, defines equivalence as a bi-invertible map (section + retraction) and relates it to having an inverse, and characterizes the identity types of Sigma-types via observational equality.
 
-*Subsections:* Homotopies (`:12`), Bi-invertible maps (`:154`), Characterizing the identity types of $\Sigma$-types (`:313`)
+*Subsections:* Homotopies (`:12`), Bi-invertible maps (`:154`), Characterizing the identity types of Σ-types (`:313`)
 
 Key items:
 - Definition — homotopy (f ~ g) as a family of pointwise identifications `:36`
@@ -457,7 +457,7 @@ Key items:
 - Theorem — if A is a (k+1)-type then so is W(A,B) (W-types preserve truncation level) `:240`
 - Definition — functorial action W(f,e) of a map plus family of equivalences on W-types `:259`
 - Theorem — if f is k-truncated then W(f,e) is; in particular equivalences and embeddings are preserved `:301`
-- Definition — elementhood relation \in on W(A,B) `:330`
+- Definition — elementhood relation ∈ on W(A,B) `:330`
 - Theorem — well-founded induction principle for the elementhood relation on W-types `:340`
 - Definition — extensional W-type (canonical map to shared-elements equivalence) `:419`
 - Theorem — characterization of extensionality for an inhabited W-type (equivalent conditions) `:429`

@@ -152,8 +152,8 @@ universes `𝒰`; `path_A(a,b)` and `pathd_A(a,b)` are the path and
 dependent path types; path abstraction is `λi.a`; `refl_a`;
 inversion `p⁻¹`; the source's concatenation symbol (a small filled
 square, `\sq`) is transcribed `∙`, its whiskerings `\rsq`/`\lsq` as
-`∙ᵣ`/`∙ₗ`; transport `a^{\lto{i}{j}}_A` (squiggly arrow) as
-`a^{i⇝j}_A`; the derived meet, halfway meet, and join are
+`∙ᵣ`/`∙ₗ`; the source's transport notation (squiggly arrow, `\lto{i}{j}`)
+is transcribed `a^{i⇝j}_A`; the derived meet, halfway meet, and join are
 `p(i ∧ j)`, `p(i ∧* j)`, `p(i ∨ j)`; fillers `fill_j(p)`; the
 source's `\not\equiv` is transcribed `≢`.
 

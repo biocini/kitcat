@@ -179,7 +179,13 @@ The body sections:
   source's load**, like the map's: statement-level for the parts a
   development leans on, a few sentences per section for background
   parts, absent for a shelf reference. Digests state what the source
-  states — never what any development has done with it.
+  states — never what any development has done with it. Render
+  notation in Unicode, matching literate Agda and CLI reading, never
+  in raw LaTeX. Write a multi-character subscript or superscript as
+  `_{...}`/`^{...}` when Unicode has no combining form for it. Quote a
+  source's own LaTeX macro name only as a labeled aside connecting a
+  Unicode symbol back to the source, for example "`⟑` renders the
+  source's `\tensorialand`", never as the symbol itself.
 - **What the source establishes** — the source's actual deliverables
   and their status in the field, compactly. Entries record what the
   source states, not what anyone has proven from it: every

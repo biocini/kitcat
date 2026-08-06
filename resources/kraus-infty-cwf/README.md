@@ -14,7 +14,7 @@ secondary-sha256: 31db662a4dd8a986fe7f49db95f0a4e6d5f2cd9de8e5f4bcaef79f494910cc
 
 # Kraus — Internal ∞-Categorical Models of Dependent Type Theory
 
-A definition of $\infty$-categories with families ($\infty$-CwF's) in
+A definition of ∞-categories with families (∞-CwF's) in
 homotopy type theory, built to serve as models of dependent type
 theory without assuming unique identity proofs. The paper's §5.2
 introduces **identities via idempotent equivalences**: a morphism
@@ -29,7 +29,7 @@ alongside the paper as a secondary artifact (see Files).
 Load declaration: full statement depth over §5.2 ("Contexts and
 substitutions, second part: identities", the identities-via-
 idempotent-equivalences development) and its companion Agda file.
-The rest of the paper ($\infty$-CwF's proper, semi-Segal contexts,
+The rest of the paper (∞-CwF's proper, semi-Segal contexts,
 2LTT, the example models) is mapped at outline depth only.
 
 ## Citation
@@ -220,18 +220,18 @@ sections; full depth for §5.2 (marked below).
 part: identities", `\label{subsec:identities}` at `l.773`):
 - `l.775–791` — the three design conditions an identity-property must
   satisfy: (1) recover naive two-sided-neutral identities per object;
-  (2) be a *proposition* (an $\infty$-semicategory is an
-  $\infty$-category in at most one way); (3) not force univalence
+  (2) be a *proposition* (an ∞-semicategory is an
+  ∞-category in at most one way); (3) not force univalence
   (contexts of the syntactic model must not be forced to a set).
 - `l.793–812` — situating the definition against prior approaches
   (Rourke's non-constructive extension result; Lurie/Harpaz's
   semisimplicial-space horn-filling condition, translated to
   "complete semi-Segal types"; Sattler–Kraus and Kock's infinite-tower
   alternatives) and the "dunce's hat" motivating analogy (contractible
-  but not collapsible — not of the form $\Sigma(a{:}A).\,a=a_0$).
+  but not collapsible — not of the form Σ(a:A). a=a₀).
   `l.813–816`: the whole §5.2 development needs only the first four
-  semisimplicial levels $(A_0,A_1,A_2,A_3)$, phrased in wild-semicategory
-  language `(\ob,\hom,\mc,\ass)` with **no set-truncation**, and is
+  semisimplicial levels (A₀,A₁,A₂,A₃), phrased in wild-semicategory
+  language `(ob,hom,mc,ass)` with **no set-truncation**, and is
   "completely formalised in Agda" (cross-ref to the footnote at
   `l.202–204`).
 - `l.819–836` **Definition** (identities via idempotent equivalences,
@@ -262,7 +262,7 @@ part: identities", `\label{subsec:identities}` at `l.773`):
   an earlier example); the definition via idempotent equivalences is
   "fully coherent."
 - `l.865–867` **Theorem** `\label{thm:id-struc-is-prop}` — for a
-  semicategory $\CC$, `hasGoodIdStruc(C)` is a proposition.
+  semicategory C, `hasGoodIdStruc(C)` is a proposition.
 - `l.869–875` — the auxiliary construction: for an equivalence
   `e : hom(x,y)`, `I(e) := (e⋄-)⁻¹(e) : hom(x,x)` (`\label{eq:I-def}`
   at `l.871`); attributed to Harpaz and to Capriotti–Kraus as how
@@ -288,7 +288,7 @@ part: identities", `\label{subsec:identities}` at `l.773`):
   `0 → 2 ←e 1` has a contractible type of fillers; a proof that
   `f : A₁ x x` is idempotent is an element of `A₂ f f f`.
 - `l.916–918` **Definition** `\label{def:infcategory}` — an
-  $\infty$-category is an $\infty$-semicategory with a good identity
+  ∞-category is an ∞-semicategory with a good identity
   structure. `l.920–922`: from here on the paper drops "good" and
   just says "identity" (justified by Lemma `id-characterisation`:
   every identity is good).
@@ -397,13 +397,13 @@ own claim, not re-verified here.
 Everything below records what the source states; every mathematical
 claim is CONJECTURED until machine-checked in this repository.
 
-The paper defines $\infty$-categories with families ($\infty$-CwF's)
+The paper defines ∞-categories with families (∞-CwF's)
 in two-level type theory, to give an internal notion of model for
 dependent type theory that does not force unique identity proofs. The
 identities-via-idempotent-equivalences development (§5.2, this
 entry's load-bearing content) is presented as "a small part of the
 paper" that nonetheless supplies "a core idea for the construction of
-$\infty$-CwF's": replacing posited two-sided-neutral identities
+∞-CwF's": replacing posited two-sided-neutral identities
 (structure, and in general non-unique — the paper's Corollary
 `only-one-id` and Theorem `id-struc-is-prop` are exactly what rules
 this out) with the property "there is an idempotent equivalence at
