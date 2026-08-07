@@ -79,7 +79,7 @@ polarities are propositions.
 
 ## The forward direction
 
-Both twists at `x` inhabit `hom x x`, so each polarity witness
+Both half-twists at `x` inhabit `hom x x`, so each polarity witness
 evaluates at them: four instantiations, with no content beyond the
 quantifier.
 
@@ -99,12 +99,12 @@ quantifier.
 
 ## Generation
 
-`gen` says an edge is a cut word in the twists. Its indices force
+`gen` says an edge is a cut word in the half-twists. Its indices force
 every generated edge onto a loop: `gen-diag` reads the endpoint
 identification off a derivation, so the generated-carrier hypothesis
 is vacuous on any carrier with a non-loop edge. Over a generated
 carrier, induction over `gen` returns each polarity from its
-two-twist instances, `gen-diag` transporting the hypotheses to the
+two-half-twist instances, `gen-diag` transporting the hypotheses to the
 junctions a derivation visits.
 
 ```agda
@@ -164,8 +164,8 @@ junctions a derivation visits.
 
 Each hand's far unit law, fixed at one object, is the exact
 consumable. With the far left law at `x`, every edge out of `x` is
-the positive twist cut before that edge, and `linear-⨾⁺` finishes
-from the twist alone; dually with the far right law and
+the positive half-twist cut before that edge, and `linear-⨾⁺` finishes
+from the half-twist alone; dually with the far right law and
 `thunkable-⨾⁻`. So one edge decides its object's polarity wherever
 those laws hold, with no generation hypothesis. `Cancellation`
 instantiates these at the tiers.

@@ -6,6 +6,21 @@ entry names the checker run that says so.
 
 ---
 
+## 2026-08-06 — README citation re-pointed after the plan set was cut
+
+**Documentation only, no module changed.** The composite-rx refactor
+narrowed to `Core.Kan`, `Core.Composite`, and `Core.Rx`, and its
+per-stage documents merged into
+`docs/composite-rx-refactor/stages.md`. `README.md` cited
+`stage-4-cat-rebuild.md`, which no longer exists. The sentence now
+names the rebuild by its owner, `docs/roadmap.md` project 1, and
+keeps the decision D8 reference and the
+`docs/composite-rx-refactor/evidence.md` census pointer. The dropped
+sentence about decision D5 went with the decision, which the cut
+retired.
+
+No `.lagda.md` file changed, so the tree's green state is unaffected.
+
 ## 2026-07-28 — the Magmoid suite extracted to Bb.UnitalMagmoids
 
 **The extraction, `verified`.** The twelve `Magmoid` modules

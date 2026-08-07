@@ -1,12 +1,12 @@
 The cancellation layer: readback plus the two absorption tiers. Each
-tier's centre reads back as the other twist, so both cancellations
-are theorems, the twist absorptions follow, and each hand gains its
+tier's centre reads back as the other half-twist, so both cancellations
+are theorems, the half-twist absorptions follow, and each hand gains its
 other unit law — two unital magmoids on one graph, offset by the
-double twist. The centre and cancellation fragment consumes no cut
+double half-twist. The centre and cancellation fragment consumes no cut
 and no embedding-condition hypothesis; the far unit laws add one
 cut per hand; at contractible cuts the embedding condition is a
-theorem and `associates` holds at the twist-flanked word. The
-polarity collapse closes the file: the two twist conditions imply
+theorem and `associates` holds at the half-twist-flanked word. The
+polarity collapse closes the file: the two half-twist conditions imply
 each other at every object, so the two polarities are logically
 equivalent.
 
@@ -33,7 +33,7 @@ open import Bb.VirtualGraphs.Polarity
 ## Centres and cancellations
 
 No cut enters: readback alone reads each tier's centre at the other
-twist's coterm or term.
+half-twist's coterm or term.
 
 ```agda
 module cancellation {o h} (G : virtual-graph o h) (open virtual-graph G)
@@ -99,7 +99,7 @@ module far {o h} (G : virtual-graph o h) (open virtual-graph G)
 
 The embedding condition is a theorem here, and `associates` holds
 wherever the
-units can reach — the word with both trailing edges at the twists.
+units can reach — the word with both trailing edges at the half-twists.
 
 ```agda
 module at-strength {o h} (G : virtual-graph o h) (open virtual-graph G)
@@ -125,9 +125,9 @@ module at-strength {o h} (G : virtual-graph o h) (open virtual-graph G)
 
   open tower G rx corx S C⁺ C⁻ using (associates)
 
-  associates-at-twists : ∀ {x y} (f : hom x y)
+  associates-at-half-twists : ∀ {x y} (f : hom x y)
                        → associates f (corx y) (rx y)
-  associates-at-twists {x} {y} f =
+  associates-at-half-twists {x} {y} f =
       ap (_⨾⁻ rx y) (unitr⁺ f)
     ∙ unitr⁻ f
     ∙ sym (ap (f ⨾⁺_) (unitr⁻ (corx y)) ∙ unitr⁺ f)
@@ -135,11 +135,11 @@ module at-strength {o h} (G : virtual-graph o h) (open virtual-graph G)
 
 ## The polarity collapse
 
-Each hand cuts against the other hand's twist; neither pairing is a
-unit law. The mixed law moves the pairing's twist across the
+Each hand cuts against the other hand's half-twist; neither pairing is a
+unit law. The mixed law moves the pairing's half-twist across the
 junction and the hand's own unit law absorbs it, so each cut is the
 other cut after its own pairing, and each pairing distributes over
-the cut it produces. From there each twist condition implies the
+the cut it produces. From there each half-twist condition implies the
 other, and the one-edge theorems of `Polarity` send each polarity to
 the other one.
 
@@ -153,10 +153,12 @@ module collapse {o h} (G : virtual-graph o h) (open virtual-graph G)
   (T⁻ : framing⁻.is-absorbing⁻ G rx)
   (T⁺ : framing⁺.is-absorbing⁺ G corx) where
 
-  open polarity G rx corx S C⁺ C⁻ public
+  open polarity G rx corx S C⁺ C⁻ public hiding (cut⁻-cross; cut⁺-cross)
+  private
+    module tw = tower G rx corx S C⁺ C⁻
   open far G rx corx C⁺ C⁻ R T⁻ T⁺ public
     using ( unitl⁺; unitr⁻; unitr⁺; unitl⁻
-          ; ⨾⁺-is-coact; ⨾⁻-is-act; composite⁻-twist
+          ; ⨾⁺-is-coact; ⨾⁻-is-act; composite⁻-half-twist
           ; centre⁻-corx; centre⁺-rx; cancel⁻; cancel⁺
           ; absorb⁻; absorb⁺ )
 
@@ -172,21 +174,13 @@ module collapse {o h} (G : virtual-graph o h) (open virtual-graph G)
   negative-of-rx : ∀ x → thunkable (rx x) → negative x
   negative-of-rx x = negative-from-unit x unitr⁻
 
-  cross⁻ : ∀ {x y} → hom x y → hom x y
-  cross⁻ {y = y} f = f ⨾⁻ corx y
-
-  cross⁺ : ∀ {x y} → hom x y → hom x y
-  cross⁺ {x} g = rx x ⨾⁺ g
-
   cut⁻-cross : ∀ {x y z} (f : hom x y) (g : hom y z)
              → cross⁻ f ⨾⁺ g ≡ f ⨾⁻ g
-  cut⁻-cross {y = y} f g =
-    mixed-assoc f (corx y) g ∙ ap (f ⨾⁻_) (unitl⁺ g)
+  cut⁻-cross = tw.cut⁻-cross unitl⁺
 
   cut⁺-cross : ∀ {x y z} (f : hom x y) (g : hom y z)
              → f ⨾⁻ cross⁺ g ≡ f ⨾⁺ g
-  cut⁺-cross {y = y} f g =
-    sym (mixed-assoc f (rx y) g) ∙ ap (_⨾⁺ g) (unitr⁻ f)
+  cut⁺-cross = tw.cut⁺-cross unitr⁻
 
   cross⁻-cut⁺ : ∀ {x y z} (f : hom x y) (g : hom y z)
               → cross⁻ (cross⁻ f ⨾⁺ g) ≡ cross⁻ f ⨾⁺ cross⁻ g
@@ -203,9 +197,9 @@ module collapse {o h} (G : virtual-graph o h) (open virtual-graph G)
     ∙ sym (cut⁺-cross (cross⁺ f) g)
 ```
 
-A linear positive twist reads at its own twist: the pairing at an
+A linear positive half-twist reads at its own half-twist: the pairing at an
 edge into `x` is a positive cut against a fixed edge, the fixed edge
-is the pairing at the positive twist, and the negative twist cuts
+is the pairing at the positive half-twist, and the negative half-twist cuts
 onto it as a right inverse. The distribution law then reads at any
 edge into `x`.
 

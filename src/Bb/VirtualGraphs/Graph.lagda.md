@@ -1,4 +1,4 @@
-The framing in reflexive-graph language. A twist family is a
+The framing in reflexive-graph language. A half-twist family is a
 reflexivity datum, so a framing is a pair of reflexive graphs
 sharing vertices and edges, and the sequent vocabulary is that
 graph's fan calculus: a term is a cofan, a coterm a fan, and the two
@@ -23,7 +23,7 @@ open import Bb.VirtualGraphs.Embedding using (opⱽ)
 open import Bb.VirtualGraphs.Framing
 ```
 
-## The graph of a twist family
+## The graph of a half-twist family
 
 ```agda
 rxgraph : ∀ {o h} (G : virtual-graph o h)
@@ -88,7 +88,7 @@ it together and the framing does not enter it.
 A judgment is contravariant in the term index and covariant in the
 coterm index, and the base carrying that pair of variances is the
 binary product of the negative graph's opposite with the positive
-graph. Its reflexive edge at a diagonal vertex is the pair of twists
+graph. Its reflexive edge at a diagonal vertex is the pair of half-twists
 — the axiom, as one edge. Both slots travel at once under `bipush`;
 each action preserves its anonymous endpoint, so the conclusion is
 untouched and no transport appears.
@@ -123,8 +123,8 @@ module two-sided {o h} (G : virtual-graph o h) (open virtual-graph G)
 
 ## The one-sided families
 
-Each family sits over the graph of the twist its own axiom half does
-not carry, since that is the twist its action is stated at.
+Each family sits over the graph of the half-twist its own axiom half does
+not carry, since that is the half-twist its action is stated at.
 
 ```agda
 module families {o h} (G : virtual-graph o h) (open virtual-graph G)

@@ -1,5 +1,5 @@
 Retuning the readback of the circle model — replacing the unit witness
-`rb₀` with its winding shift `rb₁`, while the carrier, both twists,
+`rb₀` with its winding shift `rb₁`, while the carrier, both half-twists,
 and both cuts stay fixed — moves two of the presentation's laws by one
 winding each and leaves the rest on the nose. The reflection square
 between a graph and the graph of its own presentation is unmoved by
@@ -21,7 +21,7 @@ open import Core.Base
 open import Core.Kan using (_∙_; module Path)
 open import Core.Data.Sigma
 open import Core.Data.Empty using (⊥)
-open import Core.Path.Base using (ap-retr; cancell; cancelr)
+open import Core.Path.Base using (ap-retr)
 open import Core.Transport.J using (J)
 open import Core.Transport.Base using (is-prop→PathP)
 open import Core.Transport.Properties using (is-prop→is-set; sq-from-∙)
@@ -41,7 +41,7 @@ open framing circle.model (λ _ → base) (λ _ → base) using (readback-of)
 ## The two readback witnesses
 
 On the minimal carrier there is no readback field to retune:
-`circle.model` is the one carrier, both twists fixed at `base`, and
+`circle.model` is the one carrier, both half-twists fixed at `base`, and
 `rb₀`/`rb₁` are its two readback witnesses, passed explicitly to
 `presented` wherever a construction reads one.
 
@@ -91,7 +91,7 @@ same-assoc f g k = ap (ap fst)
 
 ## The loop space at the axiom
 
-Both twists sit at `base` and both cuts are the multiplication, so
+Both half-twists sit at `base` and both cuts are the multiplication, so
 every word the round trip writes at the axiom is a loop at `base`.
 Every self-path family is central, and `conj` writes each loop as one
 such family, so this loop space is commutative. `∙-from-sq` inverts
@@ -119,13 +119,13 @@ comm a b =
   ∙ ap (b ∙_) (ap-M a)
 
 ω-cancel : (a b : Ω) → sym a ∙ (b ∙ a) ≡ b
-ω-cancel a b = ap (sym a ∙_) (comm b a) ∙ cancell a b
+ω-cancel a b = ap (sym a ∙_) (comm b a) ∙ Path.lc a b
 
 ω-cancelr : {a b : Ω} (κ : Ω) → a ∙ κ ≡ b ∙ κ → a ≡ b
-ω-cancelr {a} {b} κ h = sym (cancelr κ a) ∙ ap (_∙ sym κ) h ∙ cancelr κ b
+ω-cancelr {a} {b} κ h = sym (Path.rc κ a) ∙ ap (_∙ sym κ) h ∙ Path.rc κ b
 
 ω-cancell : {p q : Ω} (a : Ω) → a ∙ p ≡ a ∙ q → p ≡ q
-ω-cancell {p} {q} a h = sym (cancell a p) ∙ ap (sym a ∙_) h ∙ cancell a q
+ω-cancell {p} {q} a h = sym (Path.lc a p) ∙ ap (sym a ∙_) h ∙ Path.lc a q
 
 bump : (x α y β : Ω) → (x ∙ α) ∙ (y ∙ β) ≡ (x ∙ y) ∙ (α ∙ β)
 bump x α y β =
@@ -256,7 +256,7 @@ mixed-same = ap (ap fst)
 κ = (κ₀ ∙ loop) ∙ loop
 
 unitl-shift : ul₁ ≡ ul₀ ∙ κ₀
-unitl-shift = sym (cancell (sym ul₀) ul₁)
+unitl-shift = sym (Path.lc (sym ul₀) ul₁)
 
 rb-shift : rb₁ base ≡ rb₀ base ∙ loop
 rb-shift = refl
@@ -264,7 +264,7 @@ rb-shift = refl
 
 ## Two law fields move
 
-`cross-pivot` is the negative left unit law at the two twists —
+`cross-pivot` is the negative left unit law at the two half-twists —
 `pair⁻` under the presentation's naming — and `unitr` is the positive
 right unit law. Each gains one winding, so neither returns.
 

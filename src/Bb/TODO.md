@@ -6,34 +6,19 @@ in that tree's own `TODO.md` where one is permitted
 (`src/Bb/CLAUDE.md`'s one exception is `Bb.VirtualGraphs`); this
 file is for work above the single-tree level.
 
-- [ ] Write `src/Bb/VirtualGraphs/HISTORY.md`: a chronological
-  digest of the whole virtual-graph/deductive-system development
-  arc, spliced from every historical source across the codebase,
-  as the tree's sole historic artifact — its `README.md` and
-  `CHANGELOG.md` stay matter-of-fact per the archive contract, all
-  narrative belongs in `HISTORY.md` alone. Every beat of the
-  narrative must be cross-referenced to where its content now
-  lives in the settled tree (name the current module, not just
-  describe the history). Sources: `notes/*.md` touching virtual
-  graphs or deductive systems, 2026-07-20 through 2026-08-05;
-  `src/Cat/Logic/TODO.md`, `.../gloss.md`, `.../lemmata.md`;
-  `docs/deductive-systems/`; `docs/composite-rx-refactor/`; and
-  the `README.md`/`CHANGELOG.md` of `Bb.WeakDeductiveSystem`,
-  `Bb.OneTwist`, `Bb.VgCategoryShape`, `Bb.NaiveVirtualGraph`, and
-  `Bb.VirtualGraphs` itself (`Bb/VirtualGraphs/CHANGELOG.md` is
-  the fullest single provenance record and the anchor for cross-
-  referencing). Large reading budget needed — best run as a
-  dedicated agent (process/documentation design, `CLAUDE.md`'s
-  Delegation table puts this at the Opus tier).
-
-- [ ] Retire `Bb.OneTwist` and `Bb.VgCategoryShape`'s proved
-  content, now that it is fully vendored into `Bb.VirtualGraphs`.
-  Both confirmed fully vendored with zero live dependents
+- [ ] Retire `Bb.OneTwist`, `Bb.VgCategoryShape`, and
+  `Bb.WeakDeductiveSystem`'s proved content, now that all three are
+  fully vendored into `Bb.VirtualGraphs`. Confirmed fully vendored
+  with zero live dependents outside `Test/` (now itself retired, see
+  the root `CHANGELOG.md`'s 2026-08-06 spike-retirement entry) and
+  the archive's own `Bb/index.lagda.md`
   (`outputs/virtual-graphs-surface-onetwist.md`,
-  `outputs/virtual-graphs-surface-vgcategoryshape.md`). `Cat.Logic`
-  and `Bb.WeakDeductiveSystem` are explicitly NOT candidates — both
-  have live `src/Test/Spike*.lagda.md` dependents and must not be
-  touched. Execution, once approved:
+  `outputs/virtual-graphs-surface-vgcategoryshape.md`,
+  `outputs/virtual-graphs-surface-weakdeductivesystem.md`).
+  `Cat.Logic` is explicitly NOT a candidate: it is the live carrier
+  `docs/roadmap.md` cites for the deductive-system program, not
+  archive scaffolding, and vendoring its content elsewhere does not
+  change that. Execution, once approved:
   - `Bb.OneTwist`: delete `Base.lagda.md`, `Cancel.lagda.md`,
     `Models.lagda.md`. Update `README.md`/`CHANGELOG.md` to record
     the retirement and name the destination modules (`Extraction`,
@@ -49,6 +34,25 @@ file is for work above the single-tree level.
     references to the deleted modules rather than deleting the
     file. Drop the four `Bb.VgCategoryShape.*` imports from
     `src/Bb/index.lagda.md`.
+  - `Bb.WeakDeductiveSystem`: delete `Base.lagda.md`,
+    `Display.lagda.md`, `Graph.lagda.md`, `Type.lagda.md`, and all
+    twelve `Gist/*.lagda.md` modules (sixteen files total). Six are
+    the surface audit's **FULLY VENDORED** files
+    (`Base`→`Tower`/`Stability`/`Framing`/`Pentagon`,
+    `Gist.NeutralUnit`→`Interchange`, `Gist.TwistFidelity`→
+    `Interchange`, `Gist.AssociatesCountermodel`→`Bool.Readers`,
+    `Gist.FramedCut`→`Groupoid.Path`, `Gist.FramedGroup`→
+    `Group.Abelian`); the other ten are **COVERED BY OVERLAP** via
+    the same-named live `Cat.Logic`/`Cat.Logic.Gist` module each is
+    the pre-(D′)-cut ancestor of (`Type`, `Graph`, `Display`,
+    `Gist.FramedInterchange`, `Gist.BalancedBase`,
+    `Gist.BalancedProfile`, `Gist.ReflectFiber`, `Gist.RxDict`,
+    `Gist.ThunkableSquare`, `Gist.ReadbackTorsor`) — see the surface
+    audit for the destination of each. Update `README.md`/
+    `CHANGELOG.md` to record the retirement rather than deleting
+    them, per `src/Bb/CLAUDE.md`'s "a README/CHANGELOG in every
+    tree." Drop the sixteen `Bb.WeakDeductiveSystem.*` imports from
+    `src/Bb/index.lagda.md` (`src/Bb/index.lagda.md:168-183`).
   - Verification ladder: `gtimeout 300 just check-tree src/Bb`;
     `just check Bb.index`; an `rg` sweep confirming no other live
     reference to the deleted paths remains (dated `notes/` entries

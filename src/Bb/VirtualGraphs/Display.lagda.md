@@ -1,7 +1,7 @@
 The two argument families as lenses, and each cut as a fibration. A
 family transports along base edges and returns its own vertex at the
 base's reflexive edge, which is one cancellation — so each family is
-a lens over the graph of the twist it does not carry, with that
+a lens over the graph of the half-twist it does not carry, with that
 cancellation as its unitor. Composability then reads as a lifting
 condition, with the composition the lift's target and the
 head-rewriting witness the lift.
@@ -135,7 +135,7 @@ in one move, and its unitor is the two cancellations together.
 ```
 
 Each composite judgment is the two-sided transport with one leg held
-at its twist, applied to one factor's reflection. The two land in
+at its half-twist, applied to one factor's reflection. The two land in
 the fiber at the outer pair from different vertices, so their
 configuration is a cospan and their agreement is neither a unitor
 nor an edge of the display.

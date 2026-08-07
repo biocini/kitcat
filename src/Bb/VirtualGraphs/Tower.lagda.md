@@ -1,7 +1,7 @@
 The readback-free tower: each hand's composition is the
 representative of its own cut, the embedding condition makes it
 well defined, and associativity follows from a fiber path. Each
-hand consumes only the twist its cut reads — `tower⁺` takes `rx`
+hand consumes only the half-twist its cut reads — `tower⁺` takes `rx`
 alone and `tower⁻` takes `corx` alone — and `tower` joins them
 with the mixed word, the withheld word `associates` and its
 closures, and the coherence square of a thunkability witness.
@@ -14,9 +14,13 @@ module Bb.VirtualGraphs.Tower where
 open import Core.Type
 open import Core.Base
 open import Core.Data.Sigma
-open import Core.Kan using (_∙_; module Path)
-open import Core.HLevel.Base using (Π-is-prop; Πi-is-prop)
-open import Core.Transport.Properties using (is-prop→is-set)
+open import Core.Kan using (_∙_; module Path; is-contr→is-prop)
+open import Core.HLevel.Base
+  using (Π-is-prop; Πi-is-prop; module diagonal; loops→is-set)
+open import Core.Transport.J using (subst)
+open import Core.Transport.Properties
+  using (is-prop→is-set; is-contr-×; prop-inhabited→is-contr)
+open import Core.Equiv.Base using (is-contr-equiv)
 
 open import Bb.VirtualGraphs.Type
 open import Bb.VirtualGraphs.Embedding
@@ -173,6 +177,8 @@ module tower {o h} (G : virtual-graph o h) (open virtual-graph G)
 
   open tower⁺ G rx S C⁺ public
   open tower⁻ G corx S C⁻ public
+  open framing G rx corx
+    using (own⁻; own⁺; is-natural⁻; is-natural⁺; is-naturalᴶ⁻; is-naturalᴶ⁺)
 
   lc : ∀ {x y} {m n : hom x y} → reflect m ≡ reflect n → m ≡ n
   lc = reflect-lc G S
@@ -227,7 +233,7 @@ thunkability and linearity.
 ## Collapse at the crossed pairings
 
 A hand's crossed pairing meets that hand's other unit law at the
-composite of the two twists, so the pairing and that law together
+composite of the two half-twists, so the pairing and that law together
 identify the framing. Each pairing is an instance of a near unit
 law, and each second hypothesis is a far one; the modules that
 derive those laws instantiate these.
@@ -242,6 +248,30 @@ derive those laws instantiate these.
             → (∀ {x y} (f : hom x y) → f ⨾⁻ corx y ≡ f)
             → ∀ x → rx x ≡ corx x
   collapse⁻ pair⁻ R x = sym (R (rx x)) ∙ pair⁻ x
+```
+
+Flanking an edge with the far half-twist and cutting the flanked edge
+back gives the plain cut again, through `mixed-assoc` and that
+hand's far unit law.
+
+```agda
+  cross⁻ : ∀ {x y} → hom x y → hom x y
+  cross⁻ {y = y} f = f ⨾⁻ corx y
+
+  cross⁺ : ∀ {x y} → hom x y → hom x y
+  cross⁺ {x} g = rx x ⨾⁺ g
+
+  cut⁻-cross : (∀ {x y} (g : hom x y) → corx x ⨾⁺ g ≡ g)
+             → ∀ {x y z} (f : hom x y) (g : hom y z)
+             → cross⁻ f ⨾⁺ g ≡ f ⨾⁻ g
+  cut⁻-cross unitl⁺ {y = y} f g =
+    mixed-assoc f (corx y) g ∙ ap (f ⨾⁻_) (unitl⁺ g)
+
+  cut⁺-cross : (∀ {x y} (f : hom x y) → f ⨾⁻ rx y ≡ f)
+             → ∀ {x y z} (f : hom x y) (g : hom y z)
+             → f ⨾⁻ cross⁺ g ≡ f ⨾⁺ g
+  cut⁺-cross unitr⁻ {y = y} f g =
+    sym (mixed-assoc f (rx y) g) ∙ ap (_⨾⁺ g) (unitr⁻ f)
 ```
 
 ## Closure under the cuts
@@ -321,11 +351,207 @@ proposition and the square holds for every witness.
   compat-over-sets hs T g h k = hs _ _ _ _
 ```
 
+## The four flanking operations
+
+Flanking an edge with a half-twist is a composite in one hand, and each
+half-twist keeps one hand: `rx` the negative, `corx` the positive. `P` and
+`Q` take the near side of their hand, where the leading half-twist meets
+the negative cut and the trailing one the positive. `P'` and `Q'` take
+the far side. All four are endofunctions of one edge type.
+
+```agda
+  module flanks where
+
+    P : ∀ {x y} → hom x y → hom x y
+    P {x} m = rx x ⨾⁻ m
+
+    Q : ∀ {x y} → hom x y → hom x y
+    Q {y = y} n = n ⨾⁺ corx y
+
+    P' : ∀ {x y} → hom x y → hom x y
+    P' {y = y} n = n ⨾⁻ rx y
+
+    Q' : ∀ {x y} → hom x y → hom x y
+    Q' {x} m = corx x ⨾⁺ m
+```
+
+Each unit law says that one flanking operation is the identity, and
+the round law says that the composite of the two near flanks is. So
+the five statements are five readings of the same four operations.
+
+```agda
+  unitl⁻-law unitr⁺-law unitr⁻-law unitl⁺-law round-law : Type (o ⊔ h)
+  unitl⁻-law = ∀ {x y} (g : hom x y) → flanks.P g ≡ g
+  unitr⁺-law = ∀ {x y} (f : hom x y) → flanks.Q f ≡ f
+  unitr⁻-law = ∀ {x y} (f : hom x y) → flanks.P' f ≡ f
+  unitl⁺-law = ∀ {x y} (g : hom x y) → flanks.Q' g ≡ g
+  round-law  = ∀ {x y} (m : hom x y) → flanks.Q (flanks.P m) ≡ m
+```
+
+Naturality of a half-twist in its own hand equates the hand's two flanks.
+Read at that half-twist, the negative equation is idempotence.
+
+```agda
+  nat⁻-law nat⁺-law idem⁻-law : Type (o ⊔ h)
+  nat⁻-law  = ∀ {x y} (m : hom x y) → flanks.P m ≡ flanks.P' m
+  nat⁺-law  = ∀ {x y} (m : hom x y) → flanks.Q' m ≡ flanks.Q m
+  idem⁻-law = ∀ x → rx x ⨾⁻ rx x ≡ rx x
+```
+
+## Naturality over the tower
+
+A tier's centre represents both flanks. The embedding condition
+identifies it with each cut's own representative, and the two
+identifications concatenate into the square. Each hand reads its own
+tier alone.
+
+```agda
+  nat⁻ : is-natural⁻ → nat⁻-law
+  nat⁻ N {x} {y} m = sym u ∙ v
+    where
+      c : own⁻ m
+      c = N m .center
+
+      u : c .fst ≡ rx x ⨾⁻ m
+      u = ap fst (S (composite⁻ (rx x) m)
+            (c .fst , c .snd .fst)
+            (rx x ⨾⁻ m , reflect-⨾⁻ (rx x) m))
+
+      v : c .fst ≡ m ⨾⁻ rx y
+      v = ap fst (S (composite⁻ m (rx y))
+            (c .fst , c .snd .snd)
+            (m ⨾⁻ rx y , reflect-⨾⁻ m (rx y)))
+
+  nat⁺ : is-natural⁺ → nat⁺-law
+  nat⁺ N {x} {y} m = sym u ∙ v
+    where
+      c : own⁺ m
+      c = N m .center
+
+      u : c .fst ≡ corx x ⨾⁺ m
+      u = ap fst (S (composite⁺ (corx x) m)
+            (c .fst , c .snd .fst)
+            (corx x ⨾⁺ m , reflect-⨾⁺ (corx x) m))
+
+      v : c .fst ≡ m ⨾⁺ corx y
+      v = ap fst (S (composite⁺ m (corx y))
+            (c .fst , c .snd .snd)
+            (m ⨾⁺ corx y , reflect-⨾⁺ m (corx y)))
+```
+
+Each cut's witness identifies its judgment with the reflection of the
+representative, so a tier's path space between judgments is the path
+space between two edges. The diagonal collapses that path space onto
+a loop space, at the flank each hand's framing supplies.
+
+```agda
+  flank⁻ : is-natural⁻ → ∀ {x y} (m : hom x y)
+         → is-contr (rx x ⨾⁻ m ≡ m ⨾⁻ rx y)
+  flank⁻ N {x} {y} m =
+    path-lc G S
+      (subst (λ β → is-contr (reflect (rx x ⨾⁻ m) ≡ β))
+             (sym (reflect-⨾⁻ m (rx y)))
+        (subst (λ α → is-contr (α ≡ composite⁻ m (rx y)))
+               (sym (reflect-⨾⁻ (rx x) m))
+          (centred-loop G (N m))))
+
+  flank⁺ : is-natural⁺ → ∀ {x y} (m : hom x y)
+         → is-contr (corx x ⨾⁺ m ≡ m ⨾⁺ corx y)
+  flank⁺ N {x} {y} m =
+    path-lc G S
+      (subst (λ β → is-contr (reflect (corx x ⨾⁺ m) ≡ β))
+             (sym (reflect-⨾⁺ m (corx y)))
+        (subst (λ α → is-contr (α ≡ composite⁺ m (corx y)))
+               (sym (reflect-⨾⁺ (corx x) m))
+          (centred-loop G (N m))))
+
+  loop⁻ : is-natural⁻ → ∀ {x y} (m : hom x y)
+        → is-contr (flanks.P m ≡ flanks.P m)
+  loop⁻ N m = diagonal.loopl (flank⁻ N m)
+
+  loop⁺ : is-natural⁺ → ∀ {x y} (m : hom x y)
+        → is-contr (flanks.Q m ≡ flanks.Q m)
+  loop⁺ N m = diagonal.loopr (flank⁺ N m)
+```
+
+The judgment equation inhabits the tier's second factor. Going back
+needs one more datum: the loop space of the leading judgment is a
+proposition. Under the embedding condition and the hand's own cut, the
+two readings differ by that demand alone.
+
+```agda
+  toᴶ⁻ : is-natural⁻ → is-naturalᴶ⁻
+  toᴶ⁻ N m = sym (N m .center .snd .fst) ∙ N m .center .snd .snd
+
+  toᴶ⁺ : is-natural⁺ → is-naturalᴶ⁺
+  toᴶ⁺ N m = sym (N m .center .snd .fst) ∙ N m .center .snd .snd
+
+  centreᴶ⁻ : is-naturalᴶ⁻ → ∀ {x y} (m : hom x y) → own⁻ m
+  centreᴶ⁻ q {x} m = rx x ⨾⁻ m
+                   , reflect-⨾⁻ (rx x) m
+                   , reflect-⨾⁻ (rx x) m ∙ q m
+
+  centreᴶ⁺ : is-naturalᴶ⁺ → ∀ {x y} (m : hom x y) → own⁺ m
+  centreᴶ⁺ q {x} m = corx x ⨾⁺ m
+                   , reflect-⨾⁺ (corx x) m
+                   , reflect-⨾⁺ (corx x) m ∙ q m
+
+  tierᴶ⁻ : is-naturalᴶ⁻
+         → (∀ {x y} (m : hom x y)
+            → is-prop (composite⁻ (rx x) m ≡ composite⁻ (rx x) m))
+         → is-natural⁻
+  tierᴶ⁻ q L {x} m =
+    is-contr-equiv (centred≃ G _ _)
+      (is-contr-× (contr-from-embedding G S _ (C⁻ (rx x) m))
+                  (prop-inhabited→is-contr (diagonal.fold (q m) (L m)) (q m)))
+
+  tierᴶ⁺ : is-naturalᴶ⁺
+         → (∀ {x y} (m : hom x y)
+            → is-prop (composite⁺ (corx x) m ≡ composite⁺ (corx x) m))
+         → is-natural⁺
+  tierᴶ⁺ q L {x} m =
+    is-contr-equiv (centred≃ G _ _)
+      (is-contr-× (contr-from-embedding G S _ (C⁺ (corx x) m))
+                  (prop-inhabited→is-contr (diagonal.fold (q m) (L m)) (q m)))
+```
+
+The square follows from the equation alone. The equation makes the two
+flanks represent one judgment, the embedding condition identifies
+their representatives, and `ap fst` reads that on edges. Reflection
+carries the square back, since each cut's witness identifies its
+judgment with the reflected representative.
+
+```agda
+  fromᴶ⁻ : is-naturalᴶ⁻ → nat⁻-law
+  fromᴶ⁻ q {x} {y} m =
+    ap fst (S (composite⁻ (rx x) m)
+              (rx x ⨾⁻ m , reflect-⨾⁻ (rx x) m)
+              (m ⨾⁻ rx y , reflect-⨾⁻ m (rx y) ∙ sym (q m)))
+
+  fromᴶ⁺ : is-naturalᴶ⁺ → nat⁺-law
+  fromᴶ⁺ q {x} {y} m =
+    ap fst (S (composite⁺ (corx x) m)
+              (corx x ⨾⁺ m , reflect-⨾⁺ (corx x) m)
+              (m ⨾⁺ corx y , reflect-⨾⁺ m (corx y) ∙ sym (q m)))
+
+  judg⁻ : nat⁻-law → is-naturalᴶ⁻
+  judg⁻ N {x} {y} m =
+      sym (reflect-⨾⁻ (rx x) m)
+    ∙ ap reflect (N m)
+    ∙ reflect-⨾⁻ m (rx y)
+
+  judg⁺ : nat⁺-law → is-naturalᴶ⁺
+  judg⁺ N {x} {y} m =
+      sym (reflect-⨾⁺ (corx x) m)
+    ∙ ap reflect (N m)
+    ∙ reflect-⨾⁺ m (corx y)
+```
+
 ## Absorption from the pin and K hypotheses
 
-Pinning each twist to its side's cell and trivialising that cell is
+Pinning each half-twist to its side's cell and trivialising that cell is
 two hypotheses per side, and together they say each centre is the
-twist filling the other slot — the twists mutually inverse. The
+half-twist filling the other slot — the half-twists mutually inverse. The
 absorptions consume no tier.
 
 ```agda
@@ -345,7 +571,7 @@ module absorption {o h} (G : virtual-graph o h) (open virtual-graph G)
 
 ## Near unit laws from the absorptions
 
-Where the cancellation is the identity — the twists mutually
+Where the cancellation is the identity — the half-twists mutually
 inverse, with no readback in sight — each hand gains exactly one
 unit law: the positive a right unit at `corx`, the negative a left
 unit at `rx`. The edge each gains is the other hand's composite
@@ -363,6 +589,8 @@ module unital {o h} (G : virtual-graph o h) (open virtual-graph G)
   (K⁻ : ∀ x → cell⁻ x ≡ snd) (K⁺ : ∀ x → cell⁺ x ≡ snd) where
 
   open tower G rx corx S C⁺ C⁻
+    using (_⨾⁺_; _⨾⁻_; lc; reflect-⨾⁺; reflect-⨾⁻; loop⁻; loop⁺;
+           unitr⁻-law; unitl⁺-law)
   open absorption G rx corx pin⁻ pin⁺ K⁻ K⁺ public
 
   unitr⁺ : ∀ {x y} (f : hom x y) → f ⨾⁺ corx y ≡ f
@@ -380,4 +608,47 @@ module unital {o h} (G : virtual-graph o h) (open virtual-graph G)
 
   pair⁺ : ∀ x → rx x ⨾⁺ corx x ≡ rx x
   pair⁺ x = unitr⁺ (rx x)
+```
+
+Absorption trivializes one flank of each hand at the judgment level:
+the negative hand's leading half-twist drops out of the composite, and the
+positive hand's trailing one does the same.
+
+```agda
+  unitlᴶ⁻ : ∀ {x y} (m : hom x y) → composite⁻ (rx x) m ≡ reflect m
+  unitlᴶ⁻ m i γ = reflect m (absorb⁺ (γ .fst) i , γ .snd)
+
+  unitrᴶ⁺ : ∀ {x y} (m : hom x y) → composite⁺ m (corx y) ≡ reflect m
+  unitrᴶ⁺ m i γ = reflect m (γ .fst , absorb⁻ (γ .snd) i)
+```
+
+Each hand's remaining flank is then the unit law the framing
+withholds, so the naturality equation is exactly that law. The near
+unit law also carries a tier's loop space onto the loop space at an
+arbitrary edge, so each tier makes the hom types sets.
+
+```agda
+  module natural where
+
+    hom-set⁻ : is-natural⁻ → ∀ {x y} → is-set (hom x y)
+    hom-set⁻ N = loops→is-set λ m →
+      subst (λ z → is-prop (z ≡ z)) (unitl⁻ m) (is-contr→is-prop (loop⁻ N m))
+
+    hom-set⁺ : is-natural⁺ → ∀ {x y} → is-set (hom x y)
+    hom-set⁺ N = loops→is-set λ m →
+      subst (λ z → is-prop (z ≡ z)) (unitr⁺ m) (is-contr→is-prop (loop⁺ N m))
+
+    farᴶ⁻ : is-naturalᴶ⁻ → ∀ {x y} (m : hom x y)
+          → composite⁻ m (rx y) ≡ reflect m
+    farᴶ⁻ q m = sym (q m) ∙ unitlᴶ⁻ m
+
+    farᴶ⁺ : is-naturalᴶ⁺ → ∀ {x y} (m : hom x y)
+          → composite⁺ (corx x) m ≡ reflect m
+    farᴶ⁺ q m = q m ∙ unitrᴶ⁺ m
+
+    unitr⁻ : is-naturalᴶ⁻ → unitr⁻-law
+    unitr⁻ q {y = y} m = lc (reflect-⨾⁻ m (rx y) ∙ farᴶ⁻ q m)
+
+    unitl⁺ : is-naturalᴶ⁺ → unitl⁺-law
+    unitl⁺ q {x} m = lc (reflect-⨾⁺ (corx x) m ∙ farᴶ⁺ q m)
 ```

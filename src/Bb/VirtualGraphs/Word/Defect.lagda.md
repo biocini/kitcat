@@ -1,4 +1,4 @@
-The mixed-associativity defect at the word model is a twist word, one
+The mixed-associativity defect at the word model is a half-twist word, one
 per flanking edge. `associates f g h` compares the two bracketings of
 the mixed word whose junctions run positive then negative; each
 bracketing determines the other up to a correction, and the correction
@@ -9,7 +9,7 @@ cut, where `zrunW h` is the length of the zero plateau of `h`. The
 theorems `defect⁺` and `defect⁻` hold for every triple, and the middle
 edge enters neither correction.
 
-Both corrections are words in the twists by construction, and each is a
+Both corrections are words in the half-twists by construction, and each is a
 unit exactly at the closure its flanking edge sits under: `w⁺` is the
 identity exactly when `f` is thunkable, and `w⁻` is the unit
 translation exactly when `h` is linear.
@@ -60,7 +60,7 @@ open tower BW (λ _ → τ̂) (λ _ → ε̂) BW-embedding BW-comp⁺ BW-comp⁻
 ## Small lemmas
 
 Disequalities, monus recovery, order splitting, and the values of the
-twists.
+half-twists.
 
 ```agda
 z≢s : ∀ {n} → Z ≡ S n → ⊥
@@ -101,9 +101,9 @@ ev-cutε x n = ev-comp (φW x) ε̂ n ∙ ap (evW (φW x)) (ev-ε n) ∙ ev-φ x
 
 ## The corrections
 
-`w⁺ a` is `a` twists composed with `a` double twists, interleaved so the
+`w⁺ a` is `a` half-twists composed with `a` double half-twists, interleaved so the
 induction is structural; its denotation is `max (- , a)`, written
-through monus. `w⁻ k` guards the `S k`-fold twist by `k` zeros; its
+through monus. `w⁻ k` guards the `S k`-fold half-twist by `k` zeros; its
 denotation is zero below `k` and the successor above. Both are words in
 `τ̂` and `ε̂` under the two cuts, and nothing else.
 
@@ -547,7 +547,7 @@ S8-refuted w e =
 
 Both corrections carry the winding grade of their unit, so the collapse
 onto the grade group erases them. That group is the quotient in which
-the reverse bicyclic composite is the unit, where the twists cancel
+the reverse bicyclic composite is the unit, where the half-twists cancel
 two-sidedly; `bicyclic-persists` keeps the word model itself on the
 other side of that collapse.
 

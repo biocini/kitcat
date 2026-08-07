@@ -20,9 +20,10 @@ module Bb.VirtualGraphs.Engine where
 open import Core.Type
 open import Core.Base
 open import Core.Data.Sigma
-open import Core.Kan using (_∙_; is-contr→is-prop)
+open import Core.Kan using (_∙_; module Path; is-contr→is-prop)
 open import Core.Path.Base
-open import Core.Transport.J using (subst)
+open import Core.Transport.J using (subst; J)
+open import Core.Transport.Properties using (is-contr-is-prop)
 open import Core.Equiv.Base using (is-equiv)
 open import Core.Function.Embedding
   using (is-embedding; is-embedding→ap-equiv; ap-is-embedding)
@@ -248,6 +249,231 @@ identity from judgments to edges. Readback is not among the inputs.
       unitl⁺ : ∀ {x y} (f : hom x y) → unit⁺ x ⨾⁺ f ≡ f
       unitl⁺ {x} f =
         reflect-lc (reflect-⨾⁺ (unit⁺ x) f ∙ sym (composite⁺-unitl f))
+```
+
+## Stability
+
+A third tier rests on one hypothesis, `rb`. It gives a path for every
+edge, identifying that edge with the evaluation of its own
+reflection. Composability plays no part below. The unit tier lends
+only its two projected units and their absorptions.
+
+The tier does not need the unit tier's own contractibility.
+Evaluation at either hand's axiom is that hand's action applied to
+its own fiber point. Both facts hold by `refl`.
+
+```agda
+      module stability (rb : ∀ {x y} (f : hom x y) → eval (reflect f) ≡ f) where
+
+        eval-is-coact : ∀ {x} (e : hom x x) → eval (reflect e) ≡ coact-π e (covar x)
+        eval-is-coact _ = refl
+
+        eval-is-act : ∀ {x} (e : hom x x) → eval (reflect e) ≡ act-π e (var x)
+        eval-is-act _ = refl
+```
+
+Compose a projected unit's absorption at its own axiom with `rb` at
+that unit. The composite identifies the unit with `idn`. Each hand's
+absorption then transports onto the chosen edge. The two hands'
+units coincide. The same composite identifies any edge whose action
+is the identity action with `idn` directly. It needs no detour
+through a projected unit.
+
+```agda
+        unit⁻-is-idn : ∀ x → unit⁻ x ≡ idn x
+        unit⁻-is-idn x = sym (rb (unit⁻ x)) ∙ unit⁻-absorb x (covar x)
+
+        unit⁺-is-idn : ∀ x → unit⁺ x ≡ idn x
+        unit⁺-is-idn x = sym (rb (unit⁺ x)) ∙ unit⁺-absorb x (var x)
+
+        units-agree : ∀ x → unit⁻ x ≡ unit⁺ x
+        units-agree x = unit⁻-is-idn x ∙ sym (unit⁺-is-idn x)
+
+        idn-absorb⁻ : ∀ x (γ : coterm x) → coact-π (idn x) γ ≡ γ .snd
+        idn-absorb⁻ x γ =
+          ap (λ e → coact-π e γ) (sym (unit⁻-is-idn x)) ∙ unit⁻-absorb x γ
+
+        idn-absorb⁺ : ∀ x (t : term x) → act-π (idn x) t ≡ t .snd
+        idn-absorb⁺ x t =
+          ap (λ e → act-π e t) (sym (unit⁺-is-idn x)) ∙ unit⁺-absorb x t
+
+        unit⁻-canonical : ∀ x (e : hom x x)
+                        → (∀ γ → coact-π e γ ≡ γ .snd) → e ≡ idn x
+        unit⁻-canonical x e abs = sym (rb e) ∙ abs (covar x)
+
+        unit⁺-canonical : ∀ x (e : hom x x)
+                        → (∀ t → act-π e t ≡ t .snd) → e ≡ idn x
+        unit⁺-canonical x e abs = sym (rb e) ∙ abs (var x)
+```
+
+A candidate unit is an edge together with a proof that its action is
+the identity action. It is an element of the fiber the unit tier
+contracts. Such a candidate reaches `idn` two ways: through the
+fiber's own projected unit, or straight through `rb`. Both routes
+come from one function of the candidate, `route⁻` and `route⁺`
+below.
+
+The two routes agree naturally in a path between two candidates.
+`route⁻-natural` and `route⁺-natural` prove this by induction on
+that path. The detour through the projected unit then cancels
+against the direct route. `unique-agrees⁻` and `unique-agrees⁺`
+state that cancellation.
+
+```agda
+        route⁻ : ∀ x (c : fiber (coact-π {x} {x}) snd) → c .fst ≡ idn x
+        route⁻ x c = sym (rb (c .fst)) ∙ (λ i → c .snd i (covar x))
+
+        route⁺ : ∀ x (c : fiber (act-π {x} {x}) snd) → c .fst ≡ idn x
+        route⁺ x c = sym (rb (c .fst)) ∙ (λ i → c .snd i (var x))
+
+        route⁻-natural
+          : ∀ x (c₀ c₁ : fiber (coact-π {x} {x}) snd) (γ : c₀ ≡ c₁)
+          → route⁻ x c₀ ≡ ap fst γ ∙ route⁻ x c₁
+        route⁻-natural x c₀ c₁ γ =
+          J (λ c₁' γ' → route⁻ x c₀ ≡ ap fst γ' ∙ route⁻ x c₁')
+            (sym (Path.unitl (route⁻ x c₀))) γ
+
+        route⁺-natural
+          : ∀ x (c₀ c₁ : fiber (act-π {x} {x}) snd) (γ : c₀ ≡ c₁)
+          → route⁺ x c₀ ≡ ap fst γ ∙ route⁺ x c₁
+        route⁺-natural x c₀ c₁ γ =
+          J (λ c₁' γ' → route⁺ x c₀ ≡ ap fst γ' ∙ route⁺ x c₁')
+            (sym (Path.unitl (route⁺ x c₀))) γ
+
+        unique-agrees⁻
+          : ∀ x (e : hom x x) (abs : ∀ γ → coact-π e γ ≡ γ .snd)
+          → unit⁻-unique x e abs ∙ unit⁻-is-idn x ≡ unit⁻-canonical x e abs
+        unique-agrees⁻ x e abs =
+          ap (sym (ap fst γ) ∙_) (route⁻-natural x (unit-fiber⁻ x .center) c γ)
+          ∙ Path.assoc (sym (ap fst γ)) (ap fst γ) (route⁻ x c)
+          ∙ ap (_∙ route⁻ x c) (Path.invl (ap fst γ))
+          ∙ Path.unitl (route⁻ x c)
+          where
+            c : fiber (coact-π {x} {x}) snd
+            c = e , funext abs
+
+            γ : unit-fiber⁻ x .center ≡ c
+            γ = unit-fiber⁻ x .paths c
+
+        unique-agrees⁺
+          : ∀ x (e : hom x x) (abs : ∀ t → act-π e t ≡ t .snd)
+          → unit⁺-unique x e abs ∙ unit⁺-is-idn x ≡ unit⁺-canonical x e abs
+        unique-agrees⁺ x e abs =
+          ap (sym (ap fst γ) ∙_) (route⁺-natural x (unit-fiber⁺ x .center) c γ)
+          ∙ Path.assoc (sym (ap fst γ)) (ap fst γ) (route⁺ x c)
+          ∙ ap (_∙ route⁺ x c) (Path.invl (ap fst γ))
+          ∙ Path.unitl (route⁺ x c)
+          where
+            c : fiber (act-π {x} {x}) snd
+            c = e , funext abs
+
+            γ : unit-fiber⁺ x .center ≡ c
+            γ = unit-fiber⁺ x .paths c
+```
+
+The coherence pins a readback family at the flanks. It reads the
+family's value at each hand's projected unit. It transports that
+value to `idn` through that hand's own absorption. It then asks the
+family's own value at `idn` to agree with the transported value.
+
+`flank⁻-of` and `flank⁺-of` compute the transported side.
+`absorb-coh` states the agreement for both hands at once. The
+stability tier wraps a readback family together with a witness of
+this coherence inside contractibility. It does not assume that the
+pair is a mere proposition on its own.
+
+```agda
+        flank⁻-of : ∀ x → eval (reflect (unit⁻ x)) ≡ unit⁻ x
+                  → eval (reflect (idn x)) ≡ idn x
+        flank⁻-of x p =
+          ap (λ e → coact-π e (covar x)) (sym (sym p ∙ unit⁻-absorb x (covar x)))
+          ∙ unit⁻-absorb x (covar x)
+
+        flank⁺-of : ∀ x → eval (reflect (unit⁺ x)) ≡ unit⁺ x
+                  → eval (reflect (idn x)) ≡ idn x
+        flank⁺-of x p =
+          ap (λ e → act-π e (var x)) (sym (sym p ∙ unit⁺-absorb x (var x)))
+          ∙ unit⁺-absorb x (var x)
+
+        readback : Type (o ⊔ h)
+        readback = ∀ {x y} (f : hom x y) → eval (reflect f) ≡ f
+
+        absorb-coh : readback → Type (o ⊔ h)
+        absorb-coh u =
+          ∀ x → (u (idn x) ≡ flank⁻-of x (u (unit⁻ x)))
+              × (u (idn x) ≡ flank⁺-of x (u (unit⁺ x)))
+
+        is-stable : Type (o ⊔ h)
+        is-stable = is-contr (Σ {A = readback} absorb-coh)
+
+        is-stable-is-prop : is-prop is-stable
+        is-stable-is-prop = is-contr-is-prop _
+```
+
+Wrapping the pair in contractibility matters, and is not decoration.
+The coherence alone does not make the pair propositional as a
+structural fact. Every value the coherence reads sits at an
+endomorphism: `idn`, or one of the two projected units. A `half-twist` is
+a self-path attached to every edge. Take a half-twist that vanishes at
+every endomorphism, the hypothesis `coh-half-twist` calls `te`.
+
+Composing it onto a readback family perturbs the family without
+touching any value the coherence reads. The perturbed pair is
+coherent again, by `coh-half-twist`. Suppose the pair type were a mere
+proposition on its own. Then the perturbed pair and the original
+pair would be equal. `half-adjoint-forces-truncation` reads that
+equality apart.
+
+It shows the half-twist is trivial everywhere, at every edge and not only
+at the endomorphisms. Untruncated hom types can carry self-paths
+that are not trivial. This route does not make the pair propositional
+in general. This tier instead posits contractibility directly, as a
+hypothesis about the graph. It does not derive contractibility from
+the coherence.
+
+```agda
+        half-twist : Type (o ⊔ h)
+        half-twist = ∀ {x y} (f : hom x y) → f ≡ f
+
+        _∙ᵗ_ : readback → half-twist → readback
+        (u ∙ᵗ t) f = u f ∙ t f
+
+        half-adjoint : Type (o ⊔ h)
+        half-adjoint = Σ {A = readback} absorb-coh
+
+        module _ (t : half-twist) (te : ∀ x (e : hom x x) → t e ≡ refl) where
+
+          agree : ∀ (u : readback) x (e : hom x x) → (u ∙ᵗ t) e ≡ u e
+          agree u x e = ap (u e ∙_) (te x e) ∙ Path.unitr (u e)
+
+          coh-half-twist : (u : readback) → absorb-coh u → absorb-coh (u ∙ᵗ t)
+          coh-half-twist u c x .fst =
+            agree u x (idn x) ∙ c x .fst
+            ∙ sym (ap (flank⁻-of x) (agree u x (unit⁻ x)))
+          coh-half-twist u c x .snd =
+            agree u x (idn x) ∙ c x .snd
+            ∙ sym (ap (flank⁺-of x) (agree u x (unit⁺ x)))
+
+        private
+          cancel : ∀ {u} {A : Type u} {a b : A} (p : a ≡ b) (q : b ≡ b)
+                 → p ≡ p ∙ q → q ≡ refl
+          cancel p q e =
+            sym (Path.unitl q)
+            ∙ ap (_∙ q) (sym (Path.invl p))
+            ∙ sym (Path.assoc (sym p) p q)
+            ∙ ap (sym p ∙_) (sym e)
+            ∙ Path.invl p
+
+        half-adjoint-forces-truncation
+          : is-prop half-adjoint
+          → (S : half-adjoint)
+          → (t : half-twist) (te : ∀ x (e : hom x x) → t e ≡ refl)
+          → ∀ {x y} (f : hom x y) → t f ≡ refl
+        half-adjoint-forces-truncation P S t te {x} {y} f =
+          cancel (S .fst f) (t f) (ap (λ w → w {x} {y} f) (ap fst step))
+          where
+            step : S ≡ (S .fst ∙ᵗ t , coh-half-twist t te (S .fst) (S .snd))
+            step = P S _
 ```
 
 ## The reflexive-graph dictionary

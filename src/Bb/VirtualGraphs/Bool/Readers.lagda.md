@@ -7,7 +7,8 @@ does not derive `associates` — while the negative absorption
 tier is refutable. The four-reader model is a full system on
 `Bool × Bool` in which `associates π₁ g π₂` still fails: the
 associativity classes are pinned to the two tier centres, one
-thunkable edge and one linear edge. The two remaining models carry
+thunkable edge and one linear edge, and its negative naturality
+square fails at the coterm projection. The two remaining models carry
 readback and both tiers while one cut has no representative — the
 negative cut at the three-point carrier, the positive cut at the
 reindexed four readers — so neither cut is derivable from the
@@ -165,7 +166,7 @@ module four-reader where
   rf-inj {m} {n} w = sym (flip₁-rf m) ∙ ap flip₁ (happly w probe) ∙ flip₁-rf n
 ```
 
-Both twists are the term projection `π₁`. Each composite judgment
+Both half-twists are the term projection `π₁`. Each composite judgment
 computes to a reader again, so a case split represents both cuts,
 and the projection onto each side inhabits that side's tier: the
 `⁻` centre is `π₂` and the `⁺` centre is `π₁`.
@@ -176,7 +177,8 @@ and the projection onto each side inhabits that side's tier: the
   model .virtual-graph.hom _ _ = M
   model .virtual-graph.reflect = rf
 
-  open framing model (λ _ → π₁) (λ _ → π₁) using (coact-π; act-π)
+  open framing model (λ _ → π₁) (λ _ → π₁)
+    using (coact-π; act-π; is-natural⁻)
 
   S : reflect-is-embedding model
   S α = injective→is-embedding (Π-is-hlevel 2 λ _ → M-set) rf rf-inj α
@@ -219,7 +221,7 @@ the left bracketing ends in the coterm projection, the right one in
 the term projection. The classes are exactly the centres — `π₂`
 associates ahead of every pair, `π₁` behind every pair, and the
 remaining six closures each die on a computed instance. The linear
-edge `π₁` is both twists, so the framing itself is linear and not
+edge `π₁` is both half-twists, so the framing itself is linear and not
 thunkable.
 
 ```agda
@@ -242,8 +244,8 @@ thunkable.
   centre⁺-linear (false , true) (true , e) = refl
   centre⁺-linear (true , d) g = refl
 
-  no-thunkable-twist : thunkable π₁ → ⊥
-  no-thunkable-twist T = subst flag₂ (T π₁ π₂) tt
+  no-thunkable-half-twist : thunkable π₁ → ⊥
+  no-thunkable-half-twist T = subst flag₂ (T π₁ π₂) tt
 
   no-thunkable-κ : ∀ d → thunkable (true , d) → ⊥
   no-thunkable-κ d T = subst flag₁ (sym (T π₁ π₂)) tt
@@ -255,14 +257,32 @@ thunkable.
   no-linear-κ d L = subst flag₁ (L π₁ π₁) tt
 ```
 
+Both half-twists are the term projection, and the negative hand reads that
+half-twist differently on its two sides: on the left it returns the edge,
+on the right a constant. So the negative naturality square fails at
+the coterm projection, and the negative tier fails with it, over a
+carrier that already satisfies the embedding condition, both cuts, and
+both absorption tiers.
+
+```agda
+  cross-values : (π₁ ⨾⁻ π₂ ≡ π₂) × (π₂ ⨾⁻ π₁ ≡ κ₁)
+  cross-values = refl , refl
+
+  no-nat⁻ : nat⁻-law → ⊥
+  no-nat⁻ N = subst flag₁ (sym (N π₂)) tt
+
+  no-natural⁻ : is-natural⁻ → ⊥
+  no-natural⁻ N = no-nat⁻ (nat⁻ N)
+```
+
 ## The three-point carrier
 
 The projection model with one added reading point: constants read
-constantly as themselves, and the added point — the twist in both
-slots — reads whichever flank holds the twist, and the coterm where
+constantly as themselves, and the added point — the half-twist in both
+slots — reads whichever flank holds the half-twist, and the coterm where
 both flanks are constant. Readback and both tiers hold; the
 negative cut has no representative, since a constant against the
-twist is a mixed reader the three-point carrier does not hold.
+half-twist is a mixed reader the three-point carrier does not hold.
 
 ```agda
 module attempt₁ where
@@ -329,9 +349,9 @@ module attempt₁ where
 
 ## The four readers, reindexed
 
-Constants reindexed to themselves and the positive twist moved to
+Constants reindexed to themselves and the positive half-twist moved to
 the coterm projection: every edge reads back as itself, and each
-tier's centre is the other twist — the cancellation situation on the
+tier's centre is the other half-twist — the cancellation situation on the
 nose. The positive cut has no representative: the coterm projection
 against the term projection composes to the reader constantly at
 `π₁`, and readback pins every constant reader to its own value, so

@@ -1,4 +1,4 @@
-The circle model: one object, homs the circle, both twist families
+The circle model: one object, homs the circle, both half-twist families
 constant at `base`, reflection reading both flanks through the
 multiplication. Reflection is an embedding even with wild homs — no
 set condition enters — both cuts are contractibly representable on

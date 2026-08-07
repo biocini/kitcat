@@ -36,9 +36,8 @@ sets, an assumption this suite does not make.
 Extracted 2026-07-28 from `Bb.CatsWithExplicitInterchange.Magmoid`.
 Nothing outside that suite's own directory imported it, apart from
 the archive's index, so it stood on its own.
-`docs/composite-rx-refactor/stage-4-cat-rebuild.md` named it under
-the stale label `CatData`, and that citation now names this tree
-instead.
+`docs/composite-rx-refactor/` named it under the stale label
+`CatData`, and that citation now names this tree instead.
 
 `Bb.CatsWithExplicitInterchange.Magmoid` traces back further. On
 2026-07-24, at commit `55038a9`, the pre-refactor `Cat.*`

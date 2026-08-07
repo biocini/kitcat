@@ -53,16 +53,16 @@ interchange measures the double twist. In `Bb.VgCategoryShape` the
 two hands agree again, and interchange is a theorem rather than a
 field.
 
-The tree is the porting reference for Stage 4 of the composite-rx
-refactor, `docs/composite-rx-refactor/stage-4-cat-rebuild.md`.
-That stage ports it onto the deductive system and retires it
-unfixed. Decision D8 holds it green until then, and what `Core`
-keeps on its account carries a placement contract. The contract gives
-each of the nineteen held displaced-composition names two fates.
-Either a principled home restates it over the disciplined
-backend, or it goes with the tree that consumed it. The census is in
-`docs/composite-rx-refactor/evidence.md`. Whether anything here
-survives unported is decision D5, open.
+The tree is the porting reference for the rebuild that the
+deductive-system line owns (`docs/roadmap.md` project 1). That
+rebuild ports it onto the deductive system and retires it unfixed.
+Decision D8 of `docs/composite-rx-refactor/` holds it green until
+then, and what `Core` keeps on its account carries a placement
+contract. The contract gives each of the nineteen held
+displaced-composition names two fates. Either a principled home
+restates it over the disciplined backend, or it goes with the tree
+that consumed it. The census is in
+`docs/composite-rx-refactor/evidence.md`.
 
 No module here imports `Cat.*`. The tree rests on `Core` alone,
 so a change to `Core` is the only upstream change that can break

@@ -6,6 +6,325 @@ entry names the checker run that says so.
 
 ---
 
+## 2026-08-06 — `twist` renamed to `half-twist`, tree-wide
+
+**Naming only, no statement changed, `verified`.** Every `twist` in
+this tree now reads `half-twist`. A carrier posits one family, and
+that family is a half-twist. The full twist is its double, which no
+carrier holds as an edge. The old word named the wrong grade, and it
+covered both grades at once, so it hid a distinction the theory
+depends on.
+
+The sweep covers identifiers, prose, and the tree's records
+(`README.md`, `HISTORY.md`, `TODO.md`, and this file). It is
+retroactive. Earlier entries now use the corrected term, so no
+reader meets the old grade claim anywhere in the tree. Compounds
+keep their reading. `double half-twist` names the full twist, and
+`half-twist⁻`/`half-twist⁺` name the polarity pair.
+
+The sweep stops at this tree. `Bb.OneTwist`,
+`Bb.CatsWithExplicitInterchange`, and `Bb.WeakDeductiveSystem` keep
+`twist` in their own identifiers and prose.
+
+`gtimeout 2400 just check Bb.index`: `verified`, 148 modules.
+`just lint changed`: clean.
+
+## 2026-08-06 — HISTORY citation re-pointed after the plan set was cut
+
+**Documentation only, no module changed.** The composite-rx refactor
+narrowed to `Core.Kan`, `Core.Composite`, and `Core.Rx`, and its
+per-stage documents merged into
+`docs/composite-rx-refactor/stages.md`. `HISTORY.md`'s 2026-07-24
+entry quoted `architecture.md`, which no longer exists. The entry now
+states the same naming ruling against the plan directory, without the
+verbatim quotation, since no file carries that wording now. The
+ruling, the attribution, and the commit reference are unchanged.
+
+No `.lagda.md` file changed, so the tree's green state is unaffected.
+
+## 2026-08-06 — `JudgmentLens`/`TwoSided`
+
+**Two new modules, `verified`.** Vendors the last two
+`Bb.NaiveVirtualGraph.Gist` rows, held out of phase 3 for carrying a
+second record: `Lens.lagda.md` and `Displaced.lagda.md`. Plan:
+`outputs/.plans/virtual-graphs-vendor-phase4.md`.
+
+`Lens.lagda.md` packages the chosen edge's judgment and hom families
+as lenses instead of fibrations. It imports `Engine` for `chosen`,
+`composable`, and `dict` rather than re-deriving that vocabulary. It
+re-derives `unit⁻-is-idn`/`unit⁺-is-idn`/`idn-absorb⁻`/`idn-absorb⁺`
+locally, though. `Engine`'s own copies sit three module-parameters
+deep, behind `contr⁻`/`contr⁺` this file's `module unital` has no
+use for. Landed:
+
+- `inj⁻`/`inj⁺`, and `judgment-lens : unbiased-lens graph judgment±`
+  with its univalent display.
+- The flank-coherence scoping remark: `munitor-at-rx`,
+  `flank⁻-of`/`flank⁺-of`, `flanks-agree`.
+- The two-sided base's own lens, `two-sided-lens : oplax-cov-lens
+  two-sided judgment-fam`, and the cospan suite:
+  `push-is-composite⁻`/`⁺`, `interchange-is-cospan`,
+  `cospan-is-interchange`.
+- `hom-lens : unbiased-lens graph hom±`, `bipush-comp`, and
+  `interchange→composites-agree`.
+
+`TwoSided`'s bare `mediation` renames to `composites-agree`, matching
+`Engine`'s `units-agree`. `Bb.VirtualGraphs.Mediation` already owns
+`mediation` for a different, richer notion. Both source files
+independently named their lens `judgment-lens`. Landed side by side,
+the two-sided one is `two-sided-lens`.
+
+`Displaced.lagda.md` holds the displayed carrier `virtual-graphᴰ`
+and its Σ-by-Σ vocabulary (`term[_]`, `coterm[_]`, `argument[_]`,
+`conclusion[_]`, `judgment[_]`, `var[_]`, `covar[_]`, `act-π[_]`,
+`coact-π[_]`, `inj⁻[_]`, `inj⁺[_]`). Not carrier-generic as first
+scoped: `idn[_]`'s own type names the base `idn` directly, so the
+file takes the same `(idn : ...)` parameter and `Engine` import as
+`Lens.lagda.md`.
+
+`Bb/index.lagda.md` gained two import lines (`Displaced`, `Lens`),
+alphabetized into the existing block.
+
+**State, `verified`.** `just check-tree src/Bb`: 148 of 148 modules
+typecheck. `just check Bb.index`: clean. No postulates, no unsafe
+markers, no `-W` suppression.
+
+Next: the `Bb.NaiveVirtualGraph.Gist.PathGroupoid` model is the one
+row left unvendored. The three literature-vendoring items and the
+README prose-debt item `TODO.md` still lists.
+`Bb.OneTwist`/`Bb.VgCategoryShape` retirement, pending Lane's
+go-ahead (`src/Bb/TODO.md`).
+
+## 2026-08-06 — the remaining `Bb.NaiveVirtualGraph` chosen-edge rows
+
+**Five new modules, two extended, `verified`.** Vendors the seven
+items `outputs/.plans/virtual-graphs-vendor.md` named as deferred
+beyond `UnitShape`:
+
+- `UnitCanonical`'s canonical suite and half-adjoint obstruction
+- `CrossedUnit`
+- `AbsorbObstruction`
+- `DeductiveSystem`'s route-naturality suite
+- `StableFiber`'s packagings and op-transport
+- `ReflexiveVG`
+- `PerHandUnit`'s curried forms
+
+`JudgmentLens`/`TwoSided` stay unvendored: a displayed carrier, a
+second record, outside the tree's one-record rule. The
+`Bb.NaiveVirtualGraph.Gist.PathGroupoid` model is also not in this
+pass. Plan: `outputs/.plans/virtual-graphs-vendor-phase3.md`.
+
+`Engine.lagda.md` gained a "## Stability" section: the third tier off
+one bare `readback` hypothesis, `eval-is-coact`/`eval-is-act`, and
+the readback-alone canonicity route. It also gained the
+route-naturality suite (`route⁻`/`route⁺` and their naturality,
+`unique-agrees⁻`/`⁺`) and the half-adjoint obstruction
+(`half-adjoint-forces-truncation`). `UnitShape.lagda.md` gained
+`module absorb`/`module obstruction`: a propositional predicate that
+delivers absorption forces every self-path of the chosen family to
+die under `ap held`, unconditionally. The flat-telescope carrier let
+the source's record-perturbation step drop out entirely, since `idn`
+was already the sole free variable.
+
+Three new theory files. `CrossedUnit.lagda.md`: the coterm hand's
+derived filler feeds the term hand's tier one field early. Once an
+exchange hypothesis is supplied, the chosen family is that tier's
+unique inhabitant. `Reflexive.lagda.md`: the chosen edge with its own
+two absorptions as hypotheses rather than derived facts. It is
+canonical for free given a unit-fiber hypothesis, and (`redundancy`)
+the unit tier drops entirely once stability is stated as an
+equivalence. `Stable.lagda.md`: the equivalence-plus-idempotence
+route to absorption, three stability formulations side by side, and
+the full op-transport suite across the opposite carrier.
+
+One new file with a self-contained local carrier. `Curried.lagda.md`
+restates the two-hand theory over a ternary `emb` operator and two
+compositions as fibers over strings. Readback is one statement rather
+than two, and the flank agreement between the two hands is
+well-formed but supplied by neither hand's own data.
+
+One new model file. `Groupoid/Engine.lagda.md` gives the discrete
+path-groupoid witness for all five theory modules above: every
+hypothesis telescope holds untruncated, with no h-level condition on
+the carrier.
+
+`Bb/index.lagda.md` gained five import lines
+(`CrossedUnit`, `Curried`, `Reflexive`, `Stable`, `Groupoid.Engine`),
+alphabetized into the existing block.
+
+**State, `verified`.** `just check-tree src/Bb/VirtualGraphs`: 48 of
+48 modules typecheck. `just check Bb.index`: clean. No postulates, no
+unsafe markers, no `-W` suppression.
+
+Next: the `Bb.NaiveVirtualGraph.Gist.PathGroupoid` model, not named
+in this pass. The three literature-vendoring items and the README
+prose-debt item `TODO.md` still lists. `Bb.OneTwist`/
+`Bb.VgCategoryShape` retirement, pending Lane's go-ahead
+(`src/Bb/TODO.md`).
+
+## 2026-08-06 — five lemmas promoted to Core and HData
+
+**Two files, `verified`.** Lane approved every item in
+`outputs/virtual-graphs-core-proposals.md`. `snd-contr` moved to
+`Core.Transport.Properties`, beside `is-contr-×` (its converse), with
+a new companion `fst-contr`. `diagonal` and `loops→is-set` moved to
+`Core.HLevel.Base`. `equiv-cancel-l`/`equiv-cancel-r` moved to
+`Core.Equiv.Properties`, renamed `equiv-lc`/`equiv-rc` (`t ∘ s` writes
+`t` on the left and `s` on the right; `equiv-lc` cancels the left
+factor, `equiv-rc` the right). `mult-r-equiv` moved to
+`HData.Circle.Mult`, beside `mult-equiv`. `ap-mult-base` and
+`slide-rot` moved to `HData.Circle.Properties`, which already carried
+a private copy of `ap-mult-base` for its own use, now made public.
+`Circle.Recognition` no longer imports `Circle.Mediation` — that
+import existed only for `mult-r-equiv`.
+
+**Two renames and a relocation, `verified`.** `wind` was asked for
+"the Path module (where invl/cancell live)" — that is `Core.Kan`'s
+`module Path`, not `Core.Path.Base` (a different file, holding
+higher-level lemmas built on `Path`'s primitives). `Core.Path.Base`'s
+`cancell` is confirmed left-cancellation (it cancels the `sym p ∙ p`
+pair on the left of a composite) and `cancelr` right-cancellation
+(the symmetric pair). All three — `wind`, `cancell` renamed `lc`,
+`cancelr` renamed `rc` — moved into `Core.Kan.Path`, reached as
+`Path.wind`/`Path.lc`/`Path.rc` everywhere, matching the tree's
+existing `Path.invl`/`Path.assoc`/`Path.commutes` convention. Swept
+across every live caller: `Core.Path.Base` itself (`move-r` and
+`conj-cancel`, its remaining residents), `Core.Path.Exchange`,
+`Cat.Logic.Gist.ReadbackShift`, `HData.Circle.Properties`, and four
+`Bb.VirtualGraphs` files (`Embedding`, `Circle.Natural`,
+`Circle.Recognition`, `Circle.Shift`). Two more files
+(`Bb.WeakDeductiveSystem.Gist.FramedCut`, `Bb.VirtualGraphs.
+Groupoid.Path`) each carry an unrelated local `lc` of their own
+(reflection injectivity, not path cancellation) that briefly collided
+with an intermediate unqualified form of this rename; both are back
+to their original, unqualified `open import Core.Path.Base`, since
+`Path.lc` being qualified-only removes the collision without any
+`hiding` clause. Ten `src/Test/Spike*.lagda.md` files still call the
+old names; `Test.*` is gate-exempt and those files are out of scope.
+
+**One duplication resolved, `verified`.** `cross⁻`/`cross⁺`/
+`cut⁻-cross`/`cut⁺-cross` now live once, in bare `Tower.tower` at
+group C (taking the missing near unit law as an explicit argument,
+since group C has no absorption hypothesis to supply it
+unconditionally). `Cancellation.collapse` and `Neutral.neutral` both
+instantiate from there now instead of restating. `Circle/Natural.
+turn`'s local copy is deleted, inherited transitively through
+`naturality`/`tower`. Three sites carried this duplication in total.
+Landing the promotion broke two of them with `ClashingDefinition`:
+`Cancellation.collapse` (found and fixed first) and `Neutral.
+neutral` (found only once the promotion had already landed, not on
+any original list). Both took the same fix: a qualified
+`tw = tower ...` alias, `hiding` the two clashing names on the
+transitive open, and a one-line reinstantiation against the module's
+own already-derived unit law.
+
+**State, `verified`.** `gtimeout 590 just check-tree` (whole
+repository, 389 modules): 373 typecheck. The 16 that do not are
+`Core/Coherence/Paths.lagda.md` and `Core/Path/Coherence.lagda.md`
+(pre-existing, a stale import predating this session), the four
+`Data/Thin/*` modules (pre-existing, tracked separately), and ten
+`src/Test/Spike*.lagda.md` files (gate-exempt). Zero postulates, zero
+`TERMINATING`, zero unsafe features, across every touched file.
+
+---
+
+## 2026-08-05 — the recognition line, vendored
+
+**Thirteen new modules, six extended, `verified`.** The
+`TODO.md` item covering the thirteen 2026-08-02/03 `Test.Spike*`
+files (hypothesis groups E and F) is closed. Plan:
+`outputs/.plans/virtual-graphs-vendor-phase2.md`. Every module
+restates checker-verified lemmas only, over this tree's carrier and
+its already-landed hypothesis-group telescopes; no spike's own
+reading of what a result meant for the recognition line crossed
+over, including the five circle-model verdicts
+`notes/2026-08-03-vgds-torsor-correction.md` had already flagged as
+contaminated interpretation over sound proofs.
+
+New: `Recognition`, `Shape`, `Gluing` (the candidate-relative kit,
+per-object shape, and cross-pair grammar, from
+`SpikeCandidateGenerator`, `SpikeGradeSelector`, `SpikeFramedShape`,
+`SpikeGluingCharacteristic`, `SpikeEdgeCoherence`). `Neutral` (group
+E, from `SpikeNeutralTier`, the second route to the polarity
+collapse `Cancellation.collapse` also reaches). `Mediation` (the
+mediation clauses and Kraus canonicalization, from
+`SpikeMediationWild`, `SpikeSelfMediation`, `SpikeTwistMediation`).
+`Bool.Endo` (the commuting-involution models, from
+`SpikeNeutralReadback`). `Bool.Sleeve` (the sleeve carrier, from
+`SpikeEdgeCoherence`, `SpikeGluingCharacteristic`). `Word.Mediation`,
+`Word.Census`, `Word.Recognition` (the word-model instances of the
+above six spikes plus `SpikeCandidateGenerator`, `SpikeGradeSelector`,
+`SpikeFramedShape`). `Circle.Natural`, `Circle.Mediation`,
+`Circle.Recognition` (the circle-model instances, from
+`SpikeNaturalTier`, `SpikeNaturalTruncation`, `SpikeNaturalModuli`,
+`SpikeMediationWild`, `SpikeSelfMediation`, `SpikeCandidateGenerator`,
+`SpikeFramedShape`, `SpikeGluingCharacteristic`; `--cubical`, joining
+the tree's existing circle island).
+
+Extended: `Framing` (the six half-twist-pairings and naturality tiers,
+from `SpikeNaturalTier`, `SpikeNaturalTruncation`). `Tower` (the four
+flanking operations and their law types, the naturality-tier
+machinery, from `SpikeNeutralReadback`, `SpikeNaturalTier`,
+`SpikeNaturalTruncation`). `Embedding` (the centred pair and
+`path-lc`, from `SpikeNaturalTier`, `SpikeNaturalTruncation`).
+`Readback` (the naturality-far-law equivalence, from
+`SpikeNaturalModuli`). `Bool.Readers` (the four-reader model's
+failing negative naturality square, from `SpikeNaturalTier`).
+`Groupoid.Path` (both naturality tiers at an arbitrary self-path
+family, from `SpikeNaturalTier`).
+
+A handful of cited rows dissolved on restatement rather than
+landing: `SpikeNeutralReadback`'s restated tiers and tower duplicate
+already-landed `Framing`/`Tower` content; `SpikeFramedShape.reframe`
+has no work to do over this tree's already-parameterized
+architecture; the four `derived` closures in `Shape.recognized` are
+`Tower.tower`'s own closures, inherited rather than restated.
+
+Two housekeeping items follow from the landing, both noted in
+`TODO.md`. `cross⁻`/`cross⁺` and their crossed-cut laws are now
+stated in two places, `Cancellation.collapse` and locally inside
+`Circle/Natural.turn`. Bare `Tower` still lacks them at group C, with
+no absorption hypothesis, which is where they belong. Separately,
+`Circle.Recognition` imports `Circle.Mediation` for one lemma
+(`mult-r-equiv`) that `outputs/virtual-graphs-core-proposals.md`
+proposes moving to `HData.Circle.Mult`.
+
+**Core-placement proposal, `verified`.**
+`outputs/virtual-graphs-core-proposals.md` names five carrier-free
+lemmas found during the vendoring (`snd-contr`, the `diagonal`
+module and `loops→is-set`, `equiv-cancel-l`/`equiv-cancel-r`,
+`wind`, `mult-r-equiv`) with their exact statement, a searched
+`Core.*`/`HData.*` home, and what that search found. Nothing has
+been moved; the proposal is for review.
+
+**State, `verified`.** `gtimeout 590 just check-tree
+src/Bb/VirtualGraphs`: 43 of 43 modules typecheck. `just check
+Bb.index`: exit 0, after thirteen new import lines. `just lint
+changed`: all checks passed. Zero postulates, zero `TERMINATING`,
+zero unsafe markers, grep-confirmed across every new and extended
+file.
+
+---
+
+## 2026-08-05 — HISTORY.md, the tree's narrative record
+
+**One file, `verified`.** The tree's one permitted exception to the
+archive's no-narrative rule (`src/Bb/CLAUDE.md`). Six hundred and
+thirty-six lines, fifteen dated sections from the mid-July 2026
+monoidal-coherence precursor through the naming audit and the
+negative pentagon, each beat cross-referenced to its current module.
+Sources: `notes/*.md` 2026-07-14 through 2026-08-04, `src/Cat/Logic`'s
+`TODO.md`/`gloss.md`/`lemmata.md`, the deleted `docs/deductive-systems/`
+(recovered via `git show 8f4be13^:`), `docs/composite-rx-refactor/`,
+and every other `Bb` tree's own `README.md`/`CHANGELOG.md`.
+
+**State, `verified`.** Every identifier, module reference, and quoted
+ruling cited as living "here now" grep-checked against its claimed
+location and confirmed. The `writing` skill's self-lint:
+0.70 violations/100 words, exit 0.
+
+---
+
 ## 2026-08-05 — stability, as prose, follows the identifier
 
 **Sixteen files, `verified`.** The naming pass two entries below
@@ -22,7 +341,7 @@ reflection is (or yields) an embedding, per sentence. Local
 bindings named `stable` (a witness of `reflect-is-embedding` at a
 model, e.g. `Diagonal.pinned.stable`, `Circle.Model.circle.stable`,
 `Group.Abelian.framed.stable`) are untouched — informal local
-names, not the audited identifier. Generic "twist" as an ordinary
+names, not the audited identifier. Generic "half-twist" as an ordinary
 descriptive word is untouched throughout the tree: unlike
 "stability," it does not import a specific established concept the
 corpus fails to earn, so purging it was not warranted by the same
@@ -79,8 +398,8 @@ category-theory usage badly enough that a reader taking them at
 face value would assume theorems the corpus does not earn. All
 five are corrected, source-wide within this tree.
 
-- `twist⁻`/`twist⁺` → `rx`/`corx`, everywhere. Neither carries a
-  ribbon-twist or naturality claim; `rx` continues
+- `half-twist⁻`/`half-twist⁺` → `rx`/`corx`, everywhere. Neither carries a
+  ribbon-half-twist or naturality claim; `rx` continues
   `Bb.VgCategoryShape`'s own name for the same role.
 - `Balanced.lagda.md` → `Cancellation.lagda.md` (module
   `Bb.VirtualGraphs.Balanced` → `.Cancellation`, internal `module
@@ -120,11 +439,11 @@ five are corrected, source-wide within this tree.
 
 One correctness bug surfaced during the pass, independent of
 naming philosophy: `Groupoid/Path.lagda.md` and
-`Group/Abelian.lagda.md` both named each cut for the twist it
+`Group/Abelian.lagda.md` both named each cut for the half-twist it
 mediates with, inverting this tree's own rule (`Framing.lagda.md`:
-the positive cut mediates with the negative twist). Both are
+the positive cut mediates with the negative half-twist). Both are
 corrected — `Group/Abelian.lagda.md`'s fix also required swapping
-`cut⁻-is-twisted`/`cut⁺-is-twisted`, which had baked in the old,
+`cut⁻-is-half-twisted`/`cut⁺-is-half-twisted`, which had baked in the old,
 inverted correspondence.
 
 "Invertibility" and "invertible" as descriptive prose (not just the
@@ -134,7 +453,7 @@ opening paragraphs of `Cancellation`, `Diagonal`, `Circle.Model`,
 `Polarity`, `Presentation`, `Bool.Readers`, `Bool.Heap`, and this
 tree's own `README.md` are reworded to drop "balanced" and
 "aligned" as descriptive words, not only as identifiers. Prose use
-of "stability"/"stable" and generic "twist" as informal descriptive
+of "stability"/"stable" and generic "half-twist" as informal descriptive
 words (distinct from the renamed identifiers) is not swept in this
 pass — it is widespread enough to be its own undertaking, and is
 left as an open question rather than decided silently.
@@ -217,10 +536,10 @@ committed-source consolidation. The source ↔ module mapping:
   and four-reader models plus `Cat.Logic.Gist.BalancedProfile`'s
   `attempt₁`/`attempt₂`.
 - `Groupoid.Path`: `Bb.WeakDeductiveSystem.Gist.FramedCut` entire
-  plus `Bb.OneTwist.Models`' path model as the one-twist instance.
+  plus `Bb.OneTwist.Models`' path model as the one-half-twist instance.
 - `Group.Abelian`: `Bb.WeakDeductiveSystem.Gist.FramedGroup` entire
   (including `univalent→prop` via `rxgraph`) plus
-  `Bb.OneTwist.Models`' group model as the one-twist instance.
+  `Bb.OneTwist.Models`' group model as the one-half-twist instance.
 
 Skipped as `Test.*`-only, per the committed-source rule: `Monoid`
 (SpikePinningMonoid), `Bool.Endo`, `Bool.Sleeve`,
@@ -289,7 +608,7 @@ interchange-hypothesis results of
 transcription of `.Gist.TwistFidelity` over the tower with the pin/K
 hypotheses. `Extraction` is group O, from `Bb.OneTwist.Base` and the
 general part of `.Cancel`: the negative tier's centre defines the
-positive twist, its unit laws come free, and the term-side
+positive half-twist, its unit laws come free, and the term-side
 cancellation is equivalent to centre agreement. `Aligned` is group
 V, from `Bb.VgCategoryShape` entire minus its model: the h-category
 theory record-free — readback-route left-cancellability, the unit
@@ -313,9 +632,9 @@ the model modules wait for their own pass.
 **Seven modules, `verified`.** The committed-source consolidation
 landed the general theory in dependency order: `Stability` (group A:
 representability, stability, the carrier opposite), `Framing` (group
-B split as `framing⁻`/`framing⁺`/`framing` along which twist each
+B split as `framing⁻`/`framing⁺`/`framing` along which half-twist each
 definition reads, with the duality suite), `Tower` (group C:
-`tower⁺` over `twist⁻`+S+C⁺ alone, `tower⁻` dually, `tower` with the
+`tower⁺` over `half-twist⁻`+S+C⁺ alone, `tower⁻` dually, `tower` with the
 mixed word, `associates` and closures, the coherence square,
 `collapse⁺/⁻` with the crossed pairing explicit, plus the
 `absorption`/`unital` pin-K route), `Pentagon` (over `tower⁺` only),

@@ -1,21 +1,21 @@
 The word model: one object, canonical descriptors as edges, and the
 sandwich reflection that surrounds an edge with its argument — the
 coterm half composing on the inside, the term half through `φ` on the
-outside. The negative twist is the unit translation `τ̂`, the positive
-twist the identity descriptor `ε̂`, and readback is the sandwich
+outside. The negative half-twist is the unit translation `τ̂`, the positive
+half-twist the identity descriptor `ε̂`, and readback is the sandwich
 collapse, since `φW τ̂` computes to `ε̂`.
 
 Stability comes from the hom sets: evaluating a reflection sandwiches
-the edge between the two twists, and the unit laws make that injective.
+the edge between the two half-twists, and the unit laws make that injective.
 Both cuts are representable — `comp` for the positive, `cut⁻` for the
 negative — and each absorption tier's fiber contracts at its own
-twist.
+half-twist.
 
 The descriptor shift `t ∸ length p` is a ℤ-grading: additive for the
 positive cut, decremented by `φ`, and onto. The `associates` triple
 `(τ̂ , ε̂ , ε̂)` is empty, so `τ̂` is not thunkable and `ε̂` is not
-linear. The double twist inverts `τ̂` on one side only, and the two
-twists are distinct edges.
+linear. The double half-twist inverts `τ̂` on one side only, and the two
+half-twists are distinct edges.
 
 ```agda
 {-# OPTIONS --safe --erased-cubical --no-guardedness #-}
@@ -72,7 +72,7 @@ BW-readback f = sandwich f
 
 ## Stability
 
-Evaluating a reflection sandwiches an edge between the two twists, so it
+Evaluating a reflection sandwiches an edge between the two half-twists, so it
 is injective by the unit laws; with `W` a set this makes `reflect` an
 embedding at every pair of objects.
 
@@ -164,8 +164,8 @@ BW-contr⁻ f g =
 
 ## The framing is absorbing
 
-Each fiber has the expected twist as centre, and any inhabitant is
-pinned to it by evaluating the fiber path at the other twist's axiom
+Each fiber has the expected half-twist as centre, and any inhabitant is
+pinned to it by evaluating the fiber path at the other half-twist's axiom
 half; the path component lives in a set-valued function type, so it
 rides along as a proposition.
 
@@ -216,7 +216,7 @@ open tower BW (λ _ → τ̂) (λ _ → ε̂) BW-embedding BW-comp⁺ BW-comp⁻
 The shift of a descriptor is its eventual translation defect
 `t ∸ length p` as an integer. Trim preserves it, the positive cut adds
 it, and `φ` decrements it: the ℤ-grading, with winding `1 − 2·shift`
-and the double twist the `+1` winding generator. Every grade is
+and the double half-twist the `+1` winding generator. Every grade is
 inhabited.
 
 ```agda
@@ -320,9 +320,9 @@ shift-onto (negsuc n) = (Z ∷ zeros n , Z , zeros-can n)
 
 The `associates` triple `(τ̂ , ε̂ , ε̂)` computes to `ε̂` on the left
 bracketing and to the descriptor `([1] , 1)` on the right, so mixed
-words do not reassociate; in particular the negative twist is not
-thunkable and the identity is not linear. The double twist kills the
-negative twist on one side only, and the twists are distinct.
+words do not reassociate; in particular the negative half-twist is not
+thunkable and the identity is not linear. The double half-twist kills the
+negative half-twist on one side only, and the half-twists are distinct.
 
 ```agda
 w-nil : W → Type
@@ -347,6 +347,6 @@ bicyclic-collapse = refl
 bicyclic-persists : ¬ ((τ̂ ⨾⁺ δ̂) ≡ ε̂)
 bicyclic-persists e = subst w-nil (sym e) tt
 
-twist-distinct : ¬ (τ̂ ≡ ε̂)
-twist-distinct e = subst (λ A → pos? (A .snd .fst)) e tt
+half-twist-distinct : ¬ (τ̂ ≡ ε̂)
+half-twist-distinct e = subst (λ A → pos? (A .snd .fst)) e tt
 ```

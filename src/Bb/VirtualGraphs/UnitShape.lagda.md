@@ -20,9 +20,10 @@ module Bb.VirtualGraphs.UnitShape where
 open import Core.Type
 open import Core.Base
 open import Core.Data.Sigma
-open import Core.Kan using (_∙_)
+open import Core.Kan using (_∙_; module Path)
 open import Core.Path.Base
 open import Core.Transport.J using (subst)
+open import Core.Transport.Base using (is-prop→PathP)
 open import Core.Equiv.Base using (_≃_; iso→equiv; is-contr-equiv)
 open import Core.Equiv.Properties using (_∙e_; esym; Σ-contr-fst; Π-contr-dom)
 open import Core.HLevel.Base using (is-prop-equiv)
@@ -190,4 +191,56 @@ module self-path {u} (A : Type u) where
     Π-contr-dom
       {B = λ γ → virtual-graph.reflect PG e ((x , e) , γ) ≡ γ .snd}
       (coterm-contr x)
+```
+
+## Absorption pins the chosen family
+
+The held slot takes both its arguments from one family of
+endo-edges. Absorption is the claim that two elements of the
+resulting function type agree. One reads the family back through the
+held slot. The other reads the coterm's own edge out directly.
+
+```agda
+module absorb {o h} (G : virtual-graph o h) (open virtual-graph G)
+  (idn : (x : ob) → hom x x) where
+
+  flank : Type (o ⊔ h)
+  flank = (x : ob) (γ : coterm x) → hom x (γ .fst)
+
+  held : ((x : ob) → hom x x) → flank
+  held i x γ = reflect (i x) ((x , i x) , γ)
+
+  cut : flank
+  cut x γ = γ .snd
+
+  absorbs : Type (o ⊔ h)
+  absorbs = held idn ≡ cut
+```
+
+`held` reads the family back at every point. `cut` never mentions the
+family. A self-path of the family already traces a loop of `held`
+against a fixed target.
+
+A propositional predicate that delivers absorption cannot distinguish
+the family from any point on that loop. A witness at one endpoint
+then slides along the loop to a witness at every other point. The
+resulting square pins the loop to the constant path. This holds for
+any packaging of the predicate, with no further hypothesis on the
+carrier.
+
+```agda
+module obstruction {o h ℓ} (G : virtual-graph o h) (open virtual-graph G)
+  (idn : (x : ob) → hom x x) (open absorb G idn)
+  (P : ((x : ob) → hom x x) → Type ℓ)
+  (P-prop : (i : (x : ob) → hom x x) → is-prop (P i))
+  (pin : (i : (x : ob) → hom x x) → P i → held i ≡ cut)
+  where
+
+  drift : (p : P idn) (q : idn ≡ idn)
+        → PathP (λ i → held (q i) ≡ cut) (pin idn p) (pin idn p)
+  drift p q i = pin (q i) (is-prop→PathP (λ j → P-prop (q j)) p p i)
+
+  rigid : (p : P idn) (q : idn ≡ idn) → ap held q ≡ refl
+  rigid p q =
+    Path.loop-refl (sym (pin idn p)) (ap held q) (λ i j → drift p q i (~ j))
 ```

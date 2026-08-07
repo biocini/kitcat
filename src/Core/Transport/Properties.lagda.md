@@ -256,6 +256,17 @@ is-contr-× : ∀ {u v} {A : Type u} {B : Type v}
 is-contr-× cA cB .center = cA .center , cB .center
 is-contr-× cA cB .paths (a , b) i = cA .paths a i , cB .paths b i
 
+-- A contractible product has a contractible first and second
+-- factor: the centre of the product supplies the missing
+-- component in either case.
+fst-contr : ∀ {u v} {A : Type u} {B : Type v} → is-contr (A × B) → is-contr A
+fst-contr c .center = c .center .fst
+fst-contr c .paths a = ap fst (c .paths (a , c .center .snd))
+
+snd-contr : ∀ {u v} {A : Type u} {B : Type v} → is-contr (A × B) → is-contr B
+snd-contr c .center = c .center .snd
+snd-contr c .paths b = ap snd (c .paths (c .center .fst , b))
+
 ```
 
 ## Identity Systems

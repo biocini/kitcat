@@ -1,11 +1,11 @@
 Interchange and the frame. `framed-interchange` works over readback
 and two contractible cuts: each hand gains one unit law, the two
-cuts differ by the double twist, mixed associativity survives the
+cuts differ by the double half-twist, mixed associativity survives the
 frame through readback, and no edge is a unit on both sides unless
-the twists agree. `neutral-unit` takes the agreement of the two cut
+the half-twists agree. `neutral-unit` takes the agreement of the two cut
 judgments as a hypothesis over the tower and derives the four unit
-laws, the identification of the twists, and a shared two-sided unit.
-`tortile` transcribes the tortile twist laws per hand; each collapses
+laws, the identification of the half-twists, and a shared two-sided unit.
+`tortile` transcribes the tortile half-twist laws per hand; each collapses
 the framing to one edge.
 
 ```agda
@@ -48,7 +48,7 @@ module _ {o h} (G : virtual-graph o h) (open virtual-graph G)
 Readback and two contractible cuts. Everything an h-category
 derivation runs on transposes until its last step, which wants an
 edge that is a unit on both sides; what stands in the way is the
-double twist.
+double half-twist.
 
 ```agda
 module framed-interchange {o h} (G : virtual-graph o h) (open virtual-graph G)
@@ -82,7 +82,7 @@ module framed-interchange {o h} (G : virtual-graph o h) (open virtual-graph G)
   act-var {x} f = ap (x ,_) (R f)
 ```
 
-A cut absorbs the twist filling its own slot, and only that one: the
+A cut absorbs the half-twist filling its own slot, and only that one: the
 positive cut closes its coterm at `corx` and so is right-unital
 there, the negative one closes its term at `rx` and is
 left-unital there.
@@ -103,9 +103,9 @@ left-unital there.
     ∙ R f
 ```
 
-Cutting the inverse against the twist lands on whichever of the two
+Cutting the inverse against the half-twist lands on whichever of the two
 the hand absorbs, so the two answers are `rx` and `corx`.
-Their gap is the double twist, and asking the cuts to agree is
+Their gap is the double half-twist, and asking the cuts to agree is
 asking for it to vanish.
 
 ```agda
@@ -160,7 +160,7 @@ reflection meet, through readback rather than the embedding condition.
 ```
 
 A reflexivity edge serving both hands is available only where the
-twist is an involution; otherwise the two missing laws are carried
+half-twist is an involution; otherwise the two missing laws are carried
 by two edges.
 
 ```agda
@@ -217,7 +217,7 @@ readback or the cuts supplies that.
 
 With `corx` fixed, an edge satisfying readback against it is
 exactly a left unit for the negative cut, and any right-cancellable
-endomorphism makes such an edge unique: the negative twist is the
+endomorphism makes such an edge unique: the negative half-twist is the
 centre of a contractible fibre, with readback its defining property.
 
 ```agda
@@ -245,7 +245,7 @@ centre of a contractible fibre, with readback its defining property.
 Under `cuts-agree`, over the tower with the four absorption
 hypotheses: representation being unique, agreeing judgments have
 equal representatives, so the two compositions are one; each hand's
-own unit law transports to the other; the two twists are derived to
+own unit law transports to the other; the two half-twists are derived to
 be equal; and their composite is a two-sided unit for both cuts.
 
 ```agda
@@ -273,8 +273,8 @@ module neutral-unit {o h} (G : virtual-graph o h) (open virtual-graph G)
   unitr⁻ : ∀ {x y} (f : hom x y) → f ⨾⁻ corx y ≡ f
   unitr⁻ f = sym (⨾-agree f (corx _)) ∙ unitr⁺ f
 
-  twists-agree : ∀ x → rx x ≡ corx x
-  twists-agree x = sym (unitr⁺ (rx x)) ∙ unitl⁺ (corx x)
+  half-twists-agree : ∀ x → rx x ≡ corx x
+  half-twists-agree x = sym (unitr⁺ (rx x)) ∙ unitl⁺ (corx x)
 
   ι : (x : ob) → hom x x
   ι x = rx x ⨾⁺ corx x
@@ -283,7 +283,7 @@ module neutral-unit {o h} (G : virtual-graph o h) (open virtual-graph G)
   ι-rx = pair⁺
 
   ι-corx : ∀ x → ι x ≡ corx x
-  ι-corx x = pair⁺ x ∙ twists-agree x
+  ι-corx x = pair⁺ x ∙ half-twists-agree x
 
   ι-either : ∀ x → rx x ⨾⁻ corx x ≡ ι x
   ι-either x = sym (⨾-agree (rx x) (corx x))
@@ -301,19 +301,19 @@ module neutral-unit {o h} (G : virtual-graph o h) (open virtual-graph G)
   ι-unitr⁻ {y = y} f = sym (⨾-agree f (ι y)) ∙ ι-unitr⁺ f
 ```
 
-So a framing with two genuinely distinct twists and a shared neutral
-unit is not a shape that exists: either the twists differ and each
+So a framing with two genuinely distinct half-twists and a shared neutral
+unit is not a shape that exists: either the half-twists differ and each
 cut keeps its own one-sided unit, or they are identified and the two
 cuts collapse to one with a two-sided unit.
 
 ## The tortile obligations
 
-Each hand has a unit — the twist the other half carries — so the
-tortile absorption demand is that the composite of the two twists
-be that unit; read in either hand it forces the two twists to be one
-edge. In the hand where a twist is the unit, the tortile naturality
+Each hand has a unit — the half-twist the other half carries — so the
+tortile absorption demand is that the composite of the two half-twists
+be that unit; read in either hand it forces the two half-twists to be one
+edge. In the hand where a half-twist is the unit, the tortile naturality
 law is two-sided unitality: the edge it speaks about occupies the
-unit's place. Interchange asked at the twists alone is again their
+unit's place. Interchange asked at the half-twists alone is again their
 identification, through the crossed pairings.
 
 ```agda
@@ -355,9 +355,9 @@ module tortile {o h} (G : virtual-graph o h) (open virtual-graph G)
   natural⁺-is-unitr : natural⁺ → ∀ {x y} (f : hom x y) → f ⨾⁻ rx y ≡ f
   natural⁺-is-unitr N f = N f ∙ unitl⁻ f
 
-  twist-interchange : Type (o ⊔ h)
-  twist-interchange = ∀ x → rx x ⨾⁺ corx x ≡ rx x ⨾⁻ corx x
+  half-twist-interchange : Type (o ⊔ h)
+  half-twist-interchange = ∀ x → rx x ⨾⁺ corx x ≡ rx x ⨾⁻ corx x
 
-  twist-interchange-collapses : twist-interchange → ∀ x → rx x ≡ corx x
-  twist-interchange-collapses H x = sym (pair⁺ x) ∙ H x ∙ pair⁻ x
+  half-twist-interchange-collapses : half-twist-interchange → ∀ x → rx x ≡ corx x
+  half-twist-interchange-collapses H x = sym (pair⁺ x) ∙ H x ∙ pair⁻ x
 ```

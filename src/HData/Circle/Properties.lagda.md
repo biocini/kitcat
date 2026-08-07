@@ -24,6 +24,7 @@ open import Core.Base
 open import Core.Data.Sigma
 open import Core.Kan
 open import Core.Path.Base using (ap-retr)
+open import Core.Homotopy using (homotopy-natural)
 open import Core.Transport.J using (J; subst)
 open import Core.Transport.Base using (transport-refl; is-prop→PathP)
 open import Core.Transport.Properties using (subst-∙; transport⁻-transport)
@@ -188,8 +189,9 @@ space. The inverse is conjugation through the multiplication —
 `conj p x = ap (λ k → mult k x) p`, well-typed on the nose because
 `mult base` is the definitional identity — and `conj loop` is `rot`
 definitionally. The evaluation round trip is the `mult-unit-r`
-homotopy applied along the path; the family round trip is circle
-induction into fibers that `Circle-is-groupoid` makes propositional.
+homotopy applied along the path, and `ap-mult-base` computes it
+directly; the family round trip is circle induction into fibers
+that `Circle-is-groupoid` makes propositional.
 
 ```agda
 conj : base ≡ base → (x : Circle) → x ≡ x
@@ -198,11 +200,11 @@ conj p x = ap (λ k → mult k x) p
 conj-loop : conj loop ≡ rot
 conj-loop = refl
 
-private
-  ap-mult-base : (p : base ≡ base) → ap (λ k → mult k base) p ≡ p
-  ap-mult-base p =
-    ap-retr mult-unit-r p ∙ Path.unitl (p ∙ refl) ∙ Path.unitr p
+ap-mult-base : (p : base ≡ base) → ap (λ k → mult k base) p ≡ p
+ap-mult-base p =
+  ap-retr mult-unit-r p ∙ Path.unitl (p ∙ refl) ∙ Path.unitr p
 
+private
   conj-eval : (f : (x : Circle) → x ≡ x) → conj (f base) ≡ f
   conj-eval f = funext λ x →
     ind (λ x → conj (f base) x ≡ f x)
@@ -305,4 +307,23 @@ mult-faithful k m = iso→equiv to fro ret sec
     where
     ret-base : fro (to w) base ≡ w base
     ret-base = ap-retr H (to w) ∙ cancel-in (w base)
+```
+
+## Sliding the rotation across a path
+
+`rot` is a self-path family, so it commutes past every path by
+`homotopy-natural`. `slide-rot` reads that commutation as sliding the
+inverse rotation from one endpoint of a path to the other.
+
+```agda
+slide-rot : {a b : Circle} (s : a ≡ b) → sym (rot a) ∙ s ≡ s ∙ sym (rot b)
+slide-rot {a} {b} s =
+    ap (sym (rot a) ∙_) (sym step)
+  ∙ Path.lc (rot a) (s ∙ sym (rot b))
+  where
+    step : rot a ∙ (s ∙ sym (rot b)) ≡ s
+    step = Path.assoc (rot a) s (sym (rot b))
+         ∙ ap (_∙ sym (rot b))
+              (sym (homotopy-natural {k = idfun Circle} {l = idfun Circle} rot s))
+         ∙ Path.rc (rot b) s
 ```

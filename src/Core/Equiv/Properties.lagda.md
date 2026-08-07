@@ -567,4 +567,25 @@ properties are:
     sec' : (y : _) → f (GF.inv (g y)) ≡ y
     sec' y = ap f (ap GF.inv (ap g (sym (F.counit y))) ∙ GF.unit (F.inv y)) ∙ F.counit y
 
+
+-- Explicit-argument form of the two three-for-two properties above, under
+-- the common abbreviations for left- and right-cancellation. `t ∘ s` writes
+-- `t` on the left and `s` on the right; `equiv-lc` cancels the left factor,
+-- `equiv-rc` the right one.
+equiv-lc
+  : ∀ {u v w} {A : Type u} {B : Type v} {C : Type w}
+  → (s : A → B) (t : B → C)
+  → is-equiv t → is-equiv (λ a → t (s a)) → is-equiv s
+equiv-lc s t et ets =
+  subst is-equiv (funext λ a → Equiv.unit (t , et) (s a))
+        (comp-equiv ets (sym-equiv et))
+
+equiv-rc
+  : ∀ {u v w} {A : Type u} {B : Type v} {C : Type w}
+  → (s : A → B) (t : B → C)
+  → is-equiv s → is-equiv (λ a → t (s a)) → is-equiv t
+equiv-rc s t es ets =
+  subst is-equiv (funext λ b → ap t (Equiv.counit (s , es) b))
+        (comp-equiv (sym-equiv es) ets)
+
 ```

@@ -317,6 +317,20 @@ is-prop→Path-is-contr
 is-prop→Path-is-contr aprop x y =
   prop-inhabited→is-contr (is-prop→is-set aprop x y) (aprop x y)
 
+module diagonal {u} {A : Type u} {a b : A} where
+
+  loopl : is-contr (a ≡ b) → is-contr (a ≡ a)
+  loopl c = subst (λ z → is-contr (a ≡ z)) (sym (c .center)) c
+
+  loopr : is-contr (a ≡ b) → is-contr (b ≡ b)
+  loopr c = subst (λ z → is-contr (z ≡ b)) (c .center) c
+
+  fold : a ≡ b → is-prop (a ≡ a) → is-prop (a ≡ b)
+  fold e H = subst (λ z → is-prop (a ≡ z)) e H
+
+loops→is-set : ∀ {u} {A : Type u} → ((a : A) → is-prop (a ≡ a)) → is-set A
+loops→is-set L x _ p q = J (λ _ q' → (p' : x ≡ _) → p' ≡ q') (λ p' → L x p' refl) q p
+
 retract→is-prop
   : ∀ {ℓ ℓ'} {A : Type ℓ} {B : Type ℓ'}
   → (f : A → B) (g : B → A)

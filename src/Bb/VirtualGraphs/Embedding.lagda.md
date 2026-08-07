@@ -1,5 +1,5 @@
 Representability and the embedding condition over the bare carrier,
-and the opposite. Nothing here reads a twist: every statement is a
+and the opposite. Nothing here reads a half-twist: every statement is a
 condition on `reflect` alone.
 
 ```agda
@@ -9,15 +9,19 @@ module Bb.VirtualGraphs.Embedding where
 
 open import Core.Type
 open import Core.Base
+open import Core.Data.Nat.Type using (Z)
 open import Core.Data.Sigma
 open import Core.Kan using (_∙_; module Path)
 open import Core.Path.Base using (ap-comp)
 open import Core.Transport.J using (J)
 open import Core.Transport.Properties
-  using (is-prop-is-prop; is-prop→is-set; prop-inhabited→is-contr)
-open import Core.HLevel.Base using (Π-is-prop; Πi-is-prop; is-prop-equiv; Π-is-hlevel)
+  using (is-prop-is-prop; is-prop→is-set; prop-inhabited→is-contr; snd-contr)
+open import Core.HLevel.Base
+  using (Π-is-prop; Πi-is-prop; is-prop-equiv; is-prop-×; Π-is-hlevel;
+         retract→is-hlevel)
 open import Core.Function.Embedding using (is-embedding; injective→is-embedding)
-open import Core.Equiv.Base using (iso→equiv; _≃_)
+open import Core.Equiv.Base using (iso→equiv; is-contr-equiv; _≃_)
+open import Core.Equiv.Properties using (esym)
 
 open import Bb.VirtualGraphs.Type
 ```
@@ -130,6 +134,76 @@ then an injection: the embedding condition reduces to injectivity of
     → reflect-is-embedding
   embedding-from-injective hset inj α =
     injective→is-embedding (Π-is-hlevel 2 λ _ → hset) reflect inj α
+```
+
+## The centred pair
+
+One edge may represent two judgments at once. `centred` is the type of
+such an edge together with its two representation witnesses.
+
+```agda
+  centred : ∀ {x y} → judgment x y → judgment x y → Type (o ⊔ h)
+  centred {x} {y} α β = Σ n ∶ hom x y , (reflect n ≡ α) × (reflect n ≡ β)
+```
+
+Composing the second witness with the inverse of the first splits the
+pair in two. One factor is the fiber of `reflect` over the first
+judgment, the other the path space between the two judgments. The
+split reads nothing but `reflect`.
+
+```agda
+  centred≃ : ∀ {x y} (α β : judgment x y)
+           → centred α β ≃ (is-representable α × (α ≡ β))
+  centred≃ α β = iso→equiv fwd bwd sec retr
+    where
+      fwd : centred α β → is-representable α × (α ≡ β)
+      fwd (n , p , q) = (n , p) , sym p ∙ q
+
+      bwd : is-representable α × (α ≡ β) → centred α β
+      bwd ((n , p) , s) = n , p , p ∙ s
+
+      sec : (w : centred α β) → bwd (fwd w) ≡ w
+      sec (n , p , q) i = n , p , Path.lc (sym p) q i
+
+      retr : (w : is-representable α × (α ≡ β)) → fwd (bwd w) ≡ w
+      retr ((n , p) , s) i = (n , p) , Path.lc p s i
+```
+
+The embedding condition governs the first factor alone, so it makes
+the centred pair a proposition exactly where the path space between
+the two judgments is already one. The second factor is a retract of
+the pair, so contractibility of the pair carries to that path space.
+
+```agda
+  centred-is-prop : reflect-is-embedding → ∀ {x y} {α β : judgment x y}
+                  → is-prop (α ≡ β) → is-prop (centred α β)
+  centred-is-prop S {α = α} {β = β} pth =
+    is-prop-equiv (centred≃ α β) (is-prop-× (S α) pth)
+
+  centred-loop : ∀ {x y} {α β : judgment x y}
+               → is-contr (centred α β) → is-contr (α ≡ β)
+  centred-loop {α = α} {β = β} c =
+    snd-contr (is-contr-equiv (esym (centred≃ α β)) c)
+```
+
+Under the embedding condition `ap reflect` has `reflect-lc` as a left
+inverse, so a path space of edges is a retract of the path space of
+their reflections. Every h-level descends along that retraction.
+
+```agda
+  ap-reflect-retr
+    : (S : reflect-is-embedding) {x y : ob} {a b : hom x y} (p : a ≡ b)
+    → reflect-lc S (ap reflect p) ≡ p
+  ap-reflect-retr S {a = a} =
+    J (λ _ p' → reflect-lc S (ap reflect p') ≡ p')
+      (ap (ap fst)
+        (is-prop→is-set (S (reflect a)) (a , refl) (a , refl)
+          (S (reflect a) (a , refl) (a , refl)) refl))
+
+  path-lc : (S : reflect-is-embedding) {x y : ob} {a b : hom x y}
+          → is-contr (reflect a ≡ reflect b) → is-contr (a ≡ b)
+  path-lc S =
+    retract→is-hlevel Z (reflect-lc S) (ap reflect) (ap-reflect-retr S)
 ```
 
 ## The opposite

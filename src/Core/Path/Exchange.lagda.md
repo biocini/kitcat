@@ -18,7 +18,7 @@ open import Core.Base
 open import Core.Data.Sigma
 open import Core.Kan
 open import Core.Data.Pointed
-open import Core.Path.Base using (Ω; Loop; cancell; cancelr)
+open import Core.Path.Base using (Ω; Loop)
 open import Core.Equiv.Base using (_≃_; iso→equiv)
 
 Ω² : ∀ {u} → Type* u → Type u
@@ -144,9 +144,9 @@ supplying both round trips.
 
 ∙-pre-equiv : ∀ {u} {A : Type u} {x y z : A}
             → (l : x ≡ y) → (y ≡ z) ≃ (x ≡ z)
-∙-pre-equiv l = iso→equiv (l ∙_) (sym l ∙_) (cancell l) (cancell (sym l))
+∙-pre-equiv l = iso→equiv (l ∙_) (sym l ∙_) (Path.lc l) (Path.lc (sym l))
 
 ∙-post-equiv : ∀ {u} {A : Type u} {x y z : A}
              → (r : y ≡ z) → (x ≡ y) ≃ (x ≡ z)
-∙-post-equiv r = iso→equiv (_∙ r) (_∙ sym r) (cancelr r) (cancelr (sym r))
+∙-post-equiv r = iso→equiv (_∙ r) (_∙ sym r) (Path.rc r) (Path.rc (sym r))
 ```

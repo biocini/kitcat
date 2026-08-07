@@ -213,41 +213,24 @@ x ≢ y = ¬ (x ≡ y)
 
 ## Cancellation
 
-Left- and right-cancellation for `_∙_`, the transposition
-`move-r` — from `p ∙ sym q ≡ r` conclude `p ≡ r ∙ q` — and the
-conjugation cancellation: a loop `ζ` conjugated into a composite
-that agrees with the plain composite must be trivial. `move-r`
+The transposition `move-r` — from `p ∙ sym q ≡ r` conclude
+`p ≡ r ∙ q` — and the conjugation cancellation: a loop `ζ`
+conjugated into a composite that agrees with the plain composite
+must be trivial. Left- and right-cancellation (`Path.lc`, `Path.rc`)
+and the self-loop corollary (`Path.wind`) live in `Core.Kan`'s
+`module Path`, beside the primitives they are built from. `move-r`
 leans on the definitional involution `sym (sym q) ≐ q` to convert
 the cancellation endpoint (the involution is pinned by
-`Core.Groupoid.op-invol`). `ap-retr` reads `ap f`, for `f`
-homotopic to the identity, as conjugation of the path by the
-homotopy.
+`Core.Groupoid.op-invol`). `ap-retr` reads `ap f`, for `f` homotopic
+to the identity, as conjugation of the path by the homotopy.
 
 ```agda
-cancell
-  : ∀ {u} {A : Type u} {a b c : A}
-  → (p : a ≡ b) (s : b ≡ c)
-  → sym p ∙ p ∙ s ≡ s
-cancell p s =
-  Path.assoc (sym p) p s
-  ∙ ap (_∙ s) (Path.invl p)
-  ∙ Path.unitl s
-
-cancelr
-  : ∀ {u} {A : Type u} {a b c : A}
-  → (q : b ≡ c) (t : a ≡ b)
-  → (t ∙ q) ∙ sym q ≡ t
-cancelr q t =
-  sym (Path.assoc t q (sym q))
-  ∙ ap (t ∙_) (Path.invr q)
-  ∙ Path.unitr t
-
 move-r
   : ∀ {u} {A : Type u} {a b c : A}
   → (p : a ≡ b) (q : c ≡ b) (r : a ≡ c)
   → p ∙ sym q ≡ r → p ≡ r ∙ q
 move-r p q r h =
-  sym (cancelr (sym q) p) ∙ ap (_∙ q) h
+  sym (Path.rc (sym q) p) ∙ ap (_∙ q) h
 
 conj-cancel
   : ∀ {u} {A : Type u} {a b c : A}
@@ -255,15 +238,15 @@ conj-cancel
   → p ∙ q ≡ p ∙ ζ ∙ q
   → ζ ≡ refl
 conj-cancel p q ζ h =
-  sym (cancelr q ζ)
+  sym (Path.rc q ζ)
   ∙ ap (_∙ sym q) (sym cancel-left)
   ∙ Path.invr q
   where
     cancel-left : q ≡ ζ ∙ q
     cancel-left =
-      sym (cancell p q)
+      sym (Path.lc p q)
       ∙ ap (sym p ∙_) h
-      ∙ cancell p (ζ ∙ q)
+      ∙ Path.lc p (ζ ∙ q)
 
 ap-retr
   : ∀ {u} {A : Type u} {f : A → A} (H : ∀ x → f x ≡ x) {x y : A}

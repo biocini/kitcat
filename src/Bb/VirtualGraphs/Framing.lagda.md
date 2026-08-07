@@ -5,7 +5,7 @@ them takes them as explicit parameters. `framing⁻` holds what reads
 their union together with the constructions that read both.
 
 A `⁻`/`⁺` suffix is read in one of three registers, and they do not
-agree with one another. `corx`, `rx` name the twist families:
+agree with one another. `corx`, `rx` name the half-twist families:
 `rx` fills `var`, `corx` fills `covar`. The framing register —
 `cell`, `is-absorbing`, `fiber` — is indexed by the argument side
 the construction lives on: `⁻` is the coterm side, built through
@@ -154,8 +154,8 @@ reification at the axiom retracts evaluation.
   readback-of = ∀ {x y} (f : hom x y) → eval (reflect f) ≡ f
 ```
 
-Each side's cell carries one twist of each sign: the coterm-side
-cell is the negative twist read through `act-π`, which holds the
+Each side's cell carries one half-twist of each sign: the coterm-side
+cell is the negative half-twist read through `act-π`, which holds the
 positive one, and the term-side cell is the mirror. A pending read
 meets a pending write, the cancellation performed and never named as
 an edge of its own.
@@ -170,7 +170,7 @@ an edge of its own.
 
 Where the edges form sets, the embedding condition reduces to
 injectivity of transmission — evaluation of a reflection, the edge
-surrounded by one twist of each sign.
+surrounded by one half-twist of each sign.
 
 ```agda
   embedding-from-hom-sets
@@ -179,6 +179,89 @@ surrounded by one twist of each sign.
     → reflect-is-embedding G
   embedding-from-hom-sets hset inj =
     embedding-from-injective G hset (λ p → inj (ap eval p))
+```
+
+## Naturality of a half-twist
+
+Each hand already carries one half-twist at its junction: the positive
+composite reads its second factor at `var`, which holds `rx`, and the
+negative composite reads its first factor at `covar`, which holds
+`corx`. A half-twist may still flank either hand on either side, so six
+pairings of a hand's two judgments are well typed. `own` gives each
+half-twist the hand whose junction it does not fill. `alt` gives it the
+hand whose junction already holds it, so that word carries the same
+half-twist twice. `mixed` pairs a word of one hand with a word of the
+other, which compares the two cuts rather than one half-twist.
+
+```agda
+  own⁻ own⁺ alt⁻ alt⁺ mixed⁻ mixed⁺ : ∀ {x y} → hom x y → Type (o ⊔ h)
+  own⁻   {x} {y} m = centred G (composite⁻ (rx x) m) (composite⁻ m (rx y))
+  own⁺   {x} {y} m = centred G (composite⁺ (corx x) m) (composite⁺ m (corx y))
+  alt⁻   {x} {y} m = centred G (composite⁺ (rx x) m) (composite⁺ m (rx y))
+  alt⁺   {x} {y} m = centred G (composite⁻ (corx x) m) (composite⁻ m (corx y))
+  mixed⁻ {x} {y} m = centred G (composite⁻ (rx x) m) (composite⁺ m (corx y))
+  mixed⁺ {x} {y} m = centred G (composite⁺ (corx x) m) (composite⁻ m (rx y))
+```
+
+The two tiers adopt the `own` reading, one per hand: every edge has a
+contractible centred pair between the two flanks of its hand's half-twist.
+Contractibility is a proposition, so each tier is one.
+
+```agda
+  is-natural⁻ : Type (o ⊔ h)
+  is-natural⁻ = ∀ {x y} (m : hom x y) → is-contr (own⁻ m)
+
+  is-natural⁺ : Type (o ⊔ h)
+  is-natural⁺ = ∀ {x y} (m : hom x y) → is-contr (own⁺ m)
+
+  is-natural⁻-is-prop : is-prop is-natural⁻
+  is-natural⁻-is-prop =
+    Πi-is-prop λ _ → Πi-is-prop λ _ → Π-is-prop λ _ → is-contr-is-prop _
+
+  is-natural⁺-is-prop : is-prop is-natural⁺
+  is-natural⁺-is-prop =
+    Πi-is-prop λ _ → Πi-is-prop λ _ → Π-is-prop λ _ → is-contr-is-prop _
+```
+
+Read at the half-twist of its own hand, a tier's two judgments are one
+term, so the pair is a diagonal and states no equation between
+distinct composites. What the tier asks there is that the judgment's
+own path space be contractible.
+
+```agda
+  diag⁻ : ∀ x → own⁻ (rx x)
+              ≡ centred G (composite⁻ (rx x) (rx x))
+                          (composite⁻ (rx x) (rx x))
+  diag⁻ x = refl
+
+  diag⁺ : ∀ x → own⁺ (corx x)
+              ≡ centred G (composite⁺ (corx x) (corx x))
+                          (composite⁺ (corx x) (corx x))
+  diag⁺ x = refl
+
+  diag-loop⁻ : is-natural⁻ → ∀ x
+             → is-contr ( composite⁻ (rx x) (rx x)
+                        ≡ composite⁻ (rx x) (rx x) )
+  diag-loop⁻ N x = centred-loop G (N (rx x))
+
+  diag-loop⁺ : is-natural⁺ → ∀ x
+             → is-contr ( composite⁺ (corx x) (corx x)
+                        ≡ composite⁺ (corx x) (corx x) )
+  diag-loop⁺ N x = centred-loop G (N (corx x))
+```
+
+Dropping the contractible centre leaves the equation between the two
+judgments. Stated that way, naturality is a family of paths in the
+judgment type and asks no h-level.
+
+```agda
+  is-naturalᴶ⁻ : Type (o ⊔ h)
+  is-naturalᴶ⁻ = ∀ {x y} (m : hom x y)
+               → composite⁻ (rx x) m ≡ composite⁻ m (rx y)
+
+  is-naturalᴶ⁺ : Type (o ⊔ h)
+  is-naturalᴶ⁺ = ∀ {x y} (m : hom x y)
+               → composite⁺ (corx x) m ≡ composite⁺ m (corx y)
 ```
 
 ## Duality

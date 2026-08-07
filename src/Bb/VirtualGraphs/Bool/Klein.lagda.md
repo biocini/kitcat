@@ -1,13 +1,13 @@
-The Klein four-group under a three-cycle-twisted reflection: a
+The Klein four-group under a three-cycle-half-twisted reflection: a
 one-object carrier on `Bool × Bool` under componentwise `xor`, with
 the reflection reading its edge through a three-cycle `σ` of the
 non-unit elements. Every hypothesis of the extraction telescope is
 inhabited — the embedding condition, both cuts, both tiers — and
-the extraction computes: the extracted positive twist is
+the extraction computes: the extracted positive half-twist is
 `ψ v⁻ = v⁺` and the positive tier's centre is `ψ v⁺ = c⁺`, one
 further step around the cycle. The two differ in their first component, so the centre
 agreement, the term-side cancellation, and op-involutivity at the
-twist are all refutable here, while right-cancellability of
+half-twist are all refutable here, while right-cancellability of
 `_⨾⁻ v⁺` holds — the two ingredients of the readback-record
 cancellation reduction come apart on this carrier.
 
@@ -189,7 +189,7 @@ no-cancel⁺ c = no-agree (cancel⁺→agree c)
 
 Right-cancellability of `_⨾⁻ v⁺` holds — the hand is a composite of
 injections — while the frame law `v⁻ ⨾⁻ v⁺ ≡ v⁺` lands on the unit
-of the group instead of the extracted twist.
+of the group instead of the extracted half-twist.
 
 ```agda
 open tower⁻ KM (λ _ → v⁺) S cut⁻ using (_⨾⁻_)

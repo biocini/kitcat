@@ -357,11 +357,11 @@ object is representability of the operator on the edges into it.
                     → e ≡ cross⁻ (corx x)
   represents-forced x e rep = sym (unitl⁺ e) ∙ sym (rep (corx x))
 
-  linear-twist→represents : (x : ob) → linear (corx x) → represents x
-  linear-twist→represents x L f = from-linear.cross⁻-into L f
+  linear-half-twist→represents : (x : ob) → linear (corx x) → represents x
+  linear-half-twist→represents x L f = from-linear.cross⁻-into L f
 
-  represents→linear-twist : (x : ob) → represents x → linear (corx x)
-  represents→linear-twist x rep f g =
+  represents→linear-half-twist : (x : ob) → represents x → linear (corx x)
+  represents→linear-half-twist x rep f g =
     cross→associates f g (corx x)
       (ap (_⨾⁺ corx x)
         ( rep (f ⨾⁺ g)
@@ -369,11 +369,11 @@ object is representability of the operator on the edges into it.
         ∙ ap (f ⨾⁺_) (sym (rep g)) ))
 
   positive→represents : (x : ob) → positive x → represents x
-  positive→represents x P = linear-twist→represents x (P x (corx x))
+  positive→represents x P = linear-half-twist→represents x (P x (corx x))
 
   represents→positive : (x : ob) → represents x → positive x
   represents→positive x rep =
-    positive-of-corx x (represents→linear-twist x rep)
+    positive-of-corx x (represents→linear-half-twist x rep)
 
   negative→represents : (x : ob) → negative x → represents x
   negative→represents x N = positive→represents x (negative→positive x N)

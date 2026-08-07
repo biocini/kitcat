@@ -81,7 +81,7 @@ evW : W → Nat → Nat
 evW A = ev (A .fst) (A .snd .fst)
 ```
 
-The identity, the unit translation, and the double twist.
+The identity, the unit translation, and the double half-twist.
 
 ```agda
 ε̂ τ̂ δ̂ : W

@@ -103,7 +103,7 @@ object exactly when the group itself is a proposition.
 
 ### The embedding condition
 
-Transmission surrounds an edge with one twist of each sign, and cancelling
+Transmission surrounds an edge with one half-twist of each sign, and cancelling
 them is injective, so the edges forming a set is the whole of the tier.
 
 ```agda
@@ -116,7 +116,7 @@ them is injective, so the edges forming a set is the whole of the tier.
 
 ### Both cuts
 
-Each composite judgment is a five-fold product with the twist of its own
+Each composite judgment is a five-fold product with the half-twist of its own
 sign at the junction, and reassociating gathers the middle three into one
 edge.
 
@@ -141,9 +141,9 @@ edge.
 ### Both unit tiers
 
 An action map holds the half it does not act on at that half's axiom, so it
-multiplies by that half's twist: `coact-π` by the future's `t⁻`, `act-π` by
+multiplies by that half's half-twist: `coact-π` by the future's `t⁻`, `act-π` by
 the buffer's `t⁺`. The edge acting as the second projection is therefore
-that twist's inverse.
+that half-twist's inverse.
 
 ```agda
     coact-π-injective : ∀ {m n : A} → coact-π {tt} {tt} m ≡ coact-π {tt} {tt} n → m ≡ n
@@ -169,8 +169,8 @@ that twist's inverse.
       , funext λ t → ap (t .snd ·_) (invl t⁺) ∙ unitr (t .snd) )
 ```
 
-A hand's cell reads the opposite half's twist through the opposite half's
-action, and each twist acting on its own family lands exactly there — both
+A hand's cell reads the opposite half's half-twist through the opposite half's
+action, and each half-twist acting on its own family lands exactly there — both
 sides multiplication by `t⁻ · t⁺`.
 
 ```agda
@@ -202,7 +202,7 @@ The cancellation is that the two framing elements compose to the unit.
 ```
 
 Agreement of the two cuts is that the two framing elements are equal: the
-cuts are the same product with the junction's twist differing by sign, so
+cuts are the same product with the junction's half-twist differing by sign, so
 their difference is the framing's.
 
 ```agda
@@ -239,8 +239,8 @@ cancelling case. Both together force each element to be its own inverse.
 
 ### What each hand's unit actually is
 
-Each cut carries a junction twist, so the coterm hand's composition is the
-product twisted by `t⁻` and its unit is that element's inverse.
+Each cut carries a junction half-twist, so the coterm hand's composition is the
+product half-twisted by `t⁻` and its unit is that element's inverse.
 
 ```agda
     unit⁻-is-inverse : (u : A) → (∀ {x y} (f : hom x y) → f ⨾⁺ u ≡ f)
@@ -252,7 +252,7 @@ product twisted by `t⁻` and its unit is that element's inverse.
     unit⁺-is-inverse u U = sym (unitr (u · t⁺)) ∙ U e
 ```
 
-The composite of the two twists therefore carries three, and demanding it
+The composite of the two half-twists therefore carries three, and demanding it
 be the unit is a cubic condition on the framing rather than the
 cancellation.
 
@@ -273,7 +273,7 @@ cancellation.
 ```
 
 Read across the hands instead, the count comes out even: one hand's
-composite of the two twists carries the *other* hand's junction, and is
+composite of the two half-twists carries the *other* hand's junction, and is
 that hand's unit exactly under the cancellation.
 
 ```agda
@@ -290,9 +290,9 @@ that hand's unit exactly under the cancellation.
 
 ### The tier's centre against the framing
 
-An edge whose coterm action is the projection is the held twist's inverse —
+An edge whose coterm action is the projection is the held half-twist's inverse —
 the centre `unital⁻` supplies — and under the cancellation that inverse is
-the other twist again, so unit and framing coincide exactly there.
+the other half-twist again, so unit and framing coincide exactly there.
 
 ```agda
     absorber⁻-is-inverse : (u : A) → (∀ γ → coact-π {tt} {tt} u γ ≡ γ .snd) → t⁻ · u ≡ e
@@ -303,9 +303,9 @@ the other twist again, so unit and framing coincide exactly there.
     absorber⁻-is-corx K u P = cancel-l t⁻ (absorber⁻-is-inverse u P ∙ sym K)
 ```
 
-### What does untwist it
+### What does unhalf-twist it
 
-The twist enters because a cut fills one argument slot with an axiom half.
+The half-twist enters because a cut fills one argument slot with an axiom half.
 A two-payload string fills no slot — the factors sit adjacent — and it is
 represented by the plain product.
 
@@ -317,25 +317,25 @@ represented by the plain product.
     string-rep f g = funext λ γ →
       ap (γ .fst .snd ·_) (sym (assoc f g (γ .snd .snd)))
 
-    cut⁺-is-twisted : (f g : A) → cut⁺ f g ≡ f · (t⁻ · g)
-    cut⁺-is-twisted _ _ = refl
+    cut⁺-is-half-twisted : (f g : A) → cut⁺ f g ≡ f · (t⁻ · g)
+    cut⁺-is-half-twisted _ _ = refl
 
-    cut⁻-is-twisted : (f g : A) → cut⁻ f g ≡ (f · t⁺) · g
-    cut⁻-is-twisted _ _ = refl
+    cut⁻-is-half-twisted : (f g : A) → cut⁻ f g ≡ (f · t⁺) · g
+    cut⁻-is-half-twisted _ _ = refl
 ```
 
-Against the plain product the composite of the two twists is the
+Against the plain product the composite of the two half-twists is the
 cancellation itself, with no residue.
 
 ```agda
-    string-twists : string t⁻ t⁺ ≡ reflect (t⁻ · t⁺)
-    string-twists = string-rep t⁻ t⁺
+    string-half-twists : string t⁻ t⁺ ≡ reflect (t⁻ · t⁺)
+    string-half-twists = string-rep t⁻ t⁺
 ```
 
 ### A candidate filler, and what it costs
 
 Filling the junction with a candidate rather than with an axiom half. The
-candidate is self-consistent when composing the two twists through it
+candidate is self-consistent when composing the two half-twists through it
 returns it — and that condition is the cancellation, with no residue.
 
 ```agda
@@ -363,10 +363,10 @@ returns it — and that condition is the cancellation, with no residue.
 ## Framed on one hand, extracted
 
 Framing the group at a single element `t⁻ : A` posits only the negative
-tier; the positive twist is not chosen but extracted as that tier's centre.
+tier; the positive half-twist is not chosen but extracted as that tier's centre.
 
 ```agda
-  module one-twist (t⁻ : A) where
+  module one-half-twist (t⁻ : A) where
 
     cπ : A → Sigma ⊤ (λ _ → A) → A
     cπ m k = t⁻ · (m · k .snd)
@@ -422,7 +422,7 @@ tier; the positive twist is not chosen but extracted as that tier's centre.
 
 ### The extraction, run at the model
 
-The extraction telescope is inhabited entire, its positive twist pinned to
+The extraction telescope is inhabited entire, its positive half-twist pinned to
 `inv t⁻`.
 
 ```agda
@@ -431,7 +431,7 @@ The extraction telescope is inhabited entire, its positive twist pinned to
 ```
 
 Whatever proof the negative tier is given, its centre is the inverse of the
-posited twist.
+posited half-twist.
 
 ```agda
     corx-forced : (c : is-contr (fiber (coact-π {tt} {tt}) snd))

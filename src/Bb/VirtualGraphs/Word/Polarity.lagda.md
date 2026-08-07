@@ -3,7 +3,7 @@ are propositions at the one object, and both are empty: a positivity
 witness yields linearity of the identity descriptor `ε̂`, and a
 negativity witness yields thunkability of the unit translation `τ̂`.
 
-The two twists generate the carrier under the two cuts. `gen-sem`
+The two half-twists generate the carrier under the two cuts. `gen-sem`
 writes every canonical descriptor as a cut word in them, recursing on
 the descriptor: a pure translation peels one unit translation per step,
 a zero head is one guard — the negative cut against the identity — and
@@ -12,7 +12,7 @@ word is the unit translation cut onto the pointwise predecessor, whose
 tail value drops by one. The recursion consumes weak monotonicity
 alone, and the minimality constraint rides along inside `W`. So the
 two-edge check returns the full quantifier here, and each hypothesis
-pair fails on exactly one twist: `τ̂` is linear and `ε̂` is not, `ε̂`
+pair fails on exactly one half-twist: `τ̂` is linear and `ε̂` is not, `ε̂`
 is thunkable and `τ̂` is not.
 
 Read through the collapse, each refutation gives the other.
@@ -70,9 +70,9 @@ negative-empty : ¬ negative tt
 negative-empty N = thunkable-refuted (N tt τ̂)
 ```
 
-## The twists generate the model
+## The half-twists generate the model
 
-Each twist carries the closure its index reaches: the unit translation
+Each half-twist carries the closure its index reaches: the unit translation
 rises nowhere below its plateau, and the identity descriptor rises to
 zero.
 
@@ -124,7 +124,7 @@ spred : ∀ v → (Σ j ∶ Nat , v ≡ S j) → S (Nat.pred v) ≡ v
 spred v (j , e) = ap (λ m → S (Nat.pred m)) e ∙ sym e
 ```
 
-Every canonical descriptor is a cut word in the two twists, and every
+Every canonical descriptor is a cut word in the two half-twists, and every
 edge is one after transport along `ev-inj`.
 
 ```agda
@@ -201,7 +201,7 @@ gen-all A =
   g = gen-sem (A .fst) (A .snd .fst) (w-inc A)
 ```
 
-Over the generated carrier both twists decide each polarity.
+Over the generated carrier both half-twists decide each polarity.
 
 ```agda
 positive-two-edge : linear ε̂ → linear τ̂ → positive tt
@@ -213,7 +213,7 @@ negative-two-edge = negative-generated (λ f → gen-all f) tt
 
 ## Through the collapse
 
-Each twist condition implies the other at the one object, so either
+Each half-twist condition implies the other at the one object, so either
 refutation gives the other.
 
 ```agda

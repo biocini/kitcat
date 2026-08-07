@@ -1,6 +1,6 @@
-One twist posits the other. The negative absorption tier mentions
+One half-twist posits the other. The negative absorption tier mentions
 `coact-π`, hence `var`, hence `rx` alone — so it is stateable
-before a positive twist exists, and its centre defines one. Mutual
+before a positive half-twist exists, and its centre defines one. Mutual
 inverseness on that side is then the centre's own witness, not an
 axiom. The telescope is group O: the carrier, `rx`, and the
 tier; the positive family is a definition.
@@ -41,7 +41,7 @@ module extraction {o h} (G : virtual-graph o h) (open virtual-graph G)
 ```
 
 The coterm-side absorption comes with the extraction, with no
-readback and no second twist posited.
+readback and no second half-twist posited.
 
 ```agda
   absorb⁻ : ∀ {x} (k : coterm x) → coact (corx x) k ≡ k
@@ -67,9 +67,9 @@ readback and no second twist posited.
 ## The positive tier over the extracted framing
 
 Its centre is a left unit for the negative cut, and the term-side
-cancellation at the posited twist is equivalent to that centre
+cancellation at the posited half-twist is equivalent to that centre
 agreeing with it. The twice-opposed carrier posits the centre, so
-the same equivalence reads: the opposite is involutive at the twist
+the same equivalence reads: the opposite is involutive at the half-twist
 field.
 
 ```agda
@@ -111,8 +111,8 @@ field.
 ```
 
 The telescope is inhabited with `agree` refutable: the Klein
-four-group under a three-cycle-twisted reflection inhabits every
+four-group under a three-cycle-half-twisted reflection inhabits every
 hypothesis while the positive centre lands one step past the posited
-twist. In every abelian-group model the centre is the double
-inverse, so `cancel⁺` holds there — the separation needs a twisted
+half-twist. In every abelian-group model the centre is the double
+inverse, so `cancel⁺` holds there — the separation needs a half-twisted
 reflection.

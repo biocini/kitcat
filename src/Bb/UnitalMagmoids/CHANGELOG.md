@@ -6,6 +6,19 @@ entry names the checker run that says so.
 
 ---
 
+## 2026-08-06 — README citation re-pointed after the plan set was cut
+
+**Documentation only, no module changed.** The composite-rx refactor
+narrowed to `Core.Kan`, `Core.Composite`, and `Core.Rx`, and its
+per-stage documents merged into
+`docs/composite-rx-refactor/stages.md`. `README.md`'s provenance
+paragraph cited `stage-4-cat-rebuild.md`, which no longer exists. It
+now names the plan directory instead. The claim is unchanged: that
+plan named this material under the stale `CatData` label, and the
+citation names this tree now.
+
+No `.lagda.md` file changed, so the tree's green state is unaffected.
+
 ## 2026-07-28 — the suite extracted from Bb.CatsWithExplicitInterchange.Magmoid
 
 **The extraction, `verified`.** Twelve modules moved from

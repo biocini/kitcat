@@ -913,6 +913,18 @@ module Path {A : Type u} where
           (unitr (sym p))))
       (invl p)
 
+  -- left-cancel an inverted-then-plain prefix off a longer composite
+  lc : {a b c : A} (p : a ≡ b) (s : b ≡ c) → sym p ∙ p ∙ s ≡ s
+  lc p s = assoc (sym p) p s ∙ ap (_∙ s) (invl p) ∙ unitl s
+
+  -- right-cancel a plain-then-inverted suffix off a longer composite
+  rc : {a b c : A} (q : b ≡ c) (t : a ≡ b) → (t ∙ q) ∙ sym q ≡ t
+  rc q t = sym (assoc t q (sym q)) ∙ ap (t ∙_) (invr q) ∙ unitr t
+
+  -- a self-path composed onto a path and returning it must be trivial
+  wind : {a b : A} (p : a ≡ b) (θ : b ≡ b) → p ≡ p ∙ θ → refl ≡ θ
+  wind p θ P = sym (invl p) ∙ ap (sym p ∙_) P ∙ lc p θ
+
 slide : {a b c : A} (p : a ≡ b) (q : b ≡ c)
       → PathP (λ i → a ≡ q i) p (p ∙ q)
 slide p q = transpose (cat.fill p q)

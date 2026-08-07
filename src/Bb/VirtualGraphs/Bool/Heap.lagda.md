@@ -180,38 +180,38 @@ compositions-differ : at._⨾⁺_ false true true ≢ at._⨾⁺_ true true true
 compositions-differ = false≢true
 ```
 
-## The origins are exchanged by a twist
+## The origins are exchanged by a half-twist
 
 Negation fixes the graph and commutes with the reflection, and it
 carries one origin's unit to the other's.
 
 ```agda
 private
-  twist : Bool → Bool
-  twist = xor true
+  half-twist : Bool → Bool
+  half-twist = xor true
 
-  twist-arg : virtual-graph.argument HB tt tt → virtual-graph.argument HB tt tt
-  twist-arg γ = (γ .fst .fst , twist (γ .fst .snd))
-              , (γ .snd .fst , twist (γ .snd .snd))
+  half-twist-arg : virtual-graph.argument HB tt tt → virtual-graph.argument HB tt tt
+  half-twist-arg γ = (γ .fst .fst , half-twist (γ .fst .snd))
+              , (γ .snd .fst , half-twist (γ .snd .snd))
 
-  twist-emb
+  half-twist-emb
     : ∀ t m k
-    → xor (twist t) (xor (twist m) (twist k)) ≡ twist (xor t (xor m k))
-  twist-emb true  true  true  = refl
-  twist-emb true  true  false = refl
-  twist-emb true  false true  = refl
-  twist-emb true  false false = refl
-  twist-emb false true  true  = refl
-  twist-emb false true  false = refl
-  twist-emb false false true  = refl
-  twist-emb false false false = refl
+    → xor (half-twist t) (xor (half-twist m) (half-twist k)) ≡ half-twist (xor t (xor m k))
+  half-twist-emb true  true  true  = refl
+  half-twist-emb true  true  false = refl
+  half-twist-emb true  false true  = refl
+  half-twist-emb true  false false = refl
+  half-twist-emb false true  true  = refl
+  half-twist-emb false true  false = refl
+  half-twist-emb false false true  = refl
+  half-twist-emb false false false = refl
 
 reflection-is-equivariant
   : (m : Bool) (γ : virtual-graph.argument HB tt tt)
-  → virtual-graph.reflect HB (twist m) (twist-arg γ)
-  ≡ twist (virtual-graph.reflect HB m γ)
-reflection-is-equivariant m γ = twist-emb (γ .fst .snd) m (γ .snd .snd)
+  → virtual-graph.reflect HB (half-twist m) (half-twist-arg γ)
+  ≡ half-twist (virtual-graph.reflect HB m γ)
+reflection-is-equivariant m γ = half-twist-emb (γ .fst .snd) m (γ .snd .snd)
 
-twist-moves-the-origin : twist (at.idn false {tt}) ≡ at.idn true {tt}
-twist-moves-the-origin = refl
+half-twist-moves-the-origin : half-twist (at.idn false {tt}) ≡ at.idn true {tt}
+half-twist-moves-the-origin = refl
 ```
