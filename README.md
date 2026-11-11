@@ -67,6 +67,6 @@ go look at them.
 - [agda-categories](https://github.com/agda/agda-categories) —
   Category theory library for Agda
 
-## LLM policy (updated 2026-07-22)
+## LLM policy (updated 2026-11-11)
 
 See [llm-policy](docs/llms.md) for my statement on the use of generative LLMs in this project.
